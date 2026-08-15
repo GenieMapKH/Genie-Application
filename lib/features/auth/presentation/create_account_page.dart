@@ -142,6 +142,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       Navigator.of(context).pushReplacement(
         AppPageRoute(
           page: const LoginPage(),
+          direction: SlideDirection.fromLeft,
         ),
       );
     }

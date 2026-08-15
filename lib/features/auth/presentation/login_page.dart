@@ -483,16 +483,17 @@ class _LoginPageState extends State<LoginPage>
                                 icon: const GoogleIcon(size: 20),
                                 onPressed: widget.onGoogleLoginPressed ?? () {},
                               ),
-                              const SizedBox(height: 168),
+                              const SizedBox(height: 54),
 
                               // Bottom Link: Create a Account
                               Center(
                                 child: GestureDetector(
                                   onTap: widget.onCreateAccountPressed ??
                                       () {
-                                        Navigator.of(context).push(
+                                        Navigator.of(context).pushReplacement(
                                           AppPageRoute(
                                             page: const CreateAccountPage(),
+                                            direction: SlideDirection.fromLeft,
                                           ),
                                         );
                                       },

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
 
 void main() {
-  testWidgets('AppPageRoute transitions smoothly between pages',
+  testWidgets('AppPageRoute transitions forward fromRight and backward fromLeft',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -14,15 +14,32 @@ void main() {
                 onPressed: () {
                   Navigator.of(context).push(
                     AppPageRoute(
-                      page: const Scaffold(
-                        body: Center(
-                          child: Text('Destination Screen'),
+                      page: Builder(
+                        builder: (innerContext) => Scaffold(
+                          body: Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(innerContext).pushReplacement(
+                                  AppPageRoute(
+                                    page: const Scaffold(
+                                      body: Center(
+                                        child: Text('Replaced Screen'),
+                                      ),
+                                    ),
+                                    direction: SlideDirection.fromLeft,
+                                  ),
+                                );
+                              },
+                              child: const Text('Go Replace Left'),
+                            ),
+                          ),
                         ),
                       ),
+                      direction: SlideDirection.fromRight,
                     ),
                   );
                 },
-                child: const Text('Go Forward'),
+                child: const Text('Go Forward Right'),
               ),
             ),
           ),
@@ -30,15 +47,26 @@ void main() {
       ),
     );
 
-    expect(find.text('Go Forward'), findsOneWidget);
-    expect(find.text('Destination Screen'), findsNothing);
+    expect(find.text('Go Forward Right'), findsOneWidget);
+    expect(find.text('Go Replace Left'), findsNothing);
 
-    // Tap to transition forward
-    await tester.tap(find.text('Go Forward'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 150));
+    // Tap to transition forward from right
+    await tester.tap(find.text('Go Forward Right'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Destination Screen'), findsOneWidget);
+    expect(find.text('Go Replace Left'), findsOneWidget);
+
+    // Tap to replace from left
+    await tester.tap(find.text('Go Replace Left'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Replaced Screen'), findsOneWidget);
+
+    // Popping the replaced screen should return directly to root in a single pop
+    final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+    navigator.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Go Forward Right'), findsOneWidget);
   });
 }
