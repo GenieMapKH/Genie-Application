@@ -117,6 +117,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     final agreed = await Navigator.of(context).push<bool>(
       AppPageRoute(
         page: TermsOfServicePage(
+          initialAgreed: _agreeToTerms,
           onAgreeChanged: (val) {
             setState(() {
               _agreeToTerms = val;
@@ -271,10 +272,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               width: 1.5,
                             ),
                             onChanged: (val) {
-                              setState(() {
-                                _agreeToTerms = val ?? false;
-                                if (_agreeToTerms) _termsError = null;
-                              });
+                              if (val == true) {
+                                _openTermsOfService();
+                              } else {
+                                setState(() {
+                                  _agreeToTerms = false;
+                                });
+                              }
                             },
                           ),
                         ),
@@ -287,10 +291,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    setState(() {
-                                      _agreeToTerms = !_agreeToTerms;
-                                      if (_agreeToTerms) _termsError = null;
-                                    });
+                                    if (!_agreeToTerms) {
+                                      _openTermsOfService();
+                                    } else {
+                                      setState(() {
+                                        _agreeToTerms = false;
+                                      });
+                                    }
                                   },
                                   child: Text(
                                     'By continuing, you agree to out ',
