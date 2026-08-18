@@ -9,13 +9,13 @@ class DynamicMapMarkers {
   static Future<BitmapDescriptor> createNumberedMarker(int number) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    const double size = 60.0;
+    const double size = 36.0;
     
     // Draw white circle with shadow
     final Paint shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.15)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
-    canvas.drawCircle(const Offset(size / 2, size / 2 + 2), size / 2.5, shadowPaint);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
+    canvas.drawCircle(const Offset(size / 2, size / 2 + 1), size / 2.5, shadowPaint);
 
     final Paint paint = Paint()..color = Colors.white;
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 2.5, paint);
@@ -26,7 +26,7 @@ class DynamicMapMarkers {
         text: number.toString(),
         style: const TextStyle(
           color: Color(0xFF6B7280), // Gray text
-          fontSize: 22,
+          fontSize: 14,
           fontWeight: FontWeight.bold,
           fontFamily: 'Inter', // Note: Using default if Inter isn't loaded on Canvas yet
         ),
@@ -58,7 +58,7 @@ class DynamicMapMarkers {
         text: text,
         style: TextStyle(
           color: isArea ? const Color(0xFF4B5563) : const Color(0xFF6B7280),
-          fontSize: isArea ? 22 : 18,
+          fontSize: isArea ? 22 : 12,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -66,8 +66,8 @@ class DynamicMapMarkers {
     );
     textPainter.layout();
 
-    final double paddingHorizontal = 16.0;
-    final double paddingVertical = 8.0;
+    final double paddingHorizontal = isArea ? 16.0 : 8.0;
+    final double paddingVertical = isArea ? 8.0 : 4.0;
     final double width = textPainter.width + paddingHorizontal * 2;
     final double height = textPainter.height + paddingVertical * 2;
     
@@ -185,6 +185,31 @@ class DynamicMapMarkers {
       Offset(size / 2 - textPainter.width / 2, size / 2 - textPainter.height / 2),
     );
 
+    final ui.Image img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.bytes(
+      data!.buffer.asUint8List(),
+      width: size,
+      height: size,
+    );
+  }
+
+  /// Creates a small white dot marker
+  static Future<BitmapDescriptor> createSmallWhiteDotMarker() async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double size = 24.0;
+    
+    // Draw shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.15)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
+    canvas.drawCircle(const Offset(size / 2, size / 2 + 1), size / 3, shadowPaint);
+
+    // Draw white circle
+    final Paint paint = Paint()..color = Colors.white;
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 3, paint);
+    
     final ui.Image img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(
