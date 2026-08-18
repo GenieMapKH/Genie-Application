@@ -52,19 +52,21 @@ class DynamicMapMarkers {
   }
 
   /// Creates a pill-shaped marker with text (e.g. for area and lengths)
-  static Future<BitmapDescriptor> createTextMarker(String text, {bool isArea = false}) async {
+  static Future<BitmapDescriptor> createTextMarker(String text, {bool isArea = false, double? fontSize}) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double pixelRatio = 3.0;
     
     canvas.scale(pixelRatio, pixelRatio);
     
+    final double actualFontSize = fontSize ?? (isArea ? 14.0 : 12.0);
+
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: text,
         style: TextStyle(
           color: isArea ? const Color(0xFF4B5563) : const Color(0xFF6B7280),
-          fontSize: isArea ? 22 : 12,
+          fontSize: actualFontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -72,8 +74,9 @@ class DynamicMapMarkers {
     );
     textPainter.layout();
 
-    final double paddingHorizontal = isArea ? 16.0 : 8.0;
-    final double paddingVertical = isArea ? 8.0 : 4.0;
+    final double scaleRatio = (actualFontSize / 14.0).clamp(0.6, 1.0);
+    final double paddingHorizontal = (isArea ? 12.0 : 8.0) * scaleRatio;
+    final double paddingVertical = (isArea ? 6.0 : 4.0) * scaleRatio;
     final double width = textPainter.width + paddingHorizontal * 2;
     final double height = textPainter.height + paddingVertical * 2;
     

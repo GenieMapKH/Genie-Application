@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../shared/utils/app_popup.dart';
 
 /// Terms of Service screen for Genie Property.
 /// Enforces scrolling to the very bottom before the user can agree.
@@ -65,16 +66,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
 
   void _handleAgree(bool value) {
     if (!_hasScrolledToBottom) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Please scroll to the bottom of the terms to agree.',
-            style: GoogleFonts.inter(fontSize: 13),
-          ),
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      AppPopup.showError(context, 'Please scroll to the bottom of the terms to agree.');
       return;
     }
 

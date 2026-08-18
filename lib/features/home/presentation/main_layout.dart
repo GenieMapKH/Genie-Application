@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../shared/utils/app_popup.dart';
 import 'package:genie/features/home/presentation/widgets/utm_locate_bottom_sheet.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -56,12 +57,7 @@ class _MainLayoutState extends State<MainLayout>
   LatLng? _currentMapCenter = const LatLng(11.5564, 104.9282);
   final double _zoomThreshold = 16.5;
 
-  final List<LatLng> _dummyProperties = [
-    const LatLng(11.5564, 104.9282),
-    const LatLng(11.5580, 104.9290),
-    const LatLng(11.5550, 104.9270),
-    const LatLng(11.5575, 104.9265),
-  ];
+
 
   static const CameraPosition _initialPosition = CameraPosition(
     target: LatLng(11.5564, 104.9282), // Phnom Penh coordinates as default
@@ -80,6 +76,21 @@ class _MainLayoutState extends State<MainLayout>
       curve: Curves.easeOutBack,
     );
     _loadMapIcons();
+    _initLocation();
+  }
+
+  Future<void> _initLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+    
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    
+    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+      if (mounted) setState(() {});
+    }
   }
 
   Future<void> _loadMapIcons() async {
@@ -107,13 +118,7 @@ class _MainLayoutState extends State<MainLayout>
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Location services are disabled. Please enable them.',
-            ),
-          ),
-        );
+        AppPopup.showError(context, 'Location services are disabled. Please enable them.');
       }
       return;
     }
@@ -123,9 +128,7 @@ class _MainLayoutState extends State<MainLayout>
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied.')),
-          );
+          AppPopup.showError(context, 'Location permissions are denied.');
         }
         return;
       }
@@ -133,13 +136,7 @@ class _MainLayoutState extends State<MainLayout>
 
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.',
-            ),
-          ),
-        );
+        AppPopup.showError(context, 'Location permissions are permanently denied, we cannot request permissions.');
       }
       return;
     }
@@ -160,9 +157,7 @@ class _MainLayoutState extends State<MainLayout>
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not get location: $e')));
+        AppPopup.showError(context, 'Could not get location: $e');
       }
     }
   }
@@ -371,6 +366,27 @@ class _MainLayoutState extends State<MainLayout>
     );
   }
 
+  bool _shouldShowEdgeLengths(double area) {
+    // Edge lengths will disappear before the area bubble, 
+    // but they show up much earlier for larger properties.
+    if (area > 50000) return _currentZoom > 14.0;
+    if (area > 5000) return _currentZoom > 15.0;
+    if (area > 500) return _currentZoom > 16.0;
+    if (area > 50) return _currentZoom > 17.0;
+    return _currentZoom > 17.5;
+  }
+
+  double _calculateFontSize(double area, {bool isArea = false}) {
+    double size = isArea ? 14.0 : 12.0;
+    
+    if (area <= 10000 && _currentZoom <= 16.0) size *= 0.75;
+    else if (area <= 1000 && _currentZoom <= 17.5) size *= 0.75;
+    else if (area <= 100 && _currentZoom <= 18.5) size *= 0.75;
+    else if (area <= 50 && _currentZoom <= 19.5) size *= 0.6;
+
+    return size.clamp(8.0, 16.0);
+  }
+
   Future<void> _updateMapOverlays() async {
     final Set<Marker> newMarkers = {};
     final Set<Polyline> newPolylines = {};
@@ -382,8 +398,6 @@ class _MainLayoutState extends State<MainLayout>
 
     List<LatLng> allCentroids = [];
     List<List<LatLng>> detailedProps = [];
-    List<LatLng> dummyProps = _dummyProperties;
-
     // 1. Gather Finalized Property Data
     for (int pIndex = 0; pIndex < _finalizedProperties.length; pIndex++) {
       final List<LatLng> propPoints = _finalizedProperties[pIndex];
@@ -401,9 +415,6 @@ class _MainLayoutState extends State<MainLayout>
         detailedProps.add(propPoints);
       }
     }
-
-    // Gather Dummy Property Data
-    allCentroids.addAll(dummyProps);
 
     // 2. Render Existing Properties based on Zoom Level
     if (isClusteredView) {
@@ -480,69 +491,77 @@ class _MainLayoutState extends State<MainLayout>
             points: propPoints,
             strokeColor: Colors.white,
             strokeWidth: 2,
-            fillColor: Colors.white.withValues(alpha: 0.01),
+            fillColor: Colors.white.withValues(alpha: 0.15),
             consumeTapEvents: true,
             onTap: () => _flyToAndSpin(propPoints),
           ),
         );
         final measurements = calculateMeasurements(propPoints);
 
-        final bool showEdgeLengths = _currentZoom > 18.0;
+        if (measurements != null) {
+          final double area = measurements.area;
+          final bool showEdgeLengths = _shouldShowEdgeLengths(area);
+          final double areaFontSize = _calculateFontSize(area, isArea: true);
+          final double edgeFontSize = _calculateFontSize(area, isArea: false);
 
-        // Vertex numbers
-        if (showEdgeLengths) {
-          for (int i = 0; i < propPoints.length; i++) {
-            final markerIcon = await DynamicMapMarkers.createNumberedMarker(i + 1);
-            newMarkers.add(
-              Marker(
-                markerId: MarkerId('vertex_${pIndex}_$i'),
-                position: propPoints[i],
-                icon: markerIcon,
-                anchor: const Offset(0.5, 0.5),
-              ),
-            );
-          }
-        }
-
-        // Edge length markers & Area
-        if (measurements != null && measurements.sides.isNotEmpty) {
+          // Vertex numbers
           if (showEdgeLengths) {
             for (int i = 0; i < propPoints.length; i++) {
-              final LatLng p1 = propPoints[i];
-              final LatLng p2 = propPoints[(i + 1) % propPoints.length];
-              final LatLng midPoint = LatLng(
-                (p1.latitude + p2.latitude) / 2,
-                (p1.longitude + p2.longitude) / 2,
-              );
-              final lengthStr = '${measurements.sides[i].toStringAsFixed(0)} m';
-              final lengthIcon = await DynamicMapMarkers.createTextMarker(lengthStr);
-
+              final markerIcon = await DynamicMapMarkers.createNumberedMarker(i + 1);
               newMarkers.add(
                 Marker(
-                  markerId: MarkerId('length_${pIndex}_$i'),
-                  position: midPoint,
-                  icon: lengthIcon,
+                  markerId: MarkerId('vertex_${pIndex}_$i'),
+                  position: propPoints[i],
+                  icon: markerIcon,
                   anchor: const Offset(0.5, 0.5),
+                  zIndex: 3,
                 ),
               );
             }
           }
 
-          double sumLat = 0, sumLng = 0;
-          for (var p in propPoints) { sumLat += p.latitude; sumLng += p.longitude; }
-          final LatLng centroid = LatLng(sumLat / propPoints.length, sumLng / propPoints.length);
-          
-          final areaStr = '${measurements.area.toStringAsFixed(0)} m²';
-          final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true);
-          newMarkers.add(
-            Marker(
-              markerId: MarkerId('area_marker_$pIndex'),
-              position: centroid,
-              icon: areaIcon,
-              anchor: const Offset(0.5, 0.5),
-            ),
-          );
-        }
+          // Edge length markers & Area
+          if (measurements.sides.isNotEmpty) {
+            if (showEdgeLengths) {
+              for (int i = 0; i < propPoints.length; i++) {
+                final LatLng p1 = propPoints[i];
+                final LatLng p2 = propPoints[(i + 1) % propPoints.length];
+                final LatLng midPoint = LatLng(
+                  (p1.latitude + p2.latitude) / 2,
+                  (p1.longitude + p2.longitude) / 2,
+                );
+                final lengthStr = '${measurements.sides[i].toStringAsFixed(0)} m';
+                final lengthIcon = await DynamicMapMarkers.createTextMarker(lengthStr, fontSize: edgeFontSize);
+
+                newMarkers.add(
+                  Marker(
+                    markerId: MarkerId('length_${pIndex}_$i'),
+                    position: midPoint,
+                    icon: lengthIcon,
+                    anchor: const Offset(0.5, 0.5),
+                    zIndex: 2,
+                  ),
+                );
+              }
+            }
+
+            double sumLat = 0, sumLng = 0;
+            for (var p in propPoints) { sumLat += p.latitude; sumLng += p.longitude; }
+            final LatLng centroid = LatLng(sumLat / propPoints.length, sumLng / propPoints.length);
+            
+            final areaStr = '${measurements.area.toStringAsFixed(0)} m²';
+            final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true, fontSize: areaFontSize);
+            newMarkers.add(
+              Marker(
+                markerId: MarkerId('area_marker_$pIndex'),
+                position: centroid,
+                icon: areaIcon,
+                anchor: const Offset(0.5, 0.5),
+                zIndex: 1,
+              ),
+            );
+          }
+          }
 
         // Edit marker
         final editIcon = await DynamicMapMarkers.createEditMarker();
@@ -572,17 +591,6 @@ class _MainLayoutState extends State<MainLayout>
         );
       }
 
-      // Detailed view for dummy properties (Price Tags)
-      for (int i = 0; i < dummyProps.length; i++) {
-        newMarkers.add(
-          Marker(
-            markerId: MarkerId('dummy_detail_$i'),
-            position: dummyProps[i],
-            icon: _detailedPropertyIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-            anchor: const Offset(0.5, 0.5),
-          ),
-        );
-      }
     } else {
       // Level 2: Individual Green Dots
       for (int i = 0; i < allCentroids.length; i++) {
@@ -612,41 +620,58 @@ class _MainLayoutState extends State<MainLayout>
         );
 
         final measurements = calculateMeasurements(_drawnPoints);
-        if (measurements != null && measurements.sides.isNotEmpty) {
-          final bool showEdgeLengths = _currentZoom > 18.0;
-          if (showEdgeLengths) {
-            for (int i = 0; i < _drawnPoints.length; i++) {
-              final LatLng p1 = _drawnPoints[i];
-              final LatLng p2 = _drawnPoints[(i + 1) % _drawnPoints.length];
-              final LatLng midPoint = LatLng(
-                (p1.latitude + p2.latitude) / 2,
-                (p1.longitude + p2.longitude) / 2,
-              );
+        if (measurements != null) {
+          final double area = measurements.area;
+          final bool showEdgeLengths = _shouldShowEdgeLengths(area);
+          final double edgeFontSize = _calculateFontSize(area, isArea: false);
 
-              newMarkers.add(
-                Marker(
-                  markerId: MarkerId('edit_midpoint_$i'),
-                  position: midPoint,
-                  icon: _smallWhiteDotIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-                  anchor: const Offset(0.5, 0.5),
-                  consumeTapEvents: true,
-                  draggable: true,
-                  onDragEnd: (newPosition) {
-                    setState(() {
-                      _drawnPoints.insert(i + 1, newPosition);
-                      _selectedVertexIndex = i + 1;
-                    });
-                    _updateMapOverlays();
-                  },
-                  onTap: () {
-                    setState(() {
-                      _drawnPoints.insert(i + 1, midPoint);
-                      _selectedVertexIndex = i + 1;
-                    });
-                    _updateMapOverlays();
-                  },
-                ),
-              );
+          if (measurements.sides.isNotEmpty) {
+            if (showEdgeLengths) {
+              for (int i = 0; i < _drawnPoints.length; i++) {
+                final LatLng p1 = _drawnPoints[i];
+                final LatLng p2 = _drawnPoints[(i + 1) % _drawnPoints.length];
+                final LatLng midPoint = LatLng(
+                  (p1.latitude + p2.latitude) / 2,
+                  (p1.longitude + p2.longitude) / 2,
+                );
+
+                newMarkers.add(
+                  Marker(
+                    markerId: MarkerId('edit_midpoint_$i'),
+                    position: midPoint,
+                    icon: _smallWhiteDotIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                    anchor: const Offset(0.5, 0.5),
+                    consumeTapEvents: true,
+                    draggable: true,
+                    onDragEnd: (newPosition) {
+                      setState(() {
+                        _drawnPoints.insert(i + 1, newPosition);
+                        _selectedVertexIndex = i + 1;
+                      });
+                      _updateMapOverlays();
+                    },
+                    onTap: () {
+                      setState(() {
+                        _drawnPoints.insert(i + 1, midPoint);
+                        _selectedVertexIndex = i + 1;
+                      });
+                      _updateMapOverlays();
+                    },
+                  ),
+                );
+
+                final lengthStr = '${measurements.sides[i].toStringAsFixed(0)} m';
+                final lengthIcon = await DynamicMapMarkers.createTextMarker(lengthStr, fontSize: edgeFontSize);
+                newMarkers.add(
+                  Marker(
+                    markerId: MarkerId('edit_length_$i'),
+                    position: midPoint,
+                    icon: lengthIcon,
+                    anchor: const Offset(0.5, 0.5),
+                    zIndex: 2,
+                  ),
+                );
+              }
             }
           }
 
@@ -657,13 +682,14 @@ class _MainLayoutState extends State<MainLayout>
           }
           final LatLng centroid = LatLng(sumLat / _drawnPoints.length, sumLng / _drawnPoints.length);
           final areaStr = '${measurements.area.toStringAsFixed(0)} m²';
-          final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true);
+          final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true, fontSize: _calculateFontSize(area, isArea: true));
           newMarkers.add(
             Marker(
               markerId: const MarkerId('edit_area_marker'),
               position: centroid,
               icon: areaIcon,
               anchor: const Offset(0.5, 0.5),
+              zIndex: 1,
             ),
           );
         }
@@ -786,6 +812,23 @@ class _MainLayoutState extends State<MainLayout>
                   _updateMapOverlays();
                 }
               },
+              onCameraIdle: () async {
+                if (_isDrawing && !_isEditingPolygon && _drawnPoints.length >= 3 && _currentMapCenter != null) {
+                  final controller = await _mapController.future;
+                  final firstPointScreen = await controller.getScreenCoordinate(_drawnPoints.first);
+                  final crosshairScreen = await controller.getScreenCoordinate(_currentMapCenter!);
+                  
+                  final dx = firstPointScreen.x - crosshairScreen.x;
+                  final dy = firstPointScreen.y - crosshairScreen.y;
+                  final distanceSquared = dx * dx + dy * dy;
+                  
+                  // Magnetically snap the camera to the first pin if within ~100 screen pixels
+                  // The > 5 check prevents an infinite snapping loop if we are already centered
+                  if (distanceSquared <= 100 * 100 && distanceSquared > 5) {
+                    controller.animateCamera(CameraUpdate.newLatLng(_drawnPoints.first));
+                  }
+                }
+              },
               onTap: _onMapTapped,
               markers: _markers,
               polygons: _polygons,
@@ -802,21 +845,24 @@ class _MainLayoutState extends State<MainLayout>
           if (_isDrawing && !_isEditingPolygon)
             IgnorePointer(
               child: Center(
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xFFE5484D).withValues(alpha: 0.5),
-                      width: 2,
+                child: Transform.translate(
+                  offset: const Offset(0, 20), // Align with map center (due to bottom: -40)
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFFE5484D).withValues(alpha: 0.5),
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.add,
-                      size: 28,
-                      color: Color(0xFFE5484D),
+                    child: const Center(
+                      child: Icon(
+                        Icons.add,
+                        size: 28,
+                        color: Color(0xFFE5484D),
+                      ),
                     ),
                   ),
                 ),
@@ -933,9 +979,7 @@ class _MainLayoutState extends State<MainLayout>
                               if (croppedFile == null) return;
                               
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Processing image...')),
-                                );
+                                AppPopup.showInfo(context, 'Processing image...');
                               }
                               
                               final textRecognizer = TextRecognizer();
@@ -949,13 +993,9 @@ class _MainLayoutState extends State<MainLayout>
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                 if (coordinates.isNotEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Extracted ${coordinates.length} coordinate(s)!')),
-                                  );
+                                  AppPopup.showSuccess(context, 'Extracted ${coordinates.length} coordinate(s)!');
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('No coordinates found. Please try again.')),
-                                  );
+                                  AppPopup.showError(context, 'No coordinates found. Please try again.');
                                 }
                                 
                                 final result = await showModalBottomSheet<List<LatLng>>(
@@ -1380,8 +1420,8 @@ class _MainLayoutState extends State<MainLayout>
                                 final dy = firstPointScreen.y - crosshairScreen.y;
                                 final distanceSquared = dx * dx + dy * dy;
                                 
-                                // Auto-connect if within 40 screen pixels
-                                if (distanceSquared <= 40 * 40) {
+                                // Auto-connect if within 150 screen pixels
+                                if (distanceSquared <= 150 * 150) {
                                   if (mounted) {
                                     setState(() {
                                       _isDrawing = false;
