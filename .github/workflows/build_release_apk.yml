@@ -31,12 +31,18 @@ jobs:
         run: flutter pub get
 
       - name: Build Release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --split-per-abi
 
       - name: Send APK to Telegram
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          message: "🚀 New Genie App Release is out! Download the APK below:"
-          document: build/app/outputs/flutter-apk/app-release.apk
+          message: |
+            🚀 *New Genie App Release!*
+            
+            *Changelog:*
+            ${{ github.event.head_commit.message }}
+            
+            *(Sent arm64 version to stay under Telegram's 50MB bot limit)*
+          document: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
