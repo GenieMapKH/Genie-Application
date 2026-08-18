@@ -367,11 +367,13 @@ class _MainLayoutState extends State<MainLayout>
   }
 
   bool _shouldShowEdgeLengths(double area) {
-    if (area > 100000) return _currentZoom > 15.5;
-    if (area > 10000) return _currentZoom > 16.5;
-    if (area > 1000) return _currentZoom > 17.5;
-    if (area > 100) return _currentZoom > 18.5;
-    return _currentZoom > 19.5;
+    // Edge lengths will disappear before the area bubble, 
+    // but they show up much earlier for larger properties.
+    if (area > 50000) return _currentZoom > 14.0;
+    if (area > 5000) return _currentZoom > 15.0;
+    if (area > 500) return _currentZoom > 16.0;
+    if (area > 50) return _currentZoom > 17.0;
+    return _currentZoom > 17.5;
   }
 
   double _calculateFontSize(double area, {bool isArea = false}) {
@@ -487,9 +489,9 @@ class _MainLayoutState extends State<MainLayout>
           Polygon(
             polygonId: PolygonId('final_polygon_$pIndex'),
             points: propPoints,
-            strokeColor: const Color(0xFF3E49C7),
-            strokeWidth: 3,
-            fillColor: const Color(0xFF3E49C7).withValues(alpha: 0.15),
+            strokeColor: Colors.white,
+            strokeWidth: 2,
+            fillColor: Colors.white.withValues(alpha: 0.15),
             consumeTapEvents: true,
             onTap: () => _flyToAndSpin(propPoints),
           ),
@@ -512,6 +514,7 @@ class _MainLayoutState extends State<MainLayout>
                   position: propPoints[i],
                   icon: markerIcon,
                   anchor: const Offset(0.5, 0.5),
+                  zIndex: 3,
                 ),
               );
             }
@@ -536,6 +539,7 @@ class _MainLayoutState extends State<MainLayout>
                     position: midPoint,
                     icon: lengthIcon,
                     anchor: const Offset(0.5, 0.5),
+                    zIndex: 2,
                   ),
                 );
               }
@@ -553,6 +557,7 @@ class _MainLayoutState extends State<MainLayout>
                 position: centroid,
                 icon: areaIcon,
                 anchor: const Offset(0.5, 0.5),
+                zIndex: 1,
               ),
             );
           }
@@ -663,6 +668,7 @@ class _MainLayoutState extends State<MainLayout>
                     position: midPoint,
                     icon: lengthIcon,
                     anchor: const Offset(0.5, 0.5),
+                    zIndex: 2,
                   ),
                 );
               }
@@ -683,6 +689,7 @@ class _MainLayoutState extends State<MainLayout>
               position: centroid,
               icon: areaIcon,
               anchor: const Offset(0.5, 0.5),
+              zIndex: 1,
             ),
           );
         }
