@@ -752,7 +752,11 @@ class _MainLayoutState extends State<MainLayout>
       body: Stack(
         children: [
           // Google Map Background
-          Positioned.fill(
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: -40, // Push the map off-screen to hide the Google logo
             child: GoogleMap(
               mapType: _currentSkin == MapSkin.satellite
                   ? MapType.satellite
