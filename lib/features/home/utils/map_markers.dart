@@ -10,6 +10,9 @@ class DynamicMapMarkers {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 36.0;
+    const double pixelRatio = 3.0;
+    
+    canvas.scale(pixelRatio, pixelRatio);
     
     // Draw white circle with shadow
     final Paint shadowPaint = Paint()
@@ -39,7 +42,7 @@ class DynamicMapMarkers {
       Offset(size / 2 - textPainter.width / 2, size / 2 - textPainter.height / 2),
     );
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
@@ -52,6 +55,9 @@ class DynamicMapMarkers {
   static Future<BitmapDescriptor> createTextMarker(String text, {bool isArea = false}) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
+    const double pixelRatio = 3.0;
+    
+    canvas.scale(pixelRatio, pixelRatio);
     
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
@@ -99,7 +105,7 @@ class DynamicMapMarkers {
     final int canvasWidth = (width + 8).toInt();
     final int canvasHeight = (height + 8).toInt();
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage(canvasWidth, canvasHeight);
+    final ui.Image img = await pictureRecorder.endRecording().toImage((canvasWidth * pixelRatio).toInt(), (canvasHeight * pixelRatio).toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     
     return BitmapDescriptor.bytes(
@@ -114,6 +120,9 @@ class DynamicMapMarkers {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 57.0;
+    const double pixelRatio = 3.0;
+
+    canvas.scale(pixelRatio, pixelRatio);
 
     // Draw shadow
     final Paint shadowPaint = Paint()
@@ -133,7 +142,7 @@ class DynamicMapMarkers {
       ..strokeWidth = 1.0;
     canvas.drawCircle(const Offset(size / 2, size / 2), 12.0, borderPaint);
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     
     return BitmapDescriptor.bytes(
@@ -148,6 +157,9 @@ class DynamicMapMarkers {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 50.0;
+    const double pixelRatio = 3.0;
+    
+    canvas.scale(pixelRatio, pixelRatio);
     
     // Draw shadow
     final Paint shadowPaint = Paint()
@@ -185,7 +197,7 @@ class DynamicMapMarkers {
       Offset(size / 2 - textPainter.width / 2, size / 2 - textPainter.height / 2),
     );
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
@@ -199,6 +211,9 @@ class DynamicMapMarkers {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 24.0;
+    const double pixelRatio = 3.0;
+    
+    canvas.scale(pixelRatio, pixelRatio);
     
     // Draw shadow
     final Paint shadowPaint = Paint()
@@ -210,7 +225,7 @@ class DynamicMapMarkers {
     final Paint paint = Paint()..color = Colors.white;
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 3, paint);
     
-    final ui.Image img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
