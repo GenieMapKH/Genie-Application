@@ -14,7 +14,7 @@ class LoadingPage extends StatefulWidget {
     this.onFinished,
   });
 
-  static const String logoAssetPath = 'assets/images/image.png';
+  static const String logoAssetPath = 'assets/images/login/image.png';
   static const double logoWidth = 114.0;
   static const double logoHeight = 159.0;
 

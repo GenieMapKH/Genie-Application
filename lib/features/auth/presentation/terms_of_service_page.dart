@@ -5,10 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 /// Enforces scrolling to the very bottom before the user can agree.
 class TermsOfServicePage extends StatefulWidget {
   final ValueChanged<bool>? onAgreeChanged;
+  final bool initialAgreed;
 
   const TermsOfServicePage({
     super.key,
     this.onAgreeChanged,
+    this.initialAgreed = false,
   });
 
   @override
@@ -17,12 +19,14 @@ class TermsOfServicePage extends StatefulWidget {
 
 class _TermsOfServicePageState extends State<TermsOfServicePage> {
   final ScrollController _scrollController = ScrollController();
-  bool _hasScrolledToBottom = false;
-  bool _isAgreed = false;
+  late bool _hasScrolledToBottom;
+  late bool _isAgreed;
 
   @override
   void initState() {
     super.initState();
+    _hasScrolledToBottom = widget.initialAgreed;
+    _isAgreed = widget.initialAgreed;
     _scrollController.addListener(_handleScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkScrollability();

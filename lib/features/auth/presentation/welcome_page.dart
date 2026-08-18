@@ -5,6 +5,7 @@ import 'package:genie/features/auth/presentation/create_account_page.dart';
 import 'package:genie/features/auth/presentation/login_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
 import 'package:genie/shared/widgets/app_button.dart';
+import 'package:genie/features/home/presentation/main_layout.dart';
 
 /// Optimized, high-performance Welcome / Auth landing screen.
 ///
@@ -30,7 +31,7 @@ class WelcomePage extends StatefulWidget {
     this.autoStart = true,
   });
 
-  static const String logoAssetPath = 'assets/images/image.png';
+  static const String logoAssetPath = 'assets/images/login/image.png';
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
@@ -268,7 +269,13 @@ class _WelcomePageState extends State<WelcomePage>
                           // Explore without account Secondary Button (#E5E7EB)
                           AppButton.secondary(
                             text: 'Explore without account',
-                            onPressed: widget.onExplorePressed ?? () {},
+                            onPressed: widget.onExplorePressed ?? () {
+                                  Navigator.of(context).pushReplacement(
+                                    AppPageRoute(
+                                      page: const MainLayout(),
+                                    ),
+                                  );
+                            },
                           ),
                           const SizedBox(height: 24),
 

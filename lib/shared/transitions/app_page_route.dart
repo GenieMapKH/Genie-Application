@@ -8,7 +8,8 @@ enum SlideDirection {
 }
 
 /// A unified, consistent page route transition across the entire Genie app.
-/// Implements a high-performance shared-axis slide and fade with matching reverse pop transitions.
+/// Implements a high-performance shared-axis slide and fade with matching reverse pop transitions
+/// and a solid white backdrop to eliminate any sub-pixel black seam/flash during route replacement.
 class AppPageRoute<T> extends PageRouteBuilder<T> {
   final Widget page;
   final SlideDirection direction;
@@ -19,6 +20,7 @@ class AppPageRoute<T> extends PageRouteBuilder<T> {
     super.settings,
     super.transitionDuration = const Duration(milliseconds: 260),
     super.reverseTransitionDuration = const Duration(milliseconds: 240),
+    super.opaque = true,
   }) : super(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -32,10 +34,10 @@ class AppPageRoute<T> extends PageRouteBuilder<T> {
             Offset beginOffset;
             switch (direction) {
               case SlideDirection.fromRight:
-                beginOffset = const Offset(0.08, 0.0);
+                beginOffset = const Offset(0.06, 0.0);
                 break;
               case SlideDirection.fromLeft:
-                beginOffset = const Offset(-0.08, 0.0);
+                beginOffset = const Offset(-0.06, 0.0);
                 break;
               case SlideDirection.none:
                 beginOffset = Offset.zero;
@@ -57,33 +59,15 @@ class AppPageRoute<T> extends PageRouteBuilder<T> {
               ),
             );
 
-            // Secondary transition for screen being covered
-            final secondaryAnimationCurved = CurvedAnimation(
-              parent: secondaryAnimation,
-              curve: Curves.easeOutCubic,
-              reverseCurve: Curves.easeInCubic,
-            );
-
-            final exitOffset = direction == SlideDirection.fromLeft
-                ? const Offset(0.04, 0.0)
-                : const Offset(-0.04, 0.0);
-
-            final slideOut = Tween<Offset>(
-              begin: Offset.zero,
-              end: exitOffset,
-            ).animate(secondaryAnimationCurved);
-
-            return SlideTransition(
-              position: slideOut,
-              child: FadeTransition(
-                opacity: Tween<double>(begin: 1.0, end: 0.88)
-                    .animate(secondaryAnimationCurved),
-                child: SlideTransition(
-                  position: slideIn,
-                  child: FadeTransition(
-                    opacity: fadeIn,
-                    child: child,
-                  ),
+            // Wrap in a solid pure-white canvas to completely prevent any underlying
+            // black window surface from flashing through transparent seams during transitions
+            return Container(
+              color: Colors.white,
+              child: SlideTransition(
+                position: slideIn,
+                child: FadeTransition(
+                  opacity: fadeIn,
+                  child: child,
                 ),
               ),
             );
