@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:genie/features/home/presentation/widgets/utm_locate_bottom_sheet.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,28 +10,12 @@ import 'package:genie/shared/widgets/tactile_button.dart';
 import 'package:genie/features/home/utils/map_measurements.dart';
 import 'package:genie/features/home/utils/svg_marker.dart';
 import 'package:genie/features/home/utils/map_markers.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import '../utils/ocr_parser.dart';
 
-enum MapSkin { defaultMap, satellite, leaflet }
-
-class OSMTileProvider implements TileProvider {
-  @override
-  Future<Tile> getTile(int x, int y, int? zoom) async {
-    try {
-      final url = 'https://tile.openstreetmap.org/$zoom/$x/$y.png';
-      // OSM requires a valid User-Agent header or they block requests, especially on Android
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {'User-Agent': 'GenieApp/1.0.0 (Flutter)'},
-      );
-      if (response.statusCode == 200) {
-        return Tile(256, 256, response.bodyBytes);
-      }
-      return TileProvider.noTile;
-    } catch (e) {
-      return TileProvider.noTile;
-    }
-  }
-}
+enum MapSkin { defaultMap, satellite }
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -43,14 +28,13 @@ class _MainLayoutState extends State<MainLayout>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   MapSkin _currentSkin = MapSkin.defaultMap;
-  final TileProvider _osmTileProvider = OSMTileProvider();
-
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
   bool _isMenuOpen = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
+  Timer? _spinTimer;
 
   // Drawing Mode States
   bool _isDrawing = false;
@@ -110,6 +94,7 @@ class _MainLayoutState extends State<MainLayout>
 
   @override
   void dispose() {
+    _spinTimer?.cancel();
     _animationController.dispose();
     super.dispose();
   }
@@ -224,7 +209,11 @@ class _MainLayoutState extends State<MainLayout>
                     ],
                   ),
                   child: Center(
-                    child: SvgPicture.asset(iconPath, width: 24, height: 24),
+                    child: SvgPicture.asset(
+                      iconPath,
+                      width: 22,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),
@@ -269,8 +258,8 @@ class _MainLayoutState extends State<MainLayout>
     return TactileButton(
       onPressed: onPressed,
       child: Container(
-        width: 44,
-        height: 44,
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
@@ -283,13 +272,103 @@ class _MainLayoutState extends State<MainLayout>
             ),
           ],
         ),
-        child: Center(child: SvgPicture.asset(iconPath, width: 24, height: 24)),
+        child: Center(child: SvgPicture.asset(iconPath, width: 34, height: 34)),
       ),
     );
   }
 
   void _onMapTapped(LatLng position) {
     // Tapping map disabled during draw mode to enforce crosshair precision.
+  }
+  
+  Future<void> _flyToAndSpin(List<LatLng> propPoints) async {
+    _spinTimer?.cancel();
+    final GoogleMapController controller = await _mapController.future;
+
+    double sumLat = 0, sumLng = 0;
+    for (var p in propPoints) {
+      sumLat += p.latitude;
+      sumLng += p.longitude;
+    }
+    final center = LatLng(sumLat / propPoints.length, sumLng / propPoints.length);
+
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: center,
+          zoom: 19.5,
+          tilt: 60.0,
+        ),
+      ),
+    );
+
+    await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
+
+    final spinDuration = const Duration(seconds: 4);
+    final startTime = DateTime.now();
+    
+    _spinTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      final elapsed = DateTime.now().difference(startTime);
+      if (elapsed > spinDuration) {
+        timer.cancel();
+        controller.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(target: center, zoom: 19.5, tilt: 0, bearing: 0)
+        ));
+        return;
+      }
+      
+      final progress = elapsed.inMilliseconds / spinDuration.inMilliseconds;
+      final easeProgress = Curves.easeInOut.transform(progress);
+      final bearing = easeProgress * 360.0;
+      
+      controller.moveCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: center,
+          zoom: 19.5,
+          tilt: 60.0,
+          bearing: bearing,
+        ),
+      ));
+    });
+  }
+
+  Future<void> _animateToPolygon(List<LatLng> points) async {
+    if (points.isEmpty) return;
+    
+    final GoogleMapController controller = await _mapController.future;
+    
+    if (points.length == 1) {
+      controller.animateCamera(CameraUpdate.newLatLngZoom(points.first, 18.0));
+      return;
+    }
+    
+    double minLat = points[0].latitude;
+    double maxLat = points[0].latitude;
+    double minLng = points[0].longitude;
+    double maxLng = points[0].longitude;
+
+    for (var point in points) {
+      if (point.latitude < minLat) minLat = point.latitude;
+      if (point.latitude > maxLat) maxLat = point.latitude;
+      if (point.longitude < minLng) minLng = point.longitude;
+      if (point.longitude > maxLng) maxLng = point.longitude;
+    }
+
+    controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(minLat, minLng),
+          northeast: LatLng(maxLat, maxLng),
+        ),
+        50.0, // padding
+      ),
+    );
   }
 
   Future<void> _updateMapOverlays() async {
@@ -401,7 +480,9 @@ class _MainLayoutState extends State<MainLayout>
             points: propPoints,
             strokeColor: Colors.white,
             strokeWidth: 2,
-            fillColor: Colors.transparent,
+            fillColor: Colors.white.withValues(alpha: 0.01),
+            consumeTapEvents: true,
+            onTap: () => _flyToAndSpin(propPoints),
           ),
         );
         final measurements = calculateMeasurements(propPoints);
@@ -675,9 +756,7 @@ class _MainLayoutState extends State<MainLayout>
             child: GoogleMap(
               mapType: _currentSkin == MapSkin.satellite
                   ? MapType.satellite
-                  : (_currentSkin == MapSkin.leaflet
-                        ? MapType.none
-                        : MapType.normal),
+                  : MapType.normal,
               initialCameraPosition: _initialPosition,
               onMapCreated: (GoogleMapController controller) {
                 _mapController.complete(controller);
@@ -707,20 +786,12 @@ class _MainLayoutState extends State<MainLayout>
               markers: _markers,
               polygons: _polygons,
               polylines: _polylines,
-              tileOverlays: _currentSkin == MapSkin.leaflet
-                  ? {
-                      TileOverlay(
-                        tileOverlayId: const TileOverlayId('osm_tiles'),
-                        tileProvider: _osmTileProvider,
-                      ),
-                    }
-                  : {},
               zoomControlsEnabled: false,
               myLocationButtonEnabled: false,
               minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
               compassEnabled: false,
               mapToolbarEnabled: false,
-              myLocationEnabled: false,
+              myLocationEnabled: true,
             ),
           ),
           // Crosshair
@@ -826,7 +897,83 @@ class _MainLayoutState extends State<MainLayout>
                           ),
                           // Scan button
                           TactileButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              final picker = ImagePicker();
+                              final XFile? image = await picker.pickImage(
+                                source: ImageSource.camera,
+                                maxWidth: 1000,
+                                maxHeight: 1000,
+                                imageQuality: 70,
+                              );
+                              
+                              if (image == null) return;
+                              
+                              final croppedFile = await ImageCropper().cropImage(
+                                sourcePath: image.path,
+                                compressQuality: 100,
+                                uiSettings: [
+                                  AndroidUiSettings(
+                                    toolbarTitle: 'Crop Document',
+                                    toolbarColor: const Color(0xFF5B5FEF),
+                                    toolbarWidgetColor: Colors.white,
+                                    initAspectRatio: CropAspectRatioPreset.original,
+                                    lockAspectRatio: false,
+                                    hideBottomControls: false,
+                                  ),
+                                  IOSUiSettings(
+                                    title: 'Crop Document',
+                                  ),
+                                ],
+                              );
+                              
+                              if (croppedFile == null) return;
+                              
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Processing image...')),
+                                );
+                              }
+                              
+                              final textRecognizer = TextRecognizer();
+                              final inputImage = InputImage.fromFilePath(croppedFile.path);
+                              
+                              final recognizedText = await textRecognizer.processImage(inputImage);
+                              final coordinates = OcrParser.parseRecognizedText(recognizedText);
+                              
+                              await textRecognizer.close();
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                if (coordinates.isNotEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Extracted ${coordinates.length} coordinate(s)!')),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('No coordinates found. Please try again.')),
+                                  );
+                                }
+                                
+                                final result = await showModalBottomSheet<List<LatLng>>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  useRootNavigator: false,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) => UtmLocateBottomSheet(initialCoordinates: coordinates),
+                                );
+                                
+                                if (result != null && result.isNotEmpty && mounted) {
+                                  setState(() {
+                                    _isDrawing = true;
+                                    _isEditingPolygon = true;
+                                    _canDraw = false;
+                                    _drawnPoints = List.from(result);
+                                  });
+                                  _updateMapOverlays();
+                                  _animateToPolygon(result);
+                                }
+                              }
+                            },
                             child: Align(
                               widthFactor: 0.8,
                               child: SvgPicture.asset(
@@ -904,9 +1051,6 @@ class _MainLayoutState extends State<MainLayout>
                                 setState(() {
                                   if (_currentSkin == MapSkin.defaultMap) {
                                     _currentSkin = MapSkin.satellite;
-                                  } else if (_currentSkin ==
-                                      MapSkin.satellite) {
-                                    _currentSkin = MapSkin.leaflet;
                                   } else {
                                     _currentSkin = MapSkin.defaultMap;
                                   }
@@ -932,9 +1076,7 @@ class _MainLayoutState extends State<MainLayout>
                                     image: AssetImage(
                                       _currentSkin == MapSkin.satellite
                                           ? 'assets/images/homescreen/mapSatellite.png'
-                                          : (_currentSkin == MapSkin.leaflet
-                                                ? 'assets/images/homescreen/mapLeaflet.jpg'
-                                                : 'assets/images/homescreen/mapDefault.png'),
+                                          : 'assets/images/homescreen/mapDefault.png',
                                     ),
                                     fit: BoxFit.cover,
                                   ),
@@ -964,8 +1106,32 @@ class _MainLayoutState extends State<MainLayout>
                   _buildAnimatedMenuItem(
                     iconPath: 'assets/icons/utm.svg',
                     label: 'Coordinates',
-                    onTap: () {
-                      // TODO: Handle Coordinates action
+                    onTap: () async {
+                      // Close the floating menu first
+                      setState(() {
+                        _isMenuOpen = false;
+                        _animationController.reverse();
+                      });
+                      final result = await showModalBottomSheet<List<LatLng>>(
+                        context: context,
+                        isScrollControlled: true,
+                        useRootNavigator: false,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const UtmLocateBottomSheet(),
+                      );
+                      
+                      if (result != null && result.isNotEmpty && mounted) {
+                        setState(() {
+                          _isDrawing = true;
+                          _isEditingPolygon = true;
+                          _canDraw = false;
+                          _drawnPoints = List.from(result);
+                        });
+                        _updateMapOverlays();
+                        
+                        final GoogleMapController controller = await _mapController.future;
+                        controller.animateCamera(CameraUpdate.newLatLngZoom(result.first, 18));
+                      }
                     },
                   ),
                   _buildAnimatedMenuItem(
@@ -1251,7 +1417,7 @@ class _MainLayoutState extends State<MainLayout>
                           child: const Icon(
                             Icons.add_location_alt,
                             color: Colors.white,
-                            size: 32,
+                            size: 34,
                           ),
                         ),
                       ),
