@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../shared/utils/app_popup.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:utm/utm.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -180,22 +181,16 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
               _coordinateRows[i]['x']!.text = coordinates[i]['x'].toString();
               _coordinateRows[i]['y']!.text = coordinates[i]['y'].toString();
             }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Successfully extracted ${coordinates.length} coordinate(s) natively!')),
-            );
+            AppPopup.showSuccess(context, 'Successfully extracted ${coordinates.length} coordinate(s) natively!');
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('No coordinates found in the image.')),
-            );
+            AppPopup.showInfo(context, 'No coordinates found in the image.');
           }
         });
       }
     } catch (e, stack) {
       print('OCR Error: $e\n$stack');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error scanning document: $e')),
-        );
+        AppPopup.showError(context, 'Error scanning document: $e');
       }
     } finally {
       if (mounted) {
@@ -219,9 +214,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       }
 
       if (xText.isEmpty || yText.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill both X and Y coordinates for a row, or leave both empty.')),
-        );
+        AppPopup.showError(context, 'Please fill both X and Y coordinates for a row, or leave both empty.');
         return;
       }
 
@@ -229,9 +222,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       final double? northing = double.tryParse(yText);
 
       if (easting == null || northing == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Coordinates must be valid numbers.')),
-        );
+        AppPopup.showError(context, 'Coordinates must be valid numbers.');
         return;
       }
 
@@ -245,17 +236,13 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
         );
         points.add(LatLng(utm.lat, utm.lon));
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid UTM coordinates: $e')),
-        );
+        AppPopup.showError(context, 'Invalid UTM coordinates: $e');
         return;
       }
     }
 
     if (points.length < 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter at least 3 coordinates to form a property.')),
-      );
+      AppPopup.showError(context, 'Please enter at least 3 coordinates to form a property.');
       return;
     }
 
