@@ -46,6 +46,7 @@ dependencies:
   google_mlkit_text_recognition: ^0.16.0
   flutter_displaymode: ^0.7.0
 
+  google_maps_flutter_platform_interface: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

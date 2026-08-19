@@ -1,13 +1,14 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'my_properties_page.dart';
 import '../models/property_model.dart';
 import '../data/property_repository.dart';
+import 'widgets/property_type_selector.dart';
+import 'widgets/property_image_picker.dart';
+import 'widgets/property_form_inputs.dart';
 
 class AddPropertyPage extends StatefulWidget {
   final List<LatLng> boundaryPoints;
@@ -103,16 +104,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     }
   }
 
-  final List<Map<String, dynamic>> _propertyTypes = [
-    {'name': 'Land', 'iconPath': 'assets/icons/property_land.svg'},
-    {'name': 'House', 'iconPath': 'assets/icons/property_house.svg'},
-    {'name': 'Building', 'iconPath': 'assets/icons/property_building.svg'},
-    {'name': 'Condo', 'iconPath': 'assets/icons/property_condo.svg'},
-    {'name': 'Borey', 'iconPath': 'assets/icons/property_borey.svg'},
-    {'name': 'Business for Sale', 'iconPath': 'assets/icons/property_business.svg'},
-    {'name': 'Warehouse', 'iconPath': 'assets/icons/property_warehouse.svg'},
-  ];
-
   final List<Map<String, dynamic>> _keywords = [
     {'name': 'Road Access', 'iconPath': 'assets/icons/keyword_road_access.svg'},
     {'name': 'Corner Land', 'iconPath': 'assets/icons/keyword_corner_land.svg'},
@@ -204,7 +195,14 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             const SizedBox(height: 24),
             _buildSectionTitle('Property Type', required: false),
             const SizedBox(height: 12),
-            _buildPropertyTypeGrid(),
+            PropertyTypeSelector(
+              selectedPropertyType: _selectedPropertyType,
+              onChanged: (val) {
+                setState(() {
+                  _selectedPropertyType = val;
+                });
+              },
+            ),
             const SizedBox(height: 24),
             _buildTextField(
               label: 'Title/Headline',
@@ -246,7 +244,15 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             const SizedBox(height: 24),
             _buildSectionTitle('Upload property photos', required: false),
             const SizedBox(height: 12),
-            _buildPhotoUploadSection(),
+            PropertyImagePicker(
+              selectedPhotos: _selectedPhotos,
+              onPhotoPicked: _pickImage,
+              onPhotoRemoved: (index) {
+                setState(() {
+                  _selectedPhotos.removeAt(index);
+                });
+              },
+            ),
             const SizedBox(height: 24),
             _buildTextField(
               label: 'Contact Information',
@@ -379,60 +385,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     );
   }
 
-  Widget _buildPropertyTypeGrid() {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: _propertyTypes.map((type) {
-        final isSelected = _selectedPropertyType == type['name'];
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedPropertyType = type['name'];
-            });
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            width: (MediaQuery.sizeOf(context).width - 32 - 24) / 3, // 3 columns
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF5B5FEF).withValues(alpha: 0.05) : Colors.white,
-              border: Border.all(
-                color: isSelected ? const Color(0xFF5B5FEF) : const Color(0xFFE5E7EB),
-                width: 1.5,
-              ),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Column(
-              children: [
-                SvgPicture.asset(
-                  type['iconPath'],
-                  colorFilter: ColorFilter.mode(
-                    isSelected ? const Color(0xFF5B5FEF) : const Color(0xFF6B7280),
-                    BlendMode.srcIn,
-                  ),
-                  width: 24,
-                  height: 24,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  type['name'],
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    color: isSelected ? const Color(0xFF5B5FEF) : const Color(0xFF6B7280),
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
   Widget _buildKeywordsWrap() {
     return Wrap(
       spacing: 8,
@@ -486,131 +438,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
           ),
         );
       }).toList(),
-    );
-  }
-
-  Widget _buildPhotoUploadSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(
-                    _selectedPhotos.length < 4 ? 4 : _selectedPhotos.length + 1,
-                    (index) {
-                      final boxSize = (MediaQuery.sizeOf(context).width - 32 - 36) / 4;
-                      final isPhoto = index < _selectedPhotos.length;
-                      return Container(
-                        width: boxSize,
-                        height: boxSize,
-                        margin: EdgeInsets.only(right: index == (_selectedPhotos.length < 4 ? 3 : _selectedPhotos.length) ? 0 : 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: isPhoto ? null : Border.all(color: const Color(0xFFD1D5DB), style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(8.0),
-                          image: isPhoto 
-                              ? DecorationImage(
-                                  image: FileImage(File(_selectedPhotos[index].path)),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                        child: isPhoto
-                            ? Stack(
-                                children: [
-                                  Positioned(
-                                    top: 4,
-                                    right: 4,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedPhotos.removeAt(index);
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(2),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.black54,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(Icons.close, size: 14, color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const Center(
-                                child: Icon(Icons.add, color: Color(0xFF9CA3AF)),
-                              ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      'Add at least 3 clear photos of the property and surrounding area',
-                      style: GoogleFonts.inter(color: const Color(0xFF6B7280), fontSize: 11),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => _pickImage(ImageSource.camera),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        side: const BorderSide(color: Color(0xFFE5E7EB)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                        backgroundColor: Colors.white,
-                      ),
-                      child: Text(
-                        'Open camera',
-                        style: GoogleFonts.inter(color: const Color(0xFF374151), fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: () => _pickImage(ImageSource.gallery),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF5B5FEF),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                      ),
-                      child: Text(
-                        'Upload property photos',
-                        style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -681,24 +508,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   }
 
   Widget _buildSectionTitle(String title, {required bool required, bool hasError = false}) {
-    return RichText(
-      text: TextSpan(
-        text: title,
-        style: GoogleFonts.inter(
-          color: hasError ? const Color(0xFFE5484D) : const Color(0xFF111827),
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-        children: required
-            ? [
-                TextSpan(
-                  text: ' *',
-                  style: GoogleFonts.inter(color: const Color(0xFFE5484D)),
-                )
-              ]
-            : [],
-      ),
-    );
+    return PropertySectionTitle(title: title, required: required, hasError: hasError);
   }
 
   Widget _buildTextField({
@@ -710,61 +520,18 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     bool hasError = false,
     Key? focusKey,
   }) {
-    return Column(
-      key: focusKey,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildSectionTitle(label, required: required, hasError: hasError),
-            if (infoText != null)
-              Row(
-                children: [
-                  const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
-                  const SizedBox(width: 4),
-                  Text(
-                    infoText,
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF6B7280),
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          decoration: _defaultInputDecoration(hintText, hasError: hasError),
-        ),
-      ],
+    return PropertyTextField(
+      label: label,
+      required: required,
+      controller: controller,
+      hintText: hintText,
+      infoText: infoText,
+      hasError: hasError,
+      focusKey: focusKey,
     );
   }
 
-  InputDecoration _defaultInputDecoration(String hint, {bool hasError = false}) {
-    final borderColor = hasError ? const Color(0xFFE5484D) : const Color(0xFFE5E7EB);
-    final hintColor = hasError ? const Color(0xFFE5484D) : const Color(0xFF9CA3AF);
-    
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.inter(color: hintColor, fontSize: 13),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        borderSide: BorderSide(color: hasError ? borderColor : const Color(0xFF3E49C7)),
-      ),
-    );
-  }
+
 
   Widget _buildDefaultPriceListingSettings() {
     return Row(
@@ -941,7 +708,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _landSizeController,
-          decoration: _defaultInputDecoration(isLandType ? 'Size Area' : 'Enter land size (m²)', hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration(isLandType ? 'Size Area' : 'Enter land size (m²)', hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
         ),
       ],
     );
@@ -986,7 +753,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _buildingSizeController,
-          decoration: _defaultInputDecoration('Enter building size (m²)', hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration('Enter building size (m²)', hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
         ),
       ],
     );
@@ -1019,7 +786,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _unitSizeController,
-          decoration: _defaultInputDecoration('Enter unit size in m²', hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration('Enter unit size in m²', hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
         ),
       ],
     );
@@ -1051,7 +818,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _maintenanceFeeController,
-          decoration: _defaultInputDecoration('Monthly maintenance fee (USD)'),
+          decoration: defaultPropertyInputDecoration('Monthly maintenance fee (USD)'),
         ),
       ],
     );
@@ -1258,20 +1025,20 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               flex: 1,
               child: TextField(
                 controller: _leaseRemainingController,
-                decoration: _defaultInputDecoration('Duration'),
+                decoration: defaultPropertyInputDecoration('Duration'),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               flex: 1,
               child: DropdownButtonFormField<String>(
-                value: _selectedLeaseUnit ?? 'Months',
+                initialValue: _selectedLeaseUnit ?? 'Months',
                 isExpanded: true,
                 icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
                 style: GoogleFonts.inter(color: const Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w500),
                 dropdownColor: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
-                decoration: _defaultInputDecoration('Select unit'),
+                decoration: defaultPropertyInputDecoration('Select unit'),
                 onChanged: (val) => setState(() => _selectedLeaseUnit = val),
                 items: ['Months', 'Years'].map((String item) {
                   return DropdownMenuItem<String>(
@@ -1297,33 +1064,15 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     bool hasError = false,
     Key? focusKey,
   }) {
-    return Column(
-      key: focusKey,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle(label, required: required, hasError: hasError),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          value: value,
-          hint: hintText != null ? Text(hintText, style: GoogleFonts.inter(color: hasError ? const Color(0xFFE5484D) : const Color(0xFF9CA3AF), fontSize: 13)) : null,
-          isExpanded: true,
-          icon: Icon(Icons.keyboard_arrow_down, color: hasError ? const Color(0xFFE5484D) : const Color(0xFF9CA3AF)),
-          style: GoogleFonts.inter(color: const Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w500),
-          dropdownColor: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
-          elevation: 4,
-          decoration: _defaultInputDecoration('', hasError: hasError).copyWith(
-            hintText: null, // we use hint above
-          ),
-          onChanged: onChanged,
-          items: items.map<DropdownMenuItem<String>>((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
-          }).toList(),
-        ),
-      ],
+    return PropertyDropdown(
+      label: label,
+      required: required,
+      value: value,
+      hintText: hintText,
+      items: items,
+      onChanged: onChanged,
+      hasError: hasError,
+      focusKey: focusKey,
     );
   }
   void _validateForm() {
@@ -1472,10 +1221,9 @@ class _PublishButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
 
   const _PublishButtonWidget({
-    Key? key,
     required this.isLoading,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

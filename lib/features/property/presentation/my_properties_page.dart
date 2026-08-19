@@ -10,7 +10,7 @@ import '../data/property_repository.dart';
 class MyPropertiesPage extends StatefulWidget {
   final bool isEmbedded;
   
-  const MyPropertiesPage({Key? key, this.isEmbedded = false}) : super(key: key);
+  const MyPropertiesPage({super.key, this.isEmbedded = false});
 
   @override
   State<MyPropertiesPage> createState() => _MyPropertiesPageState();
@@ -78,8 +78,8 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
           width: 140,
           height: 44,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
+            onPressed: () async {
+              await Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const AddPropertyPage(
                     boundaryPoints: [], // Empty for now or mock data
@@ -87,6 +87,9 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
                   ),
                 ),
               );
+              if (mounted) {
+                setState(() {}); // Rebuild to pick up newly added properties
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF5B5FEF),
@@ -160,7 +163,7 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
