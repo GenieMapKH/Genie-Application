@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/auth/presentation/create_account_page.dart';
-import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
 
 void main() {
@@ -30,8 +29,8 @@ void main() {
     expect(find.text('terms of services.'), findsOneWidget);
 
     // Verify Buttons
-    expect(find.widgetWithText(AppButton, 'Sign up'), findsOneWidget);
-    expect(find.widgetWithText(AppButton, 'Continue with Google'), findsOneWidget);
+    expect(find.byKey(const Key('sign_up_button')), findsOneWidget);
+    expect(find.byKey(const Key('google_button')), findsOneWidget);
     expect(find.byType(GoogleIcon), findsOneWidget);
 
     // Verify bottom link
@@ -52,7 +51,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Tap Sign up with empty fields
-    final signUpButton = find.widgetWithText(AppButton, 'Sign up');
+    final signUpButton = find.byKey(const Key('sign_up_button'));
     await tester.ensureVisible(signUpButton);
     await tester.tap(signUpButton);
     await tester.pumpAndSettle();
@@ -109,18 +108,27 @@ void main() {
     );
 
     // Agree to terms
-    await tester.tap(find.byType(Checkbox));
+    await tester.tap(find.byType(Checkbox).first);
+    await tester.pumpAndSettle();
+
+    // Scroll to bottom of terms
+    await tester.drag(find.byType(SingleChildScrollView).last, const Offset(0, -3000));
+    await tester.pumpAndSettle();
+
+    // Tap agree checkbox in terms modal
+    await tester.tap(find.byType(Checkbox).last);
     await tester.pumpAndSettle();
 
     // Tap Sign up
-    final signUpButton = find.widgetWithText(AppButton, 'Sign up');
+    final signUpButton = find.byKey(const Key('sign_up_button'));
+    debugPrint(tester.allWidgets.map((w) => w.toString()).join('\n'));
     await tester.ensureVisible(signUpButton);
     await tester.tap(signUpButton);
     await tester.pumpAndSettle();
     expect(signUpCalled, isTrue);
 
     // Tap Google button
-    final googleButton = find.widgetWithText(AppButton, 'Continue with Google');
+    final googleButton = find.byKey(const Key('google_button'));
     await tester.ensureVisible(googleButton);
     await tester.tap(googleButton);
     await tester.pumpAndSettle();

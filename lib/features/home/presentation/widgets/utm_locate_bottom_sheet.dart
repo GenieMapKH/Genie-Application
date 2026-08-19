@@ -158,7 +158,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
 
     try {
       // --- NATIVE ML KIT OCR (MOBILE/DESKTOP) ---
-      print('Running native ML Kit OCR...');
+      debugPrint('Running native ML Kit OCR...');
       final textRecognizer = TextRecognizer();
       final inputImage = InputImage.fromFilePath(croppedFile.path);
       
@@ -188,7 +188,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
         });
       }
     } catch (e, stack) {
-      print('OCR Error: $e\n$stack');
+      debugPrint('OCR Error: $e\n$stack');
       if (mounted) {
         AppPopup.showError(context, 'Error scanning document: $e');
       }
