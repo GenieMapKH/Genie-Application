@@ -1,22 +1,21 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:genie/features/home/presentation/widgets/map_top_controls.dart';
+import 'package:genie/features/home/presentation/widgets/map_floating_menu.dart';
+import 'package:genie/features/home/presentation/widgets/drawing_controls_panel.dart';
 import '../../../../shared/utils/app_popup.dart';
-import 'package:genie/features/home/presentation/widgets/utm_locate_bottom_sheet.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:genie/shared/widgets/tactile_button.dart';
 import 'package:genie/features/home/utils/map_measurements.dart';
 import 'package:genie/features/home/utils/svg_marker.dart';
 import 'package:genie/features/home/utils/map_markers.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import '../utils/ocr_parser.dart';
-
-enum MapSkin { defaultMap, satellite }
+import 'package:genie/features/property/presentation/add_property_page.dart';
+import 'package:genie/features/property/presentation/my_properties_page.dart';
+import 'package:genie/features/property/models/property_model.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -45,7 +44,7 @@ class _MainLayoutState extends State<MainLayout>
   
   List<LatLng> _drawnPoints = [];
   List<LatLng>? _backupPoints;
-  List<List<LatLng>> _finalizedProperties = [];
+  final List<List<LatLng>> _finalizedProperties = [];
   Set<Marker> _markers = {};
   Set<Polygon> _polygons = {};
   Set<Polyline> _polylines = {};
@@ -197,7 +196,7 @@ class _MainLayoutState extends State<MainLayout>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -224,7 +223,7 @@ class _MainLayoutState extends State<MainLayout>
                   border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -261,7 +260,7 @@ class _MainLayoutState extends State<MainLayout>
           border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -379,8 +378,9 @@ class _MainLayoutState extends State<MainLayout>
   double _calculateFontSize(double area, {bool isArea = false}) {
     double size = isArea ? 14.0 : 12.0;
     
-    if (area <= 10000 && _currentZoom <= 16.0) size *= 0.75;
-    else if (area <= 1000 && _currentZoom <= 17.5) size *= 0.75;
+    if (area <= 10000 && _currentZoom <= 16.0) {
+      size *= 0.75;
+    } else if (area <= 1000 && _currentZoom <= 17.5) size *= 0.75;
     else if (area <= 100 && _currentZoom <= 18.5) size *= 0.75;
     else if (area <= 50 && _currentZoom <= 19.5) size *= 0.6;
 
@@ -549,7 +549,7 @@ class _MainLayoutState extends State<MainLayout>
             for (var p in propPoints) { sumLat += p.latitude; sumLng += p.longitude; }
             final LatLng centroid = LatLng(sumLat / propPoints.length, sumLng / propPoints.length);
             
-            final areaStr = '${measurements.area.toStringAsFixed(0)} m²';
+            final areaStr = formatArea(measurements.area);
             final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true, fontSize: areaFontSize);
             newMarkers.add(
               Marker(
@@ -681,7 +681,7 @@ class _MainLayoutState extends State<MainLayout>
             sumLng += p.longitude;
           }
           final LatLng centroid = LatLng(sumLat / _drawnPoints.length, sumLng / _drawnPoints.length);
-          final areaStr = '${measurements.area.toStringAsFixed(0)} m²';
+          final areaStr = formatArea(measurements.area);
           final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true, fontSize: _calculateFontSize(area, isArea: true));
           newMarkers.add(
             Marker(
@@ -733,13 +733,7 @@ class _MainLayoutState extends State<MainLayout>
               consumeTapEvents: true,
               onTap: () {
                 if (i == 0 && _drawnPoints.length >= 3) {
-                  setState(() {
-                    _isDrawing = false;
-                    _canDraw = false;
-                    _finalizedProperties.add(List.from(_drawnPoints));
-                    _drawnPoints.clear();
-                  });
-                  _updateMapOverlays();
+                  _closePolygonAndShowForm();
                 }
               },
               icon: isLastPoint
@@ -759,6 +753,29 @@ class _MainLayoutState extends State<MainLayout>
               width: 2,
             ),
           );
+
+          for (int i = 0; i < _drawnPoints.length - 1; i++) {
+            final LatLng p1 = _drawnPoints[i];
+            final LatLng p2 = _drawnPoints[i + 1];
+            final double dist = calculateDistanceBetween(p1, p2);
+            final LatLng midPoint = LatLng(
+              (p1.latitude + p2.latitude) / 2,
+              (p1.longitude + p2.longitude) / 2,
+            );
+            final lengthStr = '${dist.toStringAsFixed(0)} m';
+            // Use 36 for default font size since area is unknown
+            final lengthIcon = await DynamicMapMarkers.createTextMarker(lengthStr, fontSize: 36);
+
+            newMarkers.add(
+              Marker(
+                markerId: MarkerId('free_length_$i'),
+                position: midPoint,
+                icon: lengthIcon,
+                anchor: const Offset(0.5, 0.5),
+                zIndex: 2,
+              ),
+            );
+          }
         }
       }
     }
@@ -772,11 +789,54 @@ class _MainLayoutState extends State<MainLayout>
     }
   }
 
+  void _closePolygonAndShowForm() {
+    if (_drawnPoints.length < 3) return;
+    
+    setState(() {
+      _isEditingPolygon = true;
+    });
+    _updateMapOverlays();
+
+    final measurements = calculateMeasurements(_drawnPoints);
+    final double area = measurements?.area ?? 0.0;
+    final pointsCopy = List<LatLng>.from(_drawnPoints);
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddPropertyPage(
+          boundaryPoints: pointsCopy,
+          propertyArea: area,
+        ),
+      ),
+    ).then((result) {
+      if (result is PropertyModel) {
+        setState(() {
+          _isDrawing = false;
+          _isEditingPolygon = false;
+          _selectedVertexIndex = null;
+          _canDraw = false;
+          _finalizedProperties.add(pointsCopy);
+          _drawnPoints.clear();
+          _backupPoints = null;
+        });
+        _updateMapOverlays();
+        if (result.status == 'Active') {
+          setState(() => _currentIndex = 3);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      extendBody: true, // Allow map to show through the transparent nav bar
+      body: IndexedStack(
+        index: _currentIndex == 3 ? 1 : 0, // Assuming map is 0, MyProperties is 1
         children: [
+          Stack(
+            children: [
           // Google Map Background
           Positioned(
             top: 0,
@@ -870,357 +930,64 @@ class _MainLayoutState extends State<MainLayout>
             ),
           // Top Search Bar and Filters
           if (!_isDrawing)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 4.0,
-                    top: 12.0,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          // Search bar
-                          Expanded(
-                            child: TactileButton(
-                              onPressed: () {
-                                // TODO: Handle search action
-                              },
-                              child: Container(
-                                height: 48,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(24.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.01),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/search.svg',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        'Search by area, road, village...',
-                                        style: GoogleFonts.inter(
-                                          color: const Color(0xFF6B7280),
-                                          fontSize: 14,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          // Filter button
-                          TactileButton(
-                            onPressed: () {},
-                            child: Align(
-                              widthFactor: 0.8,
-                              child: SvgPicture.asset(
-                                'assets/icons/filter.svg',
-                                width: 76,
-                                height: 68,
-                              ),
-                            ),
-                          ),
-                          // Scan button
-                          TactileButton(
-                            onPressed: () async {
-                              final picker = ImagePicker();
-                              final XFile? image = await picker.pickImage(
-                                source: ImageSource.camera,
-                                maxWidth: 1000,
-                                maxHeight: 1000,
-                                imageQuality: 70,
-                              );
-                              
-                              if (image == null) return;
-                              
-                              final croppedFile = await ImageCropper().cropImage(
-                                sourcePath: image.path,
-                                compressQuality: 100,
-                                uiSettings: [
-                                  AndroidUiSettings(
-                                    toolbarTitle: 'Crop Document',
-                                    toolbarColor: const Color(0xFF5B5FEF),
-                                    toolbarWidgetColor: Colors.white,
-                                    initAspectRatio: CropAspectRatioPreset.original,
-                                    lockAspectRatio: false,
-                                    hideBottomControls: false,
-                                  ),
-                                  IOSUiSettings(
-                                    title: 'Crop Document',
-                                  ),
-                                ],
-                              );
-                              
-                              if (croppedFile == null) return;
-                              
-                              if (context.mounted) {
-                                AppPopup.showInfo(context, 'Processing image...');
-                              }
-                              
-                              final textRecognizer = TextRecognizer();
-                              final inputImage = InputImage.fromFilePath(croppedFile.path);
-                              
-                              final recognizedText = await textRecognizer.processImage(inputImage);
-                              final coordinates = OcrParser.parseRecognizedText(recognizedText);
-                              
-                              await textRecognizer.close();
-
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                if (coordinates.isNotEmpty) {
-                                  AppPopup.showSuccess(context, 'Extracted ${coordinates.length} coordinate(s)!');
-                                } else {
-                                  AppPopup.showError(context, 'No coordinates found. Please try again.');
-                                }
-                                
-                                final result = await showModalBottomSheet<List<LatLng>>(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  useRootNavigator: false,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (context) => UtmLocateBottomSheet(initialCoordinates: coordinates),
-                                );
-                                
-                                if (result != null && result.isNotEmpty && mounted) {
-                                  setState(() {
-                                    _isDrawing = true;
-                                    _isEditingPolygon = true;
-                                    _canDraw = false;
-                                    _drawnPoints = List.from(result);
-                                  });
-                                  _updateMapOverlays();
-                                  _animateToPolygon(result);
-                                }
-                              }
-                            },
-                            child: Align(
-                              widthFactor: 0.8,
-                              child: SvgPicture.asset(
-                                'assets/icons/scan.svg',
-                                width: 76,
-                                height: 68,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      // Second Row: Listing Type and Map Type
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Listing Type chip
-                          TactileButton(
-                            onPressed: () {
-                              // TODO: Handle listing type tap
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                                vertical: 8.0,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                  color: const Color(0xFF3E49C7),
-                                  width: 1.5,
-                                ),
-                                borderRadius: BorderRadius.circular(24.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.cancel,
-                                    color: Color(0xFF3E49C7),
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'Listing Type',
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFF3E49C7),
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: Color(0xFF3E49C7),
-                                    size: 18,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          // Map type icon
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: TactileButton(
-                              onPressed: () {
-                                setState(() {
-                                  if (_currentSkin == MapSkin.defaultMap) {
-                                    _currentSkin = MapSkin.satellite;
-                                  } else {
-                                    _currentSkin = MapSkin.defaultMap;
-                                  }
-                                });
-                              },
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: const Color(0xFFE5E7EB),
-                                    width: 2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.08),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                  image: DecorationImage(
-                                    image: AssetImage(
-                                      _currentSkin == MapSkin.satellite
-                                          ? 'assets/images/homescreen/mapSatellite.png'
-                                          : 'assets/images/homescreen/mapDefault.png',
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            MapTopControls(
+              currentSkin: _currentSkin,
+              onToggleMapType: () {
+                setState(() {
+                  if (_currentSkin == MapSkin.defaultMap) {
+                    _currentSkin = MapSkin.satellite;
+                  } else {
+                    _currentSkin = MapSkin.defaultMap;
+                  }
+                });
+              },
+              onCoordinatesScanned: (result) {
+                if (mounted) {
+                  setState(() {
+                    _isDrawing = true;
+                    _isEditingPolygon = true;
+                    _canDraw = false;
+                    _drawnPoints = List.from(result);
+                  });
+                  _updateMapOverlays();
+                  _mapController.future.then((controller) {
+                    controller.animateCamera(CameraUpdate.newLatLngZoom(result.first, 18));
+                  });
+                }
+              },
             ),
           // Plus Icon and Animated Menu (Bottom Left)
           if (!_isDrawing)
-            Positioned(
-              left: 0,
-              bottom: 0,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {}, // Prevent taps from bleeding to map
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildAnimatedMenuItem(
-                    iconPath: 'assets/icons/utm.svg',
-                    label: 'Coordinates',
-                    onTap: () async {
-                      // Close the floating menu first
-                      setState(() {
-                        _isMenuOpen = false;
-                        _animationController.reverse();
-                      });
-                      final result = await showModalBottomSheet<List<LatLng>>(
-                        context: context,
-                        isScrollControlled: true,
-                        useRootNavigator: false,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => const UtmLocateBottomSheet(),
-                      );
-                      
-                      if (result != null && result.isNotEmpty && mounted) {
-                        setState(() {
-                          _isDrawing = true;
-                          _isEditingPolygon = true;
-                          _canDraw = false;
-                          _drawnPoints = List.from(result);
-                        });
-                        _updateMapOverlays();
-                        
-                        final GoogleMapController controller = await _mapController.future;
-                        controller.animateCamera(CameraUpdate.newLatLngZoom(result.first, 18));
-                      }
-                    },
-                  ),
-                  _buildAnimatedMenuItem(
-                    iconPath: 'assets/icons/draw.svg',
-                    label: 'Draw',
-                    onTap: () {
-                      setState(() {
-                        _isDrawing = true;
-                        _canDraw = false;
-                      });
-                      Future.delayed(const Duration(milliseconds: 300), () {
-                        if (mounted) setState(() => _canDraw = true);
-                      });
-                    },
-                  ),
-                  TactileButton(
-                    onPressed: () {
-                      setState(() {
-                        _isMenuOpen = !_isMenuOpen;
-                        if (_isMenuOpen) {
-                          _animationController.forward();
-                        } else {
-                          _animationController.reverse();
-                        }
-                      });
-                    },
-                    child: AnimatedRotation(
-                      turns: _isMenuOpen ? 0.125 : 0, // 45 degree rotation
-                      duration: const Duration(milliseconds: 250),
-                      child: SvgPicture.asset(
-                        'assets/icons/plus.svg',
-                        width: 76,
-                        height: 76,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            MapFloatingMenu(
+              onDrawPressed: () {
+                setState(() {
+                  _isDrawing = true;
+                  _canDraw = false;
+                });
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  if (mounted) setState(() => _canDraw = true);
+                });
+              },
+              onCoordinatesScanned: (result) {
+                if (mounted) {
+                  setState(() {
+                    _isDrawing = true;
+                    _isEditingPolygon = true;
+                    _canDraw = false;
+                    _drawnPoints = List.from(result);
+                  });
+                  _updateMapOverlays();
+                  _mapController.future.then((controller) {
+                    controller.animateCamera(CameraUpdate.newLatLngZoom(result.first, 18));
+                  });
+                }
+              },
             ),
-          ),
           // Current Position Icon (Bottom Right)
           if (!_isDrawing)
             Positioned(
               right: 0,
-              bottom: 0,
+              bottom: 110, // Offset for extendBody bottom navigation bar
             child: TactileButton(
               onPressed: _goToCurrentPosition,
               child: SvgPicture.asset(
@@ -1232,243 +999,99 @@ class _MainLayoutState extends State<MainLayout>
           ),
           // Drawing UI Controls
           if (_isDrawing)
-            Positioned(
-              left: 16,
-              bottom: 24,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {}, // Prevent taps from bleeding through to the map
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildCircleButton(
-                      'assets/icons/revert.svg',
-                      onPressed: () {
-                        if (_isEditingPolygon) {
-                          if (_selectedVertexIndex != null && _drawnPoints.length > 3) {
-                            setState(() {
-                              _drawnPoints.removeAt(_selectedVertexIndex!);
-                              _selectedVertexIndex = null;
-                              _updateMapOverlays();
-                            });
-                          }
-                        } else {
-                          if (_drawnPoints.isNotEmpty) {
-                            setState(() {
-                              _drawnPoints.removeLast();
-                              _updateMapOverlays();
-                            });
-                          }
+            DrawingControlsPanel(
+              isEditingPolygon: _isEditingPolygon,
+              onRevertPressed: () {
+                if (_isEditingPolygon) {
+                  if (_selectedVertexIndex != null && _drawnPoints.length > 3) {
+                    setState(() {
+                      _drawnPoints.removeAt(_selectedVertexIndex!);
+                      _selectedVertexIndex = null;
+                      _updateMapOverlays();
+                    });
+                  }
+                } else {
+                  if (_drawnPoints.isNotEmpty) {
+                    setState(() {
+                      _drawnPoints.removeLast();
+                      _updateMapOverlays();
+                    });
+                  }
+                }
+              },
+              onDeletePressed: () {
+                setState(() {
+                  _drawnPoints.clear();
+                  if (_isEditingPolygon) {
+                    _isDrawing = false;
+                    _isEditingPolygon = false;
+                    _selectedVertexIndex = null;
+                    _backupPoints = null; // Deleted!
+                    _canDraw = false;
+                  }
+                  _updateMapOverlays();
+                });
+              },
+              onCancelPressed: () {
+                setState(() {
+                  _isDrawing = false;
+                  _isEditingPolygon = false;
+                  _selectedVertexIndex = null;
+                  _canDraw = false;
+                  if (_backupPoints != null) {
+                    _finalizedProperties.add(_backupPoints!);
+                    _backupPoints = null;
+                  }
+                  _drawnPoints.clear();
+                  _updateMapOverlays();
+                });
+              },
+              onSavePressed: () {
+                if (_drawnPoints.length >= 3) {
+                  _closePolygonAndShowForm();
+                } else {
+                  setState(() {
+                    _isDrawing = false;
+                    _canDraw = false;
+                    _backupPoints = null;
+                    _drawnPoints.clear();
+                  });
+                  _updateMapOverlays();
+                }
+              },
+              onAddPinPressed: () {
+                if (_currentMapCenter != null) {
+                  _mapController.future.then((controller) async {
+                    if (_drawnPoints.length >= 3) {
+                      final firstPointScreen = await controller.getScreenCoordinate(_drawnPoints.first);
+                      final crosshairScreen = await controller.getScreenCoordinate(_currentMapCenter!);
+                      
+                      final dx = firstPointScreen.x - crosshairScreen.x;
+                      final dy = firstPointScreen.y - crosshairScreen.y;
+                      final distanceSquared = dx * dx + dy * dy;
+                      
+                      // Auto-connect if within 150 screen pixels
+                      if (distanceSquared <= 150 * 150) {
+                        if (mounted) {
+                          _closePolygonAndShowForm();
                         }
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _buildCircleButton(
-                      'assets/icons/bin.svg',
-                      onPressed: () {
-                        setState(() {
-                          _drawnPoints.clear();
-                          if (_isEditingPolygon) {
-                            _isDrawing = false;
-                            _isEditingPolygon = false;
-                            _selectedVertexIndex = null;
-                            _backupPoints = null; // Deleted!
-                            _canDraw = false;
-                          }
-                          _updateMapOverlays();
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          if (_isDrawing)
-            Positioned(
-              bottom: 24,
-              left: 0,
-              right: 0,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {}, // Prevent taps from bleeding through
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TactileButton(
-                        onPressed: () {
-                          setState(() {
-                            _isDrawing = false;
-                            _isEditingPolygon = false;
-                            _selectedVertexIndex = null;
-                            _canDraw = false;
-                            if (_backupPoints != null) {
-                              _finalizedProperties.add(_backupPoints!);
-                              _backupPoints = null;
-                            }
-                            _drawnPoints.clear();
-                            _updateMapOverlays();
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0,
-                            vertical: 12.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.0),
-                            border: Border.all(
-                              color: const Color(0xFFE5E7EB),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            'Cancel',
-                            style: GoogleFonts.inter(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      TactileButton(
-                        onPressed: () {
-                          if (_drawnPoints.length >= 3) {
-                            setState(() {
-                              _isDrawing = false;
-                              _isEditingPolygon = false;
-                              _selectedVertexIndex = null;
-                              _canDraw = false;
-                              _finalizedProperties.add(List.from(_drawnPoints));
-                              _drawnPoints.clear();
-                              _backupPoints = null;
-                            });
-                            _updateMapOverlays();
-                          } else {
-                            setState(() {
-                              _isDrawing = false;
-                              _canDraw = false;
-                              _backupPoints = null;
-                              _drawnPoints.clear();
-                            });
-                            _updateMapOverlays();
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0,
-                            vertical: 12.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF5B5FEF),
-                            borderRadius: BorderRadius.circular(12.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            'Save',
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Add Pin FAB (Right Side)
-            if (_isDrawing && !_isEditingPolygon)
-              Positioned(
-                right: 16,
-                bottom: 24,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {}, // Prevent taps from bleeding through to the map
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TactileButton(
-                        onPressed: () {
-                          if (_currentMapCenter != null) {
-                            _mapController.future.then((controller) async {
-                              if (_drawnPoints.length >= 3) {
-                                final firstPointScreen = await controller.getScreenCoordinate(_drawnPoints.first);
-                                final crosshairScreen = await controller.getScreenCoordinate(_currentMapCenter!);
-                                
-                                final dx = firstPointScreen.x - crosshairScreen.x;
-                                final dy = firstPointScreen.y - crosshairScreen.y;
-                                final distanceSquared = dx * dx + dy * dy;
-                                
-                                // Auto-connect if within 150 screen pixels
-                                if (distanceSquared <= 150 * 150) {
-                                  if (mounted) {
-                                    setState(() {
-                                      _isDrawing = false;
-                                      _canDraw = false;
-                                      _finalizedProperties.add(List.from(_drawnPoints));
-                                      _drawnPoints.clear();
-                                    });
-                                    _updateMapOverlays();
-                                  }
-                                  return;
-                                }
-                              }
+                        return;
+                      }
+                    }
 
-                              if (mounted) {
-                                setState(() {
-                                  _drawnPoints.add(_currentMapCenter!);
-                                  _updateMapOverlays();
-                                });
-                              }
-                            });
-                          }
-                        },
-                        child: Container(
-                          width: 64,
-                          height: 64,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE5484D),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFE5484D).withValues(alpha: 0.4),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.add_location_alt,
-                            color: Colors.white,
-                            size: 34,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    if (mounted) {
+                      setState(() {
+                        _drawnPoints.add(_currentMapCenter!);
+                        _updateMapOverlays();
+                      });
+                    }
+                  });
+                }
+              },
+            ),
+        ],
+          ),
+          MyPropertiesPage(isEmbedded: true),
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -1476,11 +1099,13 @@ class _MainLayoutState extends State<MainLayout>
   }
 
   Widget _buildBottomNavigationBar() {
-    return Container(
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    Widget navContent = Container(
       height: 98.0,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 1.0)),
+      decoration: BoxDecoration(
+        color: isIOS ? Colors.white.withValues(alpha: 0.85) : Colors.white,
+        border: const Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 1.0)),
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: 16.0),
@@ -1517,6 +1142,17 @@ class _MainLayoutState extends State<MainLayout>
         ),
       ),
     );
+
+    if (isIOS) {
+      return ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+          child: navContent,
+        ),
+      );
+    }
+
+    return navContent;
   }
 
   Widget _buildNavItem({
