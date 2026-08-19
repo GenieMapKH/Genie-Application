@@ -5,12 +5,19 @@ import 'package:genie/features/auth/presentation/welcome_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Request the latest Android Map renderer which fixes lag and supports high refresh rates
   if (defaultTargetPlatform == TargetPlatform.android) {
+    try {
+      await FlutterDisplayMode.setHighRefreshRate();
+    } catch (e) {
+      // Ignore on devices where it's not supported
+    }
+
     AndroidMapRenderer mapRenderer = AndroidMapRenderer.latest;
     final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
     if (mapsImplementation is GoogleMapsFlutterAndroid) {

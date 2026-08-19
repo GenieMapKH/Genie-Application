@@ -15,6 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import '../utils/ocr_parser.dart';
+import 'package:genie/features/property/presentation/add_property_page.dart';
 
 enum MapSkin { defaultMap, satellite }
 
@@ -1346,16 +1347,30 @@ class _MainLayoutState extends State<MainLayout>
                       TactileButton(
                         onPressed: () {
                           if (_drawnPoints.length >= 3) {
-                            setState(() {
-                              _isDrawing = false;
-                              _isEditingPolygon = false;
-                              _selectedVertexIndex = null;
-                              _canDraw = false;
-                              _finalizedProperties.add(List.from(_drawnPoints));
-                              _drawnPoints.clear();
-                              _backupPoints = null;
+                            final measurements = calculateMeasurements(_drawnPoints);
+                            final double area = measurements?.area ?? 0.0;
+                            final pointsCopy = List<LatLng>.from(_drawnPoints);
+                            
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddPropertyPage(
+                                  boundaryPoints: pointsCopy,
+                                  propertyArea: area,
+                                ),
+                              ),
+                            ).then((_) {
+                              setState(() {
+                                _isDrawing = false;
+                                _isEditingPolygon = false;
+                                _selectedVertexIndex = null;
+                                _canDraw = false;
+                                _finalizedProperties.add(pointsCopy);
+                                _drawnPoints.clear();
+                                _backupPoints = null;
+                              });
+                              _updateMapOverlays();
                             });
-                            _updateMapOverlays();
                           } else {
                             setState(() {
                               _isDrawing = false;
@@ -1423,13 +1438,27 @@ class _MainLayoutState extends State<MainLayout>
                                 // Auto-connect if within 150 screen pixels
                                 if (distanceSquared <= 150 * 150) {
                                   if (mounted) {
-                                    setState(() {
-                                      _isDrawing = false;
-                                      _canDraw = false;
-                                      _finalizedProperties.add(List.from(_drawnPoints));
-                                      _drawnPoints.clear();
+                                    final measurements = calculateMeasurements(_drawnPoints);
+                                    final double area = measurements?.area ?? 0.0;
+                                    final pointsCopy = List<LatLng>.from(_drawnPoints);
+                                    
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddPropertyPage(
+                                          boundaryPoints: pointsCopy,
+                                          propertyArea: area,
+                                        ),
+                                      ),
+                                    ).then((_) {
+                                      setState(() {
+                                        _isDrawing = false;
+                                        _canDraw = false;
+                                        _finalizedProperties.add(pointsCopy);
+                                        _drawnPoints.clear();
+                                      });
+                                      _updateMapOverlays();
                                     });
-                                    _updateMapOverlays();
                                   }
                                   return;
                                 }
