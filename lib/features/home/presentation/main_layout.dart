@@ -549,7 +549,7 @@ class _MainLayoutState extends State<MainLayout>
             for (var p in propPoints) { sumLat += p.latitude; sumLng += p.longitude; }
             final LatLng centroid = LatLng(sumLat / propPoints.length, sumLng / propPoints.length);
             
-            final areaStr = '${measurements.area.toStringAsFixed(0)} m²';
+            final areaStr = formatArea(measurements.area);
             final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true, fontSize: areaFontSize);
             newMarkers.add(
               Marker(
@@ -681,7 +681,7 @@ class _MainLayoutState extends State<MainLayout>
             sumLng += p.longitude;
           }
           final LatLng centroid = LatLng(sumLat / _drawnPoints.length, sumLng / _drawnPoints.length);
-          final areaStr = '${measurements.area.toStringAsFixed(0)} m²';
+          final areaStr = formatArea(measurements.area);
           final areaIcon = await DynamicMapMarkers.createTextMarker(areaStr, isArea: true, fontSize: _calculateFontSize(area, isArea: true));
           newMarkers.add(
             Marker(
@@ -733,13 +733,7 @@ class _MainLayoutState extends State<MainLayout>
               consumeTapEvents: true,
               onTap: () {
                 if (i == 0 && _drawnPoints.length >= 3) {
-                  setState(() {
-                    _isDrawing = false;
-                    _canDraw = false;
-                    _finalizedProperties.add(List.from(_drawnPoints));
-                    _drawnPoints.clear();
-                  });
-                  _updateMapOverlays();
+                  _closePolygonAndShowForm();
                 }
               },
               icon: isLastPoint
@@ -759,6 +753,29 @@ class _MainLayoutState extends State<MainLayout>
               width: 2,
             ),
           );
+
+          for (int i = 0; i < _drawnPoints.length - 1; i++) {
+            final LatLng p1 = _drawnPoints[i];
+            final LatLng p2 = _drawnPoints[i + 1];
+            final double dist = calculateDistanceBetween(p1, p2);
+            final LatLng midPoint = LatLng(
+              (p1.latitude + p2.latitude) / 2,
+              (p1.longitude + p2.longitude) / 2,
+            );
+            final lengthStr = '${dist.toStringAsFixed(0)} m';
+            // Use 36 for default font size since area is unknown
+            final lengthIcon = await DynamicMapMarkers.createTextMarker(lengthStr, fontSize: 36);
+
+            newMarkers.add(
+              Marker(
+                markerId: MarkerId('free_length_$i'),
+                position: midPoint,
+                icon: lengthIcon,
+                anchor: const Offset(0.5, 0.5),
+                zIndex: 2,
+              ),
+            );
+          }
         }
       }
     }
@@ -770,6 +787,45 @@ class _MainLayoutState extends State<MainLayout>
         _polygons = newPolygons;
       });
     }
+  }
+
+  void _closePolygonAndShowForm() {
+    if (_drawnPoints.length < 3) return;
+    
+    setState(() {
+      _isEditingPolygon = true;
+    });
+    _updateMapOverlays();
+
+    final measurements = calculateMeasurements(_drawnPoints);
+    final double area = measurements?.area ?? 0.0;
+    final pointsCopy = List<LatLng>.from(_drawnPoints);
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddPropertyPage(
+          boundaryPoints: pointsCopy,
+          propertyArea: area,
+        ),
+      ),
+    ).then((result) {
+      if (result is PropertyModel) {
+        setState(() {
+          _isDrawing = false;
+          _isEditingPolygon = false;
+          _selectedVertexIndex = null;
+          _canDraw = false;
+          _finalizedProperties.add(pointsCopy);
+          _drawnPoints.clear();
+          _backupPoints = null;
+        });
+        _updateMapOverlays();
+        if (result.status == 'Active') {
+          setState(() => _currentIndex = 3);
+        }
+      }
+    });
   }
 
   @override
@@ -992,37 +1048,7 @@ class _MainLayoutState extends State<MainLayout>
               },
               onSavePressed: () {
                 if (_drawnPoints.length >= 3) {
-                  final measurements = calculateMeasurements(_drawnPoints);
-                  final double area = measurements?.area ?? 0.0;
-                  final pointsCopy = List<LatLng>.from(_drawnPoints);
-                  
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddPropertyPage(
-                        boundaryPoints: pointsCopy,
-                        propertyArea: area,
-                      ),
-                    ),
-                  ).then((result) {
-                    if (result is PropertyModel) {
-                      setState(() {
-                        _isDrawing = false;
-                        _isEditingPolygon = false;
-                        _selectedVertexIndex = null;
-                        _canDraw = false;
-                        _finalizedProperties.add(pointsCopy);
-                        _drawnPoints.clear();
-                        _backupPoints = null;
-                      });
-                      _updateMapOverlays();
-                      if (result.status == 'Active') {
-                        setState(() => _currentIndex = 3);
-                      }
-                    } else {
-                      // User cancelled
-                    }
-                  });
+                  _closePolygonAndShowForm();
                 } else {
                   setState(() {
                     _isDrawing = false;
@@ -1047,34 +1073,7 @@ class _MainLayoutState extends State<MainLayout>
                       // Auto-connect if within 150 screen pixels
                       if (distanceSquared <= 150 * 150) {
                         if (mounted) {
-                          final measurements = calculateMeasurements(_drawnPoints);
-                          final double area = measurements?.area ?? 0.0;
-                          final pointsCopy = List<LatLng>.from(_drawnPoints);
-                          
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddPropertyPage(
-                                boundaryPoints: pointsCopy,
-                                propertyArea: area,
-                              ),
-                            ),
-                          ).then((result) {
-                            if (result is PropertyModel) {
-                              setState(() {
-                                _isDrawing = false;
-                                _canDraw = false;
-                                _finalizedProperties.add(pointsCopy);
-                                _drawnPoints.clear();
-                              });
-                              _updateMapOverlays();
-                              if (result.status == 'Active') {
-                                setState(() => _currentIndex = 3);
-                              }
-                            } else {
-                              // User cancelled
-                            }
-                          });
+                          _closePolygonAndShowForm();
                         }
                         return;
                       }

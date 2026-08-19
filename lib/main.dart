@@ -12,11 +12,11 @@ void main() async {
 
   // Request the latest Android Map renderer which fixes lag and supports high refresh rates
   if (defaultTargetPlatform == TargetPlatform.android) {
-    try {
-      await FlutterDisplayMode.setHighRefreshRate();
-    } catch (e) {
-      // Ignore on devices where it's not supported
-    }
+    // try {
+    //   await FlutterDisplayMode.setHighRefreshRate();
+    // } catch (e) {
+    //   // Ignore on devices where it's not supported
+    // }
 
     AndroidMapRenderer mapRenderer = AndroidMapRenderer.latest;
     final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;

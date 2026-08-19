@@ -6,7 +6,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/property_model.dart';
 import '../data/property_repository.dart';
-import 'widgets/property_type_selector.dart';
+import 'package:genie/features/property/presentation/widgets/property_type_selector.dart';
+import 'package:genie/features/home/utils/map_measurements.dart';
 import 'widgets/property_image_picker.dart';
 import 'widgets/property_form_inputs.dart';
 
@@ -121,7 +122,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   void initState() {
     super.initState();
     if (widget.propertyArea > 0) {
-      _landSizeController.text = '${widget.propertyArea.toStringAsFixed(0)} m²';
+      _landSizeController.text = formatArea(widget.propertyArea);
     }
   }
 
@@ -677,7 +678,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle(isLandType ? 'Size' : 'Land Size (m²)', required: true, hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
+            _buildSectionTitle(isLandType ? 'Size' : 'Land Size', required: true, hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
             isLandType
                 ? InkWell(
                     onTap: () {},
@@ -708,7 +709,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _landSizeController,
-          decoration: defaultPropertyInputDecoration(isLandType ? 'Size Area' : 'Enter land size (m²)', hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration(isLandType ? 'Size Area' : 'Enter land size', hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
         ),
       ],
     );
@@ -734,7 +735,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('Building Size (m²)', required: true, hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
+            _buildSectionTitle('Building Size', required: true, hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
             Row(
               children: [
                 const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
@@ -753,7 +754,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _buildingSizeController,
-          decoration: defaultPropertyInputDecoration('Enter building size (m²)', hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration('Enter building size', hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
         ),
       ],
     );
@@ -767,7 +768,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('Unit Size (m²)', required: true, hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
+            _buildSectionTitle('Unit Size', required: true, hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
             Row(
               children: [
                 const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
@@ -786,7 +787,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _unitSizeController,
-          decoration: defaultPropertyInputDecoration('Enter unit size in m²', hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration('Enter unit size', hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
         ),
       ],
     );

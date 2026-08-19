@@ -77,3 +77,25 @@ LandMeasurements? calculateMeasurements(List<gmaps.LatLng> mapPoints) {
     sides: sides,
   );
 }
+
+double calculateDistanceBetween(gmaps.LatLng p1, gmaps.LatLng p2) {
+  return SphericalUtil.computeDistanceBetween(
+    LatLng(p1.latitude, p1.longitude),
+    LatLng(p2.latitude, p2.longitude),
+  ).toDouble();
+}
+
+String formatArea(double areaInSquareMeters) {
+  if (areaInSquareMeters >= 10000) {
+    final hectares = areaInSquareMeters / 10000;
+    String formatted = hectares.toStringAsFixed(2);
+    if (formatted.endsWith('.00')) {
+      formatted = formatted.substring(0, formatted.length - 3);
+    } else if (formatted.endsWith('0')) {
+      formatted = formatted.substring(0, formatted.length - 1);
+    }
+    return '$formatted ha';
+  } else {
+    return '${areaInSquareMeters.toStringAsFixed(0)} m²';
+  }
+}
