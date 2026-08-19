@@ -5,6 +5,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'my_properties_page.dart';
+import '../models/property_model.dart';
+import '../data/property_repository.dart';
+
 class AddPropertyPage extends StatefulWidget {
   final List<LatLng> boundaryPoints;
   final double propertyArea;
@@ -22,14 +26,57 @@ class AddPropertyPage extends StatefulWidget {
 class _AddPropertyPageState extends State<AddPropertyPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _sizeController = TextEditingController();
+  final TextEditingController _landSizeController = TextEditingController();
+  final TextEditingController _buildingSizeController = TextEditingController();
+  final TextEditingController _unitSizeController = TextEditingController();
+  final TextEditingController _maintenanceFeeController = TextEditingController();
+  
+  // Borey specific controllers
+  final TextEditingController _developerNameController = TextEditingController();
+  final TextEditingController _projectNameController = TextEditingController();
+  final TextEditingController _totalProjectAreaController = TextEditingController();
+  final TextEditingController _totalUnitsTextController = TextEditingController();
+  final TextEditingController _startingPriceController = TextEditingController();
+  
+  // Business for Sale specific controllers
+  final TextEditingController _monthlyRentController = TextEditingController();
+  final TextEditingController _leaseRemainingController = TextEditingController();
+  final TextEditingController _equipmentIncludedController = TextEditingController();
+  final TextEditingController _reasonForSellingController = TextEditingController();
+  
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
   String _selectedPropertyType = '';
   String _selectedListingSetting = 'Sale';
   String _selectedTitleType = 'Hard Title';
+  
+  String? _selectedBedrooms;
+  String? _selectedBathrooms;
+  String? _selectedFloors;
+  String? _selectedFloorNumber;
+  String? _selectedParking;
+  String? _selectedFurnished;
+  String? _selectedBuildingType;
+  String? _selectedTotalUnits;
+  String? _selectedBalcony;
+  String? _selectedCompletionStatus;
+  String? _selectedViewType;
+  
+  // New selected states for Borey & Business
+  String? _selectedProjectType;
+  String? _selectedLeaseUnit;
   final Set<String> _selectedKeywords = {};
+
+  bool _hasAttemptedSubmit = false;
+  bool _isLoading = false;
+
+  final GlobalKey _titleKey = GlobalKey();
+  final GlobalKey _priceKey = GlobalKey();
+  final GlobalKey _listingSettingsKey = GlobalKey();
+  final GlobalKey _landSizeKey = GlobalKey();
+  final GlobalKey _buildingSizeKey = GlobalKey();
+  final GlobalKey _unitSizeKey = GlobalKey();
 
   final ImagePicker _picker = ImagePicker();
   final List<XFile> _selectedPhotos = [];
@@ -83,7 +130,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   void initState() {
     super.initState();
     if (widget.propertyArea > 0) {
-      _sizeController.text = '${widget.propertyArea.toStringAsFixed(0)} m²';
+      _landSizeController.text = '${widget.propertyArea.toStringAsFixed(0)} m²';
     }
   }
 
@@ -91,7 +138,19 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   void dispose() {
     _titleController.dispose();
     _priceController.dispose();
-    _sizeController.dispose();
+    _landSizeController.dispose();
+    _buildingSizeController.dispose();
+    _unitSizeController.dispose();
+    _maintenanceFeeController.dispose();
+    _developerNameController.dispose();
+    _projectNameController.dispose();
+    _totalProjectAreaController.dispose();
+    _totalUnitsTextController.dispose();
+    _startingPriceController.dispose();
+    _monthlyRentController.dispose();
+    _leaseRemainingController.dispose();
+    _equipmentIncludedController.dispose();
+    _reasonForSellingController.dispose();
     _descriptionController.dispose();
     _phoneController.dispose();
     super.dispose();
@@ -119,7 +178,10 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              final property = _saveProperty('Draft');
+              Navigator.of(context).pop(property);
+            },
             child: Text(
               'Save',
               style: GoogleFonts.inter(
@@ -149,44 +211,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               required: true,
               controller: _titleController,
               hintText: 'Example: 10x30 Land Near National Road 1',
+              hasError: _hasAttemptedSubmit && _titleController.text.trim().isEmpty,
+              focusKey: _titleKey,
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTextField(
-                    label: 'Price',
-                    required: true,
-                    controller: _priceController,
-                    hintText: 'Selling price (USD)',
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDropdown(
-                    label: 'Listing Settings',
-                    required: true,
-                    value: _selectedListingSetting,
-                    items: ['Sale', 'Rent', 'To Let'],
-                    onChanged: (val) {
-                      if (val != null) setState(() => _selectedListingSetting = val);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildSizeField(),
-            const SizedBox(height: 16),
-            _buildDropdown(
-              label: 'Title Type',
-              required: false,
-              value: _selectedTitleType,
-              items: ['Hard Title', 'Soft Title', 'Other'],
-              onChanged: (val) {
-                if (val != null) setState(() => _selectedTitleType = val);
-              },
-            ),
+            _buildDynamicFields(),
             const SizedBox(height: 24),
             _buildSectionTitle('Description', required: false),
             const SizedBox(height: 8),
@@ -232,7 +261,10 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       ),
       bottomNavigationBar: _buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: const _PublishButtonWidget(),
+      floatingActionButton: _PublishButtonWidget(
+        isLoading: _isLoading,
+        onPressed: _validateForm,
+      ),
     );
   }
 
@@ -648,12 +680,12 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     );
   }
 
-  Widget _buildSectionTitle(String title, {required bool required}) {
+  Widget _buildSectionTitle(String title, {required bool required, bool hasError = false}) {
     return RichText(
       text: TextSpan(
         text: title,
         style: GoogleFonts.inter(
-          color: const Color(0xFF111827),
+          color: hasError ? const Color(0xFFE5484D) : const Color(0xFF111827),
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
@@ -674,77 +706,582 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     required bool required,
     required TextEditingController controller,
     required String hintText,
+    String? infoText,
+    bool hasError = false,
+    Key? focusKey,
   }) {
     return Column(
+      key: focusKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle(label, required: required),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionTitle(label, required: required, hasError: hasError),
+            if (infoText != null)
+              Row(
+                children: [
+                  const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                  const SizedBox(width: 4),
+                  Text(
+                    infoText,
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF6B7280),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 13),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFF3E49C7)),
-            ),
+          decoration: _defaultInputDecoration(hintText, hasError: hasError),
+        ),
+      ],
+    );
+  }
+
+  InputDecoration _defaultInputDecoration(String hint, {bool hasError = false}) {
+    final borderColor = hasError ? const Color(0xFFE5484D) : const Color(0xFFE5E7EB);
+    final hintColor = hasError ? const Color(0xFFE5484D) : const Color(0xFF9CA3AF);
+    
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.inter(color: hintColor, fontSize: 13),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        borderSide: BorderSide(color: borderColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        borderSide: BorderSide(color: borderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        borderSide: BorderSide(color: hasError ? borderColor : const Color(0xFF3E49C7)),
+      ),
+    );
+  }
+
+  Widget _buildDefaultPriceListingSettings() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _buildTextField(
+            label: 'Price',
+            required: true,
+            controller: _priceController,
+            hintText: 'Enter selling price (USD)',
+            hasError: _hasAttemptedSubmit && _priceController.text.trim().isEmpty,
+            focusKey: _priceKey,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildDropdown(
+            label: 'Listing Settings',
+            required: true,
+            value: _selectedListingSetting,
+            items: ['Sale', 'Rent', 'To Let'],
+            hasError: _hasAttemptedSubmit && _selectedListingSetting.isEmpty,
+            focusKey: _listingSettingsKey,
+            onChanged: (val) {
+              if (val != null) setState(() => _selectedListingSetting = val);
+            },
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSizeField() {
+  Widget _buildDynamicFields() {
+    List<Widget> fields = [];
+    void addSpacing() => fields.add(const SizedBox(height: 16));
+
+    if (_selectedPropertyType == 'Land' || _selectedPropertyType.isEmpty) {
+      fields.add(_buildDefaultPriceListingSettings());
+      addSpacing();
+      fields.add(_buildLandSizeField(isLandType: true));
+      addSpacing();
+      fields.add(_buildTitleTypeField());
+    } else if (_selectedPropertyType == 'House' || _selectedPropertyType == 'Warehouse') {
+      fields.add(_buildDefaultPriceListingSettings());
+      addSpacing();
+      fields.add(_buildLandSizeField());
+      addSpacing();
+      fields.add(_buildBuildingSizeField());
+      addSpacing();
+      fields.add(_buildBedroomsField());
+      addSpacing();
+      fields.add(_buildBathroomsField());
+      addSpacing();
+      fields.add(_buildFloorsField());
+      addSpacing();
+      fields.add(_buildParkingField());
+      addSpacing();
+      fields.add(_buildFurnishedField());
+      addSpacing();
+      fields.add(_buildTitleTypeField());
+    } else if (_selectedPropertyType == 'Building') {
+      fields.add(_buildDefaultPriceListingSettings());
+      addSpacing();
+      fields.add(_buildBuildingTypeField());
+      addSpacing();
+      fields.add(_buildLandSizeField());
+      addSpacing();
+      fields.add(_buildBuildingSizeField());
+      addSpacing();
+      fields.add(_buildNumberofFloorsField());
+      addSpacing();
+      fields.add(_buildTotalUnitsField());
+      addSpacing();
+      fields.add(_buildParkingField());
+      addSpacing();
+      fields.add(_buildTitleTypeField());
+    } else if (_selectedPropertyType == 'Condo') {
+      fields.add(_buildDefaultPriceListingSettings());
+      addSpacing();
+      fields.add(_buildUnitSizeField());
+      addSpacing();
+      fields.add(_buildFloorNumberField());
+      addSpacing();
+      fields.add(_buildTotalFloorsField());
+      addSpacing();
+      fields.add(_buildBedroomsField(isCondo: true));
+      addSpacing();
+      fields.add(_buildBathroomsField());
+      addSpacing();
+      fields.add(_buildBalconyField());
+      addSpacing();
+      fields.add(_buildFurnishedField());
+      addSpacing();
+      fields.add(_buildCompletionStatusField());
+      addSpacing();
+      fields.add(_buildViewTypeField());
+      addSpacing();
+      fields.add(_buildMaintenanceFeeField());
+      addSpacing();
+      fields.add(_buildTitleTypeField());
+    } else if (_selectedPropertyType == 'Borey') {
+      fields.add(_buildTextField(label: 'Developer Name', required: false, controller: _developerNameController, hintText: 'Example: ABC Development Co., Ltd'));
+      addSpacing();
+      fields.add(_buildTextField(label: 'Project Name', required: false, controller: _projectNameController, hintText: 'Project name', infoText: 'Official name of the development project'));
+      addSpacing();
+      fields.add(_buildProjectTypeField());
+      addSpacing();
+      fields.add(_buildTextField(label: 'Total Project Area', required: false, controller: _totalProjectAreaController, hintText: 'Enter total land size', infoText: 'Total land area of entire project'));
+      addSpacing();
+      fields.add(_buildTextField(label: 'Total Units', required: false, controller: _totalUnitsTextController, hintText: 'Total number of units in project'));
+      addSpacing();
+      fields.add(_buildBoreyCompletionStatusField());
+      addSpacing();
+      fields.add(_buildTextField(label: 'Starting Price', required: false, controller: _startingPriceController, hintText: 'Starting price in USD', infoText: 'Lowest available unit price'));
+      addSpacing();
+      fields.add(_buildTitleTypeField());
+    } else if (_selectedPropertyType == 'Business for Sale') {
+      fields.add(_buildLandSizeField(isLandType: true));
+      addSpacing();
+      fields.add(_buildTextField(label: 'Monthly Rent', required: false, controller: _monthlyRentController, hintText: 'Enter monthly shop rent (USD)', infoText: 'Lower rent = higher profit potential'));
+      addSpacing();
+      fields.add(_buildDropdown(label: 'Listing Settings', required: true, value: _selectedListingSetting, items: ['Sale', 'Rent', 'To Let'], hasError: _hasAttemptedSubmit && _selectedListingSetting.isEmpty, focusKey: _listingSettingsKey, onChanged: (val) { if (val != null) setState(() => _selectedListingSetting = val); }));
+      addSpacing();
+      fields.add(_buildLeaseRemainingField());
+      addSpacing();
+      fields.add(_buildTextField(label: 'Equipment Included', required: false, controller: _equipmentIncludedController, hintText: 'List furniture, kitchen equipment, machines, POS system, etc.', infoText: 'Describe assets included in sale'));
+      addSpacing();
+      fields.add(_buildTextField(label: 'Reason for Selling', required: false, controller: _reasonForSellingController, hintText: 'Example: Owner relocating abroad'));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: fields,
+    );
+  }
+
+  Widget _buildLandSizeField({bool isLandType = false}) {
+    return Column(
+      key: _landSizeKey,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionTitle(isLandType ? 'Size' : 'Land Size (m²)', required: true, hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
+            isLandType
+                ? InkWell(
+                    onTap: () {},
+                    child: Text(
+                      'Auto from map',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF6B7280),
+                        fontSize: 12,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  )
+                : Row(
+                    children: [
+                      const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Total land area of the property',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF6B7280),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _landSizeController,
+          decoration: _defaultInputDecoration(isLandType ? 'Size Area' : 'Enter land size (m²)', hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTitleTypeField() {
+    return _buildDropdown(
+      label: 'Title Type',
+      required: false,
+      value: _selectedTitleType,
+      items: ['Hard Title', 'Soft Title', 'Other'],
+      onChanged: (val) {
+        if (val != null) setState(() => _selectedTitleType = val);
+      },
+    );
+  }
+
+  Widget _buildBuildingSizeField() {
+    return Column(
+      key: _buildingSizeKey,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionTitle('Building Size (m²)', required: true, hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
+            Row(
+              children: [
+                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const SizedBox(width: 4),
+                Text(
+                  'Total built-up area',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF6B7280),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _buildingSizeController,
+          decoration: _defaultInputDecoration('Enter building size (m²)', hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUnitSizeField() {
+    return Column(
+      key: _unitSizeKey,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionTitle('Unit Size (m²)', required: true, hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
+            Row(
+              children: [
+                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const SizedBox(width: 4),
+                Text(
+                  'Total usable area of the unit',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF6B7280),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _unitSizeController,
+          decoration: _defaultInputDecoration('Enter unit size in m²', hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMaintenanceFeeField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('Size', required: true),
-            InkWell(
-              onTap: () {},
-              child: Text(
-                'Auto from map',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF6B7280),
-                  fontSize: 12,
-                  decoration: TextDecoration.underline,
+            _buildSectionTitle('Maintenance Fee', required: false),
+            Row(
+              children: [
+                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const SizedBox(width: 4),
+                Text(
+                  'Building management fee per month',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF6B7280),
+                    fontSize: 11,
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
         const SizedBox(height: 8),
         TextField(
-          controller: _sizeController,
-          decoration: InputDecoration(
-            hintText: 'Size Area',
-            hintStyle: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 13),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+          controller: _maintenanceFeeController,
+          decoration: _defaultInputDecoration('Monthly maintenance fee (USD)'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBedroomsField({bool isCondo = false}) {
+    List<String> items = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'];
+    if (isCondo) {
+      items.insert(0, 'Studio');
+    } else {
+      items.insert(0, '0');
+    }
+    return _buildDropdown(
+      label: 'Bedrooms',
+      required: false,
+      value: _selectedBedrooms,
+      hintText: 'Number of bedrooms',
+      items: items,
+      onChanged: (val) => setState(() => _selectedBedrooms = val),
+    );
+  }
+
+  Widget _buildBathroomsField() {
+    return _buildDropdown(
+      label: 'Bathrooms',
+      required: false,
+      value: _selectedBathrooms,
+      hintText: 'Number of bathrooms',
+      items: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
+      onChanged: (val) => setState(() => _selectedBathrooms = val),
+    );
+  }
+
+  Widget _buildFloorsField() {
+    return _buildDropdown(
+      label: 'Floors',
+      required: false,
+      value: _selectedFloors,
+      hintText: 'Total floors (e.g. 2)',
+      items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
+      onChanged: (val) => setState(() => _selectedFloors = val),
+    );
+  }
+
+  Widget _buildNumberofFloorsField() {
+    return _buildDropdown(
+      label: 'Number of Floors',
+      required: false,
+      value: _selectedFloors,
+      hintText: 'Number of Floors',
+      items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
+      onChanged: (val) => setState(() => _selectedFloors = val),
+    );
+  }
+
+  Widget _buildFloorNumberField() {
+    return _buildDropdown(
+      label: 'Floor Number',
+      required: false,
+      value: _selectedFloorNumber,
+      hintText: 'Enter floor number (e.g. 12)',
+      items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
+      onChanged: (val) => setState(() => _selectedFloorNumber = val),
+    );
+  }
+
+  Widget _buildTotalFloorsField() {
+    return _buildDropdown(
+      label: 'Total Floors',
+      required: false,
+      value: _selectedFloors,
+      hintText: 'Total floors in building',
+      items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
+      onChanged: (val) => setState(() => _selectedFloors = val),
+    );
+  }
+
+  Widget _buildParkingField() {
+    return _buildDropdown(
+      label: 'Parking',
+      required: false,
+      value: _selectedParking,
+      hintText: 'Select parking',
+      items: ['Yes', 'No'],
+      onChanged: (val) => setState(() => _selectedParking = val),
+    );
+  }
+
+  Widget _buildFurnishedField() {
+    return _buildDropdown(
+      label: 'Furnished',
+      required: false,
+      value: _selectedFurnished,
+      hintText: 'Select furnished',
+      items: ['Unfurnished', 'Fully Furnished', 'Electrical appliances'],
+      onChanged: (val) => setState(() => _selectedFurnished = val),
+    );
+  }
+
+  Widget _buildBuildingTypeField() {
+    return _buildDropdown(
+      label: 'Building Type',
+      required: false,
+      value: _selectedBuildingType,
+      hintText: 'Select building type',
+      items: ['Commercial Building', 'Office Building', 'Mixed-use', 'Retail Building', 'Warehouse'],
+      onChanged: (val) => setState(() => _selectedBuildingType = val),
+    );
+  }
+
+  Widget _buildTotalUnitsField() {
+    return _buildDropdown(
+      label: 'Total Units',
+      required: false,
+      value: _selectedTotalUnits,
+      hintText: 'Number of units',
+      items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
+      onChanged: (val) => setState(() => _selectedTotalUnits = val),
+    );
+  }
+
+  Widget _buildBalconyField() {
+    return _buildDropdown(
+      label: 'Balcony',
+      required: false,
+      value: _selectedBalcony,
+      hintText: 'Select balcony',
+      items: ['Yes', 'No'],
+      onChanged: (val) => setState(() => _selectedBalcony = val),
+    );
+  }
+
+  Widget _buildCompletionStatusField() {
+    return _buildDropdown(
+      label: 'Completion Status',
+      required: false,
+      value: _selectedCompletionStatus,
+      hintText: 'Select Status',
+      items: ['Off-plan', 'Under Construction', 'Completed'],
+      onChanged: (val) => setState(() => _selectedCompletionStatus = val),
+    );
+  }
+
+  Widget _buildViewTypeField() {
+    return _buildDropdown(
+      label: 'View Type',
+      required: false,
+      value: _selectedViewType,
+      hintText: 'Select view type',
+      items: ['City View', 'River View', 'Garden View', 'Pool View', 'No View'],
+      onChanged: (val) => setState(() => _selectedViewType = val),
+    );
+  }
+
+  Widget _buildProjectTypeField() {
+    return _buildDropdown(
+      label: 'Project Type',
+      required: false,
+      value: _selectedProjectType,
+      hintText: 'Select project type',
+      items: ['Borey', 'Condo', 'Commercial', 'Mixed-use', 'Land Subdivision'],
+      onChanged: (val) => setState(() => _selectedProjectType = val),
+    );
+  }
+
+  Widget _buildBoreyCompletionStatusField() {
+    return _buildDropdown(
+      label: 'Completion Status',
+      required: false,
+      value: _selectedCompletionStatus,
+      hintText: 'Select status',
+      items: ['Pre-launch', 'Under Construction', '50% Completed', '80% Completed', 'Completed'],
+      onChanged: (val) => setState(() => _selectedCompletionStatus = val),
+    );
+  }
+
+  Widget _buildLeaseRemainingField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionTitle('Lease Remaining', required: false),
+            Row(
+              children: [
+                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const SizedBox(width: 4),
+                Text(
+                  'Remaining contract duration with landlord',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF6B7280),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: TextField(
+                controller: _leaseRemainingController,
+                decoration: _defaultInputDecoration('Duration'),
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFF3E49C7)),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 1,
+              child: DropdownButtonFormField<String>(
+                value: _selectedLeaseUnit ?? 'Months',
+                isExpanded: true,
+                icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
+                style: GoogleFonts.inter(color: const Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w500),
+                dropdownColor: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+                decoration: _defaultInputDecoration('Select unit'),
+                onChanged: (val) => setState(() => _selectedLeaseUnit = val),
+                items: ['Months', 'Years'].map((String item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item),
+                  );
+                }).toList(),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
@@ -753,37 +1290,30 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   Widget _buildDropdown({
     required String label,
     required bool required,
-    required String value,
+    required String? value,
+    String? hintText,
     required List<String> items,
     required Function(String?) onChanged,
+    bool hasError = false,
+    Key? focusKey,
   }) {
     return Column(
+      key: focusKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle(label, required: required),
+        _buildSectionTitle(label, required: required, hasError: hasError),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
+          hint: hintText != null ? Text(hintText, style: GoogleFonts.inter(color: hasError ? const Color(0xFFE5484D) : const Color(0xFF9CA3AF), fontSize: 13)) : null,
           isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
+          icon: Icon(Icons.keyboard_arrow_down, color: hasError ? const Color(0xFFE5484D) : const Color(0xFF9CA3AF)),
           style: GoogleFonts.inter(color: const Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w500),
           dropdownColor: Colors.white,
           borderRadius: BorderRadius.circular(12.0),
           elevation: 4,
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFF3E49C7)),
-            ),
+          decoration: _defaultInputDecoration('', hasError: hasError).copyWith(
+            hintText: null, // we use hint above
           ),
           onChanged: onChanged,
           items: items.map<DropdownMenuItem<String>>((String item) {
@@ -796,10 +1326,156 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       ],
     );
   }
+  void _validateForm() {
+    setState(() => _hasAttemptedSubmit = true);
+
+    GlobalKey? firstErrorKey;
+
+    if (_titleController.text.trim().isEmpty) firstErrorKey ??= _titleKey;
+
+    if (_selectedPropertyType == 'Land' || _selectedPropertyType.isEmpty) {
+      if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
+      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
+      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
+    } else if (_selectedPropertyType == 'House' || _selectedPropertyType == 'Warehouse') {
+      if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
+      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
+      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
+      if (_buildingSizeController.text.trim().isEmpty) firstErrorKey ??= _buildingSizeKey;
+    } else if (_selectedPropertyType == 'Building') {
+      if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
+      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
+      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
+      if (_buildingSizeController.text.trim().isEmpty) firstErrorKey ??= _buildingSizeKey;
+    } else if (_selectedPropertyType == 'Condo') {
+      if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
+      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
+      if (_unitSizeController.text.trim().isEmpty) firstErrorKey ??= _unitSizeKey;
+    } else if (_selectedPropertyType == 'Borey') {
+      // Title is already checked
+    } else if (_selectedPropertyType == 'Business for Sale') {
+      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
+      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
+    }
+
+    if (firstErrorKey != null) {
+      _showErrorDialog(firstErrorKey);
+    } else {
+      _submitForm();
+    }
+  }
+
+  void _showErrorDialog(GlobalKey firstErrorKey) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          contentPadding: const EdgeInsets.all(24),
+          title: Text(
+            'Validate required fields',
+            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: const Color(0xFF111827)),
+            textAlign: TextAlign.center,
+          ),
+          content: Text(
+            'Please complete required fields before publishing.',
+            style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF4B5563)),
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (firstErrorKey.currentContext != null) {
+                  Scrollable.ensureVisible(
+                    firstErrorKey.currentContext!,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              },
+              child: Text(
+                'Close',
+                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFF5B5FEF)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _submitForm() async {
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    
+    final property = _saveProperty('Active');
+    _showSuccessDialog(property);
+  }
+
+  PropertyModel _saveProperty(String status) {
+    final property = PropertyModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: _titleController.text.trim().isEmpty ? 'Untitled Property' : _titleController.text.trim(),
+      price: _priceController.text.trim(),
+      propertyType: _selectedPropertyType.isEmpty ? 'Land' : _selectedPropertyType,
+      status: status,
+      createdAt: DateTime.now(),
+      photos: List.from(_selectedPhotos),
+      boundaryPoints: widget.boundaryPoints,
+    );
+    PropertyRepository.addProperty(property);
+    return property;
+  }
+
+  void _showSuccessDialog(PropertyModel property) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          contentPadding: const EdgeInsets.all(24),
+          title: Text(
+            'Property Published\nSuccessfully!',
+            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: const Color(0xFF111827)),
+            textAlign: TextAlign.center,
+          ),
+          content: Text(
+            'Your listing is now visible to buyers.',
+            style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF4B5563)),
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(context, property); // Pop AddPropertyPage with property
+              },
+              child: Text(
+                'Close',
+                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFF5B5FEF)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class _PublishButtonWidget extends StatelessWidget {
-  const _PublishButtonWidget({Key? key}) : super(key: key);
+  final bool isLoading;
+  final VoidCallback onPressed;
+
+  const _PublishButtonWidget({
+    Key? key,
+    required this.isLoading,
+    required this.onPressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -818,10 +1494,12 @@ class _PublishButtonWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 70.0),
             child: ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).pop(true),
-              icon: const Icon(Icons.upload_outlined, color: Colors.white, size: 20),
+              onPressed: isLoading ? null : onPressed,
+              icon: isLoading 
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Icon(Icons.upload_outlined, color: Colors.white, size: 20),
               label: Text(
-                'Publish Property',
+                isLoading ? 'Publishing your property...' : 'Publish Property',
                 style: GoogleFonts.inter(
                   color: Colors.white,
                   fontSize: 16,

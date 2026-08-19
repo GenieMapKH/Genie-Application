@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../shared/utils/app_popup.dart';
@@ -16,6 +17,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import '../utils/ocr_parser.dart';
 import 'package:genie/features/property/presentation/add_property_page.dart';
+import 'package:genie/features/property/presentation/my_properties_page.dart';
+import 'package:genie/features/property/models/property_model.dart';
 
 enum MapSkin { defaultMap, satellite }
 
@@ -776,8 +779,12 @@ class _MainLayoutState extends State<MainLayout>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      extendBody: true, // Allow map to show through the transparent nav bar
+      body: IndexedStack(
+        index: _currentIndex == 3 ? 1 : 0, // Assuming map is 0, MyProperties is 1
         children: [
+          Stack(
+            children: [
           // Google Map Background
           Positioned(
             top: 0,
@@ -1140,7 +1147,7 @@ class _MainLayoutState extends State<MainLayout>
           if (!_isDrawing)
             Positioned(
               left: 0,
-              bottom: 0,
+              bottom: 110, // Offset for extendBody bottom navigation bar
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {}, // Prevent taps from bleeding to map
@@ -1221,7 +1228,7 @@ class _MainLayoutState extends State<MainLayout>
           if (!_isDrawing)
             Positioned(
               right: 0,
-              bottom: 0,
+              bottom: 110, // Offset for extendBody bottom navigation bar
             child: TactileButton(
               onPressed: _goToCurrentPosition,
               child: SvgPicture.asset(
@@ -1235,7 +1242,7 @@ class _MainLayoutState extends State<MainLayout>
           if (_isDrawing)
             Positioned(
               left: 16,
-              bottom: 24,
+              bottom: 124, // Offset for extendBody
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {}, // Prevent taps from bleeding through to the map
@@ -1287,7 +1294,7 @@ class _MainLayoutState extends State<MainLayout>
             ),
           if (_isDrawing)
             Positioned(
-              bottom: 24,
+              bottom: 124, // Offset for extendBody
               left: 0,
               right: 0,
               child: Align(
@@ -1359,17 +1366,24 @@ class _MainLayoutState extends State<MainLayout>
                                   propertyArea: area,
                                 ),
                               ),
-                            ).then((_) {
-                              setState(() {
-                                _isDrawing = false;
-                                _isEditingPolygon = false;
-                                _selectedVertexIndex = null;
-                                _canDraw = false;
-                                _finalizedProperties.add(pointsCopy);
-                                _drawnPoints.clear();
-                                _backupPoints = null;
-                              });
-                              _updateMapOverlays();
+                            ).then((result) {
+                              if (result is PropertyModel) {
+                                setState(() {
+                                  _isDrawing = false;
+                                  _isEditingPolygon = false;
+                                  _selectedVertexIndex = null;
+                                  _canDraw = false;
+                                  _finalizedProperties.add(pointsCopy);
+                                  _drawnPoints.clear();
+                                  _backupPoints = null;
+                                });
+                                _updateMapOverlays();
+                                if (result.status == 'Active') {
+                                  setState(() => _currentIndex = 3);
+                                }
+                              } else {
+                                // User cancelled
+                              }
                             });
                           } else {
                             setState(() {
@@ -1416,7 +1430,7 @@ class _MainLayoutState extends State<MainLayout>
             if (_isDrawing && !_isEditingPolygon)
               Positioned(
                 right: 16,
-                bottom: 24,
+                bottom: 124, // Offset for extendBody
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {}, // Prevent taps from bleeding through to the map
@@ -1450,14 +1464,21 @@ class _MainLayoutState extends State<MainLayout>
                                           propertyArea: area,
                                         ),
                                       ),
-                                    ).then((_) {
-                                      setState(() {
-                                        _isDrawing = false;
-                                        _canDraw = false;
-                                        _finalizedProperties.add(pointsCopy);
-                                        _drawnPoints.clear();
-                                      });
-                                      _updateMapOverlays();
+                                    ).then((result) {
+                                      if (result is PropertyModel) {
+                                        setState(() {
+                                          _isDrawing = false;
+                                          _canDraw = false;
+                                          _finalizedProperties.add(pointsCopy);
+                                          _drawnPoints.clear();
+                                        });
+                                        _updateMapOverlays();
+                                        if (result.status == 'Active') {
+                                          setState(() => _currentIndex = 3);
+                                        }
+                                      } else {
+                                        // User cancelled
+                                      }
                                     });
                                   }
                                   return;
@@ -1499,17 +1520,22 @@ class _MainLayoutState extends State<MainLayout>
                 ),
               ),
         ],
+          ),
+          const MyPropertiesPage(isEmbedded: true),
+        ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
   Widget _buildBottomNavigationBar() {
-    return Container(
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    Widget navContent = Container(
       height: 98.0,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 1.0)),
+      decoration: BoxDecoration(
+        color: isIOS ? Colors.white.withOpacity(0.85) : Colors.white,
+        border: const Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 1.0)),
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: 16.0),
@@ -1546,6 +1572,17 @@ class _MainLayoutState extends State<MainLayout>
         ),
       ),
     );
+
+    if (isIOS) {
+      return ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+          child: navContent,
+        ),
+      );
+    }
+
+    return navContent;
   }
 
   Widget _buildNavItem({
