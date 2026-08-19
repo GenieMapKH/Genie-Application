@@ -30,7 +30,7 @@ Future<BitmapDescriptor> getSvgMarker(String assetName) async {
       height: targetHeight,
     );
   } catch (e) {
-    print('Error loading SVG marker: $e');
+    debugPrint('Error loading SVG marker: $e');
     return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
   }
 }

@@ -357,6 +357,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                     // Primary Sign up Button (#4F5BD5)
                     AppButton.primary(
+                      key: const Key('sign_up_button'),
                       text: 'Sign up',
                       isLoading: _isLoading,
                       onPressed: _handleSignUp,
@@ -395,6 +396,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                     // Google OAuth Button
                     AppButton(
+                      key: const Key('google_button'),
                       text: 'Continue with Google',
                       backgroundColor: Colors.white,
                       textColor: const Color(0xFF1F2937),
