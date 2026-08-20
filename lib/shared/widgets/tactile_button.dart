@@ -6,11 +6,7 @@ class TactileButton extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPressed;
 
-  const TactileButton({
-    super.key,
-    required this.child,
-    this.onPressed,
-  });
+  const TactileButton({super.key, required this.child, this.onPressed});
 
   @override
   State<TactileButton> createState() => _TactileButtonState();

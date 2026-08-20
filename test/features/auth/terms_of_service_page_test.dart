@@ -3,8 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/auth/presentation/terms_of_service_page.dart';
 
 void main() {
-  testWidgets('TermsOfServicePage renders sections and enforces scroll to bottom',
-      (WidgetTester tester) async {
+  testWidgets('TermsOfServicePage renders sections and enforces scroll to bottom', (
+    WidgetTester tester,
+  ) async {
     var agreed = false;
 
     tester.view.physicalSize = const Size(800, 600);
@@ -13,9 +14,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: TermsOfServicePage(
-          onAgreeChanged: (val) => agreed = val,
-        ),
+        home: TermsOfServicePage(onAgreeChanged: (val) => agreed = val),
       ),
     );
     await tester.pumpAndSettle();
@@ -27,7 +26,10 @@ void main() {
     expect(find.text('3. Property Listings'), findsOneWidget);
 
     // Initial state: not scrolled to bottom, agreement text shows scroll instruction
-    expect(find.text('Scroll to bottom to agree terms of services'), findsOneWidget);
+    expect(
+      find.text('Scroll to bottom to agree terms of services'),
+      findsOneWidget,
+    );
 
     // Tap agree before scrolling -> remains false
     await tester.tap(find.byType(Checkbox));

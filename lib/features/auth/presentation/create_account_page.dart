@@ -156,7 +156,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 408.0),
               child: Form(
@@ -230,10 +233,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         icon: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 200),
                           transitionBuilder: (child, animation) =>
-                              ScaleTransition(
-                            scale: animation,
-                            child: child,
-                          ),
+                              ScaleTransition(scale: animation, child: child),
                           child: Icon(
                             _obscurePassword
                                 ? Icons.visibility_outlined
@@ -426,7 +426,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             onTap: _navigateToLogin,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 4.0, vertical: 6.0),
+                                horizontal: 4.0,
+                                vertical: 6.0,
+                              ),
                               child: Text(
                                 'Sign in here',
                                 style: GoogleFonts.inter(

@@ -35,19 +35,35 @@ class PropertyImagePicker extends StatelessWidget {
                   children: List.generate(
                     selectedPhotos.length < 4 ? 4 : selectedPhotos.length + 1,
                     (index) {
-                      final boxSize = (MediaQuery.sizeOf(context).width - 32 - 36) / 4;
+                      final boxSize =
+                          (MediaQuery.sizeOf(context).width - 32 - 36) / 4;
                       final isPhoto = index < selectedPhotos.length;
                       return Container(
                         width: boxSize,
                         height: boxSize,
-                        margin: EdgeInsets.only(right: index == (selectedPhotos.length < 4 ? 3 : selectedPhotos.length) ? 0 : 12),
+                        margin: EdgeInsets.only(
+                          right:
+                              index ==
+                                  (selectedPhotos.length < 4
+                                      ? 3
+                                      : selectedPhotos.length)
+                              ? 0
+                              : 12,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: isPhoto ? null : Border.all(color: const Color(0xFFD1D5DB), style: BorderStyle.solid),
+                          border: isPhoto
+                              ? null
+                              : Border.all(
+                                  color: const Color(0xFFD1D5DB),
+                                  style: BorderStyle.solid,
+                                ),
                           borderRadius: BorderRadius.circular(8.0),
-                          image: isPhoto 
+                          image: isPhoto
                               ? DecorationImage(
-                                  image: FileImage(File(selectedPhotos[index].path)),
+                                  image: FileImage(
+                                    File(selectedPhotos[index].path),
+                                  ),
                                   fit: BoxFit.cover,
                                 )
                               : null,
@@ -66,14 +82,21 @@ class PropertyImagePicker extends StatelessWidget {
                                           color: Colors.black54,
                                           shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(Icons.close, size: 14, color: Colors.white),
+                                        child: const Icon(
+                                          Icons.close,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ],
                               )
                             : const Center(
-                                child: Icon(Icons.add, color: Color(0xFF9CA3AF)),
+                                child: Icon(
+                                  Icons.add,
+                                  color: Color(0xFF9CA3AF),
+                                ),
                               ),
                       );
                     },
@@ -83,12 +106,19 @@ class PropertyImagePicker extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                  const Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: Color(0xFF6B7280),
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       'Add at least 3 clear photos of the property and surrounding area',
-                      style: GoogleFonts.inter(color: const Color(0xFF6B7280), fontSize: 11),
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF6B7280),
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ],
@@ -102,12 +132,18 @@ class PropertyImagePicker extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         side: const BorderSide(color: Color(0xFFE5E7EB)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                         backgroundColor: Colors.white,
                       ),
                       child: Text(
                         'Open camera',
-                        style: GoogleFonts.inter(color: const Color(0xFF374151), fontSize: 13, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF374151),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -120,11 +156,17 @@ class PropertyImagePicker extends StatelessWidget {
                         backgroundColor: const Color(0xFF5B5FEF),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
                       child: Text(
                         'Upload property photos',
-                        style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

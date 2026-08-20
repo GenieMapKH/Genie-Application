@@ -70,15 +70,13 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
 
-    _headerSlide = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entryController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-      ),
-    );
+    _headerSlide = Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entryController,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _formFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -87,15 +85,13 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
 
-    _formSlide = Tween<Offset>(
-      begin: const Offset(0, 0.12),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entryController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
-      ),
-    );
+    _formSlide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entryController,
+            curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _actionsFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -104,15 +100,13 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
 
-    _actionsSlide = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entryController,
-        curve: const Interval(0.4, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+    _actionsSlide = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entryController,
+            curve: const Interval(0.4, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _entryController.forward();
   }
@@ -190,7 +184,10 @@ class _LoginPageState extends State<LoginPage>
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 408.0),
               child: Form(
@@ -330,7 +327,8 @@ class _LoginPageState extends State<LoginPage>
                                   if (_passwordError != null) {
                                     setState(() {
                                       if (val.isEmpty) {
-                                        _passwordError = 'Enter a valid password';
+                                        _passwordError =
+                                            'Enter a valid password';
                                       } else if (val.length < 6) {
                                         _passwordError =
                                             'Password must be at least 6 characters';
@@ -341,7 +339,8 @@ class _LoginPageState extends State<LoginPage>
                                   }
                                 },
                                 topTrailingWidget: GestureDetector(
-                                  onTap: widget.onForgotPasswordPressed ?? () {},
+                                  onTap:
+                                      widget.onForgotPasswordPressed ?? () {},
                                   child: Text(
                                     'Forget Password?',
                                     style: GoogleFonts.inter(
@@ -356,9 +355,9 @@ class _LoginPageState extends State<LoginPage>
                                     duration: const Duration(milliseconds: 200),
                                     transitionBuilder: (child, animation) =>
                                         ScaleTransition(
-                                      scale: animation,
-                                      child: child,
-                                    ),
+                                          scale: animation,
+                                          child: child,
+                                        ),
                                     child: Icon(
                                       _obscurePassword
                                           ? Icons.visibility_outlined
@@ -387,8 +386,9 @@ class _LoginPageState extends State<LoginPage>
                                       value: _keepMeSignedIn,
                                       activeColor: const Color(0xFF4F5BD5),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
+                                        borderRadius: BorderRadius.circular(
+                                          4.0,
+                                        ),
                                       ),
                                       side: const BorderSide(
                                         color: Color(0xFFCBD5E1),
@@ -453,7 +453,8 @@ class _LoginPageState extends State<LoginPage>
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
+                                      horizontal: 16.0,
+                                    ),
                                     child: Text(
                                       'or sign in with',
                                       style: GoogleFonts.inter(
@@ -488,7 +489,8 @@ class _LoginPageState extends State<LoginPage>
                               // Bottom Link: Create a Account
                               Center(
                                 child: GestureDetector(
-                                  onTap: widget.onCreateAccountPressed ??
+                                  onTap:
+                                      widget.onCreateAccountPressed ??
                                       () {
                                         Navigator.of(context).pushReplacement(
                                           AppPageRoute(

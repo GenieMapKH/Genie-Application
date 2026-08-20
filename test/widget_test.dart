@@ -5,8 +5,9 @@ import 'package:genie/main.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 
 void main() {
-  testWidgets('MyApp renders WelcomePage with smooth splash and actions',
-      (WidgetTester tester) async {
+  testWidgets('MyApp renders WelcomePage with smooth splash and actions', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
 
     // Initially displays the WelcomePage

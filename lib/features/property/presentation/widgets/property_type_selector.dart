@@ -18,7 +18,10 @@ class PropertyTypeSelector extends StatelessWidget {
     {'name': 'Building', 'iconPath': 'assets/icons/property_building.svg'},
     {'name': 'Condo', 'iconPath': 'assets/icons/property_condo.svg'},
     {'name': 'Borey', 'iconPath': 'assets/icons/property_borey.svg'},
-    {'name': 'Business for Sale', 'iconPath': 'assets/icons/property_business.svg'},
+    {
+      'name': 'Business for Sale',
+      'iconPath': 'assets/icons/property_business.svg',
+    },
     {'name': 'Warehouse', 'iconPath': 'assets/icons/property_warehouse.svg'},
   ];
 
@@ -34,12 +37,17 @@ class PropertyTypeSelector extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
-            width: (MediaQuery.sizeOf(context).width - 32 - 24) / 3, // 3 columns
+            width:
+                (MediaQuery.sizeOf(context).width - 32 - 24) / 3, // 3 columns
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF5B5FEF).withValues(alpha: 0.05) : Colors.white,
+              color: isSelected
+                  ? const Color(0xFF5B5FEF).withValues(alpha: 0.05)
+                  : Colors.white,
               border: Border.all(
-                color: isSelected ? const Color(0xFF5B5FEF) : const Color(0xFFE5E7EB),
+                color: isSelected
+                    ? const Color(0xFF5B5FEF)
+                    : const Color(0xFFE5E7EB),
                 width: 1.5,
               ),
               borderRadius: BorderRadius.circular(8.0),
@@ -49,7 +57,9 @@ class PropertyTypeSelector extends StatelessWidget {
                 SvgPicture.asset(
                   type['iconPath'],
                   colorFilter: ColorFilter.mode(
-                    isSelected ? const Color(0xFF5B5FEF) : const Color(0xFF6B7280),
+                    isSelected
+                        ? const Color(0xFF5B5FEF)
+                        : const Color(0xFF6B7280),
                     BlendMode.srcIn,
                   ),
                   width: 24,
@@ -60,7 +70,9 @@ class PropertyTypeSelector extends StatelessWidget {
                   type['name'],
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
-                    color: isSelected ? const Color(0xFF5B5FEF) : const Color(0xFF6B7280),
+                    color: isSelected
+                        ? const Color(0xFF5B5FEF)
+                        : const Color(0xFF6B7280),
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),

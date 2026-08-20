@@ -66,7 +66,10 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
 
   void _handleAgree(bool value) {
     if (!_hasScrolledToBottom) {
-      AppPopup.showError(context, 'Please scroll to the bottom of the terms to agree.');
+      AppPopup.showError(
+        context,
+        'Please scroll to the bottom of the terms to agree.',
+      );
       return;
     }
 
@@ -96,7 +99,10 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
           children: [
             // Top App Bar with back button
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
               child: Row(
                 children: [
                   IconButton(
@@ -178,11 +184,15 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                       'To use certain features, users must register using a valid phone number or email address.\nYou agree that:',
                     ),
                     const SizedBox(height: 8),
-                    _buildBulletPoint('The information you provide is accurate'),
+                    _buildBulletPoint(
+                      'The information you provide is accurate',
+                    ),
                     _buildBulletPoint(
                       'You are responsible for maintaining the confidentiality of your account',
                     ),
-                    _buildBulletPoint('You will not impersonate another person'),
+                    _buildBulletPoint(
+                      'You will not impersonate another person',
+                    ),
                     const SizedBox(height: 12),
                     _buildParagraph(
                       'Genie reserves the right to suspend accounts that provide false information.',
@@ -230,14 +240,14 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
 
             // Bottom Sticky Agree Bar
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 14.0,
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border(
-                  top: BorderSide(
-                    color: const Color(0xFFE5E7EB),
-                    width: 1.0,
-                  ),
+                  top: BorderSide(color: const Color(0xFFE5E7EB), width: 1.0),
                 ),
                 boxShadow: const [
                   BoxShadow(
@@ -333,11 +343,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
         children: [
           const Padding(
             padding: EdgeInsets.only(top: 7.0, right: 8.0),
-            child: Icon(
-              Icons.circle,
-              size: 4.5,
-              color: Color(0xFF475569),
-            ),
+            child: Icon(Icons.circle, size: 4.5, color: Color(0xFF475569)),
           ),
           Expanded(
             child: Text(

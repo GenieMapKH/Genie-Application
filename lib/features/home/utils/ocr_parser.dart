@@ -1,7 +1,9 @@
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 class OcrParser {
-  static List<Map<String, dynamic>> parseRecognizedText(RecognizedText recognizedText) {
+  static List<Map<String, dynamic>> parseRecognizedText(
+    RecognizedText recognizedText,
+  ) {
     List<Map<String, dynamic>> coordinates = [];
 
     // ML Kit structure: Blocks -> Lines -> Elements (Words)
@@ -29,7 +31,7 @@ class OcrParser {
             sumY += w.boundingBox.top;
           }
           double avgY = sumY / row.length;
-          
+
           if ((word.boundingBox.top - avgY).abs() < yTolerance) {
             row.add(word);
             placed = true;
@@ -42,15 +44,17 @@ class OcrParser {
       }
       // Sort rows from top to bottom based on their average Y coordinate
       rows.sort((a, b) {
-        double avgYa = a.fold(0.0, (sum, w) => sum + w.boundingBox.top) / a.length;
-        double avgYb = b.fold(0.0, (sum, w) => sum + w.boundingBox.top) / b.length;
+        double avgYa =
+            a.fold(0.0, (sum, w) => sum + w.boundingBox.top) / a.length;
+        double avgYb =
+            b.fold(0.0, (sum, w) => sum + w.boundingBox.top) / b.length;
         return avgYa.compareTo(avgYb);
       });
 
       for (var row in rows) {
         // Sort left to right
         row.sort((a, b) => a.boundingBox.left.compareTo(b.boundingBox.left));
-        
+
         List<double> cleanNumbers = [];
         for (var word in row) {
           String t = word.text
@@ -58,8 +62,10 @@ class OcrParser {
               .replaceAll(RegExp(r'[lI]'), '1')
               .replaceAll(RegExp(r'[Oo]'), '0')
               .replaceAll(',', '.');
-              
-          Iterable<RegExpMatch> matches = RegExp(r'\d+(?:\.\d+)?').allMatches(t);
+
+          Iterable<RegExpMatch> matches = RegExp(
+            r'\d+(?:\.\d+)?',
+          ).allMatches(t);
           for (var m in matches) {
             double? num = double.tryParse(m.group(0)!);
             if (num != null) {
@@ -91,7 +97,7 @@ class OcrParser {
             .replaceAll(RegExp(r'[lI]'), '1')
             .replaceAll(RegExp(r'[Oo]'), '0')
             .replaceAll(',', '.');
-            
+
         Iterable<RegExpMatch> matches = RegExp(r'\d+(?:\.\d+)?').allMatches(t);
         List<double> nums = [];
         for (var m in matches) {
@@ -113,7 +119,7 @@ class OcrParser {
         }
       }
     }
-    
+
     return coordinates;
   }
 }

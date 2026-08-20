@@ -3,8 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 
 void main() {
-  testWidgets('AppButton.primary renders with text and triggers callback',
-      (WidgetTester tester) async {
+  testWidgets('AppButton.primary renders with text and triggers callback', (
+    WidgetTester tester,
+  ) async {
     var wasPressed = false;
 
     await tester.pumpWidget(
@@ -31,8 +32,9 @@ void main() {
     expect(wasPressed, isTrue);
   });
 
-  testWidgets('AppButton.secondary renders with correct border and text',
-      (WidgetTester tester) async {
+  testWidgets('AppButton.secondary renders with correct border and text', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -47,16 +49,13 @@ void main() {
     expect(find.text('Explore without account'), findsOneWidget);
   });
 
-  testWidgets('AppButton displays loading indicator when isLoading is true',
-      (WidgetTester tester) async {
+  testWidgets('AppButton displays loading indicator when isLoading is true', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: AppButton(
-            text: 'Submit',
-            onPressed: () {},
-            isLoading: true,
-          ),
+          body: AppButton(text: 'Submit', onPressed: () {}, isLoading: true),
         ),
       ),
     );

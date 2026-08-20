@@ -13,14 +13,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class UtmLocateBottomSheet extends StatefulWidget {
   final List<Map<String, dynamic>>? initialCoordinates;
-  
+
   const UtmLocateBottomSheet({super.key, this.initialCoordinates});
 
   @override
   State<UtmLocateBottomSheet> createState() => _UtmLocateBottomSheetState();
 }
 
-class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with SingleTickerProviderStateMixin {
+class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
+    with SingleTickerProviderStateMixin {
   final List<Map<String, TextEditingController>> _coordinateRows = [];
   bool _isScanning = false;
   double _uploadProgress = 0.0;
@@ -36,8 +37,9 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
   @override
   void initState() {
     super.initState();
-    
-    if (widget.initialCoordinates != null && widget.initialCoordinates!.isNotEmpty) {
+
+    if (widget.initialCoordinates != null &&
+        widget.initialCoordinates!.isNotEmpty) {
       for (var coord in widget.initialCoordinates!) {
         _coordinateRows.add({
           'x': TextEditingController(text: coord['x'].toString()),
@@ -59,12 +61,13 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       duration: const Duration(milliseconds: 600),
     );
 
-    _slideAnimation1 = Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-      ),
-    );
+    _slideAnimation1 =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+          ),
+        );
     _fadeAnimation1 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -72,12 +75,13 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       ),
     );
 
-    _slideAnimation2 = Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
-      ),
-    );
+    _slideAnimation2 =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+          ),
+        );
     _fadeAnimation2 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -85,12 +89,13 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       ),
     );
 
-    _slideAnimation3 = Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.4, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+    _slideAnimation3 =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.4, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
     _fadeAnimation3 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -128,7 +133,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       maxHeight: 1000,
       imageQuality: 70,
     );
-    
+
     if (image == null) return; // User canceled camera
 
     final croppedFile = await ImageCropper().cropImage(
@@ -143,12 +148,10 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
           lockAspectRatio: false,
           hideBottomControls: false,
         ),
-        IOSUiSettings(
-          title: 'Crop Document',
-        ),
+        IOSUiSettings(title: 'Crop Document'),
       ],
     );
-    
+
     if (croppedFile == null) return; // User canceled crop
 
     setState(() {
@@ -161,10 +164,10 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       debugPrint('Running native ML Kit OCR...');
       final textRecognizer = TextRecognizer();
       final inputImage = InputImage.fromFilePath(croppedFile.path);
-      
+
       final recognizedText = await textRecognizer.processImage(inputImage);
       final coordinates = OcrParser.parseRecognizedText(recognizedText);
-      
+
       await textRecognizer.close();
 
       if (mounted) {
@@ -181,7 +184,10 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
               _coordinateRows[i]['x']!.text = coordinates[i]['x'].toString();
               _coordinateRows[i]['y']!.text = coordinates[i]['y'].toString();
             }
-            AppPopup.showSuccess(context, 'Successfully extracted ${coordinates.length} coordinate(s) natively!');
+            AppPopup.showSuccess(
+              context,
+              'Successfully extracted ${coordinates.length} coordinate(s) natively!',
+            );
           } else {
             AppPopup.showInfo(context, 'No coordinates found in the image.');
           }
@@ -214,7 +220,10 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
       }
 
       if (xText.isEmpty || yText.isEmpty) {
-        AppPopup.showError(context, 'Please fill both X and Y coordinates for a row, or leave both empty.');
+        AppPopup.showError(
+          context,
+          'Please fill both X and Y coordinates for a row, or leave both empty.',
+        );
         return;
       }
 
@@ -242,7 +251,10 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
     }
 
     if (points.length < 3) {
-      AppPopup.showError(context, 'Please enter at least 3 coordinates to form a property.');
+      AppPopup.showError(
+        context,
+        'Please enter at least 3 coordinates to form a property.',
+      );
       return;
     }
 
@@ -268,7 +280,12 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 16),
+            padding: const EdgeInsets.only(
+              top: 20,
+              left: 16,
+              right: 16,
+              bottom: 16,
+            ),
             child: Row(
               children: [
                 GestureDetector(
@@ -291,7 +308,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
               ],
             ),
           ),
-          
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -317,7 +334,11 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(Icons.info_outline, size: 16, color: Color(0xFF6B7280)),
+                              const Icon(
+                                Icons.info_outline,
+                                size: 16,
+                                color: Color(0xFF6B7280),
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 'CRS: WGS84 / UTM Zone 48P',
@@ -351,11 +372,16 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(Icons.document_scanner_outlined, size: 40, color: Color(0xFF4B5563)),
+                                const Icon(
+                                  Icons.document_scanner_outlined,
+                                  size: 40,
+                                  color: Color(0xFF4B5563),
+                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Scan UTM from Document',
@@ -387,7 +413,9 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                                  border: Border.all(
+                                    color: const Color(0xFFE5E7EB),
+                                  ),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
@@ -398,7 +426,9 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                                           child: FractionallySizedBox(
                                             alignment: Alignment.centerLeft,
                                             widthFactor: _uploadProgress,
-                                            child: Container(color: const Color(0xFFE5E7EB)),
+                                            child: Container(
+                                              color: const Color(0xFFE5E7EB),
+                                            ),
                                           ),
                                         ),
                                       Center(
@@ -410,7 +440,9 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                                                 style: GoogleFonts.inter(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
-                                                  color: const Color(0xFF374151),
+                                                  color: const Color(
+                                                    0xFF374151,
+                                                  ),
                                                 ),
                                               )
                                             : Text(
@@ -418,7 +450,9 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                                                 style: GoogleFonts.inter(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
-                                                  color: const Color(0xFF374151),
+                                                  color: const Color(
+                                                    0xFF374151,
+                                                  ),
                                                 ),
                                               ),
                                       ),
@@ -448,121 +482,77 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                           border: Border.all(color: const Color(0xFFE5E7EB)),
                         ),
                         child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SvgPicture.asset(
-                              'assets/icons/keyboard.svg',
-                              width: 40,
-                              height: 40,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icons/keyboard.svg',
+                                  width: 40,
+                                  height: 40,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Enter Coordinates Manually',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFF1F2937),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Type UTM Zone, Easting (X), and Northing (Y).',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          color: const Color(0xFF6B7280),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Enter Coordinates Manually',
+                            const SizedBox(height: 20),
+                            Center(
+                              child: Container(
+                                height: 44,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFF5B5FEF,
+                                  ), // Purple color from screenshot
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Enter Coordinates',
                                     style: GoogleFonts.inter(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF1F2937),
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Type UTM Zone, Easting (X), and Northing (Y).',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13,
-                                      color: const Color(0xFF6B7280),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Center(
-                          child: Container(
-                            height: 44,
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF5B5FEF), // Purple color from screenshot
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Enter Coordinates',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        
-                        // Table Headers
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 24,
-                              child: Text(
-                                '#',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF374151),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  'X',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF374151),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  'Y',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF374151),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
+                            const SizedBox(height: 24),
 
-                        // Coordinate Rows
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _coordinateRows.length,
-                          separatorBuilder: (context, index) => const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            return Row(
+                            // Table Headers
+                            Row(
                               children: [
                                 SizedBox(
                                   width: 24,
                                   child: Text(
-                                    '$index.',
+                                    '#',
                                     style: GoogleFonts.inter(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -571,93 +561,167 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet> with Single
                                   ),
                                 ),
                                 Expanded(
-                                  child: Container(
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: const Color(0xFFE5E7EB)),
-                                    ),
-                                    child: TextField(
-                                      controller: _coordinateRows[index]['x'],
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                        hintText: 'e.g. 485230',
-                                        hintStyle: GoogleFonts.inter(
-                                          color: const Color(0xFFD1D5DB),
-                                          fontSize: 14,
-                                        ),
+                                  child: Center(
+                                    child: Text(
+                                      'X',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF374151),
                                       ),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Container(
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: const Color(0xFFE5E7EB)),
-                                    ),
-                                    child: TextField(
-                                      controller: _coordinateRows[index]['y'],
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                        hintText: 'e.g. 1358420',
-                                        hintStyle: GoogleFonts.inter(
-                                          color: const Color(0xFFD1D5DB),
-                                          fontSize: 14,
-                                        ),
+                                  child: Center(
+                                    child: Text(
+                                      'Y',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF374151),
                                       ),
                                     ),
                                   ),
                                 ),
                               ],
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        
-                        // Add Button
-                        Center(
-                          child: GestureDetector(
-                            onTap: _addNewRow,
-                            child: Container(
-                              width: 60,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(color: const Color(0xFFE5E7EB)),
-                              ),
-                              child: const Center(
-                                child: Icon(Icons.add, color: Color(0xFF6B7280), size: 20),
+                            ),
+                            const SizedBox(height: 12),
+
+                            // Coordinate Rows
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: _coordinateRows.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                return Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 24,
+                                      child: Text(
+                                        '$index.',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFF374151),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        height: 44,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: const Color(0xFFE5E7EB),
+                                          ),
+                                        ),
+                                        child: TextField(
+                                          controller:
+                                              _coordinateRows[index]['x'],
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 12,
+                                                ),
+                                            hintText: 'e.g. 485230',
+                                            hintStyle: GoogleFonts.inter(
+                                              color: const Color(0xFFD1D5DB),
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Container(
+                                        height: 44,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: const Color(0xFFE5E7EB),
+                                          ),
+                                        ),
+                                        child: TextField(
+                                          controller:
+                                              _coordinateRows[index]['y'],
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 12,
+                                                ),
+                                            hintText: 'e.g. 1358420',
+                                            hintStyle: GoogleFonts.inter(
+                                              color: const Color(0xFFD1D5DB),
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Add Button
+                            Center(
+                              child: GestureDetector(
+                                onTap: _addNewRow,
+                                child: Container(
+                                  width: 60,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(18),
+                                    border: Border.all(
+                                      color: const Color(0xFFE5E7EB),
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Color(0xFF6B7280),
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 100), // Space for bottom button
-            ],
+                  const SizedBox(height: 100), // Space for bottom button
+                ],
               ),
             ),
           ),
-          
+
           // Fixed Preview Button at bottom
           Container(
             padding: EdgeInsets.only(
-              left: 16, 
-              right: 16, 
-              top: 16, 
+              left: 16,
+              right: 16,
+              top: 16,
               bottom: MediaQuery.of(context).padding.bottom + 16,
             ),
             decoration: BoxDecoration(

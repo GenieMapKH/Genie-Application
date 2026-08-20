@@ -5,10 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class GoogleIcon extends StatelessWidget {
   final double size;
 
-  const GoogleIcon({
-    super.key,
-    this.size = 20.0,
-  });
+  const GoogleIcon({super.key, this.size = 20.0});
 
   static const String _svgContent = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">

@@ -38,10 +38,7 @@ class _LoadingPageState extends State<LoadingPage>
     )..repeat(reverse: true);
 
     _pulseAnimation = Tween<double>(begin: 0.96, end: 1.02).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
     if (widget.displayDuration > Duration.zero) {
