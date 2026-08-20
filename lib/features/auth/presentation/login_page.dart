@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
+import 'package:genie/core/di/service_locator.dart';
+import 'package:genie/features/home/presentation/main_layout.dart';
 import 'package:genie/features/auth/presentation/create_account_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
 import 'package:genie/shared/widgets/app_button.dart';
@@ -165,12 +168,47 @@ class _LoginPageState extends State<LoginPage>
     return isValid;
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     final isValid = _validateForm();
-    if (isValid && widget.onLoginPressed != null) {
+    if (isValid) {
       setState(() => _isLoading = true);
       try {
-        widget.onLoginPressed!();
+        if (_selectedMethod == AuthMethod.email) {
+          await locator.authService.login(
+            _emailController.text,
+            _passwordController.text,
+          );
+        } else {
+          // Placeholder for phone login
+        }
+
+        if (widget.onLoginPressed != null) {
+          widget.onLoginPressed!();
+        } else {
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              AppPageRoute(page: const MainLayout()),
+            );
+          }
+        }
+      } on DioException catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Login failed: ${e.response?.data['message'] ?? e.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('An error occurred: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } finally {
         if (mounted) setState(() => _isLoading = false);
       }

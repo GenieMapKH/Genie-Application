@@ -47,6 +47,9 @@ dependencies:
   flutter_displaymode: ^0.7.0
 
   google_maps_flutter_platform_interface: any
+  firebase_auth: ^6.5.7
+  dio: ^5.11.0
+  flutter_secure_storage: ^11.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
