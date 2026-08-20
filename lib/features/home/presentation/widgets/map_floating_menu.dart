@@ -63,7 +63,7 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
   }) {
     return SizeTransition(
       sizeFactor: _expandAnimation,
-      axisAlignment: -1.0,
+      alignment: const Alignment(-1.0, -1.0),
       child: FadeTransition(
         opacity: _expandAnimation,
         child: Padding(

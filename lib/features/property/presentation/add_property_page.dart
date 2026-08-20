@@ -1325,40 +1325,52 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
 
     if (_selectedPropertyType == 'Land' || _selectedPropertyType.isEmpty) {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty)
+      if (_selectedListingSetting.isEmpty) {
         firstErrorKey ??= _listingSettingsKey;
-      if (_landSizeController.text.trim().isEmpty)
+      }
+      if (_landSizeController.text.trim().isEmpty) {
         firstErrorKey ??= _landSizeKey;
+      }
     } else if (_selectedPropertyType == 'House' ||
         _selectedPropertyType == 'Warehouse') {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty)
+      if (_selectedListingSetting.isEmpty) {
         firstErrorKey ??= _listingSettingsKey;
-      if (_landSizeController.text.trim().isEmpty)
+      }
+      if (_landSizeController.text.trim().isEmpty) {
         firstErrorKey ??= _landSizeKey;
-      if (_buildingSizeController.text.trim().isEmpty)
+      }
+      if (_buildingSizeController.text.trim().isEmpty) {
         firstErrorKey ??= _buildingSizeKey;
+      }
     } else if (_selectedPropertyType == 'Building') {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty)
+      if (_selectedListingSetting.isEmpty) {
         firstErrorKey ??= _listingSettingsKey;
-      if (_landSizeController.text.trim().isEmpty)
+      }
+      if (_landSizeController.text.trim().isEmpty) {
         firstErrorKey ??= _landSizeKey;
-      if (_buildingSizeController.text.trim().isEmpty)
+      }
+      if (_buildingSizeController.text.trim().isEmpty) {
         firstErrorKey ??= _buildingSizeKey;
+      }
     } else if (_selectedPropertyType == 'Condo') {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty)
+      if (_selectedListingSetting.isEmpty) {
         firstErrorKey ??= _listingSettingsKey;
-      if (_unitSizeController.text.trim().isEmpty)
+      }
+      if (_unitSizeController.text.trim().isEmpty) {
         firstErrorKey ??= _unitSizeKey;
+      }
     } else if (_selectedPropertyType == 'Borey') {
       // Title is already checked
     } else if (_selectedPropertyType == 'Business for Sale') {
-      if (_landSizeController.text.trim().isEmpty)
+      if (_landSizeController.text.trim().isEmpty) {
         firstErrorKey ??= _landSizeKey;
-      if (_selectedListingSetting.isEmpty)
+      }
+      if (_selectedListingSetting.isEmpty) {
         firstErrorKey ??= _listingSettingsKey;
+      }
     }
 
     if (firstErrorKey != null) {

@@ -31,15 +31,11 @@ class _MainLayoutState extends State<MainLayout>
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
-  bool _isMenuOpen = false;
   late AnimationController _animationController;
-  late Animation<double> _expandAnimation;
   Timer? _spinTimer;
 
   // Drawing Mode States
   bool _isDrawing = false;
-  bool _canDraw =
-      false; // Used to prevent taps immediately after entering drawing mode
   bool _isEditingPolygon = false;
   int? _selectedVertexIndex;
 
@@ -51,7 +47,6 @@ class _MainLayoutState extends State<MainLayout>
   Set<Polyline> _polylines = {};
   BitmapDescriptor? _pinIcon;
   BitmapDescriptor? _greenDotIcon;
-  BitmapDescriptor? _detailedPropertyIcon;
   BitmapDescriptor? _smallWhiteDotIcon;
   double _currentZoom = 14.4746;
   LatLng? _currentMapCenter = const LatLng(11.5564, 104.9282);
@@ -68,10 +63,6 @@ class _MainLayoutState extends State<MainLayout>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
-    );
-    _expandAnimation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
     );
     _loadMapIcons();
     _initLocation();
@@ -95,9 +86,6 @@ class _MainLayoutState extends State<MainLayout>
   Future<void> _loadMapIcons() async {
     _pinIcon = await getSvgMarker('assets/icons/pin.svg');
     _greenDotIcon = await DynamicMapMarkers.createGreenDotMarker();
-    _detailedPropertyIcon = await DynamicMapMarkers.createTextMarker(
-      '\$120,000',
-    );
     _smallWhiteDotIcon = await DynamicMapMarkers.createSmallWhiteDotMarker();
     _updateMapOverlays();
   }
@@ -148,7 +136,9 @@ class _MainLayoutState extends State<MainLayout>
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       final GoogleMapController controller = await _mapController.future;
@@ -165,116 +155,6 @@ class _MainLayoutState extends State<MainLayout>
         AppPopup.showError(context, 'Could not get location: $e');
       }
     }
-  }
-
-  Widget _buildAnimatedMenuItem({
-    required String iconPath,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return SizeTransition(
-      sizeFactor: _expandAnimation,
-      child: FadeTransition(
-        opacity: _expandAnimation,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, bottom: 12.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TactileButton(
-                onPressed: () {
-                  // Close menu on tap and trigger action
-                  setState(() {
-                    _isMenuOpen = false;
-                    _animationController.reverse();
-                  });
-                  onTap();
-                },
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xFFE5E7EB),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      iconPath,
-                      width: 22,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 12.0,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24.0),
-                  border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  label,
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF4B5563),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCircleButton(
-    String iconPath, {
-    required VoidCallback onPressed,
-  }) {
-    return TactileButton(
-      onPressed: onPressed,
-      child: Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Center(child: SvgPicture.asset(iconPath, width: 34, height: 34)),
-      ),
-    );
   }
 
   void _onMapTapped(LatLng position) {
@@ -341,39 +221,6 @@ class _MainLayoutState extends State<MainLayout>
     });
   }
 
-  Future<void> _animateToPolygon(List<LatLng> points) async {
-    if (points.isEmpty) return;
-
-    final GoogleMapController controller = await _mapController.future;
-
-    if (points.length == 1) {
-      controller.animateCamera(CameraUpdate.newLatLngZoom(points.first, 18.0));
-      return;
-    }
-
-    double minLat = points[0].latitude;
-    double maxLat = points[0].latitude;
-    double minLng = points[0].longitude;
-    double maxLng = points[0].longitude;
-
-    for (var point in points) {
-      if (point.latitude < minLat) minLat = point.latitude;
-      if (point.latitude > maxLat) maxLat = point.latitude;
-      if (point.longitude < minLng) minLng = point.longitude;
-      if (point.longitude > maxLng) maxLng = point.longitude;
-    }
-
-    controller.animateCamera(
-      CameraUpdate.newLatLngBounds(
-        LatLngBounds(
-          southwest: LatLng(minLat, minLng),
-          northeast: LatLng(maxLat, maxLng),
-        ),
-        50.0, // padding
-      ),
-    );
-  }
-
   bool _shouldShowEdgeLengths(double area) {
     // Edge lengths will disappear before the area bubble,
     // but they show up much earlier for larger properties.
@@ -389,12 +236,13 @@ class _MainLayoutState extends State<MainLayout>
 
     if (area <= 10000 && _currentZoom <= 16.0) {
       size *= 0.75;
-    } else if (area <= 1000 && _currentZoom <= 17.5)
+    } else if (area <= 1000 && _currentZoom <= 17.5) {
       size *= 0.75;
-    else if (area <= 100 && _currentZoom <= 18.5)
+    } else if (area <= 100 && _currentZoom <= 18.5) {
       size *= 0.75;
-    else if (area <= 50 && _currentZoom <= 19.5)
+    } else if (area <= 50 && _currentZoom <= 19.5) {
       size *= 0.6;
+    }
 
     return size.clamp(8.0, 16.0);
   }
@@ -532,7 +380,7 @@ class _MainLayoutState extends State<MainLayout>
                   position: propPoints[i],
                   icon: markerIcon,
                   anchor: const Offset(0.5, 0.5),
-                  zIndex: 3,
+                  zIndexInt: 3,
                 ),
               );
             }
@@ -561,7 +409,7 @@ class _MainLayoutState extends State<MainLayout>
                     position: midPoint,
                     icon: lengthIcon,
                     anchor: const Offset(0.5, 0.5),
-                    zIndex: 2,
+                    zIndexInt: 2,
                   ),
                 );
               }
@@ -589,7 +437,7 @@ class _MainLayoutState extends State<MainLayout>
                 position: centroid,
                 icon: areaIcon,
                 anchor: const Offset(0.5, 0.5),
-                zIndex: 1,
+                zIndexInt: 1,
               ),
             );
           }
@@ -612,10 +460,10 @@ class _MainLayoutState extends State<MainLayout>
                 _isDrawing = true;
                 _isEditingPolygon = true;
                 _selectedVertexIndex = null;
-                _canDraw = false;
+                // _canDraw = false;
               });
               Future.delayed(const Duration(milliseconds: 300), () {
-                if (mounted) setState(() => _canDraw = true);
+                // if (mounted) setState(() => _canDraw = true);
               });
               _updateMapOverlays();
             },
@@ -711,7 +559,7 @@ class _MainLayoutState extends State<MainLayout>
                     position: midPoint,
                     icon: lengthIcon,
                     anchor: const Offset(0.5, 0.5),
-                    zIndex: 2,
+                    zIndexInt: 2,
                   ),
                 );
               }
@@ -739,7 +587,7 @@ class _MainLayoutState extends State<MainLayout>
               position: centroid,
               icon: areaIcon,
               anchor: const Offset(0.5, 0.5),
-              zIndex: 1,
+              zIndexInt: 1,
             ),
           );
         }
@@ -829,10 +677,10 @@ class _MainLayoutState extends State<MainLayout>
               (p1.longitude + p2.longitude) / 2,
             );
             final lengthStr = '${dist.toStringAsFixed(0)} m';
-            // Use 36 for default font size since area is unknown
+            final double edgeFontSize = _calculateFontSize(0, isArea: false);
             final lengthIcon = await DynamicMapMarkers.createTextMarker(
               lengthStr,
-              fontSize: 36,
+              fontSize: edgeFontSize,
             );
 
             newMarkers.add(
@@ -841,7 +689,7 @@ class _MainLayoutState extends State<MainLayout>
                 position: midPoint,
                 icon: lengthIcon,
                 anchor: const Offset(0.5, 0.5),
-                zIndex: 2,
+                zIndexInt: 2,
               ),
             );
           }
@@ -882,7 +730,7 @@ class _MainLayoutState extends State<MainLayout>
           _isDrawing = false;
           _isEditingPolygon = false;
           _selectedVertexIndex = null;
-          _canDraw = false;
+          // _canDraw = false;
           _finalizedProperties.add(pointsCopy);
           _drawnPoints.clear();
           _backupPoints = null;
@@ -1027,7 +875,7 @@ class _MainLayoutState extends State<MainLayout>
                       setState(() {
                         _isDrawing = true;
                         _isEditingPolygon = true;
-                        _canDraw = false;
+                        // _canDraw = false;
                         _drawnPoints = List.from(result);
                       });
                       _updateMapOverlays();
@@ -1045,10 +893,10 @@ class _MainLayoutState extends State<MainLayout>
                   onDrawPressed: () {
                     setState(() {
                       _isDrawing = true;
-                      _canDraw = false;
+                      // _canDraw = false;
                     });
                     Future.delayed(const Duration(milliseconds: 300), () {
-                      if (mounted) setState(() => _canDraw = true);
+                      // if (mounted) setState(() => _canDraw = true);
                     });
                   },
                   onCoordinatesScanned: (result) {
@@ -1056,7 +904,7 @@ class _MainLayoutState extends State<MainLayout>
                       setState(() {
                         _isDrawing = true;
                         _isEditingPolygon = true;
-                        _canDraw = false;
+                        // _canDraw = false;
                         _drawnPoints = List.from(result);
                       });
                       _updateMapOverlays();
@@ -1113,7 +961,7 @@ class _MainLayoutState extends State<MainLayout>
                         _isEditingPolygon = false;
                         _selectedVertexIndex = null;
                         _backupPoints = null; // Deleted!
-                        _canDraw = false;
+                        // _canDraw = false;
                       }
                       _updateMapOverlays();
                     });
@@ -1123,7 +971,7 @@ class _MainLayoutState extends State<MainLayout>
                       _isDrawing = false;
                       _isEditingPolygon = false;
                       _selectedVertexIndex = null;
-                      _canDraw = false;
+                      // _canDraw = false;
                       if (_backupPoints != null) {
                         _finalizedProperties.add(_backupPoints!);
                         _backupPoints = null;
@@ -1138,7 +986,7 @@ class _MainLayoutState extends State<MainLayout>
                     } else {
                       setState(() {
                         _isDrawing = false;
-                        _canDraw = false;
+                        // _canDraw = false;
                         _backupPoints = null;
                         _drawnPoints.clear();
                       });
