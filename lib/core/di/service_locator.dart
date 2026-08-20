@@ -10,7 +10,7 @@ class ServiceLocator {
   
   ServiceLocator._internal();
 
-  late final authService = AuthService(createApiClient());
+  AuthService authService = AuthService(createApiClient());
 }
 
 final locator = ServiceLocator();

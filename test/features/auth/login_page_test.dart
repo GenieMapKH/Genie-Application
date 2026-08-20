@@ -3,8 +3,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/auth/presentation/login_page.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
+import 'package:genie/core/services/auth_service.dart';
+import 'package:genie/core/di/service_locator.dart';
+import 'package:dio/dio.dart';
+
+class MockAuthService extends AuthService {
+  MockAuthService() : super(Dio());
+  @override
+  Future<void> login(String email, String password) async {}
+}
 
 void main() {
+  setUpAll(() {
+    locator.authService = MockAuthService();
+  });
+
   testWidgets('LoginPage renders all elements in Email mode by default', (
     WidgetTester tester,
   ) async {

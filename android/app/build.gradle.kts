@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.genie"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -40,8 +40,4 @@ android {
 
 flutter {
     source = "../.."
-}
-
-kotlin {
-    jvmToolchain(17)
 }
