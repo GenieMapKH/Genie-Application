@@ -94,18 +94,18 @@ jobs:
 
       - name: Send APK to Telegram (with retry for 504 Timeouts)
         uses: Wandalen/wretry.action@v3.1.0
+        env:
+          INPUT_TO: ${{ secrets.TELEGRAM_CHAT_ID }}
+          INPUT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          INPUT_DOCUMENT: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          INPUT_MESSAGE: |
+            🚀 *New Genie App Release!*
+            
+            *Changelog:*
+            ${{ github.event.head_commit.message }}
+            
+            ✅ *Passed all tests and static analysis!*
         with:
           action: appleboy/telegram-action@master
-          with: |
-            to: ${{ secrets.TELEGRAM_CHAT_ID }}
-            token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-            message: |
-              🚀 *New Genie App Release!*
-              
-              *Changelog:*
-              ${{ github.event.head_commit.message }}
-              
-              ✅ *Passed all tests and static analysis!*
-            document: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
           attempt_limit: 3
           attempt_delay: 10000
