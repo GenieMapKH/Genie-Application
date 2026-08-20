@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
+import 'package:genie/core/di/service_locator.dart';
 import 'package:genie/features/auth/presentation/login_page.dart';
 import 'package:genie/features/auth/presentation/terms_of_service_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
@@ -101,12 +103,47 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return isValid;
   }
 
-  void _handleSignUp() {
+  Future<void> _handleSignUp() async {
     final isValid = _validateForm();
-    if (isValid && widget.onSignUpPressed != null) {
+    if (isValid) {
       setState(() => _isLoading = true);
       try {
-        widget.onSignUpPressed!();
+        await locator.authService.register(
+          _identifierController.text,
+          _passwordController.text,
+        );
+
+        if (widget.onSignUpPressed != null) {
+          widget.onSignUpPressed!();
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Account created successfully! Please login.'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            _navigateToLogin();
+          }
+        }
+      } on DioException catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Registration failed: ${e.response?.data['message'] ?? e.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('An error occurred: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } finally {
         if (mounted) setState(() => _isLoading = false);
       }

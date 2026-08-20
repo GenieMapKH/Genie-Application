@@ -107,15 +107,35 @@ jobs:
           echo "$EOF" >> $GITHUB_ENV
 
       - name: Send APK to Telegram (with retry for 504 Timeouts)
-        uses: Wandalen/wretry.action@v3.1.0
-        with:
-          action: appleboy/telegram-action@master
-          with: >-
-            {
-              "to": "${{ secrets.TELEGRAM_CHAT_ID }}",
-              "token": "${{ secrets.TELEGRAM_BOT_TOKEN }}",
-              "document": "build/app/outputs/flutter-apk/app-arm64-v8a-release.apk",
-              "message": ${{ toJSON(env.FULL_MESSAGE) }}
-            }
-          attempt_limit: 3
-          attempt_delay: 10000
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          MAX_RETRIES=3
+          DELAY=10
+          
+          for ((i=1; i<=MAX_RETRIES; i++)); do
+            echo "Attempt $i to upload APK to Telegram..."
+            HTTP_RESPONSE=$(curl -s -w "%{http_code}" -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument" \
+              -F "chat_id=$TELEGRAM_CHAT_ID" \
+              -F "document=@build/app/outputs/flutter-apk/app-arm64-v8a-release.apk" \
+              -F "caption=$FULL_MESSAGE" \
+              -F "parse_mode=Markdown" \
+              -o response.json)
+              
+            if [ "$HTTP_RESPONSE" -eq 200 ]; then
+              echo "✅ Successfully uploaded APK!"
+              cat response.json
+              exit 0
+            else
+              echo "❌ Failed to upload (HTTP $HTTP_RESPONSE)."
+              cat response.json || true
+              if [ $i -lt $MAX_RETRIES ]; then
+                echo "Retrying in $DELAY seconds..."
+                sleep $DELAY
+              else
+                echo "All retries failed."
+                exit 1
+              fi
+            fi
+          done
