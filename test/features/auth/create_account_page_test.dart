@@ -4,17 +4,14 @@ import 'package:genie/features/auth/presentation/create_account_page.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
 
 void main() {
-  testWidgets('CreateAccountPage renders all form elements and links',
-      (WidgetTester tester) async {
+  testWidgets('CreateAccountPage renders all form elements and links', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: CreateAccountPage(),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: CreateAccountPage()));
     await tester.pumpAndSettle();
 
     // Verify Title
@@ -37,17 +34,14 @@ void main() {
     expect(find.text('Sign in here'), findsOneWidget);
   });
 
-  testWidgets('CreateAccountPage validates inputs on submit',
-      (WidgetTester tester) async {
+  testWidgets('CreateAccountPage validates inputs on submit', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: CreateAccountPage(),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: CreateAccountPage()));
     await tester.pumpAndSettle();
 
     // Tap Sign up with empty fields
@@ -58,13 +52,20 @@ void main() {
 
     // Verify errors
     expect(find.text('Please enter your name'), findsOneWidget);
-    expect(find.text('Enter a valid email address or phone number'), findsOneWidget);
+    expect(
+      find.text('Enter a valid email address or phone number'),
+      findsOneWidget,
+    );
     expect(find.text('Enter a valid password'), findsOneWidget);
-    expect(find.text('Please agree to the terms of services to continue.'), findsOneWidget);
+    expect(
+      find.text('Please agree to the terms of services to continue.'),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('CreateAccountPage triggers callbacks on valid submit',
-      (WidgetTester tester) async {
+  testWidgets('CreateAccountPage triggers callbacks on valid submit', (
+    WidgetTester tester,
+  ) async {
     var signUpCalled = false;
     var googleCalled = false;
     var signInHereCalled = false;
@@ -112,7 +113,10 @@ void main() {
     await tester.pumpAndSettle();
 
     // Scroll to bottom of terms
-    await tester.drag(find.byType(SingleChildScrollView).last, const Offset(0, -3000));
+    await tester.drag(
+      find.byType(SingleChildScrollView).last,
+      const Offset(0, -3000),
+    );
     await tester.pumpAndSettle();
 
     // Tap agree checkbox in terms modal

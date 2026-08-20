@@ -149,9 +149,7 @@ class _AppTextFieldState extends State<AppTextField> {
           hintStyle: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: hasError
-                ? const Color(0xFFE57373)
-                : const Color(0xFF9CA3AF),
+            color: hasError ? const Color(0xFFE57373) : const Color(0xFF9CA3AF),
           ),
           filled: true,
           fillColor: Colors.white,
@@ -180,11 +178,7 @@ class _AppTextFieldState extends State<AppTextField> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.info_outline,
-                    size: 14.0,
-                    color: errorColor,
-                  ),
+                  const Icon(Icons.info_outline, size: 14.0, color: errorColor),
                   const SizedBox(width: 5),
                   Flexible(
                     child: Text(

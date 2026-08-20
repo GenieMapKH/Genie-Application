@@ -18,7 +18,8 @@ void main() async {
     // }
 
     AndroidMapRenderer mapRenderer = AndroidMapRenderer.latest;
-    final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
+    final GoogleMapsFlutterPlatform mapsImplementation =
+        GoogleMapsFlutterPlatform.instance;
     if (mapsImplementation is GoogleMapsFlutterAndroid) {
       mapsImplementation.initializeWithRenderer(mapRenderer);
     }
@@ -42,9 +43,7 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFF4F5BD5),
           surface: Colors.white,
         ),
-        textTheme: GoogleFonts.interTextTheme(
-          Theme.of(context).textTheme,
-        ),
+        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
         useMaterial3: true,
       ),
       home: const WelcomePage(),

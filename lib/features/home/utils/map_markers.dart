@@ -11,14 +11,18 @@ class DynamicMapMarkers {
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 36.0;
     const double pixelRatio = 3.0;
-    
+
     canvas.scale(pixelRatio, pixelRatio);
-    
+
     // Draw white circle with shadow
     final Paint shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.15)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
-    canvas.drawCircle(const Offset(size / 2, size / 2 + 1), size / 2.5, shadowPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2 + 1),
+      size / 2.5,
+      shadowPaint,
+    );
 
     final Paint paint = Paint()..color = Colors.white;
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 2.5, paint);
@@ -31,7 +35,8 @@ class DynamicMapMarkers {
           color: Color(0xFF6B7280), // Gray text
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Inter', // Note: Using default if Inter isn't loaded on Canvas yet
+          fontFamily:
+              'Inter', // Note: Using default if Inter isn't loaded on Canvas yet
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -39,10 +44,16 @@ class DynamicMapMarkers {
     textPainter.layout();
     textPainter.paint(
       canvas,
-      Offset(size / 2 - textPainter.width / 2, size / 2 - textPainter.height / 2),
+      Offset(
+        size / 2 - textPainter.width / 2,
+        size / 2 - textPainter.height / 2,
+      ),
     );
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (size * pixelRatio).toInt(),
+      (size * pixelRatio).toInt(),
+    );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
@@ -52,13 +63,17 @@ class DynamicMapMarkers {
   }
 
   /// Creates a pill-shaped marker with text (e.g. for area and lengths)
-  static Future<BitmapDescriptor> createTextMarker(String text, {bool isArea = false, double? fontSize}) async {
+  static Future<BitmapDescriptor> createTextMarker(
+    String text, {
+    bool isArea = false,
+    double? fontSize,
+  }) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double pixelRatio = 3.0;
-    
+
     canvas.scale(pixelRatio, pixelRatio);
-    
+
     final double actualFontSize = fontSize ?? (isArea ? 14.0 : 12.0);
 
     final TextPainter textPainter = TextPainter(
@@ -79,13 +94,16 @@ class DynamicMapMarkers {
     final double paddingVertical = (isArea ? 6.0 : 4.0) * scaleRatio;
     final double width = textPainter.width + paddingHorizontal * 2;
     final double height = textPainter.height + paddingVertical * 2;
-    
+
     // Draw shadow
     final Paint shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.15)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
     final RRect shadowRRect = RRect.fromLTRBR(
-      0, 2, width, height + 2,
+      0,
+      2,
+      width,
+      height + 2,
       const Radius.circular(24.0),
     );
     canvas.drawRRect(shadowRRect, shadowPaint);
@@ -93,24 +111,27 @@ class DynamicMapMarkers {
     // Draw white background
     final Paint paint = Paint()..color = Colors.white;
     final RRect rrect = RRect.fromLTRBR(
-      0, 0, width, height,
+      0,
+      0,
+      width,
+      height,
       const Radius.circular(24.0),
     );
     canvas.drawRRect(rrect, paint);
 
     // Draw text
-    textPainter.paint(
-      canvas,
-      Offset(paddingHorizontal, paddingVertical),
-    );
+    textPainter.paint(canvas, Offset(paddingHorizontal, paddingVertical));
 
     // Add extra padding to canvas size so shadows aren't clipped
     final int canvasWidth = (width + 8).toInt();
     final int canvasHeight = (height + 8).toInt();
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage((canvasWidth * pixelRatio).toInt(), (canvasHeight * pixelRatio).toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (canvasWidth * pixelRatio).toInt(),
+      (canvasHeight * pixelRatio).toInt(),
+    );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
-    
+
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: canvasWidth.toDouble(),
@@ -145,9 +166,12 @@ class DynamicMapMarkers {
       ..strokeWidth = 1.0;
     canvas.drawCircle(const Offset(size / 2, size / 2), 12.0, borderPaint);
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (size * pixelRatio).toInt(),
+      (size * pixelRatio).toInt(),
+    );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
-    
+
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: size,
@@ -161,25 +185,33 @@ class DynamicMapMarkers {
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 50.0;
     const double pixelRatio = 3.0;
-    
+
     canvas.scale(pixelRatio, pixelRatio);
-    
+
     // Draw shadow
     final Paint shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.15)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
-    canvas.drawCircle(const Offset(size / 2, size / 2 + 2), size / 2.5, shadowPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2 + 2),
+      size / 2.5,
+      shadowPaint,
+    );
 
     // Draw blue circle
     final Paint paint = Paint()..color = const Color(0xFF3E49C7);
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 2.5, paint);
-    
+
     // Draw white border
     final Paint borderPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
-    canvas.drawCircle(const Offset(size / 2, size / 2), size / 2.5, borderPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      size / 2.5,
+      borderPaint,
+    );
 
     // Draw Edit Icon
     final TextPainter textPainter = TextPainter(
@@ -197,10 +229,16 @@ class DynamicMapMarkers {
     textPainter.layout();
     textPainter.paint(
       canvas,
-      Offset(size / 2 - textPainter.width / 2, size / 2 - textPainter.height / 2),
+      Offset(
+        size / 2 - textPainter.width / 2,
+        size / 2 - textPainter.height / 2,
+      ),
     );
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (size * pixelRatio).toInt(),
+      (size * pixelRatio).toInt(),
+    );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
@@ -215,20 +253,27 @@ class DynamicMapMarkers {
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 24.0;
     const double pixelRatio = 3.0;
-    
+
     canvas.scale(pixelRatio, pixelRatio);
-    
+
     // Draw shadow
     final Paint shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.15)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
-    canvas.drawCircle(const Offset(size / 2, size / 2 + 1), size / 3, shadowPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2 + 1),
+      size / 3,
+      shadowPaint,
+    );
 
     // Draw white circle
     final Paint paint = Paint()..color = Colors.white;
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 3, paint);
-    
-    final ui.Image img = await pictureRecorder.endRecording().toImage((size * pixelRatio).toInt(), (size * pixelRatio).toInt());
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (size * pixelRatio).toInt(),
+      (size * pixelRatio).toInt(),
+    );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
@@ -237,4 +282,3 @@ class DynamicMapMarkers {
     );
   }
 }
-

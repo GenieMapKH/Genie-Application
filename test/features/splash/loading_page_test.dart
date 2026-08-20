@@ -3,13 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/splash/presentation/loading_page.dart';
 
 void main() {
-  testWidgets('LoadingPage renders core logo image', (WidgetTester tester) async {
+  testWidgets('LoadingPage renders core logo image', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: LoadingPage(
-          displayDuration: Duration.zero,
-        ),
-      ),
+      const MaterialApp(home: LoadingPage(displayDuration: Duration.zero)),
     );
 
     // Locate the Image widget
@@ -24,8 +22,9 @@ void main() {
     expect(imageWidget.height, equals(159.0));
   });
 
-  testWidgets('LoadingPage invokes onFinished when timer expires',
-      (WidgetTester tester) async {
+  testWidgets('LoadingPage invokes onFinished when timer expires', (
+    WidgetTester tester,
+  ) async {
     var finished = false;
 
     await tester.pumpWidget(

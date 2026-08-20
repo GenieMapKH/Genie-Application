@@ -34,11 +34,7 @@ class MapTopControls extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.only(
-            left: 16.0,
-            right: 4.0,
-            top: 12.0,
-          ),
+          padding: const EdgeInsets.only(left: 16.0, right: 4.0, top: 12.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,9 +49,7 @@ class MapTopControls extends StatelessWidget {
                       },
                       child: Container(
                         height: 48,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(24.0),
@@ -224,9 +218,9 @@ class MapTopControls extends StatelessWidget {
       maxHeight: 1000,
       imageQuality: 70,
     );
-    
+
     if (image == null) return;
-    
+
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: image.path,
       compressQuality: 100,
@@ -239,42 +233,44 @@ class MapTopControls extends StatelessWidget {
           lockAspectRatio: false,
           hideBottomControls: false,
         ),
-        IOSUiSettings(
-          title: 'Crop Document',
-        ),
+        IOSUiSettings(title: 'Crop Document'),
       ],
     );
-    
+
     if (croppedFile == null) return;
-    
+
     if (context.mounted) {
       AppPopup.showInfo(context, 'Processing image...');
     }
-    
+
     final textRecognizer = TextRecognizer();
     final inputImage = InputImage.fromFilePath(croppedFile.path);
-    
+
     final recognizedText = await textRecognizer.processImage(inputImage);
     final coordinates = OcrParser.parseRecognizedText(recognizedText);
-    
+
     await textRecognizer.close();
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       if (coordinates.isNotEmpty) {
-        AppPopup.showSuccess(context, 'Extracted ${coordinates.length} coordinate(s)!');
+        AppPopup.showSuccess(
+          context,
+          'Extracted ${coordinates.length} coordinate(s)!',
+        );
       } else {
         AppPopup.showError(context, 'No coordinates found. Please try again.');
       }
-      
+
       final result = await showModalBottomSheet<List<LatLng>>(
         context: context,
         isScrollControlled: true,
         useRootNavigator: false,
         backgroundColor: Colors.transparent,
-        builder: (context) => UtmLocateBottomSheet(initialCoordinates: coordinates),
+        builder: (context) =>
+            UtmLocateBottomSheet(initialCoordinates: coordinates),
       );
-      
+
       if (result != null && result.isNotEmpty) {
         onCoordinatesScanned(result);
       }

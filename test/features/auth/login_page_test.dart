@@ -5,13 +5,10 @@ import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
 
 void main() {
-  testWidgets('LoginPage renders all elements in Email mode by default',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: LoginPage(),
-      ),
-    );
+  testWidgets('LoginPage renders all elements in Email mode by default', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
     await tester.pumpAndSettle();
 
     // Verify Title & Subtitle
@@ -42,13 +39,10 @@ void main() {
     expect(find.text('Create a Account'), findsOneWidget);
   });
 
-  testWidgets('LoginPage switches between Email and Phone Number tabs',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: LoginPage(),
-      ),
-    );
+  testWidgets('LoginPage switches between Email and Phone Number tabs', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
     await tester.pumpAndSettle();
 
     // Initial state: Email field visible
@@ -71,32 +65,31 @@ void main() {
     expect(find.byKey(const Key('phone_field')), findsNothing);
   });
 
-  testWidgets('LoginPage shows error state for invalid email and password',
-      (WidgetTester tester) async {
+  testWidgets('LoginPage shows error state for invalid email and password', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: LoginPage(),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
     await tester.pumpAndSettle();
 
     // Enter invalid email and invalid password
     await tester.enterText(
-        find.descendant(
-          of: find.byKey(const Key('email_field')),
-          matching: find.byType(TextFormField),
-        ),
-        'invalid-email');
+      find.descendant(
+        of: find.byKey(const Key('email_field')),
+        matching: find.byType(TextFormField),
+      ),
+      'invalid-email',
+    );
     await tester.enterText(
-        find.descendant(
-          of: find.byKey(const Key('password_field')),
-          matching: find.byType(TextFormField),
-        ),
-        '123');
+      find.descendant(
+        of: find.byKey(const Key('password_field')),
+        matching: find.byType(TextFormField),
+      ),
+      '123',
+    );
 
     // Tap Login to trigger validation
     final primaryButtonFinder = find.widgetWithText(AppButton, 'Login');
@@ -110,17 +103,14 @@ void main() {
     expect(find.byIcon(Icons.info_outline), findsNWidgets(2));
   });
 
-  testWidgets('LoginPage shows error state for invalid phone number',
-      (WidgetTester tester) async {
+  testWidgets('LoginPage shows error state for invalid phone number', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: LoginPage(),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
     await tester.pumpAndSettle();
 
     // Switch to Phone tab
@@ -129,11 +119,12 @@ void main() {
 
     // Enter invalid phone
     await tester.enterText(
-        find.descendant(
-          of: find.byKey(const Key('phone_field')),
-          matching: find.byType(TextFormField),
-        ),
-        '123');
+      find.descendant(
+        of: find.byKey(const Key('phone_field')),
+        matching: find.byType(TextFormField),
+      ),
+      '123',
+    );
 
     // Tap Login
     final primaryButtonFinder = find.widgetWithText(AppButton, 'Login');
@@ -145,13 +136,10 @@ void main() {
     expect(find.text('Enter a valid phone number'), findsOneWidget);
   });
 
-  testWidgets('LoginPage toggles password visibility',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: LoginPage(),
-      ),
-    );
+  testWidgets('LoginPage toggles password visibility', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
     await tester.pumpAndSettle();
 
     final visibilityIconButton = find.byType(IconButton);
@@ -167,53 +155,59 @@ void main() {
     expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
   });
 
-  testWidgets('LoginPage triggers login and google auth callbacks on valid input',
-      (WidgetTester tester) async {
-    var loginCalled = false;
-    var googleCalled = false;
+  testWidgets(
+    'LoginPage triggers login and google auth callbacks on valid input',
+    (WidgetTester tester) async {
+      var loginCalled = false;
+      var googleCalled = false;
 
-    // Set viewport size suitable for full mobile scroll
-    tester.view.physicalSize = const Size(800, 1400);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
+      // Set viewport size suitable for full mobile scroll
+      tester.view.physicalSize = const Size(800, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: LoginPage(
-          onLoginPressed: () => loginCalled = true,
-          onGoogleLoginPressed: () => googleCalled = true,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: LoginPage(
+            onLoginPressed: () => loginCalled = true,
+            onGoogleLoginPressed: () => googleCalled = true,
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    // Fill valid credentials
-    await tester.enterText(
+      // Fill valid credentials
+      await tester.enterText(
         find.descendant(
           of: find.byKey(const Key('email_field')),
           matching: find.byType(TextFormField),
         ),
-        'test@example.com');
-    await tester.enterText(
+        'test@example.com',
+      );
+      await tester.enterText(
         find.descendant(
           of: find.byKey(const Key('password_field')),
           matching: find.byType(TextFormField),
         ),
-        'secret123');
+        'secret123',
+      );
 
-    // Tap Login button
-    final primaryButtonFinder = find.widgetWithText(AppButton, 'Login');
-    await tester.ensureVisible(primaryButtonFinder);
-    await tester.tap(primaryButtonFinder);
-    await tester.pumpAndSettle();
-    expect(loginCalled, isTrue);
+      // Tap Login button
+      final primaryButtonFinder = find.widgetWithText(AppButton, 'Login');
+      await tester.ensureVisible(primaryButtonFinder);
+      await tester.tap(primaryButtonFinder);
+      await tester.pumpAndSettle();
+      expect(loginCalled, isTrue);
 
-    // Tap Google button
-    final googleButtonFinder =
-        find.widgetWithText(AppButton, 'Continue with Google');
-    await tester.ensureVisible(googleButtonFinder);
-    await tester.tap(googleButtonFinder);
-    await tester.pumpAndSettle();
-    expect(googleCalled, isTrue);
-  });
+      // Tap Google button
+      final googleButtonFinder = find.widgetWithText(
+        AppButton,
+        'Continue with Google',
+      );
+      await tester.ensureVisible(googleButtonFinder);
+      await tester.tap(googleButtonFinder);
+      await tester.pumpAndSettle();
+      expect(googleCalled, isTrue);
+    },
+  );
 }

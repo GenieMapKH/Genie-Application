@@ -21,7 +21,10 @@ class DrawingControlsPanel extends StatelessWidget {
     required this.onAddPinPressed,
   });
 
-  Widget _buildCircleButton(String iconPath, {required VoidCallback onPressed}) {
+  Widget _buildCircleButton(
+    String iconPath, {
+    required VoidCallback onPressed,
+  }) {
     return TactileButton(
       onPressed: onPressed,
       child: Container(

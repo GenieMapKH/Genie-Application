@@ -4,8 +4,9 @@ import 'package:genie/features/auth/presentation/welcome_page.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 
 void main() {
-  testWidgets('WelcomePage renders logo, headlines, buttons, and link',
-      (WidgetTester tester) async {
+  testWidgets('WelcomePage renders logo, headlines, buttons, and link', (
+    WidgetTester tester,
+  ) async {
     var loginPressed = false;
     var explorePressed = false;
     var createAccountPressed = false;

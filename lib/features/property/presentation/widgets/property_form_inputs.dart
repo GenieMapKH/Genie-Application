@@ -28,7 +28,7 @@ class PropertySectionTitle extends StatelessWidget {
                 TextSpan(
                   text: ' *',
                   style: GoogleFonts.inter(color: const Color(0xFFE5484D)),
-                )
+                ),
               ]
             : [],
       ),
@@ -65,11 +65,19 @@ class PropertyTextField extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            PropertySectionTitle(title: label, required: required, hasError: hasError),
+            PropertySectionTitle(
+              title: label,
+              required: required,
+              hasError: hasError,
+            ),
             if (infoText != null)
               Row(
                 children: [
-                  const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                  const Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: Color(0xFF6B7280),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     infoText!,
@@ -85,7 +93,10 @@ class PropertyTextField extends StatelessWidget {
         const SizedBox(height: 8),
         TextField(
           controller: controller,
-          decoration: defaultPropertyInputDecoration(hintText, hasError: hasError),
+          decoration: defaultPropertyInputDecoration(
+            hintText,
+            hasError: hasError,
+          ),
         ),
       ],
     );
@@ -125,11 +136,19 @@ class PropertyDropdown extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            PropertySectionTitle(title: label, required: required, hasError: hasError),
+            PropertySectionTitle(
+              title: label,
+              required: required,
+              hasError: hasError,
+            ),
             if (infoText != null)
               Row(
                 children: [
-                  const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                  const Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: Color(0xFF6B7280),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     infoText!,
@@ -147,16 +166,20 @@ class PropertyDropdown extends StatelessWidget {
           initialValue: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
-          style: GoogleFonts.inter(color: const Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w500),
+          style: GoogleFonts.inter(
+            color: const Color(0xFF111827),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
           dropdownColor: Colors.white,
           borderRadius: BorderRadius.circular(12.0),
-          decoration: defaultPropertyInputDecoration(hintText ?? 'Select', hasError: hasError),
+          decoration: defaultPropertyInputDecoration(
+            hintText ?? 'Select',
+            hasError: hasError,
+          ),
           onChanged: onChanged,
           items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
+            return DropdownMenuItem<String>(value: item, child: Text(item));
           }).toList(),
         ),
       ],
@@ -164,10 +187,17 @@ class PropertyDropdown extends StatelessWidget {
   }
 }
 
-InputDecoration defaultPropertyInputDecoration(String hint, {bool hasError = false}) {
-  final borderColor = hasError ? const Color(0xFFE5484D) : const Color(0xFFE5E7EB);
-  final hintColor = hasError ? const Color(0xFFE5484D) : const Color(0xFF9CA3AF);
-  
+InputDecoration defaultPropertyInputDecoration(
+  String hint, {
+  bool hasError = false,
+}) {
+  final borderColor = hasError
+      ? const Color(0xFFE5484D)
+      : const Color(0xFFE5E7EB);
+  final hintColor = hasError
+      ? const Color(0xFFE5484D)
+      : const Color(0xFF9CA3AF);
+
   return InputDecoration(
     hintText: hint,
     hintStyle: GoogleFonts.inter(color: hintColor, fontSize: 13),
@@ -182,7 +212,9 @@ InputDecoration defaultPropertyInputDecoration(String hint, {bool hasError = fal
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(color: hasError ? borderColor : const Color(0xFF3E49C7)),
+      borderSide: BorderSide(
+        color: hasError ? borderColor : const Color(0xFF3E49C7),
+      ),
     ),
   );
 }

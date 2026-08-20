@@ -31,28 +31,36 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   final TextEditingController _landSizeController = TextEditingController();
   final TextEditingController _buildingSizeController = TextEditingController();
   final TextEditingController _unitSizeController = TextEditingController();
-  final TextEditingController _maintenanceFeeController = TextEditingController();
-  
+  final TextEditingController _maintenanceFeeController =
+      TextEditingController();
+
   // Borey specific controllers
-  final TextEditingController _developerNameController = TextEditingController();
+  final TextEditingController _developerNameController =
+      TextEditingController();
   final TextEditingController _projectNameController = TextEditingController();
-  final TextEditingController _totalProjectAreaController = TextEditingController();
-  final TextEditingController _totalUnitsTextController = TextEditingController();
-  final TextEditingController _startingPriceController = TextEditingController();
-  
+  final TextEditingController _totalProjectAreaController =
+      TextEditingController();
+  final TextEditingController _totalUnitsTextController =
+      TextEditingController();
+  final TextEditingController _startingPriceController =
+      TextEditingController();
+
   // Business for Sale specific controllers
   final TextEditingController _monthlyRentController = TextEditingController();
-  final TextEditingController _leaseRemainingController = TextEditingController();
-  final TextEditingController _equipmentIncludedController = TextEditingController();
-  final TextEditingController _reasonForSellingController = TextEditingController();
-  
+  final TextEditingController _leaseRemainingController =
+      TextEditingController();
+  final TextEditingController _equipmentIncludedController =
+      TextEditingController();
+  final TextEditingController _reasonForSellingController =
+      TextEditingController();
+
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
   String _selectedPropertyType = '';
   String _selectedListingSetting = 'Sale';
   String _selectedTitleType = 'Hard Title';
-  
+
   String? _selectedBedrooms;
   String? _selectedBathrooms;
   String? _selectedFloors;
@@ -64,7 +72,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   String? _selectedBalcony;
   String? _selectedCompletionStatus;
   String? _selectedViewType;
-  
+
   // New selected states for Borey & Business
   String? _selectedProjectType;
   String? _selectedLeaseUnit;
@@ -110,12 +118,30 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     {'name': 'Corner Land', 'iconPath': 'assets/icons/keyword_corner_land.svg'},
     {'name': 'Near Market', 'iconPath': 'assets/icons/keyword_near_market.svg'},
     {'name': 'Near School', 'iconPath': 'assets/icons/keyword_near_school.svg'},
-    {'name': 'Near Hospital', 'iconPath': 'assets/icons/keyword_near_hospital.svg'},
-    {'name': 'River / Lake Nearby', 'iconPath': 'assets/icons/keyword_river_lake.svg'},
-    {'name': 'Electricity Ready', 'iconPath': 'assets/icons/keyword_electricity_ready.svg'},
-    {'name': 'Water Supply', 'iconPath': 'assets/icons/keyword_water_supply.svg'},
-    {'name': 'Residential Area', 'iconPath': 'assets/icons/keyword_residential_area.svg'},
-    {'name': 'Commercial Area', 'iconPath': 'assets/icons/keyword_commercial_area.svg'},
+    {
+      'name': 'Near Hospital',
+      'iconPath': 'assets/icons/keyword_near_hospital.svg',
+    },
+    {
+      'name': 'River / Lake Nearby',
+      'iconPath': 'assets/icons/keyword_river_lake.svg',
+    },
+    {
+      'name': 'Electricity Ready',
+      'iconPath': 'assets/icons/keyword_electricity_ready.svg',
+    },
+    {
+      'name': 'Water Supply',
+      'iconPath': 'assets/icons/keyword_water_supply.svg',
+    },
+    {
+      'name': 'Residential Area',
+      'iconPath': 'assets/icons/keyword_residential_area.svg',
+    },
+    {
+      'name': 'Commercial Area',
+      'iconPath': 'assets/icons/keyword_commercial_area.svg',
+    },
   ];
 
   @override
@@ -189,82 +215,86 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildMapPreview(),
-            const SizedBox(height: 24),
-            _buildSectionTitle('Property Type', required: false),
-            const SizedBox(height: 12),
-            PropertyTypeSelector(
-              selectedPropertyType: _selectedPropertyType,
-              onChanged: (val) {
-                setState(() {
-                  _selectedPropertyType = val;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-            _buildTextField(
-              label: 'Title/Headline',
-              required: true,
-              controller: _titleController,
-              hintText: 'Example: 10x30 Land Near National Road 1',
-              hasError: _hasAttemptedSubmit && _titleController.text.trim().isEmpty,
-              focusKey: _titleKey,
-            ),
-            const SizedBox(height: 16),
-            _buildDynamicFields(),
-            const SizedBox(height: 24),
-            _buildSectionTitle('Description', required: false),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _descriptionController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'Describe what makes this property special',
-                hintStyle: GoogleFonts.inter(color: const Color(0xFF9CA3AF), fontSize: 14),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(color: Color(0xFF3E49C7)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildMapPreview(),
+              const SizedBox(height: 24),
+              _buildSectionTitle('Property Type', required: false),
+              const SizedBox(height: 12),
+              PropertyTypeSelector(
+                selectedPropertyType: _selectedPropertyType,
+                onChanged: (val) {
+                  setState(() {
+                    _selectedPropertyType = val;
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              _buildTextField(
+                label: 'Title/Headline',
+                required: true,
+                controller: _titleController,
+                hintText: 'Example: 10x30 Land Near National Road 1',
+                hasError:
+                    _hasAttemptedSubmit && _titleController.text.trim().isEmpty,
+                focusKey: _titleKey,
+              ),
+              const SizedBox(height: 16),
+              _buildDynamicFields(),
+              const SizedBox(height: 24),
+              _buildSectionTitle('Description', required: false),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _descriptionController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Describe what makes this property special',
+                  hintStyle: GoogleFonts.inter(
+                    color: const Color(0xFF9CA3AF),
+                    fontSize: 14,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: const BorderSide(color: Color(0xFF3E49C7)),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            _buildSectionTitle('Keywords / Features', required: false),
-            const SizedBox(height: 12),
-            _buildKeywordsWrap(),
-            const SizedBox(height: 24),
-            _buildSectionTitle('Upload property photos', required: false),
-            const SizedBox(height: 12),
-            PropertyImagePicker(
-              selectedPhotos: _selectedPhotos,
-              onPhotoPicked: _pickImage,
-              onPhotoRemoved: (index) {
-                setState(() {
-                  _selectedPhotos.removeAt(index);
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-            _buildTextField(
-              label: 'Contact Information',
-              required: false,
-              controller: _phoneController,
-              hintText: 'Phone Number (0...)',
-            ),
-            const SizedBox(height: 100), // Bottom padding for sticky button
-          ],
+              const SizedBox(height: 24),
+              _buildSectionTitle('Keywords / Features', required: false),
+              const SizedBox(height: 12),
+              _buildKeywordsWrap(),
+              const SizedBox(height: 24),
+              _buildSectionTitle('Upload property photos', required: false),
+              const SizedBox(height: 12),
+              PropertyImagePicker(
+                selectedPhotos: _selectedPhotos,
+                onPhotoPicked: _pickImage,
+                onPhotoRemoved: (index) {
+                  setState(() {
+                    _selectedPhotos.removeAt(index);
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              _buildTextField(
+                label: 'Contact Information',
+                required: false,
+                controller: _phoneController,
+                hintText: 'Phone Number (0...)',
+              ),
+              const SizedBox(height: 100), // Bottom padding for sticky button
+            ],
+          ),
         ),
-      ),
       ),
       bottomNavigationBar: _buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -309,16 +339,22 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
                       Polygon(
                         polygonId: const PolygonId('preview'),
                         points: widget.boundaryPoints,
-                        fillColor: const Color(0xFF5B5FEF).withValues(alpha: 0.2),
+                        fillColor: const Color(
+                          0xFF5B5FEF,
+                        ).withValues(alpha: 0.2),
                         strokeColor: const Color(0xFF5B5FEF),
                         strokeWidth: 2,
                       ),
                     },
                     onMapCreated: (controller) {
-                      final bounds = _boundsFromLatLngList(widget.boundaryPoints);
+                      final bounds = _boundsFromLatLngList(
+                        widget.boundaryPoints,
+                      );
                       Future.delayed(const Duration(milliseconds: 300), () {
                         if (mounted) {
-                          controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 30));
+                          controller.animateCamera(
+                            CameraUpdate.newLatLngBounds(bounds, 30),
+                          );
                         }
                       });
                     },
@@ -343,7 +379,10 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         Text(
           'Location & Boundary',
-          style: GoogleFonts.inter(color: const Color(0xFF6B7280), fontSize: 12),
+          style: GoogleFonts.inter(
+            color: const Color(0xFF6B7280),
+            fontSize: 12,
+          ),
         ),
         const SizedBox(height: 8),
         Row(
@@ -351,15 +390,25 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () {},
-                icon: const Icon(Icons.location_on_outlined, size: 18, color: Color(0xFF374151)),
+                icon: const Icon(
+                  Icons.location_on_outlined,
+                  size: 18,
+                  color: Color(0xFF374151),
+                ),
                 label: Text(
                   'Locate Property',
-                  style: GoogleFonts.inter(color: const Color(0xFF374151), fontSize: 13, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF374151),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: const BorderSide(color: Color(0xFFE5E7EB)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
               ),
             ),
@@ -367,16 +416,30 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: () {},
-                icon: SvgPicture.asset('assets/icons/draw_property.svg', width: 18, height: 18, colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)),
+                icon: SvgPicture.asset(
+                  'assets/icons/draw_property.svg',
+                  width: 18,
+                  height: 18,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
                 label: Text(
                   'Drawing Property',
-                  style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF5B5FEF),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
               ),
             ),
@@ -407,9 +470,13 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             curve: Curves.easeInOut,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF5B5FEF).withValues(alpha: 0.05) : Colors.white,
+              color: isSelected
+                  ? const Color(0xFF5B5FEF).withValues(alpha: 0.05)
+                  : Colors.white,
               border: Border.all(
-                color: isSelected ? const Color(0xFF5B5FEF) : const Color(0xFFE5E7EB),
+                color: isSelected
+                    ? const Color(0xFF5B5FEF)
+                    : const Color(0xFFE5E7EB),
               ),
               borderRadius: BorderRadius.circular(20.0),
             ),
@@ -421,7 +488,9 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
                   width: 16,
                   height: 16,
                   colorFilter: ColorFilter.mode(
-                    isSelected ? const Color(0xFF5B5FEF) : const Color(0xFF6B7280),
+                    isSelected
+                        ? const Color(0xFF5B5FEF)
+                        : const Color(0xFF6B7280),
                     BlendMode.srcIn,
                   ),
                 ),
@@ -429,7 +498,9 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
                 Text(
                   kw['name'],
                   style: GoogleFonts.inter(
-                    color: isSelected ? const Color(0xFF5B5FEF) : const Color(0xFF4B5563),
+                    color: isSelected
+                        ? const Color(0xFF5B5FEF)
+                        : const Color(0xFF4B5563),
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
@@ -441,8 +512,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       }).toList(),
     );
   }
-
-
 
   LatLngBounds _boundsFromLatLngList(List<LatLng> list) {
     double? x0, x1, y0, y1;
@@ -457,7 +526,10 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         if (latLng.longitude < y0!) y0 = latLng.longitude;
       }
     }
-    return LatLngBounds(northeast: LatLng(x1!, y1!), southwest: LatLng(x0!, y0!));
+    return LatLngBounds(
+      northeast: LatLng(x1!, y1!),
+      southwest: LatLng(x0!, y0!),
+    );
   }
 
   Widget _buildBottomBar() {
@@ -470,18 +542,31 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(iconPath: 'assets/icons/explore.svg', label: 'Explore', isSelected: true),
+          _buildNavItem(
+            iconPath: 'assets/icons/explore.svg',
+            label: 'Explore',
+            isSelected: true,
+          ),
           _buildNavItem(iconPath: 'assets/icons/saved.svg', label: 'Saved'),
           _buildNavItem(iconPath: 'assets/icons/chat.svg', label: 'Chat'),
-          _buildNavItem(iconPath: 'assets/icons/property.svg', label: 'My Properties'),
+          _buildNavItem(
+            iconPath: 'assets/icons/property.svg',
+            label: 'My Properties',
+          ),
           _buildNavItem(iconPath: 'assets/icons/user.svg', label: 'User'),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem({required String iconPath, required String label, bool isSelected = false}) {
-    final color = isSelected ? const Color(0xFF5B5FEF) : const Color(0xFF6B7280);
+  Widget _buildNavItem({
+    required String iconPath,
+    required String label,
+    bool isSelected = false,
+  }) {
+    final color = isSelected
+        ? const Color(0xFF5B5FEF)
+        : const Color(0xFF6B7280);
     return SizedBox(
       width: 70,
       child: Column(
@@ -508,8 +593,16 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     );
   }
 
-  Widget _buildSectionTitle(String title, {required bool required, bool hasError = false}) {
-    return PropertySectionTitle(title: title, required: required, hasError: hasError);
+  Widget _buildSectionTitle(
+    String title, {
+    required bool required,
+    bool hasError = false,
+  }) {
+    return PropertySectionTitle(
+      title: title,
+      required: required,
+      hasError: hasError,
+    );
   }
 
   Widget _buildTextField({
@@ -532,8 +625,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     );
   }
 
-
-
   Widget _buildDefaultPriceListingSettings() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -544,7 +635,8 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             required: true,
             controller: _priceController,
             hintText: 'Enter selling price (USD)',
-            hasError: _hasAttemptedSubmit && _priceController.text.trim().isEmpty,
+            hasError:
+                _hasAttemptedSubmit && _priceController.text.trim().isEmpty,
             focusKey: _priceKey,
           ),
         ),
@@ -576,7 +668,8 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       fields.add(_buildLandSizeField(isLandType: true));
       addSpacing();
       fields.add(_buildTitleTypeField());
-    } else if (_selectedPropertyType == 'House' || _selectedPropertyType == 'Warehouse') {
+    } else if (_selectedPropertyType == 'House' ||
+        _selectedPropertyType == 'Warehouse') {
       fields.add(_buildDefaultPriceListingSettings());
       addSpacing();
       fields.add(_buildLandSizeField());
@@ -635,33 +728,107 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       addSpacing();
       fields.add(_buildTitleTypeField());
     } else if (_selectedPropertyType == 'Borey') {
-      fields.add(_buildTextField(label: 'Developer Name', required: false, controller: _developerNameController, hintText: 'Example: ABC Development Co., Ltd'));
+      fields.add(
+        _buildTextField(
+          label: 'Developer Name',
+          required: false,
+          controller: _developerNameController,
+          hintText: 'Example: ABC Development Co., Ltd',
+        ),
+      );
       addSpacing();
-      fields.add(_buildTextField(label: 'Project Name', required: false, controller: _projectNameController, hintText: 'Project name', infoText: 'Official name of the development project'));
+      fields.add(
+        _buildTextField(
+          label: 'Project Name',
+          required: false,
+          controller: _projectNameController,
+          hintText: 'Project name',
+          infoText: 'Official name of the development project',
+        ),
+      );
       addSpacing();
       fields.add(_buildProjectTypeField());
       addSpacing();
-      fields.add(_buildTextField(label: 'Total Project Area', required: false, controller: _totalProjectAreaController, hintText: 'Enter total land size', infoText: 'Total land area of entire project'));
+      fields.add(
+        _buildTextField(
+          label: 'Total Project Area',
+          required: false,
+          controller: _totalProjectAreaController,
+          hintText: 'Enter total land size',
+          infoText: 'Total land area of entire project',
+        ),
+      );
       addSpacing();
-      fields.add(_buildTextField(label: 'Total Units', required: false, controller: _totalUnitsTextController, hintText: 'Total number of units in project'));
+      fields.add(
+        _buildTextField(
+          label: 'Total Units',
+          required: false,
+          controller: _totalUnitsTextController,
+          hintText: 'Total number of units in project',
+        ),
+      );
       addSpacing();
       fields.add(_buildBoreyCompletionStatusField());
       addSpacing();
-      fields.add(_buildTextField(label: 'Starting Price', required: false, controller: _startingPriceController, hintText: 'Starting price in USD', infoText: 'Lowest available unit price'));
+      fields.add(
+        _buildTextField(
+          label: 'Starting Price',
+          required: false,
+          controller: _startingPriceController,
+          hintText: 'Starting price in USD',
+          infoText: 'Lowest available unit price',
+        ),
+      );
       addSpacing();
       fields.add(_buildTitleTypeField());
     } else if (_selectedPropertyType == 'Business for Sale') {
       fields.add(_buildLandSizeField(isLandType: true));
       addSpacing();
-      fields.add(_buildTextField(label: 'Monthly Rent', required: false, controller: _monthlyRentController, hintText: 'Enter monthly shop rent (USD)', infoText: 'Lower rent = higher profit potential'));
+      fields.add(
+        _buildTextField(
+          label: 'Monthly Rent',
+          required: false,
+          controller: _monthlyRentController,
+          hintText: 'Enter monthly shop rent (USD)',
+          infoText: 'Lower rent = higher profit potential',
+        ),
+      );
       addSpacing();
-      fields.add(_buildDropdown(label: 'Listing Settings', required: true, value: _selectedListingSetting, items: ['Sale', 'Rent', 'To Let'], hasError: _hasAttemptedSubmit && _selectedListingSetting.isEmpty, focusKey: _listingSettingsKey, onChanged: (val) { if (val != null) setState(() => _selectedListingSetting = val); }));
+      fields.add(
+        _buildDropdown(
+          label: 'Listing Settings',
+          required: true,
+          value: _selectedListingSetting,
+          items: ['Sale', 'Rent', 'To Let'],
+          hasError: _hasAttemptedSubmit && _selectedListingSetting.isEmpty,
+          focusKey: _listingSettingsKey,
+          onChanged: (val) {
+            if (val != null) setState(() => _selectedListingSetting = val);
+          },
+        ),
+      );
       addSpacing();
       fields.add(_buildLeaseRemainingField());
       addSpacing();
-      fields.add(_buildTextField(label: 'Equipment Included', required: false, controller: _equipmentIncludedController, hintText: 'List furniture, kitchen equipment, machines, POS system, etc.', infoText: 'Describe assets included in sale'));
+      fields.add(
+        _buildTextField(
+          label: 'Equipment Included',
+          required: false,
+          controller: _equipmentIncludedController,
+          hintText:
+              'List furniture, kitchen equipment, machines, POS system, etc.',
+          infoText: 'Describe assets included in sale',
+        ),
+      );
       addSpacing();
-      fields.add(_buildTextField(label: 'Reason for Selling', required: false, controller: _reasonForSellingController, hintText: 'Example: Owner relocating abroad'));
+      fields.add(
+        _buildTextField(
+          label: 'Reason for Selling',
+          required: false,
+          controller: _reasonForSellingController,
+          hintText: 'Example: Owner relocating abroad',
+        ),
+      );
     }
 
     return Column(
@@ -678,7 +845,13 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle(isLandType ? 'Size' : 'Land Size', required: true, hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
+            _buildSectionTitle(
+              isLandType ? 'Size' : 'Land Size',
+              required: true,
+              hasError:
+                  _hasAttemptedSubmit &&
+                  _landSizeController.text.trim().isEmpty,
+            ),
             isLandType
                 ? InkWell(
                     onTap: () {},
@@ -693,7 +866,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
                   )
                 : Row(
                     children: [
-                      const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                      const Icon(
+                        Icons.info_outline,
+                        size: 14,
+                        color: Color(0xFF6B7280),
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Total land area of the property',
@@ -709,7 +886,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _landSizeController,
-          decoration: defaultPropertyInputDecoration(isLandType ? 'Size Area' : 'Enter land size', hasError: _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration(
+            isLandType ? 'Size Area' : 'Enter land size',
+            hasError:
+                _hasAttemptedSubmit && _landSizeController.text.trim().isEmpty,
+          ),
         ),
       ],
     );
@@ -735,10 +916,20 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('Building Size', required: true, hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
+            _buildSectionTitle(
+              'Building Size',
+              required: true,
+              hasError:
+                  _hasAttemptedSubmit &&
+                  _buildingSizeController.text.trim().isEmpty,
+            ),
             Row(
               children: [
-                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: Color(0xFF6B7280),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Total built-up area',
@@ -754,7 +945,12 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _buildingSizeController,
-          decoration: defaultPropertyInputDecoration('Enter building size', hasError: _hasAttemptedSubmit && _buildingSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration(
+            'Enter building size',
+            hasError:
+                _hasAttemptedSubmit &&
+                _buildingSizeController.text.trim().isEmpty,
+          ),
         ),
       ],
     );
@@ -768,10 +964,20 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('Unit Size', required: true, hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
+            _buildSectionTitle(
+              'Unit Size',
+              required: true,
+              hasError:
+                  _hasAttemptedSubmit &&
+                  _unitSizeController.text.trim().isEmpty,
+            ),
             Row(
               children: [
-                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: Color(0xFF6B7280),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Total usable area of the unit',
@@ -787,7 +993,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _unitSizeController,
-          decoration: defaultPropertyInputDecoration('Enter unit size', hasError: _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty),
+          decoration: defaultPropertyInputDecoration(
+            'Enter unit size',
+            hasError:
+                _hasAttemptedSubmit && _unitSizeController.text.trim().isEmpty,
+          ),
         ),
       ],
     );
@@ -803,7 +1013,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             _buildSectionTitle('Maintenance Fee', required: false),
             Row(
               children: [
-                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: Color(0xFF6B7280),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Building management fee per month',
@@ -819,7 +1033,9 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _maintenanceFeeController,
-          decoration: defaultPropertyInputDecoration('Monthly maintenance fee (USD)'),
+          decoration: defaultPropertyInputDecoration(
+            'Monthly maintenance fee (USD)',
+          ),
         ),
       ],
     );
@@ -925,7 +1141,13 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       required: false,
       value: _selectedBuildingType,
       hintText: 'Select building type',
-      items: ['Commercial Building', 'Office Building', 'Mixed-use', 'Retail Building', 'Warehouse'],
+      items: [
+        'Commercial Building',
+        'Office Building',
+        'Mixed-use',
+        'Retail Building',
+        'Warehouse',
+      ],
       onChanged: (val) => setState(() => _selectedBuildingType = val),
     );
   }
@@ -991,7 +1213,13 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       required: false,
       value: _selectedCompletionStatus,
       hintText: 'Select status',
-      items: ['Pre-launch', 'Under Construction', '50% Completed', '80% Completed', 'Completed'],
+      items: [
+        'Pre-launch',
+        'Under Construction',
+        '50% Completed',
+        '80% Completed',
+        'Completed',
+      ],
       onChanged: (val) => setState(() => _selectedCompletionStatus = val),
     );
   }
@@ -1006,7 +1234,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             _buildSectionTitle('Lease Remaining', required: false),
             Row(
               children: [
-                const Icon(Icons.info_outline, size: 14, color: Color(0xFF6B7280)),
+                const Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: Color(0xFF6B7280),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Remaining contract duration with landlord',
@@ -1035,8 +1267,15 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               child: DropdownButtonFormField<String>(
                 initialValue: _selectedLeaseUnit ?? 'Months',
                 isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
-                style: GoogleFonts.inter(color: const Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w500),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Color(0xFF9CA3AF),
+                ),
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF111827),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
                 dropdownColor: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
                 decoration: defaultPropertyInputDecoration('Select unit'),
@@ -1076,6 +1315,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       focusKey: focusKey,
     );
   }
+
   void _validateForm() {
     setState(() => _hasAttemptedSubmit = true);
 
@@ -1085,27 +1325,40 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
 
     if (_selectedPropertyType == 'Land' || _selectedPropertyType.isEmpty) {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
-      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
-    } else if (_selectedPropertyType == 'House' || _selectedPropertyType == 'Warehouse') {
+      if (_selectedListingSetting.isEmpty)
+        firstErrorKey ??= _listingSettingsKey;
+      if (_landSizeController.text.trim().isEmpty)
+        firstErrorKey ??= _landSizeKey;
+    } else if (_selectedPropertyType == 'House' ||
+        _selectedPropertyType == 'Warehouse') {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
-      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
-      if (_buildingSizeController.text.trim().isEmpty) firstErrorKey ??= _buildingSizeKey;
+      if (_selectedListingSetting.isEmpty)
+        firstErrorKey ??= _listingSettingsKey;
+      if (_landSizeController.text.trim().isEmpty)
+        firstErrorKey ??= _landSizeKey;
+      if (_buildingSizeController.text.trim().isEmpty)
+        firstErrorKey ??= _buildingSizeKey;
     } else if (_selectedPropertyType == 'Building') {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
-      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
-      if (_buildingSizeController.text.trim().isEmpty) firstErrorKey ??= _buildingSizeKey;
+      if (_selectedListingSetting.isEmpty)
+        firstErrorKey ??= _listingSettingsKey;
+      if (_landSizeController.text.trim().isEmpty)
+        firstErrorKey ??= _landSizeKey;
+      if (_buildingSizeController.text.trim().isEmpty)
+        firstErrorKey ??= _buildingSizeKey;
     } else if (_selectedPropertyType == 'Condo') {
       if (_priceController.text.trim().isEmpty) firstErrorKey ??= _priceKey;
-      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
-      if (_unitSizeController.text.trim().isEmpty) firstErrorKey ??= _unitSizeKey;
+      if (_selectedListingSetting.isEmpty)
+        firstErrorKey ??= _listingSettingsKey;
+      if (_unitSizeController.text.trim().isEmpty)
+        firstErrorKey ??= _unitSizeKey;
     } else if (_selectedPropertyType == 'Borey') {
       // Title is already checked
     } else if (_selectedPropertyType == 'Business for Sale') {
-      if (_landSizeController.text.trim().isEmpty) firstErrorKey ??= _landSizeKey;
-      if (_selectedListingSetting.isEmpty) firstErrorKey ??= _listingSettingsKey;
+      if (_landSizeController.text.trim().isEmpty)
+        firstErrorKey ??= _landSizeKey;
+      if (_selectedListingSetting.isEmpty)
+        firstErrorKey ??= _listingSettingsKey;
     }
 
     if (firstErrorKey != null) {
@@ -1120,16 +1373,25 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           contentPadding: const EdgeInsets.all(24),
           title: Text(
             'Validate required fields',
-            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: const Color(0xFF111827)),
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF111827),
+            ),
             textAlign: TextAlign.center,
           ),
           content: Text(
             'Please complete required fields before publishing.',
-            style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF4B5563)),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: const Color(0xFF4B5563),
+            ),
             textAlign: TextAlign.center,
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -1147,7 +1409,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               },
               child: Text(
                 'Close',
-                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFF5B5FEF)),
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF5B5FEF),
+                ),
               ),
             ),
           ],
@@ -1161,7 +1427,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
     setState(() => _isLoading = false);
-    
+
     final property = _saveProperty('Active');
     _showSuccessDialog(property);
   }
@@ -1169,9 +1435,13 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   PropertyModel _saveProperty(String status) {
     final property = PropertyModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: _titleController.text.trim().isEmpty ? 'Untitled Property' : _titleController.text.trim(),
+      title: _titleController.text.trim().isEmpty
+          ? 'Untitled Property'
+          : _titleController.text.trim(),
       price: _priceController.text.trim(),
-      propertyType: _selectedPropertyType.isEmpty ? 'Land' : _selectedPropertyType,
+      propertyType: _selectedPropertyType.isEmpty
+          ? 'Land'
+          : _selectedPropertyType,
       status: status,
       createdAt: DateTime.now(),
       photos: List.from(_selectedPhotos),
@@ -1186,16 +1456,25 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           contentPadding: const EdgeInsets.all(24),
           title: Text(
             'Property Published\nSuccessfully!',
-            style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: const Color(0xFF111827)),
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF111827),
+            ),
             textAlign: TextAlign.center,
           ),
           content: Text(
             'Your listing is now visible to buyers.',
-            style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF4B5563)),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: const Color(0xFF4B5563),
+            ),
             textAlign: TextAlign.center,
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -1203,11 +1482,18 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Close dialog
-                Navigator.pop(context, property); // Pop AddPropertyPage with property
+                Navigator.pop(
+                  context,
+                  property,
+                ); // Pop AddPropertyPage with property
               },
               child: Text(
                 'Close',
-                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFF5B5FEF)),
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF5B5FEF),
+                ),
               ),
             ),
           ],
@@ -1229,7 +1515,7 @@ class _PublishButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isKeyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
-    
+
     return AnimatedSlide(
       offset: isKeyboardOpen ? const Offset(0, 1.2) : Offset.zero,
       duration: const Duration(milliseconds: 250),
@@ -1241,12 +1527,28 @@ class _PublishButtonWidget extends StatelessWidget {
         child: IgnorePointer(
           ignoring: isKeyboardOpen,
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 70.0),
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: 8.0,
+              bottom: 70.0,
+            ),
             child: ElevatedButton.icon(
               onPressed: isLoading ? null : onPressed,
-              icon: isLoading 
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Icon(Icons.upload_outlined, color: Colors.white, size: 20),
+              icon: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.upload_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
               label: Text(
                 isLoading ? 'Publishing your property...' : 'Publish Property',
                 style: GoogleFonts.inter(

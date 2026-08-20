@@ -107,11 +107,13 @@ class _AppButtonState extends State<AppButton> {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBorder = widget.borderColor != null && widget.borderColor != Colors.transparent
+    final effectiveBorder =
+        widget.borderColor != null && widget.borderColor != Colors.transparent
         ? Border.all(color: widget.borderColor!, width: widget.borderWidth)
         : null;
 
-    final resolvedTextStyle = widget.textStyle ??
+    final resolvedTextStyle =
+        widget.textStyle ??
         GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w600,

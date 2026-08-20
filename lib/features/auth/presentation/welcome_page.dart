@@ -88,20 +88,15 @@ class _WelcomePageState extends State<WelcomePage>
     );
 
     // Logo glides up from center (offset 0.35 -> 0.0)
-    _logoSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.35),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.65, curve: Curves.easeOutCubic),
-      ),
-    );
+    _logoSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.35), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 0.65, curve: Curves.easeOutCubic),
+          ),
+        );
 
-    _logoScaleAnimation = Tween<double>(
-      begin: 1.08,
-      end: 1.0,
-    ).animate(
+    _logoScaleAnimation = Tween<double>(begin: 1.08, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.65, curve: Curves.easeOutCubic),
@@ -109,52 +104,39 @@ class _WelcomePageState extends State<WelcomePage>
     );
 
     // Headline & Subtitle fade and upward slide
-    _headerFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    _headerFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.20, 0.70, curve: Curves.easeOut),
       ),
     );
 
-    _headerSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.25),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.20, 0.70, curve: Curves.easeOutCubic),
-      ),
-    );
+    _headerSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.20, 0.70, curve: Curves.easeOutCubic),
+          ),
+        );
 
     // Buttons section fade and upward slide
-    _buttonsFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    _buttonsFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.40, 0.85, curve: Curves.easeOut),
       ),
     );
 
-    _buttonsSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.30),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.40, 0.85, curve: Curves.easeOutCubic),
-      ),
-    );
+    _buttonsSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.30), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.40, 0.85, curve: Curves.easeOutCubic),
+          ),
+        );
 
     // Create a Account text link fade
-    _createAccountFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    _createAccountFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.60, 1.0, curve: Curves.easeOut),
@@ -255,13 +237,12 @@ class _WelcomePageState extends State<WelcomePage>
                           // Login Primary Button (#4F5BD5)
                           AppButton.primary(
                             text: 'Login',
-                            onPressed: widget.onLoginPressed ??
+                            onPressed:
+                                widget.onLoginPressed ??
                                 () {
-                                  Navigator.of(context).push(
-                                    AppPageRoute(
-                                      page: const LoginPage(),
-                                    ),
-                                  );
+                                  Navigator.of(
+                                    context,
+                                  ).push(AppPageRoute(page: const LoginPage()));
                                 },
                           ),
                           const SizedBox(height: 10),
@@ -269,13 +250,13 @@ class _WelcomePageState extends State<WelcomePage>
                           // Explore without account Secondary Button (#E5E7EB)
                           AppButton.secondary(
                             text: 'Explore without account',
-                            onPressed: widget.onExplorePressed ?? () {
+                            onPressed:
+                                widget.onExplorePressed ??
+                                () {
                                   Navigator.of(context).pushReplacement(
-                                    AppPageRoute(
-                                      page: const MainLayout(),
-                                    ),
+                                    AppPageRoute(page: const MainLayout()),
                                   );
-                            },
+                                },
                           ),
                           const SizedBox(height: 24),
 
@@ -283,7 +264,8 @@ class _WelcomePageState extends State<WelcomePage>
                           FadeTransition(
                             opacity: _createAccountFadeAnimation,
                             child: GestureDetector(
-                              onTap: widget.onCreateAccountPressed ??
+                              onTap:
+                                  widget.onCreateAccountPressed ??
                                   () {
                                     Navigator.of(context).push(
                                       AppPageRoute(

@@ -19,7 +19,8 @@ class MapFloatingMenu extends StatefulWidget {
   State<MapFloatingMenu> createState() => _MapFloatingMenuState();
 }
 
-class _MapFloatingMenuState extends State<MapFloatingMenu> with SingleTickerProviderStateMixin {
+class _MapFloatingMenuState extends State<MapFloatingMenu>
+    with SingleTickerProviderStateMixin {
   bool _isMenuOpen = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
@@ -91,11 +92,7 @@ class _MapFloatingMenuState extends State<MapFloatingMenu> with SingleTickerProv
                     ],
                   ),
                   child: Center(
-                    child: SvgPicture.asset(
-                      iconPath,
-                      width: 24,
-                      height: 24,
-                    ),
+                    child: SvgPicture.asset(iconPath, width: 24, height: 24),
                   ),
                 ),
               ),
@@ -157,7 +154,7 @@ class _MapFloatingMenuState extends State<MapFloatingMenu> with SingleTickerProv
                   backgroundColor: Colors.transparent,
                   builder: (context) => const UtmLocateBottomSheet(),
                 );
-                
+
                 if (result != null && result.isNotEmpty && mounted) {
                   widget.onCoordinatesScanned(result);
                 }
