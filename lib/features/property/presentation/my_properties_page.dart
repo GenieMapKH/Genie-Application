@@ -35,16 +35,18 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
     try {
       final repo = ref.read(propertyRepositoryProvider);
       _properties = await repo.fetchAll(forceRefresh: true);
-      if (mounted)
+      if (mounted) {
         setState(() {
           _isLoading = false;
         });
+      }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _isLoading = false;
           _error = e.toString();
         });
+      }
     }
   }
 
