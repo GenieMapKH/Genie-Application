@@ -23,8 +23,9 @@ class AuthService {
       String message = e.message ?? 'An unknown network error occurred';
       if (e.response?.data is Map) {
         var msg = e.response?.data['message'];
-        if (msg != null)
+        if (msg != null) {
           message = (msg is List) ? msg.join(', ') : msg.toString();
+        }
       }
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         return AuthException(message, code: e.response?.statusCode.toString());
