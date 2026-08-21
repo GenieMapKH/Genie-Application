@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dio/dio.dart';
-import 'package:genie/core/di/service_locator.dart';
-import 'package:genie/features/auth/presentation/login_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:genie/core/services/auth_service.dart';
+import 'package:genie/core/errors/app_exceptions.dart';
+import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/auth/presentation/terms_of_service_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
 import 'package:genie/shared/widgets/app_button.dart';
@@ -10,7 +12,7 @@ import 'package:genie/shared/widgets/app_text_field.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
 
 /// Create an account screen for Genie.
-class CreateAccountPage extends StatefulWidget {
+class CreateAccountPage extends ConsumerStatefulWidget {
   final VoidCallback? onSignUpPressed;
   final VoidCallback? onGoogleSignUpPressed;
   final VoidCallback? onSignInHerePressed;
@@ -23,10 +25,10 @@ class CreateAccountPage extends StatefulWidget {
   });
 
   @override
-  State<CreateAccountPage> createState() => _CreateAccountPageState();
+  ConsumerState<CreateAccountPage> createState() => _CreateAccountPageState();
 }
 
-class _CreateAccountPageState extends State<CreateAccountPage> {
+class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
@@ -108,41 +110,28 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     if (isValid) {
       setState(() => _isLoading = true);
       try {
-        await locator.authService.register(
-          _identifierController.text,
-          _passwordController.text,
-        );
+        await ref
+            .read(authServiceProvider)
+            .register(_identifierController.text, _passwordController.text);
 
         if (widget.onSignUpPressed != null) {
           widget.onSignUpPressed!();
         } else {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account created successfully! Please login.'),
-                backgroundColor: Colors.green,
-              ),
+            AppPopup.showSuccess(
+              context,
+              'Account created successfully! Please login.',
             );
             _navigateToLogin();
           }
         }
-      } on DioException catch (e) {
+      } on AppException catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Registration failed: ${e.response?.data['message'] ?? e.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          AppPopup.showError(context, 'Registration failed: ${e.message}');
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('An error occurred: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          AppPopup.showError(context, 'An unexpected error occurred: $e');
         }
       } finally {
         if (mounted) setState(() => _isLoading = false);
@@ -177,12 +166,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     if (widget.onSignInHerePressed != null) {
       widget.onSignInHerePressed!();
     } else {
-      Navigator.of(context).pushReplacement(
-        AppPageRoute(
-          page: const LoginPage(),
-          direction: SlideDirection.fromLeft,
-        ),
-      );
+      context.go('/login');
     }
   }
 

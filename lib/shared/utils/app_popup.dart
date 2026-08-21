@@ -46,7 +46,8 @@ class AppPopup {
       elevation: 0,
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
-      margin: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
+      clipBehavior: Clip.none,
+      margin: const EdgeInsets.only(bottom: 30, left: 16, right: 16),
       content: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(

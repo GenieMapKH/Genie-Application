@@ -16,6 +16,9 @@ import 'package:genie/features/home/utils/map_markers.dart';
 import 'package:genie/features/property/presentation/add_property_page.dart';
 import 'package:genie/features/property/presentation/my_properties_page.dart';
 import 'package:genie/features/property/models/property_model.dart';
+import 'package:genie/features/profile/presentation/user_profile_page.dart';
+import 'package:genie/core/storage/auth_storage.dart';
+import 'package:genie/features/auth/presentation/welcome_page.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -747,287 +750,290 @@ class _MainLayoutState extends State<MainLayout>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true, // Allow map to show through the transparent nav bar
-      body: IndexedStack(
-        index: _currentIndex == 3
-            ? 1
-            : 0, // Assuming map is 0, MyProperties is 1
+      body: Stack(
         children: [
-          Stack(
-            children: [
-              // Google Map Background
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: -40, // Push the map off-screen to hide the Google logo
-                child: GoogleMap(
-                  mapType: _currentSkin == MapSkin.satellite
-                      ? MapType.satellite
-                      : MapType.normal,
-                  initialCameraPosition: _initialPosition,
-                  onMapCreated: (GoogleMapController controller) {
-                    _mapController.complete(controller);
-                  },
-                  onCameraMove: (CameraPosition position) {
-                    _currentMapCenter = position.target;
-                    final double clusterZoomThreshold = 13.0;
-                    final double edgeZoomThreshold = 18.0;
+          Offstage(
+            offstage: _currentIndex == 3 || _currentIndex == 4,
+            child: Stack(
+              children: [
+                // Google Map Background
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom:
+                      -40, // Push the map off-screen to hide the Google logo
+                  child: GoogleMap(
+                    mapType: _currentSkin == MapSkin.satellite
+                        ? MapType.satellite
+                        : MapType.normal,
+                    initialCameraPosition: _initialPosition,
+                    onMapCreated: (GoogleMapController controller) {
+                      _mapController.complete(controller);
+                    },
+                    onCameraMove: (CameraPosition position) {
+                      _currentMapCenter = position.target;
+                      final double clusterZoomThreshold = 13.0;
+                      final double edgeZoomThreshold = 18.0;
 
-                    int getZoomState(double zoom) {
-                      if (zoom <= clusterZoomThreshold) return 1;
-                      if (zoom <= _zoomThreshold) return 2;
-                      if (zoom <= edgeZoomThreshold) return 3;
-                      return 4;
-                    }
-
-                    final int prevZoomState = getZoomState(_currentZoom);
-                    final int newZoomState = getZoomState(position.zoom);
-
-                    _currentZoom = position.zoom;
-
-                    if (prevZoomState != newZoomState && !_isDrawing) {
-                      _updateMapOverlays();
-                    }
-                  },
-                  onCameraIdle: () async {
-                    if (_isDrawing &&
-                        !_isEditingPolygon &&
-                        _drawnPoints.length >= 3 &&
-                        _currentMapCenter != null) {
-                      final controller = await _mapController.future;
-                      final firstPointScreen = await controller
-                          .getScreenCoordinate(_drawnPoints.first);
-                      final crosshairScreen = await controller
-                          .getScreenCoordinate(_currentMapCenter!);
-
-                      final dx = firstPointScreen.x - crosshairScreen.x;
-                      final dy = firstPointScreen.y - crosshairScreen.y;
-                      final distanceSquared = dx * dx + dy * dy;
-
-                      // Magnetically snap the camera to the first pin if within ~100 screen pixels
-                      // The > 5 check prevents an infinite snapping loop if we are already centered
-                      if (distanceSquared <= 100 * 100 && distanceSquared > 5) {
-                        controller.animateCamera(
-                          CameraUpdate.newLatLng(_drawnPoints.first),
-                        );
+                      int getZoomState(double zoom) {
+                        if (zoom <= clusterZoomThreshold) return 1;
+                        if (zoom <= _zoomThreshold) return 2;
+                        if (zoom <= edgeZoomThreshold) return 3;
+                        return 4;
                       }
-                    }
-                  },
-                  onTap: _onMapTapped,
-                  markers: _markers,
-                  polygons: _polygons,
-                  polylines: _polylines,
-                  zoomControlsEnabled: false,
-                  myLocationButtonEnabled: false,
-                  minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
-                  compassEnabled: false,
-                  mapToolbarEnabled: false,
-                  myLocationEnabled: true,
+
+                      final int prevZoomState = getZoomState(_currentZoom);
+                      final int newZoomState = getZoomState(position.zoom);
+
+                      _currentZoom = position.zoom;
+
+                      if (prevZoomState != newZoomState && !_isDrawing) {
+                        _updateMapOverlays();
+                      }
+                    },
+                    onCameraIdle: () async {
+                      if (_isDrawing &&
+                          !_isEditingPolygon &&
+                          _drawnPoints.length >= 3 &&
+                          _currentMapCenter != null) {
+                        final controller = await _mapController.future;
+                        final firstPointScreen = await controller
+                            .getScreenCoordinate(_drawnPoints.first);
+                        final crosshairScreen = await controller
+                            .getScreenCoordinate(_currentMapCenter!);
+
+                        final dx = firstPointScreen.x - crosshairScreen.x;
+                        final dy = firstPointScreen.y - crosshairScreen.y;
+                        final distanceSquared = dx * dx + dy * dy;
+
+                        // Magnetically snap the camera to the first pin if within ~100 screen pixels
+                        // The > 5 check prevents an infinite snapping loop if we are already centered
+                        if (distanceSquared <= 100 * 100 &&
+                            distanceSquared > 5) {
+                          controller.animateCamera(
+                            CameraUpdate.newLatLng(_drawnPoints.first),
+                          );
+                        }
+                      }
+                    },
+                    onTap: _onMapTapped,
+                    markers: _markers,
+                    polygons: _polygons,
+                    polylines: _polylines,
+                    zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
+                    minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
+                    compassEnabled: false,
+                    mapToolbarEnabled: false,
+                    myLocationEnabled: true,
+                  ),
                 ),
-              ),
-              // Crosshair
-              if (_isDrawing && !_isEditingPolygon)
-                IgnorePointer(
-                  child: Center(
-                    child: Transform.translate(
-                      offset: const Offset(
-                        0,
-                        20,
-                      ), // Align with map center (due to bottom: -40)
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(
-                              0xFFE5484D,
-                            ).withValues(alpha: 0.5),
-                            width: 2,
+                // Crosshair
+                if (_isDrawing && !_isEditingPolygon)
+                  IgnorePointer(
+                    child: Center(
+                      child: Transform.translate(
+                        offset: const Offset(
+                          0,
+                          20,
+                        ), // Align with map center (due to bottom: -40)
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(
+                                0xFFE5484D,
+                              ).withValues(alpha: 0.5),
+                              width: 2,
+                            ),
                           ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.add,
-                            size: 28,
-                            color: Color(0xFFE5484D),
+                          child: const Center(
+                            child: Icon(
+                              Icons.add,
+                              size: 28,
+                              color: Color(0xFFE5484D),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              // Top Search Bar and Filters
-              if (!_isDrawing)
-                MapTopControls(
-                  currentSkin: _currentSkin,
-                  onToggleMapType: () {
-                    setState(() {
-                      if (_currentSkin == MapSkin.defaultMap) {
-                        _currentSkin = MapSkin.satellite;
-                      } else {
-                        _currentSkin = MapSkin.defaultMap;
+                // Top Search Bar and Filters
+                if (!_isDrawing)
+                  MapTopControls(
+                    currentSkin: _currentSkin,
+                    onToggleMapType: () {
+                      setState(() {
+                        if (_currentSkin == MapSkin.defaultMap) {
+                          _currentSkin = MapSkin.satellite;
+                        } else {
+                          _currentSkin = MapSkin.defaultMap;
+                        }
+                      });
+                    },
+                    onCoordinatesScanned: (result) {
+                      if (mounted) {
+                        setState(() {
+                          _isDrawing = true;
+                          _isEditingPolygon = true;
+                          // _canDraw = false;
+                          _drawnPoints = List.from(result);
+                        });
+                        _updateMapOverlays();
+                        _mapController.future.then((controller) {
+                          controller.animateCamera(
+                            CameraUpdate.newLatLngZoom(result.first, 18),
+                          );
+                        });
                       }
-                    });
-                  },
-                  onCoordinatesScanned: (result) {
-                    if (mounted) {
+                    },
+                  ),
+                // Plus Icon and Animated Menu (Bottom Left)
+                if (!_isDrawing)
+                  MapFloatingMenu(
+                    onDrawPressed: () {
                       setState(() {
                         _isDrawing = true;
-                        _isEditingPolygon = true;
                         // _canDraw = false;
-                        _drawnPoints = List.from(result);
                       });
-                      _updateMapOverlays();
-                      _mapController.future.then((controller) {
-                        controller.animateCamera(
-                          CameraUpdate.newLatLngZoom(result.first, 18),
-                        );
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        // if (mounted) setState(() => _canDraw = true);
                       });
-                    }
-                  },
-                ),
-              // Plus Icon and Animated Menu (Bottom Left)
-              if (!_isDrawing)
-                MapFloatingMenu(
-                  onDrawPressed: () {
-                    setState(() {
-                      _isDrawing = true;
-                      // _canDraw = false;
-                    });
-                    Future.delayed(const Duration(milliseconds: 300), () {
-                      // if (mounted) setState(() => _canDraw = true);
-                    });
-                  },
-                  onCoordinatesScanned: (result) {
-                    if (mounted) {
-                      setState(() {
-                        _isDrawing = true;
-                        _isEditingPolygon = true;
-                        // _canDraw = false;
-                        _drawnPoints = List.from(result);
-                      });
-                      _updateMapOverlays();
-                      _mapController.future.then((controller) {
-                        controller.animateCamera(
-                          CameraUpdate.newLatLngZoom(result.first, 18),
-                        );
-                      });
-                    }
-                  },
-                ),
-              // Current Position Icon (Bottom Right)
-              if (!_isDrawing)
-                Positioned(
-                  right: 0,
-                  bottom: 110, // Offset for extendBody bottom navigation bar
-                  child: TactileButton(
-                    onPressed: _goToCurrentPosition,
-                    child: SvgPicture.asset(
-                      'assets/icons/current_position.svg',
-                      width: 76,
-                      height: 76,
+                    },
+                    onCoordinatesScanned: (result) {
+                      if (mounted) {
+                        setState(() {
+                          _isDrawing = true;
+                          _isEditingPolygon = true;
+                          // _canDraw = false;
+                          _drawnPoints = List.from(result);
+                        });
+                        _updateMapOverlays();
+                        _mapController.future.then((controller) {
+                          controller.animateCamera(
+                            CameraUpdate.newLatLngZoom(result.first, 18),
+                          );
+                        });
+                      }
+                    },
+                  ),
+                // Current Position Icon (Bottom Right)
+                if (!_isDrawing)
+                  Positioned(
+                    right: 0,
+                    bottom: 110, // Offset for extendBody bottom navigation bar
+                    child: TactileButton(
+                      onPressed: _goToCurrentPosition,
+                      child: SvgPicture.asset(
+                        'assets/icons/current_position.svg',
+                        width: 76,
+                        height: 76,
+                      ),
                     ),
                   ),
-                ),
-              // Drawing UI Controls
-              if (_isDrawing)
-                DrawingControlsPanel(
-                  isEditingPolygon: _isEditingPolygon,
-                  onRevertPressed: () {
-                    if (_isEditingPolygon) {
-                      if (_selectedVertexIndex != null &&
-                          _drawnPoints.length > 3) {
-                        setState(() {
-                          _drawnPoints.removeAt(_selectedVertexIndex!);
-                          _selectedVertexIndex = null;
-                          _updateMapOverlays();
-                        });
-                      }
-                    } else {
-                      if (_drawnPoints.isNotEmpty) {
-                        setState(() {
-                          _drawnPoints.removeLast();
-                          _updateMapOverlays();
-                        });
-                      }
-                    }
-                  },
-                  onDeletePressed: () {
-                    setState(() {
-                      _drawnPoints.clear();
+                // Drawing UI Controls
+                if (_isDrawing)
+                  DrawingControlsPanel(
+                    isEditingPolygon: _isEditingPolygon,
+                    onRevertPressed: () {
                       if (_isEditingPolygon) {
-                        _isDrawing = false;
-                        _isEditingPolygon = false;
-                        _selectedVertexIndex = null;
-                        _backupPoints = null; // Deleted!
-                        // _canDraw = false;
-                      }
-                      _updateMapOverlays();
-                    });
-                  },
-                  onCancelPressed: () {
-                    setState(() {
-                      _isDrawing = false;
-                      _isEditingPolygon = false;
-                      _selectedVertexIndex = null;
-                      // _canDraw = false;
-                      if (_backupPoints != null) {
-                        _finalizedProperties.add(_backupPoints!);
-                        _backupPoints = null;
-                      }
-                      _drawnPoints.clear();
-                      _updateMapOverlays();
-                    });
-                  },
-                  onSavePressed: () {
-                    if (_drawnPoints.length >= 3) {
-                      _closePolygonAndShowForm();
-                    } else {
-                      setState(() {
-                        _isDrawing = false;
-                        // _canDraw = false;
-                        _backupPoints = null;
-                        _drawnPoints.clear();
-                      });
-                      _updateMapOverlays();
-                    }
-                  },
-                  onAddPinPressed: () {
-                    if (_currentMapCenter != null) {
-                      _mapController.future.then((controller) async {
-                        if (_drawnPoints.length >= 3) {
-                          final firstPointScreen = await controller
-                              .getScreenCoordinate(_drawnPoints.first);
-                          final crosshairScreen = await controller
-                              .getScreenCoordinate(_currentMapCenter!);
-
-                          final dx = firstPointScreen.x - crosshairScreen.x;
-                          final dy = firstPointScreen.y - crosshairScreen.y;
-                          final distanceSquared = dx * dx + dy * dy;
-
-                          // Auto-connect if within 150 screen pixels
-                          if (distanceSquared <= 150 * 150) {
-                            if (mounted) {
-                              _closePolygonAndShowForm();
-                            }
-                            return;
-                          }
-                        }
-
-                        if (mounted) {
+                        if (_selectedVertexIndex != null &&
+                            _drawnPoints.length > 3) {
                           setState(() {
-                            _drawnPoints.add(_currentMapCenter!);
+                            _drawnPoints.removeAt(_selectedVertexIndex!);
+                            _selectedVertexIndex = null;
                             _updateMapOverlays();
                           });
                         }
+                      } else {
+                        if (_drawnPoints.isNotEmpty) {
+                          setState(() {
+                            _drawnPoints.removeLast();
+                            _updateMapOverlays();
+                          });
+                        }
+                      }
+                    },
+                    onDeletePressed: () {
+                      setState(() {
+                        _drawnPoints.clear();
+                        if (_isEditingPolygon) {
+                          _isDrawing = false;
+                          _isEditingPolygon = false;
+                          _selectedVertexIndex = null;
+                          _backupPoints = null; // Deleted!
+                          // _canDraw = false;
+                        }
+                        _updateMapOverlays();
                       });
-                    }
-                  },
-                ),
-            ],
+                    },
+                    onCancelPressed: () {
+                      setState(() {
+                        _isDrawing = false;
+                        _isEditingPolygon = false;
+                        _selectedVertexIndex = null;
+                        // _canDraw = false;
+                        if (_backupPoints != null) {
+                          _finalizedProperties.add(_backupPoints!);
+                          _backupPoints = null;
+                        }
+                        _drawnPoints.clear();
+                        _updateMapOverlays();
+                      });
+                    },
+                    onSavePressed: () {
+                      if (_drawnPoints.length >= 3) {
+                        _closePolygonAndShowForm();
+                      } else {
+                        setState(() {
+                          _isDrawing = false;
+                          // _canDraw = false;
+                          _backupPoints = null;
+                          _drawnPoints.clear();
+                        });
+                        _updateMapOverlays();
+                      }
+                    },
+                    onAddPinPressed: () {
+                      if (_currentMapCenter != null) {
+                        _mapController.future.then((controller) async {
+                          if (_drawnPoints.length >= 3) {
+                            final firstPointScreen = await controller
+                                .getScreenCoordinate(_drawnPoints.first);
+                            final crosshairScreen = await controller
+                                .getScreenCoordinate(_currentMapCenter!);
+
+                            final dx = firstPointScreen.x - crosshairScreen.x;
+                            final dy = firstPointScreen.y - crosshairScreen.y;
+                            final distanceSquared = dx * dx + dy * dy;
+
+                            // Auto-connect if within 150 screen pixels
+                            if (distanceSquared <= 150 * 150) {
+                              if (mounted) {
+                                _closePolygonAndShowForm();
+                              }
+                              return;
+                            }
+                          }
+
+                          if (mounted) {
+                            setState(() {
+                              _drawnPoints.add(_currentMapCenter!);
+                              _updateMapOverlays();
+                            });
+                          }
+                        });
+                      }
+                    },
+                  ),
+              ],
+            ),
           ),
-          MyPropertiesPage(isEmbedded: true),
+          if (_currentIndex == 3) const MyPropertiesPage(isEmbedded: true),
+          if (_currentIndex == 4) const UserProfilePage(isEmbedded: true),
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -1104,7 +1110,16 @@ class _MainLayoutState extends State<MainLayout>
         : const Color(0xFF6B7280);
 
     return TactileButton(
-      onPressed: () {
+      onPressed: () async {
+        if (index == 3 || index == 4) {
+          final token = await AuthStorage.getAccessToken();
+          if (token == null) {
+            if (mounted) {
+              _showLoginRequiredDialog(context);
+            }
+            return;
+          }
+        }
         setState(() {
           _currentIndex = index;
         });
@@ -1135,6 +1150,78 @@ class _MainLayoutState extends State<MainLayout>
           ],
         ),
       ),
+    );
+  }
+
+  void _showLoginRequiredDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.all(24),
+          title: Text(
+            'Account Required',
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF111827),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: Text(
+            'Please log in or sign up to access this feature.',
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: const Color(0xFF4B5563),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+              },
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF6B7280),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF5B5FEF),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                elevation: 4,
+              ),
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WelcomePage()),
+                );
+              },
+              child: Text(
+                'Login / Sign Up',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

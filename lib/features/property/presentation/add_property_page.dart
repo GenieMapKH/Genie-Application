@@ -5,13 +5,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/property_model.dart';
-import '../data/property_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../data/property_providers.dart';
 import 'package:genie/features/property/presentation/widgets/property_type_selector.dart';
 import 'package:genie/features/home/utils/map_measurements.dart';
 import 'widgets/property_image_picker.dart';
 import 'widgets/property_form_inputs.dart';
 
-class AddPropertyPage extends StatefulWidget {
+class AddPropertyPage extends ConsumerStatefulWidget {
   final List<LatLng> boundaryPoints;
   final double propertyArea;
 
@@ -22,10 +23,10 @@ class AddPropertyPage extends StatefulWidget {
   });
 
   @override
-  State<AddPropertyPage> createState() => _AddPropertyPageState();
+  ConsumerState<AddPropertyPage> createState() => _AddPropertyPageState();
 }
 
-class _AddPropertyPageState extends State<AddPropertyPage> {
+class _AddPropertyPageState extends ConsumerState<AddPropertyPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _landSizeController = TextEditingController();
@@ -57,7 +58,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  String _selectedPropertyType = '';
+  String _selectedPropertyType = 'Land';
   String _selectedListingSetting = 'Sale';
   String _selectedTitleType = 'Hard Title';
 
@@ -197,8 +198,20 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
         actions: [
           TextButton(
             onPressed: () {
-              final property = _saveProperty('Draft');
-              Navigator.of(context).pop(property);
+              () async {
+                try {
+                  final property = await _savePropertyToApi('Draft');
+                  if (context.mounted) Navigator.of(context).pop(property);
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error saving draft: ${e.toString()}'),
+                      ),
+                    );
+                  }
+                }
+              }();
             },
             child: Text(
               'Save',
@@ -1436,30 +1449,55 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
 
   Future<void> _submitForm() async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 1500));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    final property = _saveProperty('Active');
-    _showSuccessDialog(property);
+    try {
+      final property = await _savePropertyToApi('Active');
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showSuccessDialog(property);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+    }
   }
 
-  PropertyModel _saveProperty(String status) {
-    final property = PropertyModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: _titleController.text.trim().isEmpty
+  Future<PropertyModel> _savePropertyToApi(String status) async {
+    final repo = ref.read(propertyRepositoryProvider);
+    final data = {
+      'title': _titleController.text.trim().isEmpty
           ? 'Untitled Property'
           : _titleController.text.trim(),
-      price: _priceController.text.trim(),
-      propertyType: _selectedPropertyType.isEmpty
+      'price': double.tryParse(_priceController.text.trim()) ?? 0,
+      'propertyType': _selectedPropertyType.isEmpty
           ? 'Land'
           : _selectedPropertyType,
-      status: status,
-      createdAt: DateTime.now(),
-      photos: List.from(_selectedPhotos),
-      boundaryPoints: widget.boundaryPoints,
-    );
-    PropertyRepository.addProperty(property);
+      if (_landSizeController.text.trim().isNotEmpty)
+        'landSize': double.tryParse(_landSizeController.text.trim()),
+      if (_buildingSizeController.text.trim().isNotEmpty)
+        'buildingSize': double.tryParse(_buildingSizeController.text.trim()),
+      if (_unitSizeController.text.trim().isNotEmpty)
+        'unitSize': double.tryParse(_unitSizeController.text.trim()),
+      'status': status,
+    };
+
+    // 1. Create property
+    var property = await repo.create(data);
+
+    // 2. Attach boundary points if we have them
+    if (widget.boundaryPoints.isNotEmpty) {
+      final points = widget.boundaryPoints
+          .map((p) => {'lat': p.latitude, 'lng': p.longitude})
+          .toList();
+      property = await repo.updateBoundary(property.id, points);
+    }
+
+    // 3. Upload images if selected
+    if (_selectedPhotos.isNotEmpty) {
+      property = await repo.uploadImages(property.id, _selectedPhotos);
+    }
+
     return property;
   }
 

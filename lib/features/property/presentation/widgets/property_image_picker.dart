@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -61,9 +62,12 @@ class PropertyImagePicker extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.0),
                           image: isPhoto
                               ? DecorationImage(
-                                  image: FileImage(
-                                    File(selectedPhotos[index].path),
-                                  ),
+                                  image: kIsWeb
+                                      ? NetworkImage(selectedPhotos[index].path)
+                                            as ImageProvider
+                                      : FileImage(
+                                          File(selectedPhotos[index].path),
+                                        ),
                                   fit: BoxFit.cover,
                                 )
                               : null,
