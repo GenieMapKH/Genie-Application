@@ -22,11 +22,14 @@ void main() async {
     }
   }
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
+}
+
+class AppScrollBehavior extends ScrollBehavior {
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
+  }
 }
 
 class MyApp extends ConsumerWidget {
@@ -39,6 +42,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Genie',
+      scrollBehavior: AppScrollBehavior(),
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         canvasColor: Colors.white,

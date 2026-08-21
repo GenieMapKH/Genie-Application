@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:genie/features/auth/presentation/controllers/login_controller.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
+import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/app_text_field.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
@@ -170,10 +171,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
     final isValid = _validateForm();
     if (isValid) {
       if (_selectedMethod == AuthMethod.email) {
-        await ref.read(loginControllerProvider.notifier).login(
-          _emailController.text,
-          _passwordController.text,
-        );
+        await ref
+            .read(loginControllerProvider.notifier)
+            .login(_emailController.text, _passwordController.text);
       } else {
         // Placeholder for phone login
       }
@@ -184,27 +184,21 @@ class _LoginPageState extends ConsumerState<LoginPage>
   Widget build(BuildContext context) {
     final loginState = ref.watch(loginControllerProvider);
 
-    ref.listen<AsyncValue<void>>(
-      loginControllerProvider,
-      (_, state) {
-        if (!state.isLoading && state.hasError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.error is AppException 
-                  ? (state.error as AppException).message 
-                  : state.error.toString()),
-              backgroundColor: Colors.red,
-            ),
-          );
-        } else if (!state.isLoading && !state.hasError && state.hasValue) {
-          if (widget.onLoginPressed != null) {
-            widget.onLoginPressed!();
-          } else {
-            context.go('/home');
-          }
+    ref.listen<AsyncValue<void>>(loginControllerProvider, (_, state) {
+      if (!state.isLoading && state.hasError) {
+        final errorMessage = state.error is AppException
+            ? (state.error as AppException).message
+            : 'Login failed. Please check your credentials and try again.';
+        AppPopup.showError(context, errorMessage);
+      } else if (!state.isLoading && !state.hasError && state.hasValue) {
+        AppPopup.showSuccess(context, 'Successfully logged in!');
+        if (widget.onLoginPressed != null) {
+          widget.onLoginPressed!();
+        } else {
+          context.go('/home');
         }
-      },
-    );
+      }
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

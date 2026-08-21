@@ -8,7 +8,10 @@ class AuthInterceptor extends Interceptor {
   AuthInterceptor(this.dio);
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final token = await AuthStorage.getAccessToken();
     if (token != null) {
       // Automatically attach token to ALL requests if user is logged in
@@ -29,14 +32,15 @@ class AuthInterceptor extends Interceptor {
 
     if (refreshToken == null) {
       _isRefreshing = false;
-      return handler.next(err); 
+      return handler.next(err);
     }
 
     try {
       // 1. Call backend to rotate tokens
-      final refreshResponse = await dio.post('/auth/refresh', data: {
-        'refreshToken': refreshToken
-      });
+      final refreshResponse = await dio.post(
+        '/auth/refresh',
+        data: {'refreshToken': refreshToken},
+      );
 
       final newAccess = refreshResponse.data['accessToken'];
       final newRefresh = refreshResponse.data['refreshToken'];
@@ -47,11 +51,10 @@ class AuthInterceptor extends Interceptor {
       // 3. Retry the ORIGINAL request that failed
       final requestOptions = err.requestOptions;
       requestOptions.headers['Authorization'] = 'Bearer $newAccess';
-      
+
       final retryResponse = await dio.fetch(requestOptions);
       _isRefreshing = false;
       return handler.resolve(retryResponse);
-      
     } catch (e) {
       // Token theft detected or completely expired!
       _isRefreshing = false;

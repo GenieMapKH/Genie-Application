@@ -24,9 +24,7 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          authServiceProvider.overrideWithValue(mockAuthService),
-        ],
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
         child: const MaterialApp(home: CreateAccountPage()),
       ),
     );
@@ -61,9 +59,7 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          authServiceProvider.overrideWithValue(mockAuthService),
-        ],
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
         child: const MaterialApp(home: CreateAccountPage()),
       ),
     );
@@ -101,9 +97,7 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          authServiceProvider.overrideWithValue(mockAuthService),
-        ],
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
         child: MaterialApp(
           home: CreateAccountPage(
             onSignUpPressed: () => signUpCalled = true,

@@ -1,49 +1,63 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'add_property_page.dart';
 import '../models/property_model.dart';
-import '../data/property_repository.dart';
+import '../data/property_providers.dart';
 
-class MyPropertiesPage extends StatefulWidget {
+class MyPropertiesPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
 
   const MyPropertiesPage({super.key, this.isEmbedded = false});
 
   @override
-  State<MyPropertiesPage> createState() => _MyPropertiesPageState();
+  ConsumerState<MyPropertiesPage> createState() => _MyPropertiesPageState();
 }
 
-class _MyPropertiesPageState extends State<MyPropertiesPage> {
-  int _selectedTabIndex = 0;
+class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
+  List<PropertyModel> _properties = [];
+  bool _isLoading = true;
+  String? _error;
 
-  List<PropertyModel> get _propertiesForSelectedTab {
-    switch (_selectedTabIndex) {
-      case 0:
-        return PropertyRepository.getPropertiesByStatus('Active');
-      case 1:
-        return PropertyRepository.getPropertiesByStatus('Pending');
-      case 2:
-        return PropertyRepository.getPropertiesByStatus('Draft');
-      case 3:
-        return PropertyRepository.getPropertiesByStatus('Sold');
-      default:
-        return [];
+  @override
+  void initState() {
+    super.initState();
+    _loadProperties();
+  }
+
+  Future<void> _loadProperties() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final repo = ref.read(propertyRepositoryProvider);
+      _properties = await repo.fetchAll(forceRefresh: true);
+      if (mounted)
+        setState(() {
+          _isLoading = false;
+        });
+    } catch (e) {
+      if (mounted)
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
     }
   }
 
   String _getTabTitle(int index) {
     switch (index) {
       case 0:
-        return 'Active (${PropertyRepository.getPropertiesByStatus('Active').length})';
+        return 'Active (${_properties.where((p) => p.status == 'Active').toList().length})';
       case 1:
-        return 'Pending (${PropertyRepository.getPropertiesByStatus('Pending').length})';
+        return 'Pending (${_properties.where((p) => p.status == 'Pending').toList().length})';
       case 2:
-        return 'Draft (${PropertyRepository.getPropertiesByStatus('Draft').length})';
+        return 'Draft (${_properties.where((p) => p.status == 'Draft').toList().length})';
       case 3:
-        return 'Sold (${PropertyRepository.getPropertiesByStatus('Sold').length})';
+        return 'Sold (${_properties.where((p) => p.status == 'Sold').toList().length})';
       default:
         return '';
     }
@@ -53,32 +67,18 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        leading: widget.isEmbedded
-            ? null
-            : IconButton(
-                icon: const Icon(Icons.arrow_back, color: Color(0xFF6B7280)),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-        title: Text(
-          'My Properties',
-          style: GoogleFonts.inter(
-            color: const Color(0xFF111827),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 42), // Increased margin on top
+            _buildHeader(),
+            const SizedBox(height: 32), // Increased margin below
+            _buildTabsRow(),
+            const SizedBox(height: 24),
+            Expanded(child: _buildBody()),
+          ],
         ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildTabsRow(),
-          const SizedBox(height: 24),
-          Expanded(child: _buildBody()),
-        ],
       ),
       bottomNavigationBar: widget.isEmbedded ? null : _buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -98,7 +98,7 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
                 ),
               );
               if (mounted) {
-                setState(() {}); // Rebuild to pick up newly added properties
+                _loadProperties(); // Reload from API
               }
             },
             style: ElevatedButton.styleFrom(
@@ -122,27 +122,50 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
     );
   }
 
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: GestureDetector(
+              onTap: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Icon(Icons.arrow_back, color: Color(0xFF6B7280)),
+            ),
+          ),
+          Text(
+            'My Properties',
+            style: GoogleFonts.inter(
+              color: const Color(0xFF111827),
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTabsRow() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: List.generate(4, (index) {
-          final isSelected = _selectedTabIndex == index;
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedTabIndex = index;
-              });
-            },
+          return Padding(
+            padding: EdgeInsets.only(right: index < 3 ? 24.0 : 0),
             child: Text(
               _getTabTitle(index),
               style: GoogleFonts.inter(
-                color: isSelected
-                    ? const Color(0xFF5B5FEF)
-                    : const Color(0xFF6B7280),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+                color: const Color(0xFF5B5FEF),
+                fontSize: 15, // Increased font size
+                fontWeight: FontWeight.w700,
               ),
             ),
           );
@@ -152,23 +175,98 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
   }
 
   Widget _buildBody() {
-    final properties = _propertiesForSelectedTab;
-    if (properties.isEmpty) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
+      );
+    }
+    if (_error != null) {
+      return Center(
+        child: TextButton(
+          onPressed: _loadProperties,
+          child: const Text('Retry'),
+        ),
+      );
+    }
+    final activeProps = _properties.where((p) => p.status == 'Active').toList();
+    final pendingProps = _properties
+        .where((p) => p.status == 'Pending')
+        .toList();
+    final draftProps = _properties.where((p) => p.status == 'Draft').toList();
+    final soldProps = _properties.where((p) => p.status == 'Sold').toList();
+
+    final allEmpty =
+        activeProps.isEmpty &&
+        pendingProps.isEmpty &&
+        draftProps.isEmpty &&
+        soldProps.isEmpty;
+
+    if (allEmpty) {
       return _buildEmptyState();
     }
 
-    return ListView.builder(
+    return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      itemCount: properties.length,
-      itemBuilder: (context, index) {
-        return _buildPropertyCard(properties[index]);
-      },
+      children: [
+        if (activeProps.isNotEmpty) ...[
+          _buildSectionHeader('All'),
+          ...activeProps.map((p) => _buildPropertyCard(p)),
+        ],
+        if (pendingProps.isNotEmpty) ...[
+          _buildSectionHeader('Pending'),
+          ...pendingProps.map((p) => _buildPropertyCard(p)),
+        ],
+        if (draftProps.isNotEmpty) ...[
+          _buildSectionHeader('Draft'),
+          ...draftProps.map((p) => _buildPropertyCard(p)),
+        ],
+        if (soldProps.isNotEmpty) ...[
+          _buildSectionHeader('Sold'),
+          ...soldProps.map((p) => _buildPropertyCard(p)),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0, bottom: 12.0),
+      child: Text(
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFF111827),
+        ),
+      ),
     );
   }
 
   Widget _buildPropertyCard(PropertyModel property) {
+    Color statusBgColor;
+    Color statusTextColor;
+    switch (property.status) {
+      case 'Active':
+        statusBgColor = const Color(0xFFD1FAE5);
+        statusTextColor = const Color(0xFF059669);
+        break;
+      case 'Pending':
+        statusBgColor = const Color(0xFFFEF3C7);
+        statusTextColor = const Color(0xFFD97706);
+        break;
+      case 'Sold':
+        statusBgColor = const Color(0xFFFEE2E2);
+        statusTextColor = const Color(0xFFDC2626);
+        break;
+      case 'Draft':
+      default:
+        statusBgColor = const Color(0xFFF3F4F6);
+        statusTextColor = const Color(0xFF6B7280);
+        break;
+    }
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -184,27 +282,104 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 140,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              color: Color(0xFFF3F4F6),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: property.photos.isNotEmpty
-                ? Image.file(
-                    File(property.photos.first.path),
-                    fit: BoxFit.cover,
-                  )
-                : const Center(
-                    child: Icon(
-                      Icons.image_outlined,
-                      color: Color(0xFF9CA3AF),
-                      size: 48,
-                    ),
+          // Image Area
+          Stack(
+            children: [
+              Container(
+                height: 160,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                  color: Color(0xFFF3F4F6),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: property.imageUrls.isNotEmpty
+                    ? Image.network(property.imageUrls.first, fit: BoxFit.cover)
+                    : const Center(
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: Color(0xFF9CA3AF),
+                          size: 48,
+                        ),
+                      ),
+              ),
+              // Property Type Badge
+              Positioned(
+                top: 12,
+                left: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
                   ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        property.propertyType == 'Land'
+                            ? Icons.landscape
+                            : Icons.home_outlined,
+                        size: 14,
+                        color: const Color(0xFF4B5563),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        property.propertyType,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF4B5563),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Favorite Icon
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.favorite_border,
+                    size: 18,
+                    color: Color(0xFF9CA3AF),
+                  ),
+                ),
+              ),
+              // Dots indicator
+              Positioned(
+                bottom: 8,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (i) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 2),
+                      width: i == 0 ? 12 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: i == 0
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
           ),
+          // Details Area
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
@@ -213,57 +388,71 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Text(
-                        property.title,
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF111827),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
                     Text(
-                      '\$${property.price}',
+                      '\$ ${property.price}',
                       style: GoogleFonts.inter(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF5B5FEF),
+                        color: const Color(0xFF111827),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF3F4F6),
-                        borderRadius: BorderRadius.circular(4),
+                        color: statusBgColor,
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        property.propertyType,
+                        property.status,
                         style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: const Color(0xFF4B5563),
-                          fontWeight: FontWeight.w500,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: statusTextColor,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${property.createdAt.day}/${property.createdAt.month}/${property.createdAt.year}',
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        color: const Color(0xFF9CA3AF),
-                      ),
-                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  property.propertyType == 'Land'
+                      ? '1670 m² | Land for sale'
+                      : '4 bds | 5 ba | 115.5 m² | ${property.propertyType} for sale',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF4B5563),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  property.title,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: const Color(0xFF6B7280),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Edit',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF2563EB), // Blue color
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildStatItem('5', 'Contacts'),
+                    _buildStatItem('1,688', 'Views'),
+                    _buildStatItem('99', 'Saves'),
                   ],
                 ),
               ],
@@ -274,57 +463,89 @@ class _MyPropertiesPageState extends State<MyPropertiesPage> {
     );
   }
 
-  Widget _buildEmptyState() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFF9FAFB), // Very light gray
-          borderRadius: BorderRadius.circular(12),
+  Widget _buildStatItem(String count, String label) {
+    return Row(
+      children: [
+        Text(
+          count,
+          style: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF111827),
+          ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Home icon with alert. Using a stack with Material icons as a fallback.
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                const Icon(
-                  Icons.home_outlined,
-                  size: 64,
-                  color: Color(0xFFD1D5DB),
-                ),
-                Positioned(
-                  bottom: -4,
-                  right: -4,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF9FAFB),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.error,
-                      size: 24,
-                      color: Color(0xFFD1D5DB),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF6B7280),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            vertical: 64.0,
+          ), // Fixed vertical padding
+          decoration: BoxDecoration(
+            color: const Color(0xFFF9FAFB), // Very light gray
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Don't expand to full height
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Home icon with alert. Using a stack with Material icons as a fallback.
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(
+                    Icons.home_outlined,
+                    size: 64,
+                    color: Color(0xFFD1D5DB),
+                  ),
+                  Positioned(
+                    bottom: -4,
+                    right: -4,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF9FAFB),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.error,
+                        size: 24,
+                        color: Color(0xFFD1D5DB),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'You haven\'t listed any\nproperty yet',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: const Color(0xFF9CA3AF),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                height: 1.4,
+                ],
               ),
-            ),
-            const SizedBox(height: 32),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                'You haven\'t listed any\nproperty yet',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF9CA3AF),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );

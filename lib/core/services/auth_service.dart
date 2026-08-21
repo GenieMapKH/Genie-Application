@@ -15,12 +15,17 @@ final authServiceProvider = Provider<AuthService>((ref) {
 
 class AuthService {
   final Dio dio;
-  
+
   AuthService(this.dio);
 
   Exception _handleError(dynamic e) {
     if (e is DioException) {
-      String message = e.message ?? 'An unknown network error occurred'; if (e.response?.data is Map) { var msg = e.response?.data['message']; if (msg != null) message = (msg is List) ? msg.join(', ') : msg.toString(); }
+      String message = e.message ?? 'An unknown network error occurred';
+      if (e.response?.data is Map) {
+        var msg = e.response?.data['message'];
+        if (msg != null)
+          message = (msg is List) ? msg.join(', ') : msg.toString();
+      }
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         return AuthException(message, code: e.response?.statusCode.toString());
       }
@@ -32,10 +37,10 @@ class AuthService {
   // 1. Standard Registration
   Future<void> register(String email, String password) async {
     try {
-      await dio.post('/auth/register', data: {
-        'email': email,
-        'password': password,
-      });
+      await dio.post(
+        '/auth/register',
+        data: {'email': email, 'password': password},
+      );
     } catch (e) {
       throw _handleError(e);
     }
@@ -44,11 +49,11 @@ class AuthService {
   // 2. Standard Login
   Future<void> login(String email, String password) async {
     try {
-      final response = await dio.post('/auth/login', data: {
-        'email': email,
-        'password': password,
-      });
-      
+      final response = await dio.post(
+        '/auth/login',
+        data: {'email': email, 'password': password},
+      );
+
       await AuthStorage.saveTokens(
         access: response.data['accessToken'],
         refresh: response.data['refreshToken'],
@@ -62,10 +67,11 @@ class AuthService {
   Future<void> firebaseLogin(User firebaseUser) async {
     try {
       final idToken = await firebaseUser.getIdToken();
-      
-      final response = await dio.post('/auth/firebase-login', data: {
-        'idToken': idToken,
-      });
+
+      final response = await dio.post(
+        '/auth/firebase-login',
+        data: {'idToken': idToken},
+      );
 
       await AuthStorage.saveTokens(
         access: response.data['accessToken'],

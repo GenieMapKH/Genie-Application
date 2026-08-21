@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:genie/core/services/auth_service.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
+import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/auth/presentation/terms_of_service_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
 import 'package:genie/shared/widgets/app_button.dart';
@@ -109,41 +110,28 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
     if (isValid) {
       setState(() => _isLoading = true);
       try {
-        await ref.read(authServiceProvider).register(
-          _identifierController.text,
-          _passwordController.text,
-        );
+        await ref
+            .read(authServiceProvider)
+            .register(_identifierController.text, _passwordController.text);
 
         if (widget.onSignUpPressed != null) {
           widget.onSignUpPressed!();
         } else {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account created successfully! Please login.'),
-                backgroundColor: Colors.green,
-              ),
+            AppPopup.showSuccess(
+              context,
+              'Account created successfully! Please login.',
             );
             _navigateToLogin();
           }
         }
       } on AppException catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Registration failed: ${e.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          AppPopup.showError(context, 'Registration failed: ${e.message}');
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('An error occurred: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          AppPopup.showError(context, 'An unexpected error occurred: $e');
         }
       } finally {
         if (mounted) setState(() => _isLoading = false);

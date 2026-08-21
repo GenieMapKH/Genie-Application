@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/services/auth_service.dart';
 
-final loginControllerProvider = StateNotifierProvider<LoginController, AsyncValue<void>>((ref) {
-  return LoginController(ref.watch(authServiceProvider));
-});
+final loginControllerProvider =
+    StateNotifierProvider<LoginController, AsyncValue<void>>((ref) {
+      return LoginController(ref.watch(authServiceProvider));
+    });
 
 class LoginController extends StateNotifier<AsyncValue<void>> {
   final AuthService _authService;
