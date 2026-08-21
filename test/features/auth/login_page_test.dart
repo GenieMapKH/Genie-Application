@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/presentation/login_page.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
 import 'package:genie/core/services/auth_service.dart';
-import 'package:genie/core/di/service_locator.dart';
 import 'package:dio/dio.dart';
 
 class MockAuthService extends AuthService {
@@ -14,14 +14,17 @@ class MockAuthService extends AuthService {
 }
 
 void main() {
-  setUpAll(() {
-    locator.authService = MockAuthService();
-  });
+  final mockAuthService = MockAuthService();
 
   testWidgets('LoginPage renders all elements in Email mode by default', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
+        child: const MaterialApp(home: LoginPage()),
+      ),
+    );
     await tester.pumpAndSettle();
 
     // Verify Title & Subtitle
@@ -55,7 +58,12 @@ void main() {
   testWidgets('LoginPage switches between Email and Phone Number tabs', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
+        child: const MaterialApp(home: LoginPage()),
+      ),
+    );
     await tester.pumpAndSettle();
 
     // Initial state: Email field visible
@@ -85,7 +93,12 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
+        child: const MaterialApp(home: LoginPage()),
+      ),
+    );
     await tester.pumpAndSettle();
 
     // Enter invalid email and invalid password
@@ -123,7 +136,12 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
+        child: const MaterialApp(home: LoginPage()),
+      ),
+    );
     await tester.pumpAndSettle();
 
     // Switch to Phone tab
@@ -152,7 +170,12 @@ void main() {
   testWidgets('LoginPage toggles password visibility', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
+        child: const MaterialApp(home: LoginPage()),
+      ),
+    );
     await tester.pumpAndSettle();
 
     final visibilityIconButton = find.byType(IconButton);
@@ -180,10 +203,13 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: LoginPage(
-            onLoginPressed: () => loginCalled = true,
-            onGoogleLoginPressed: () => googleCalled = true,
+        ProviderScope(
+          overrides: [authServiceProvider.overrideWithValue(mockAuthService)],
+          child: MaterialApp(
+            home: LoginPage(
+              onLoginPressed: () => loginCalled = true,
+              onGoogleLoginPressed: () => googleCalled = true,
+            ),
           ),
         ),
       );

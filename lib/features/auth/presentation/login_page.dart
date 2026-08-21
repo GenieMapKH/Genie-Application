@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dio/dio.dart';
-import 'package:genie/core/di/service_locator.dart';
-import 'package:genie/features/home/presentation/main_layout.dart';
-import 'package:genie/features/auth/presentation/create_account_page.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:genie/features/auth/presentation/controllers/login_controller.dart';
+import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/app_text_field.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
@@ -13,7 +12,7 @@ enum AuthMethod { email, phone }
 
 /// Login screen supporting Email and Phone Number authentication methods,
 /// Google OAuth login, "Keep me signed in" preference, and custom error states.
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   final VoidCallback? onLoginPressed;
   final VoidCallback? onGoogleLoginPressed;
   final VoidCallback? onForgotPasswordPressed;
@@ -28,10 +27,10 @@ class LoginPage extends StatefulWidget {
   });
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
+class _LoginPageState extends ConsumerState<LoginPage>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
 
@@ -47,7 +46,6 @@ class _LoginPageState extends State<LoginPage>
 
   bool _obscurePassword = true;
   bool _keepMeSignedIn = true;
-  bool _isLoading = false;
 
   late AnimationController _entryController;
   late Animation<double> _headerFade;
@@ -171,52 +169,42 @@ class _LoginPageState extends State<LoginPage>
   Future<void> _handleLogin() async {
     final isValid = _validateForm();
     if (isValid) {
-      setState(() => _isLoading = true);
-      try {
-        if (_selectedMethod == AuthMethod.email) {
-          await locator.authService.login(
-            _emailController.text,
-            _passwordController.text,
-          );
-        } else {
-          // Placeholder for phone login
-        }
-
-        if (widget.onLoginPressed != null) {
-          widget.onLoginPressed!();
-        } else {
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-              AppPageRoute(page: const MainLayout()),
-            );
-          }
-        }
-      } on DioException catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Login failed: ${e.response?.data['message'] ?? e.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('An error occurred: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) setState(() => _isLoading = false);
+      if (_selectedMethod == AuthMethod.email) {
+        await ref.read(loginControllerProvider.notifier).login(
+          _emailController.text,
+          _passwordController.text,
+        );
+      } else {
+        // Placeholder for phone login
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loginState = ref.watch(loginControllerProvider);
+
+    ref.listen<AsyncValue<void>>(
+      loginControllerProvider,
+      (_, state) {
+        if (!state.isLoading && state.hasError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error is AppException 
+                  ? (state.error as AppException).message 
+                  : state.error.toString()),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (!state.isLoading && !state.hasError && state.hasValue) {
+          if (widget.onLoginPressed != null) {
+            widget.onLoginPressed!();
+          } else {
+            context.go('/home');
+          }
+        }
+      },
+    );
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -475,7 +463,7 @@ class _LoginPageState extends State<LoginPage>
                               // Primary Login Button (#4F5BD5)
                               AppButton.primary(
                                 text: 'Login',
-                                isLoading: _isLoading,
+                                isLoading: loginState.isLoading,
                                 onPressed: _handleLogin,
                               ),
                               const SizedBox(height: 24),
@@ -530,12 +518,7 @@ class _LoginPageState extends State<LoginPage>
                                   onTap:
                                       widget.onCreateAccountPressed ??
                                       () {
-                                        Navigator.of(context).pushReplacement(
-                                          AppPageRoute(
-                                            page: const CreateAccountPage(),
-                                            direction: SlideDirection.fromLeft,
-                                          ),
-                                        );
+                                        context.go('/register');
                                       },
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),

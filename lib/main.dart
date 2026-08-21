@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/features/auth/presentation/welcome_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genie/core/router/app_router.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -8,15 +10,10 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   // Request the latest Android Map renderer which fixes lag and supports high refresh rates
   if (defaultTargetPlatform == TargetPlatform.android) {
-    // try {
-    //   await FlutterDisplayMode.setHighRefreshRate();
-    // } catch (e) {
-    //   // Ignore on devices where it's not supported
-    // }
-
     AndroidMapRenderer mapRenderer = AndroidMapRenderer.latest;
     final GoogleMapsFlutterPlatform mapsImplementation =
         GoogleMapsFlutterPlatform.instance;
@@ -25,15 +22,21 @@ void main() async {
     }
   }
 
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Genie',
       theme: ThemeData(
@@ -46,7 +49,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
         useMaterial3: true,
       ),
-      home: const WelcomePage(),
+      routerConfig: router,
     );
   }
 }

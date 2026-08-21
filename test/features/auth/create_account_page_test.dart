@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/presentation/create_account_page.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
 import 'package:genie/core/services/auth_service.dart';
-import 'package:genie/core/di/service_locator.dart';
 import 'package:dio/dio.dart';
 
 class MockAuthService extends AuthService {
@@ -13,9 +13,7 @@ class MockAuthService extends AuthService {
 }
 
 void main() {
-  setUpAll(() {
-    locator.authService = MockAuthService();
-  });
+  final mockAuthService = MockAuthService();
 
   testWidgets('CreateAccountPage renders all form elements and links', (
     WidgetTester tester,
@@ -24,7 +22,14 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(const MaterialApp(home: CreateAccountPage()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authServiceProvider.overrideWithValue(mockAuthService),
+        ],
+        child: const MaterialApp(home: CreateAccountPage()),
+      ),
+    );
     await tester.pumpAndSettle();
 
     // Verify Title
@@ -54,7 +59,14 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(const MaterialApp(home: CreateAccountPage()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authServiceProvider.overrideWithValue(mockAuthService),
+        ],
+        child: const MaterialApp(home: CreateAccountPage()),
+      ),
+    );
     await tester.pumpAndSettle();
 
     // Tap Sign up with empty fields
@@ -88,11 +100,16 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: CreateAccountPage(
-          onSignUpPressed: () => signUpCalled = true,
-          onGoogleSignUpPressed: () => googleCalled = true,
-          onSignInHerePressed: () => signInHereCalled = true,
+      ProviderScope(
+        overrides: [
+          authServiceProvider.overrideWithValue(mockAuthService),
+        ],
+        child: MaterialApp(
+          home: CreateAccountPage(
+            onSignUpPressed: () => signUpCalled = true,
+            onGoogleSignUpPressed: () => googleCalled = true,
+            onSignInHerePressed: () => signInHereCalled = true,
+          ),
         ),
       ),
     );
