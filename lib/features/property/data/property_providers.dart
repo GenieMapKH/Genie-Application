@@ -31,5 +31,5 @@ class PropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
 
 final propertiesProvider =
     AsyncNotifierProvider<PropertiesNotifier, List<PropertyModel>>(() {
-  return PropertiesNotifier();
-});
+      return PropertiesNotifier();
+    });

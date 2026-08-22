@@ -71,7 +71,8 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
                 ),
                 error: (error, stack) => Center(
                   child: TextButton(
-                    onPressed: () => ref.read(propertiesProvider.notifier).refresh(),
+                    onPressed: () =>
+                        ref.read(propertiesProvider.notifier).refresh(),
                     child: const Text('Retry'),
                   ),
                 ),

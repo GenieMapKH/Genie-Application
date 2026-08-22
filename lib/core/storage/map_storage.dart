@@ -8,8 +8,14 @@ class MapStorage {
   static const _zoomKey = 'last_map_zoom';
 
   static Future<void> saveLastPosition(CameraPosition position) async {
-    await _storage.write(key: _latKey, value: position.target.latitude.toString());
-    await _storage.write(key: _lngKey, value: position.target.longitude.toString());
+    await _storage.write(
+      key: _latKey,
+      value: position.target.latitude.toString(),
+    );
+    await _storage.write(
+      key: _lngKey,
+      value: position.target.longitude.toString(),
+    );
     await _storage.write(key: _zoomKey, value: position.zoom.toString());
   }
 
@@ -24,10 +30,7 @@ class MapStorage {
       final zoom = double.tryParse(zoomStr);
 
       if (lat != null && lng != null && zoom != null) {
-        return CameraPosition(
-          target: LatLng(lat, lng),
-          zoom: zoom,
-        );
+        return CameraPosition(target: LatLng(lat, lng), zoom: zoom);
       }
     }
     return null;
