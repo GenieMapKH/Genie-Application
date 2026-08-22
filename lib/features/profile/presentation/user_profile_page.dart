@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/services/auth_service.dart';
 import 'package:genie/features/profile/data/user_providers.dart';
 import 'package:genie/features/profile/data/user_repository.dart';
+import 'package:genie/features/property/data/property_providers.dart';
 
 class UserProfilePage extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -152,6 +153,11 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   Future<void> _handleLogout() async {
     final authService = ref.read(authServiceProvider);
     await authService.logout();
+
+    // Clear cached data in providers
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(propertiesProvider);
+
     if (mounted) {
       context.go('/');
     }

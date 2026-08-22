@@ -8,6 +8,8 @@ import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/app_text_field.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
+import 'package:genie/features/property/data/property_providers.dart';
+import 'package:genie/features/profile/data/user_providers.dart';
 
 enum AuthMethod { email, phone }
 
@@ -192,6 +194,11 @@ class _LoginPageState extends ConsumerState<LoginPage>
         AppPopup.showError(context, errorMessage);
       } else if (!state.isLoading && !state.hasError && state.hasValue) {
         AppPopup.showSuccess(context, 'Successfully logged in!');
+
+        // Invalidate providers so they fetch fresh data for the newly logged-in user
+        ref.invalidate(userProfileProvider);
+        ref.invalidate(propertiesProvider);
+
         if (widget.onLoginPressed != null) {
           widget.onLoginPressed!();
         } else {
