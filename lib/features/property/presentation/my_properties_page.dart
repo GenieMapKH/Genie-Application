@@ -23,7 +23,6 @@ class MyPropertiesPage extends ConsumerStatefulWidget {
 
 class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
   List<PropertyModel> _properties = [];
-  int _selectedTabIndex = 0;
 
   String _getTabTitle(int index) {
     switch (index) {
