@@ -6,7 +6,7 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepository(ref.watch(apiClientProvider));
 });
 
-final userProfileProvider = FutureProvider.autoDispose<UserProfile>((
+final userProfileProvider = FutureProvider<UserProfile>((
   ref,
 ) async {
   final repo = ref.watch(userRepositoryProvider);
