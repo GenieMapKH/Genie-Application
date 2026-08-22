@@ -33,6 +33,7 @@ class MainLayout extends ConsumerStatefulWidget {
 class _MainLayoutState extends ConsumerState<MainLayout>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+  int _previousIndex = 0;
   MapSkin _currentSkin = MapSkin.defaultMap;
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -769,7 +770,10 @@ class _MainLayoutState extends ConsumerState<MainLayout>
         });
         _updateMapOverlays();
         if (result.status == 'Active') {
-          setState(() => _currentIndex = 3);
+          setState(() {
+            _previousIndex = _currentIndex;
+            _currentIndex = 3;
+          });
         }
       }
     });
@@ -787,7 +791,10 @@ class _MainLayoutState extends ConsumerState<MainLayout>
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         if (_currentIndex != 0) {
-          setState(() => _currentIndex = 0);
+          setState(() {
+            _previousIndex = _currentIndex;
+            _currentIndex = 0;
+          });
         }
       },
       child: Scaffold(
@@ -1086,19 +1093,53 @@ class _MainLayoutState extends ConsumerState<MainLayout>
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (child, animation) {
-                return FadeTransition(opacity: animation, child: child);
+                final key = child.key as ValueKey<String>?;
+                final currentKey = _currentIndex == 3
+                    ? 'my_properties'
+                    : _currentIndex == 4
+                    ? 'user_profile'
+                    : 'empty';
+                final bool isIncoming = key?.value == currentKey;
+
+                Offset beginOffset;
+                if (_currentIndex > _previousIndex) {
+                  beginOffset = isIncoming
+                      ? const Offset(1.0, 0.0)
+                      : const Offset(-1.0, 0.0);
+                } else {
+                  beginOffset = isIncoming
+                      ? const Offset(-1.0, 0.0)
+                      : const Offset(1.0, 0.0);
+                }
+
+                final tween = Tween<Offset>(
+                  begin: beginOffset,
+                  end: Offset.zero,
+                );
+                return SlideTransition(
+                  position: tween.animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                  ),
+                  child: FadeTransition(opacity: animation, child: child),
+                );
               },
               child: _currentIndex == 3
                   ? MyPropertiesPage(
                       key: const ValueKey('my_properties'),
                       isEmbedded: true,
-                      onBackPressed: () => setState(() => _currentIndex = 0),
+                      onBackPressed: () => setState(() {
+                        _previousIndex = _currentIndex;
+                        _currentIndex = 0;
+                      }),
                     )
                   : _currentIndex == 4
                   ? UserProfilePage(
                       key: const ValueKey('user_profile'),
                       isEmbedded: true,
-                      onBackPressed: () => setState(() => _currentIndex = 0),
+                      onBackPressed: () => setState(() {
+                        _previousIndex = _currentIndex;
+                        _currentIndex = 0;
+                      }),
                     )
                   : const SizedBox.shrink(key: ValueKey('empty')),
             ),
@@ -1190,6 +1231,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
           }
         }
         setState(() {
+          _previousIndex = _currentIndex;
           _currentIndex = index;
         });
       },
