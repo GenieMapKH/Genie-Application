@@ -37,6 +37,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
             const SizedBox(height: 32),
             Expanded(
               child: profileAsync.when(
+                skipLoadingOnReload: false,
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
                 ),
@@ -157,6 +158,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     // Clear cached data in providers
     ref.invalidate(userProfileProvider);
     ref.invalidate(propertiesProvider);
+    ref.invalidate(publicPropertiesProvider);
 
     if (mounted) {
       context.go('/');

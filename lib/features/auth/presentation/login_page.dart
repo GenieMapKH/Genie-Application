@@ -198,6 +198,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
         // Invalidate providers so they fetch fresh data for the newly logged-in user
         ref.invalidate(userProfileProvider);
         ref.invalidate(propertiesProvider);
+        ref.invalidate(publicPropertiesProvider);
 
         if (widget.onLoginPressed != null) {
           widget.onLoginPressed!();

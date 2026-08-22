@@ -280,14 +280,30 @@ class _MainLayoutState extends ConsumerState<MainLayout>
     List<List<LatLng>> detailedProps = [];
     // 1. Gather Finalized Property Data
     final List<List<LatLng>> allProps = List.from(_finalizedProperties);
+
     final backendPropsAsync = ref.read(propertiesProvider);
+    final publicPropsAsync = ref.read(publicPropertiesProvider);
+
+    final Map<String, PropertyModel> combinedMap = {};
+
+    if (publicPropsAsync.hasValue) {
+      for (final p in publicPropsAsync.value!) {
+        combinedMap[p.id] = p;
+      }
+    }
+
     if (backendPropsAsync.hasValue) {
       for (final p in backendPropsAsync.value!) {
-        if (p.boundaryPoints.isNotEmpty) {
-          allProps.add(p.boundaryPoints);
-        } else if (p.lat != null && p.lng != null) {
-          allCentroids.add(LatLng(p.lat!, p.lng!));
-        }
+        combinedMap[p.id] =
+            p; // Personal properties overwrite public ones if there's overlap
+      }
+    }
+
+    for (final p in combinedMap.values) {
+      if (p.boundaryPoints.isNotEmpty) {
+        allProps.add(p.boundaryPoints);
+      } else if (p.lat != null && p.lng != null) {
+        allCentroids.add(LatLng(p.lat!, p.lng!));
       }
     }
 
@@ -782,6 +798,11 @@ class _MainLayoutState extends ConsumerState<MainLayout>
   @override
   Widget build(BuildContext context) {
     ref.listen(propertiesProvider, (previous, next) {
+      if (next.hasValue && next.value != previous?.value) {
+        _updateMapOverlays();
+      }
+    });
+    ref.listen(publicPropertiesProvider, (previous, next) {
       if (next.hasValue && next.value != previous?.value) {
         _updateMapOverlays();
       }

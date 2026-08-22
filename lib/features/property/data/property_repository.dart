@@ -14,12 +14,37 @@ class PropertyRepository {
     if (_cachedProperties.isNotEmpty && !forceRefresh) {
       return _cachedProperties;
     }
-    final response = await dio.get('/properties');
+
+    // In guest mode (no token), fetching /properties will return 401.
+    // We catch it and return empty list.
+    try {
+      final response = await dio.get('/properties');
+      final List<dynamic> data = response.data;
+      _cachedProperties = data
+          .map((json) => PropertyModel.fromJson(json))
+          .toList();
+      return _cachedProperties;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        _cachedProperties = [];
+        return [];
+      }
+      rethrow;
+    }
+  }
+
+  Future<List<PropertyModel>> fetchPublicMapProperties() async {
+    final response = await dio.get(
+      '/public/properties/map',
+      queryParameters: {
+        'minLat': -90,
+        'maxLat': 90,
+        'minLng': -180,
+        'maxLng': 180,
+      },
+    );
     final List<dynamic> data = response.data;
-    _cachedProperties = data
-        .map((json) => PropertyModel.fromJson(json))
-        .toList();
-    return _cachedProperties;
+    return data.map((json) => PropertyModel.fromJson(json)).toList();
   }
 
   List<PropertyModel> getPropertiesByStatus(String status) {
