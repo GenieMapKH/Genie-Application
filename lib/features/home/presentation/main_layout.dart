@@ -1120,7 +1120,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
                   position: tween.animate(
                     CurvedAnimation(parent: animation, curve: Curves.easeInOut),
                   ),
-                  child: FadeTransition(opacity: animation, child: child),
+                  child: child,
                 );
               },
               child: _currentIndex == 3
