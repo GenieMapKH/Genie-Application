@@ -231,6 +231,105 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
     );
   }
 
+  void _showPropertyOptions(BuildContext context, PropertyModel property) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        final isDraft = property.status == 'Draft';
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE5E7EB),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (isDraft)
+                ListTile(
+                  leading: const Icon(Icons.public, color: Color(0xFF5B5FEF)),
+                  title: const Text('Publish to Public'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _changePropertyStatus(property.id, true);
+                  },
+                )
+              else
+                ListTile(
+                  leading: const Icon(
+                    Icons.lock_outline,
+                    color: Color(0xFF5B5FEF),
+                  ),
+                  title: const Text('Move to Draft'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _changePropertyStatus(property.id, false);
+                  },
+                ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(
+                  Icons.delete_outline,
+                  color: Color(0xFFE5484D),
+                ),
+                title: const Text(
+                  'Delete Property',
+                  style: TextStyle(color: Color(0xFFE5484D)),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _deleteProperty(property.id);
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _changePropertyStatus(String id, bool publish) async {
+    try {
+      if (publish) {
+        await ref.read(propertyRepositoryProvider).publish(id);
+      } else {
+        await ref.read(propertyRepositoryProvider).unpublish(id);
+      }
+      ref.invalidate(propertiesProvider);
+      ref.invalidate(publicPropertiesProvider);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to update status')));
+      }
+    }
+  }
+
+  Future<void> _deleteProperty(String id) async {
+    try {
+      await ref.read(propertyRepositoryProvider).remove(id);
+      ref.invalidate(propertiesProvider);
+      ref.invalidate(publicPropertiesProvider);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to delete property')));
+      }
+    }
+  }
+
   Widget _buildPropertyCard(PropertyModel property) {
     Color statusBgColor;
     Color statusTextColor;
@@ -254,200 +353,213 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
         break;
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image Area
-          Stack(
-            children: [
-              Container(
-                height: 160,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                  color: Color(0xFFF3F4F6),
+    return GestureDetector(
+      onLongPress: () => _showPropertyOptions(context, property),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE5E7EB)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image Area
+            Stack(
+              children: [
+                Container(
+                  height: 160,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    color: Color(0xFFF3F4F6),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: property.imageUrls.isNotEmpty
+                      ? Image.network(
+                          property.imageUrls.first,
+                          fit: BoxFit.cover,
+                        )
+                      : const Center(
+                          child: Icon(
+                            Icons.image_outlined,
+                            color: Color(0xFF9CA3AF),
+                            size: 48,
+                          ),
+                        ),
                 ),
-                clipBehavior: Clip.antiAlias,
-                child: property.imageUrls.isNotEmpty
-                    ? Image.network(property.imageUrls.first, fit: BoxFit.cover)
-                    : const Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: Color(0xFF9CA3AF),
-                          size: 48,
+                // Property Type Badge
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          property.propertyType == 'Land'
+                              ? Icons.landscape
+                              : Icons.home_outlined,
+                          size: 14,
+                          color: const Color(0xFF4B5563),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          property.propertyType,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF4B5563),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Favorite Icon
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.favorite_border,
+                      size: 18,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
+                ),
+                // Dots indicator
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (i) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        width: i == 0 ? 12 : 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: i == 0
+                              ? Colors.white
+                              : Colors.white.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            ),
+            // Details Area
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '\$ ${property.price}',
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF111827),
                         ),
                       ),
-              ),
-              // Property Type Badge
-              Positioned(
-                top: 12,
-                left: 12,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        property.propertyType == 'Land'
-                            ? Icons.landscape
-                            : Icons.home_outlined,
-                        size: 14,
-                        color: const Color(0xFF4B5563),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        property.propertyType,
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF4B5563),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: statusBgColor,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          property.status,
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: statusTextColor,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-              // Favorite Icon
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.favorite_border,
-                    size: 18,
-                    color: Color(0xFF9CA3AF),
-                  ),
-                ),
-              ),
-              // Dots indicator
-              Positioned(
-                bottom: 8,
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (i) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 2),
-                      width: i == 0 ? 12 : 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: i == 0
-                            ? Colors.white
-                            : Colors.white.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            ],
-          ),
-          // Details Area
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '\$ ${property.price}',
-                      style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF111827),
-                      ),
+                  const SizedBox(height: 6),
+                  Text(
+                    property.propertyType == 'Land'
+                        ? '1670 m² | Land for sale'
+                        : '4 bds | 5 ba | 115.5 m² | ${property.propertyType} for sale',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF4B5563),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusBgColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        property.status,
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: statusTextColor,
-                        ),
-                      ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    property.title,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: const Color(0xFF6B7280),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  property.propertyType == 'Land'
-                      ? '1670 m² | Land for sale'
-                      : '4 bds | 5 ba | 115.5 m² | ${property.propertyType} for sale',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF4B5563),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  property.title,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: const Color(0xFF6B7280),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Edit',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2563EB), // Blue color
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Edit',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF2563EB), // Blue color
+                  const SizedBox(height: 12),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildStatItem('5', 'Contacts'),
+                        const SizedBox(width: 12),
+                        _buildStatItem('1,688', 'Views'),
+                        const SizedBox(width: 12),
+                        _buildStatItem('99', 'Saves'),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildStatItem('5', 'Contacts'),
-                    _buildStatItem('1,688', 'Views'),
-                    _buildStatItem('99', 'Saves'),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
