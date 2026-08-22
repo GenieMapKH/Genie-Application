@@ -278,13 +278,22 @@ class _MainLayoutState extends ConsumerState<MainLayout>
 
     List<LatLng> allCentroids = [];
     List<List<LatLng>> detailedProps = [];
+    List<bool> detailedPropsIsOwned =
+        []; // Track ownership for each detailed property
+
     // 1. Gather Finalized Property Data
     final List<List<LatLng>> allProps = List.from(_finalizedProperties);
+    final List<bool> allPropsIsOwned = List.filled(
+      _finalizedProperties.length,
+      true,
+      growable: true,
+    );
 
     final backendPropsAsync = ref.read(propertiesProvider);
     final publicPropsAsync = ref.read(publicPropertiesProvider);
 
     final Map<String, PropertyModel> combinedMap = {};
+    final Set<String> myPropertyIds = {};
 
     if (publicPropsAsync.hasValue) {
       for (final p in publicPropsAsync.value!) {
@@ -296,12 +305,15 @@ class _MainLayoutState extends ConsumerState<MainLayout>
       for (final p in backendPropsAsync.value!) {
         combinedMap[p.id] =
             p; // Personal properties overwrite public ones if there's overlap
+        myPropertyIds.add(p.id);
       }
     }
 
     for (final p in combinedMap.values) {
+      final bool isOwned = myPropertyIds.contains(p.id);
       if (p.boundaryPoints.isNotEmpty) {
         allProps.add(p.boundaryPoints);
+        allPropsIsOwned.add(isOwned);
       } else if (p.lat != null && p.lng != null) {
         allCentroids.add(LatLng(p.lat!, p.lng!));
       }
@@ -309,6 +321,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
 
     for (int pIndex = 0; pIndex < allProps.length; pIndex++) {
       final List<LatLng> propPoints = allProps[pIndex];
+      final bool isOwned = allPropsIsOwned[pIndex];
 
       if (propPoints.length >= 3) {
         double sumLat = 0, sumLng = 0;
@@ -322,6 +335,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
         );
         allCentroids.add(centroid);
         detailedProps.add(propPoints);
+        detailedPropsIsOwned.add(isOwned);
       }
     }
 
@@ -397,6 +411,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
       // Level 3: Detailed Property Polygons + Text
       for (int pIndex = 0; pIndex < detailedProps.length; pIndex++) {
         final propPoints = detailedProps[pIndex];
+        final bool isOwned = detailedPropsIsOwned[pIndex];
 
         newPolygons.add(
           Polygon(
@@ -413,7 +428,8 @@ class _MainLayoutState extends ConsumerState<MainLayout>
 
         if (measurements != null) {
           final double area = measurements.area;
-          final bool showEdgeLengths = _shouldShowEdgeLengths(area);
+          // Hide edge lengths if not owned
+          final bool showEdgeLengths = isOwned && _shouldShowEdgeLengths(area);
           final double areaFontSize = _calculateFontSize(area, isArea: true);
           final double edgeFontSize = _calculateFontSize(area, isArea: false);
 
@@ -492,32 +508,30 @@ class _MainLayoutState extends ConsumerState<MainLayout>
           }
         }
 
-        // Edit marker
-        final editIcon = await DynamicMapMarkers.createEditMarker();
-        newMarkers.add(
-          Marker(
-            markerId: MarkerId('edit_$pIndex'),
-            position: propPoints[0],
-            icon: editIcon,
-            anchor: const Offset(1.2, 1.2),
-            consumeTapEvents: true,
-            onTap: () {
-              setState(() {
-                _drawnPoints = List.from(propPoints);
-                _backupPoints = List.from(propPoints);
-                _finalizedProperties.remove(propPoints);
-                _isDrawing = true;
-                _isEditingPolygon = true;
-                _selectedVertexIndex = null;
-                // _canDraw = false;
-              });
-              Future.delayed(const Duration(milliseconds: 300), () {
-                // if (mounted) setState(() => _canDraw = true);
-              });
-              _updateMapOverlays();
-            },
-          ),
-        );
+        // Edit marker (only if owned)
+        if (isOwned) {
+          final editIcon = await DynamicMapMarkers.createEditMarker();
+          newMarkers.add(
+            Marker(
+              markerId: MarkerId('edit_$pIndex'),
+              position: propPoints[0],
+              icon: editIcon,
+              anchor: const Offset(1.2, 1.2),
+              consumeTapEvents: true,
+              onTap: () {
+                setState(() {
+                  _drawnPoints = List.from(propPoints);
+                  _backupPoints = List.from(propPoints);
+                  _finalizedProperties.remove(propPoints);
+                  _isDrawing = true;
+                  _isEditingPolygon = true;
+                  _selectedVertexIndex = null;
+                });
+                _updateMapOverlays();
+              },
+            ),
+          );
+        }
       }
     } else {
       // Level 2: Individual Green Dots
@@ -840,6 +854,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
                       initialCameraPosition: _initialPosition,
                       onMapCreated: (GoogleMapController controller) {
                         _mapController.complete(controller);
+                        _updateMapOverlays();
                       },
                       onCameraMove: (CameraPosition position) {
                         _currentMapCenter = position.target;
@@ -1111,58 +1126,66 @@ class _MainLayoutState extends ConsumerState<MainLayout>
                 ],
               ),
             ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) {
-                final key = child.key as ValueKey<String>?;
-                final currentKey = _currentIndex == 3
-                    ? 'my_properties'
+            Container(
+              color: (_currentIndex >= 3 && _previousIndex >= 3)
+                  ? Colors.white
+                  : Colors.transparent,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) {
+                  final key = child.key as ValueKey<String>?;
+                  final currentKey = _currentIndex == 3
+                      ? 'my_properties'
+                      : _currentIndex == 4
+                      ? 'user_profile'
+                      : 'empty';
+                  final bool isIncoming = key?.value == currentKey;
+
+                  Offset beginOffset;
+                  if (_currentIndex > _previousIndex) {
+                    beginOffset = isIncoming
+                        ? const Offset(1.0, 0.0)
+                        : const Offset(-1.0, 0.0);
+                  } else {
+                    beginOffset = isIncoming
+                        ? const Offset(-1.0, 0.0)
+                        : const Offset(1.0, 0.0);
+                  }
+
+                  final tween = Tween<Offset>(
+                    begin: beginOffset,
+                    end: Offset.zero,
+                  );
+                  return SlideTransition(
+                    position: tween.animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeInOut,
+                      ),
+                    ),
+                    child: child,
+                  );
+                },
+                child: _currentIndex == 3
+                    ? MyPropertiesPage(
+                        key: const ValueKey('my_properties'),
+                        isEmbedded: true,
+                        onBackPressed: () => setState(() {
+                          _previousIndex = _currentIndex;
+                          _currentIndex = 0;
+                        }),
+                      )
                     : _currentIndex == 4
-                    ? 'user_profile'
-                    : 'empty';
-                final bool isIncoming = key?.value == currentKey;
-
-                Offset beginOffset;
-                if (_currentIndex > _previousIndex) {
-                  beginOffset = isIncoming
-                      ? const Offset(1.0, 0.0)
-                      : const Offset(-1.0, 0.0);
-                } else {
-                  beginOffset = isIncoming
-                      ? const Offset(-1.0, 0.0)
-                      : const Offset(1.0, 0.0);
-                }
-
-                final tween = Tween<Offset>(
-                  begin: beginOffset,
-                  end: Offset.zero,
-                );
-                return SlideTransition(
-                  position: tween.animate(
-                    CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                  ),
-                  child: child,
-                );
-              },
-              child: _currentIndex == 3
-                  ? MyPropertiesPage(
-                      key: const ValueKey('my_properties'),
-                      isEmbedded: true,
-                      onBackPressed: () => setState(() {
-                        _previousIndex = _currentIndex;
-                        _currentIndex = 0;
-                      }),
-                    )
-                  : _currentIndex == 4
-                  ? UserProfilePage(
-                      key: const ValueKey('user_profile'),
-                      isEmbedded: true,
-                      onBackPressed: () => setState(() {
-                        _previousIndex = _currentIndex;
-                        _currentIndex = 0;
-                      }),
-                    )
-                  : const SizedBox.shrink(key: ValueKey('empty')),
+                    ? UserProfilePage(
+                        key: const ValueKey('user_profile'),
+                        isEmbedded: true,
+                        onBackPressed: () => setState(() {
+                          _previousIndex = _currentIndex;
+                          _currentIndex = 0;
+                        }),
+                      )
+                    : const SizedBox.shrink(key: ValueKey('empty')),
+              ),
             ),
           ],
         ),

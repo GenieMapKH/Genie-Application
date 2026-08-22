@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PropertyModel {
@@ -39,15 +41,25 @@ class PropertyModel {
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
     List<LatLng> points = [];
-    if (json['boundaryPoints'] != null && json['boundaryPoints'] is List) {
-      points = (json['boundaryPoints'] as List)
-          .map(
-            (p) => LatLng(
-              (p['lat'] as num).toDouble(),
-              (p['lng'] as num).toDouble(),
-            ),
-          )
-          .toList();
+    try {
+      if (json['boundaryPoints'] != null) {
+        var bp = json['boundaryPoints'];
+        if (bp is String) {
+          bp = jsonDecode(bp);
+        }
+        if (bp is List) {
+          points = (bp as List)
+              .map(
+                (p) => LatLng(
+                  (p['lat'] as num).toDouble(),
+                  (p['lng'] as num).toDouble(),
+                ),
+              )
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error parsing boundaryPoints: $e');
     }
 
     List<String> images = [];
