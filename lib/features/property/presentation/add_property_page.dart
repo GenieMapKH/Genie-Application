@@ -95,14 +95,23 @@ class _AddPropertyPageState extends ConsumerState<AddPropertyPage> {
   Future<void> _pickImage(ImageSource source) async {
     try {
       if (source == ImageSource.gallery) {
-        final List<XFile> images = await _picker.pickMultiImage();
+        final List<XFile> images = await _picker.pickMultiImage(
+          imageQuality: 70,
+          maxWidth: 1280,
+          maxHeight: 1280,
+        );
         if (images.isNotEmpty) {
           setState(() {
             _selectedPhotos.addAll(images);
           });
         }
       } else {
-        final XFile? image = await _picker.pickImage(source: source);
+        final XFile? image = await _picker.pickImage(
+          source: source,
+          imageQuality: 70,
+          maxWidth: 1280,
+          maxHeight: 1280,
+        );
         if (image != null) {
           setState(() {
             _selectedPhotos.add(image);
