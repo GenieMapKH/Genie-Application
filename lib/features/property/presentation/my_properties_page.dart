@@ -9,8 +9,13 @@ import '../data/property_providers.dart';
 
 class MyPropertiesPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
+  final VoidCallback? onBackPressed;
 
-  const MyPropertiesPage({super.key, this.isEmbedded = false});
+  const MyPropertiesPage({
+    super.key,
+    this.isEmbedded = false,
+    this.onBackPressed,
+  });
 
   @override
   ConsumerState<MyPropertiesPage> createState() => _MyPropertiesPageState();
@@ -18,37 +23,7 @@ class MyPropertiesPage extends ConsumerStatefulWidget {
 
 class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
   List<PropertyModel> _properties = [];
-  bool _isLoading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProperties();
-  }
-
-  Future<void> _loadProperties() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-    try {
-      final repo = ref.read(propertyRepositoryProvider);
-      _properties = await repo.fetchAll(forceRefresh: true);
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _error = e.toString();
-        });
-      }
-    }
-  }
+  int _selectedTabIndex = 0;
 
   String _getTabTitle(int index) {
     switch (index) {
@@ -67,6 +42,8 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final propertiesAsync = ref.watch(propertiesProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -76,9 +53,30 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
             const SizedBox(height: 42), // Increased margin on top
             _buildHeader(),
             const SizedBox(height: 32), // Increased margin below
-            _buildTabsRow(),
-            const SizedBox(height: 24),
-            Expanded(child: _buildBody()),
+            Expanded(
+              child: propertiesAsync.when(
+                data: (properties) {
+                  _properties = properties;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildTabsRow(),
+                      const SizedBox(height: 24),
+                      Expanded(child: _buildBody()),
+                    ],
+                  );
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
+                ),
+                error: (error, stack) => Center(
+                  child: TextButton(
+                    onPressed: () => ref.read(propertiesProvider.notifier).refresh(),
+                    child: const Text('Retry'),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -100,7 +98,7 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
                 ),
               );
               if (mounted) {
-                _loadProperties(); // Reload from API
+                ref.read(propertiesProvider.notifier).refresh();
               }
             },
             style: ElevatedButton.styleFrom(
@@ -134,7 +132,9 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
             alignment: Alignment.centerLeft,
             child: GestureDetector(
               onTap: () {
-                if (Navigator.of(context).canPop()) {
+                if (widget.onBackPressed != null) {
+                  widget.onBackPressed!();
+                } else if (Navigator.of(context).canPop()) {
                   Navigator.of(context).pop();
                 }
               },
@@ -177,19 +177,6 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
   }
 
   Widget _buildBody() {
-    if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
-      );
-    }
-    if (_error != null) {
-      return Center(
-        child: TextButton(
-          onPressed: _loadProperties,
-          child: const Text('Retry'),
-        ),
-      );
-    }
     final activeProps = _properties.where((p) => p.status == 'Active').toList();
     final pendingProps = _properties
         .where((p) => p.status == 'Pending')

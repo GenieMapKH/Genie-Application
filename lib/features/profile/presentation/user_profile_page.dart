@@ -8,8 +8,13 @@ import 'package:genie/features/profile/data/user_repository.dart';
 
 class UserProfilePage extends ConsumerStatefulWidget {
   final bool isEmbedded;
+  final VoidCallback? onBackPressed;
 
-  const UserProfilePage({super.key, this.isEmbedded = false});
+  const UserProfilePage({
+    super.key,
+    this.isEmbedded = false,
+    this.onBackPressed,
+  });
 
   @override
   ConsumerState<UserProfilePage> createState() => _UserProfilePageState();
@@ -162,7 +167,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
             alignment: Alignment.centerLeft,
             child: GestureDetector(
               onTap: () {
-                if (Navigator.of(context).canPop()) {
+                if (widget.onBackPressed != null) {
+                  widget.onBackPressed!();
+                } else if (Navigator.of(context).canPop()) {
                   Navigator.of(context).pop();
                 }
               },

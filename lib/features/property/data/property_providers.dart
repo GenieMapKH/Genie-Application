@@ -7,9 +7,29 @@ final propertyRepositoryProvider = Provider<PropertyRepository>((ref) {
   return PropertyRepository(ref.watch(apiClientProvider));
 });
 
-final propertiesProvider = FutureProvider.autoDispose<List<PropertyModel>>((
-  ref,
-) async {
-  final repo = ref.watch(propertyRepositoryProvider);
-  return repo.fetchAll(forceRefresh: true);
+class PropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
+  @override
+  Future<List<PropertyModel>> build() async {
+    final repo = ref.watch(propertyRepositoryProvider);
+    return repo.fetchAll(forceRefresh: true);
+  }
+
+  void addProperty(PropertyModel property) {
+    if (state.hasValue) {
+      state = AsyncData([...state.value!, property]);
+    }
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repo = ref.read(propertyRepositoryProvider);
+      return repo.fetchAll(forceRefresh: true);
+    });
+  }
+}
+
+final propertiesProvider =
+    AsyncNotifierProvider<PropertiesNotifier, List<PropertyModel>>(() {
+  return PropertiesNotifier();
 });

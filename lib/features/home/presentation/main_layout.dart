@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:genie/features/home/presentation/widgets/map_top_controls.dart';
 import 'package:genie/features/home/presentation/widgets/map_floating_menu.dart';
@@ -16,18 +17,20 @@ import 'package:genie/features/home/utils/map_markers.dart';
 import 'package:genie/features/property/presentation/add_property_page.dart';
 import 'package:genie/features/property/presentation/my_properties_page.dart';
 import 'package:genie/features/property/models/property_model.dart';
+import 'package:genie/features/property/data/property_providers.dart';
 import 'package:genie/features/profile/presentation/user_profile_page.dart';
 import 'package:genie/core/storage/auth_storage.dart';
+import 'package:genie/core/storage/map_storage.dart';
 import 'package:genie/features/auth/presentation/welcome_page.dart';
 
-class MainLayout extends StatefulWidget {
+class MainLayout extends ConsumerStatefulWidget {
   const MainLayout({super.key});
 
   @override
-  State<MainLayout> createState() => _MainLayoutState();
+  ConsumerState<MainLayout> createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout>
+class _MainLayoutState extends ConsumerState<MainLayout>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   MapSkin _currentSkin = MapSkin.defaultMap;
@@ -69,6 +72,19 @@ class _MainLayoutState extends State<MainLayout>
     );
     _loadMapIcons();
     _initLocation();
+    _loadInitialMapPosition();
+  }
+
+  Future<void> _loadInitialMapPosition() async {
+    final pos = await MapStorage.getLastPosition();
+    if (pos != null && mounted) {
+      final controller = await _mapController.future;
+      controller.moveCamera(CameraUpdate.newCameraPosition(pos));
+      setState(() {
+         _currentZoom = pos.zoom;
+         _currentMapCenter = pos.target;
+      });
+    }
   }
 
   Future<void> _initLocation() async {
@@ -262,8 +278,22 @@ class _MainLayoutState extends State<MainLayout>
     List<LatLng> allCentroids = [];
     List<List<LatLng>> detailedProps = [];
     // 1. Gather Finalized Property Data
-    for (int pIndex = 0; pIndex < _finalizedProperties.length; pIndex++) {
-      final List<LatLng> propPoints = _finalizedProperties[pIndex];
+    final List<List<LatLng>> allProps = List.from(_finalizedProperties);
+    final backendPropsAsync = ref.read(propertiesProvider);
+    if (backendPropsAsync.hasValue) {
+      for (final p in backendPropsAsync.value!) {
+        if (p.boundaryPoints.isNotEmpty) {
+          allProps.add(p.boundaryPoints);
+        } else if (p.lat != null && p.lng != null) {
+          allCentroids.add(LatLng(p.lat!, p.lng!));
+        }
+      }
+    }
+
+    for (int pIndex = 0; pIndex < allProps.length; pIndex++) {
+      final List<LatLng> propPoints = allProps[pIndex];
+
+      
       if (propPoints.length >= 3) {
         double sumLat = 0, sumLng = 0;
         for (var p in propPoints) {
@@ -748,12 +778,25 @@ class _MainLayoutState extends State<MainLayout>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true, // Allow map to show through the transparent nav bar
+    ref.listen(propertiesProvider, (previous, next) {
+      if (next.hasValue && next.value != previous?.value) {
+        _updateMapOverlays();
+      }
+    });
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        }
+      },
+      child: Scaffold(
+        extendBody: true, // Allow map to show through the transparent nav bar
       body: Stack(
         children: [
-          Offstage(
-            offstage: _currentIndex == 3 || _currentIndex == 4,
+          IgnorePointer(
+              ignoring: _currentIndex == 3 || _currentIndex == 4,
             child: Stack(
               children: [
                 // Google Map Background
@@ -793,6 +836,12 @@ class _MainLayoutState extends State<MainLayout>
                       }
                     },
                     onCameraIdle: () async {
+                      if (_currentMapCenter != null) {
+                        MapStorage.saveLastPosition(CameraPosition(
+                          target: _currentMapCenter!,
+                          zoom: _currentZoom,
+                        ));
+                      }
                       if (_isDrawing &&
                           !_isEditingPolygon &&
                           _drawnPoints.length >= 3 &&
@@ -1032,11 +1081,29 @@ class _MainLayoutState extends State<MainLayout>
               ],
             ),
           ),
-          if (_currentIndex == 3) const MyPropertiesPage(isEmbedded: true),
-          if (_currentIndex == 4) const UserProfilePage(isEmbedded: true),
-        ],
+          AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: _currentIndex == 3
+                  ? MyPropertiesPage(
+                      key: const ValueKey('my_properties'),
+                      isEmbedded: true,
+                      onBackPressed: () => setState(() => _currentIndex = 0),
+                    )
+                  : _currentIndex == 4
+                      ? UserProfilePage(
+                          key: const ValueKey('user_profile'),
+                          isEmbedded: true,
+                          onBackPressed: () => setState(() => _currentIndex = 0),
+                        )
+                      : const SizedBox.shrink(key: ValueKey('empty')),
+            ),
+          ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
+    ),
     );
   }
 
