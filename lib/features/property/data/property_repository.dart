@@ -103,6 +103,12 @@ class PropertyRepository {
     return PropertyModel.fromJson(response.data);
   }
 
+  Future<PropertyModel> unpublish(String id) async {
+    final response = await dio.patch('/properties/$id/unpublish');
+    _refreshCache();
+    return PropertyModel.fromJson(response.data);
+  }
+
   Future<void> remove(String id) async {
     await dio.delete('/properties/$id');
     _cachedProperties.removeWhere((p) => p.id == id);

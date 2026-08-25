@@ -45,6 +45,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
   bool _isDrawing = false;
   bool _isEditingPolygon = false;
   int? _selectedVertexIndex;
+  int? _viewedPropertyIndex;
 
   List<LatLng> _drawnPoints = [];
   List<LatLng>? _backupPoints;
@@ -179,6 +180,12 @@ class _MainLayoutState extends ConsumerState<MainLayout>
 
   void _onMapTapped(LatLng position) {
     // Tapping map disabled during draw mode to enforce crosshair precision.
+    if (!_isDrawing && _viewedPropertyIndex != null) {
+      setState(() {
+        _viewedPropertyIndex = null;
+      });
+      _updateMapOverlays();
+    }
   }
 
   Future<void> _flyToAndSpin(List<LatLng> propPoints) async {
@@ -421,20 +428,26 @@ class _MainLayoutState extends ConsumerState<MainLayout>
             strokeWidth: 2,
             fillColor: Colors.white.withValues(alpha: 0.15),
             consumeTapEvents: true,
-            onTap: () => _flyToAndSpin(propPoints),
+            onTap: () {
+              setState(() {
+                _viewedPropertyIndex = pIndex;
+              });
+              _updateMapOverlays();
+              _flyToAndSpin(propPoints);
+            },
           ),
         );
         final measurements = calculateMeasurements(propPoints);
 
         if (measurements != null) {
           final double area = measurements.area;
-          // Hide edge lengths if not owned
-          final bool showEdgeLengths = isOwned && _shouldShowEdgeLengths(area);
-          final double areaFontSize = _calculateFontSize(area, isArea: true);
-          final double edgeFontSize = _calculateFontSize(area, isArea: false);
+          final bool isViewed = _viewedPropertyIndex == pIndex;
+          
+          if (isViewed) {
+            final double areaFontSize = _calculateFontSize(area, isArea: true);
+            final double edgeFontSize = _calculateFontSize(area, isArea: false);
 
-          // Vertex numbers
-          if (showEdgeLengths) {
+            // Vertex numbers
             for (int i = 0; i < propPoints.length; i++) {
               final markerIcon = await DynamicMapMarkers.createNumberedMarker(
                 i + 1,
@@ -449,11 +462,9 @@ class _MainLayoutState extends ConsumerState<MainLayout>
                 ),
               );
             }
-          }
 
-          // Edge length markers & Area
-          if (measurements.sides.isNotEmpty) {
-            if (showEdgeLengths) {
+            // Edge length markers & Area
+            if (measurements.sides.isNotEmpty) {
               for (int i = 0; i < propPoints.length; i++) {
                 final LatLng p1 = propPoints[i];
                 final LatLng p2 = propPoints[(i + 1) % propPoints.length];
@@ -478,33 +489,33 @@ class _MainLayoutState extends ConsumerState<MainLayout>
                   ),
                 );
               }
-            }
 
-            double sumLat = 0, sumLng = 0;
-            for (var p in propPoints) {
-              sumLat += p.latitude;
-              sumLng += p.longitude;
-            }
-            final LatLng centroid = LatLng(
-              sumLat / propPoints.length,
-              sumLng / propPoints.length,
-            );
+              double sumLat = 0, sumLng = 0;
+              for (var p in propPoints) {
+                sumLat += p.latitude;
+                sumLng += p.longitude;
+              }
+              final LatLng centroid = LatLng(
+                sumLat / propPoints.length,
+                sumLng / propPoints.length,
+              );
 
-            final areaStr = formatArea(measurements.area);
-            final areaIcon = await DynamicMapMarkers.createTextMarker(
-              areaStr,
-              isArea: true,
-              fontSize: areaFontSize,
-            );
-            newMarkers.add(
-              Marker(
-                markerId: MarkerId('area_marker_$pIndex'),
-                position: centroid,
-                icon: areaIcon,
-                anchor: const Offset(0.5, 0.5),
-                zIndexInt: 1,
-              ),
-            );
+              final areaStr = formatArea(measurements.area);
+              final areaIcon = await DynamicMapMarkers.createTextMarker(
+                areaStr,
+                isArea: true,
+                fontSize: areaFontSize,
+              );
+              newMarkers.add(
+                Marker(
+                  markerId: MarkerId('area_marker_$pIndex'),
+                  position: centroid,
+                  icon: areaIcon,
+                  anchor: const Offset(0.5, 0.5),
+                  zIndexInt: 1,
+                ),
+              );
+            }
           }
         }
 
@@ -663,6 +674,12 @@ class _MainLayoutState extends ConsumerState<MainLayout>
               position: _drawnPoints[i],
               consumeTapEvents: true,
               draggable: isSelected,
+              onDrag: (newPosition) {
+                setState(() {
+                  _drawnPoints[i] = newPosition;
+                });
+                _updateMapOverlays();
+              },
               onDragEnd: (newPosition) {
                 setState(() {
                   _drawnPoints[i] = newPosition;
@@ -702,7 +719,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
               consumeTapEvents: true,
               onTap: () {
                 if (i == 0 && _drawnPoints.length >= 3) {
-                  _closePolygonAndShowForm();
+                  _closePolygonForEditing();
                 }
               },
               icon: isLastPoint
@@ -769,13 +786,17 @@ class _MainLayoutState extends ConsumerState<MainLayout>
     }
   }
 
-  void _closePolygonAndShowForm() {
+  void _closePolygonForEditing() {
     if (_drawnPoints.length < 3) return;
 
     setState(() {
       _isEditingPolygon = true;
     });
     _updateMapOverlays();
+  }
+
+  void _showAddPropertyForm() {
+    if (_drawnPoints.length < 3) return;
 
     final measurements = calculateMeasurements(_drawnPoints);
     final double area = measurements?.area ?? 0.0;
@@ -1080,7 +1101,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
                       },
                       onSavePressed: () {
                         if (_drawnPoints.length >= 3) {
-                          _closePolygonAndShowForm();
+                          _showAddPropertyForm();
                         } else {
                           setState(() {
                             _isDrawing = false;
@@ -1107,7 +1128,7 @@ class _MainLayoutState extends ConsumerState<MainLayout>
                               // Auto-connect if within 150 screen pixels
                               if (distanceSquared <= 150 * 150) {
                                 if (mounted) {
-                                  _closePolygonAndShowForm();
+                                  _closePolygonForEditing();
                                 }
                                 return;
                               }

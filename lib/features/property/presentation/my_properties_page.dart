@@ -155,7 +155,8 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
   }
 
   Widget _buildTabsRow() {
-    return Padding(
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
