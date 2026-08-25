@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:math' as math;
+import 'package:genie/core/network/api_client.dart';
+import 'package:genie/core/storage/auth_storage.dart';
 import 'package:genie/features/auth/presentation/create_account_page.dart';
 import 'package:genie/features/auth/presentation/login_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
@@ -252,10 +255,38 @@ class _WelcomePageState extends State<WelcomePage>
                             text: 'Explore without account',
                             onPressed:
                                 widget.onExplorePressed ??
-                                () {
-                                  Navigator.of(context).pushReplacement(
-                                    AppPageRoute(page: const MainLayout()),
-                                  );
+                                () async {
+                                  try {
+                                    // Guest session initialization
+                                    String? guestId =
+                                        await AuthStorage.getGuestSessionId();
+                                    if (guestId == null) {
+                                      final timestamp =
+                                          DateTime.now().millisecondsSinceEpoch;
+                                      final random = math.Random().nextInt(
+                                        1000000,
+                                      );
+                                      guestId = 'guest_${timestamp}_$random';
+                                      await AuthStorage.saveGuestSessionId(
+                                        guestId,
+                                      );
+                                    }
+
+                                    // Register with backend
+                                    final dio = createApiClient();
+                                    await dio.post(
+                                      '/public/properties/guest-session',
+                                      data: {'deviceId': guestId},
+                                    );
+                                  } catch (e) {
+                                    debugPrint('Guest session init failed: $e');
+                                  }
+
+                                  if (context.mounted) {
+                                    Navigator.of(context).pushReplacement(
+                                      AppPageRoute(page: const MainLayout()),
+                                    );
+                                  }
                                 },
                           ),
                           const SizedBox(height: 24),

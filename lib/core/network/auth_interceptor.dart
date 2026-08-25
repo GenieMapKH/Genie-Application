@@ -16,6 +16,11 @@ class AuthInterceptor extends Interceptor {
     if (token != null) {
       // Automatically attach token to ALL requests if user is logged in
       options.headers['Authorization'] = 'Bearer $token';
+    } else {
+      final guestId = await AuthStorage.getGuestSessionId();
+      if (guestId != null) {
+        options.headers['X-Guest-Session-ID'] = guestId;
+      }
     }
     return handler.next(options);
   }

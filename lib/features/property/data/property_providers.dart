@@ -33,3 +33,10 @@ final propertiesProvider =
     AsyncNotifierProvider<PropertiesNotifier, List<PropertyModel>>(() {
       return PropertiesNotifier();
     });
+
+final publicPropertiesProvider = FutureProvider<List<PropertyModel>>((
+  ref,
+) async {
+  final repo = ref.watch(propertyRepositoryProvider);
+  return repo.fetchPublicMapProperties();
+});
