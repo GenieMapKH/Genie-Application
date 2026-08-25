@@ -3,7 +3,6 @@
 part of 'main_layout.dart';
 
 extension MainLayoutMapLogic on _MainLayoutState {
-
   Future<void> _updateMapOverlays() async {
     final Set<Marker> newMarkers = {};
     final Set<Polyline> newPolylines = {};
@@ -172,7 +171,7 @@ extension MainLayoutMapLogic on _MainLayoutState {
         if (measurements != null) {
           final double area = measurements.area;
           final bool isViewed = _viewedPropertyIndex == pIndex;
-          
+
           if (isViewed) {
             final double areaFontSize = _calculateFontSize(area, isArea: true);
             final double edgeFontSize = _calculateFontSize(area, isArea: false);
@@ -559,5 +558,4 @@ extension MainLayoutMapLogic on _MainLayoutState {
       }
     });
   }
-
 }

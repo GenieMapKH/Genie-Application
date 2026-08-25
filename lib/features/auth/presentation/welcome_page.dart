@@ -258,24 +258,30 @@ class _WelcomePageState extends State<WelcomePage>
                                 () async {
                                   try {
                                     // Guest session initialization
-                                    String? guestId = await AuthStorage.getGuestSessionId();
+                                    String? guestId =
+                                        await AuthStorage.getGuestSessionId();
                                     if (guestId == null) {
-                                      final timestamp = DateTime.now().millisecondsSinceEpoch;
-                                      final random = math.Random().nextInt(1000000);
+                                      final timestamp =
+                                          DateTime.now().millisecondsSinceEpoch;
+                                      final random = math.Random().nextInt(
+                                        1000000,
+                                      );
                                       guestId = 'guest_${timestamp}_$random';
-                                      await AuthStorage.saveGuestSessionId(guestId);
+                                      await AuthStorage.saveGuestSessionId(
+                                        guestId,
+                                      );
                                     }
-                                    
+
                                     // Register with backend
                                     final dio = createApiClient();
                                     await dio.post(
-                                      '/public/properties/guest-session', 
-                                      data: {'deviceId': guestId}
+                                      '/public/properties/guest-session',
+                                      data: {'deviceId': guestId},
                                     );
                                   } catch (e) {
                                     debugPrint('Guest session init failed: $e');
                                   }
-                                  
+
                                   if (context.mounted) {
                                     Navigator.of(context).pushReplacement(
                                       AppPageRoute(page: const MainLayout()),

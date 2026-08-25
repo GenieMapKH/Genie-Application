@@ -181,7 +181,9 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
 
   Widget _buildBody() {
     final activeProps = _properties.where((p) => p.status == 'Active').toList();
-    final pendingProps = _properties.where((p) => p.status == 'Pending').toList();
+    final pendingProps = _properties
+        .where((p) => p.status == 'Pending')
+        .toList();
     final draftProps = _properties.where((p) => p.status == 'Draft').toList();
     final soldProps = _properties.where((p) => p.status == 'Sold').toList();
 
@@ -236,8 +238,6 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
     );
   }
 
-
-
   Future<void> _changePropertyStatus(String id, bool publish) async {
     try {
       if (publish) {
@@ -269,12 +269,6 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
       }
     }
   }
-
-
-
-
-
-
 
   Widget _buildBottomBar() {
     return Container(

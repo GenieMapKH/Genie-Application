@@ -11,8 +11,11 @@ extension AddPropertyPageFormsBase on _AddPropertyPageState {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            PropertySectionTitle(title: 
-              isLandType ? 'Size' : 'Land Size', required: true, hasError: _hasAttemptedSubmit &&
+            PropertySectionTitle(
+              title: isLandType ? 'Size' : 'Land Size',
+              required: true,
+              hasError:
+                  _hasAttemptedSubmit &&
                   _landSizeController.text.trim().isEmpty,
             ),
             isLandType
@@ -79,8 +82,11 @@ extension AddPropertyPageFormsBase on _AddPropertyPageState {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            PropertySectionTitle(title: 
-              'Building Size', required: true, hasError: _hasAttemptedSubmit &&
+            PropertySectionTitle(
+              title: 'Building Size',
+              required: true,
+              hasError:
+                  _hasAttemptedSubmit &&
                   _buildingSizeController.text.trim().isEmpty,
             ),
             Row(
@@ -124,8 +130,11 @@ extension AddPropertyPageFormsBase on _AddPropertyPageState {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            PropertySectionTitle(title: 
-              'Unit Size', required: true, hasError: _hasAttemptedSubmit &&
+            PropertySectionTitle(
+              title: 'Unit Size',
+              required: true,
+              hasError:
+                  _hasAttemptedSubmit &&
                   _unitSizeController.text.trim().isEmpty,
             ),
             Row(
@@ -167,7 +176,10 @@ extension AddPropertyPageFormsBase on _AddPropertyPageState {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const PropertySectionTitle(title: 'Maintenance Fee', required: false),
+            const PropertySectionTitle(
+              title: 'Maintenance Fee',
+              required: false,
+            ),
             Row(
               children: [
                 const Icon(
@@ -388,7 +400,10 @@ extension AddPropertyPageFormsBase on _AddPropertyPageState {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const PropertySectionTitle(title: 'Lease Remaining', required: false),
+            const PropertySectionTitle(
+              title: 'Lease Remaining',
+              required: false,
+            ),
             Row(
               children: [
                 const Icon(
@@ -472,5 +487,4 @@ extension AddPropertyPageFormsBase on _AddPropertyPageState {
       focusKey: focusKey,
     );
   }
-
 }

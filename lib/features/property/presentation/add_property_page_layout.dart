@@ -60,7 +60,10 @@ extension AddPropertyPageLayout on _AddPropertyPageState {
             children: [
               _buildMapPreview(),
               const SizedBox(height: 24),
-              const PropertySectionTitle(title: 'Property Type', required: false),
+              const PropertySectionTitle(
+                title: 'Property Type',
+                required: false,
+              ),
               const SizedBox(height: 12),
               PropertyTypeSelector(
                 selectedPropertyType: _selectedPropertyType,
@@ -109,11 +112,17 @@ extension AddPropertyPageLayout on _AddPropertyPageState {
                 ),
               ),
               const SizedBox(height: 24),
-              const PropertySectionTitle(title: 'Keywords / Features', required: false),
+              const PropertySectionTitle(
+                title: 'Keywords / Features',
+                required: false,
+              ),
               const SizedBox(height: 12),
               _buildKeywordsWrap(),
               const SizedBox(height: 24),
-              const PropertySectionTitle(title: 'Upload property photos', required: false),
+              const PropertySectionTitle(
+                title: 'Upload property photos',
+                required: false,
+              ),
               const SizedBox(height: 12),
               PropertyImagePicker(
                 selectedPhotos: _selectedPhotos,
@@ -144,10 +153,6 @@ extension AddPropertyPageLayout on _AddPropertyPageState {
       ),
     );
   }
-
-
-
-
 
   Future<void> _submitForm() async {
     setState(() => _isLoading = true);
@@ -202,6 +207,4 @@ extension AddPropertyPageLayout on _AddPropertyPageState {
 
     return property;
   }
-
-
 }

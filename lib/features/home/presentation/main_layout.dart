@@ -279,12 +279,6 @@ class _MainLayoutState extends ConsumerState<MainLayout>
     return size.clamp(8.0, 16.0);
   }
 
-
-
-
-
-
-
   @override
   @override
   Widget build(BuildContext context) {

@@ -291,10 +291,6 @@ extension AddPropertyPageFormsDynamic on _AddPropertyPageState {
     );
   }
 
-
-
-
-
   Widget _buildDefaultPriceListingSettings() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,5 +502,4 @@ extension AddPropertyPageFormsDynamic on _AddPropertyPageState {
       children: fields,
     );
   }
-
 }

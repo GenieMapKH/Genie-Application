@@ -386,10 +386,4 @@ extension MainLayoutUI on _MainLayoutState {
       ),
     );
   }
-
-
-
-
-
-
 }
