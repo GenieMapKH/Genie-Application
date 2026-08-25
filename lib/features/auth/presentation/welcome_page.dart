@@ -273,8 +273,7 @@ class _WelcomePageState extends State<WelcomePage>
                                       data: {'deviceId': guestId}
                                     );
                                   } catch (e) {
-                                    // Proceed to map even if guest tracking fails
-                                    print('Guest session init failed: $e');
+                                    debugPrint('Guest session init failed: $e');
                                   }
                                   
                                   if (context.mounted) {

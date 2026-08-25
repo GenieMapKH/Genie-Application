@@ -48,7 +48,7 @@ class PropertyModel {
           bp = jsonDecode(bp);
         }
         if (bp is List) {
-          points = (bp as List)
+          points = bp
               .map(
                 (p) => LatLng(
                   (p['lat'] as num).toDouble(),

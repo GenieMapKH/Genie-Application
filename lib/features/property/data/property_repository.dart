@@ -1,6 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/property_model.dart';
+
+List<PropertyModel> _parseProperties(List<dynamic> data) {
+  return data.map((json) => PropertyModel.fromJson(json)).toList();
+}
 
 class PropertyRepository {
   final Dio dio;
@@ -20,9 +25,7 @@ class PropertyRepository {
     try {
       final response = await dio.get('/properties');
       final List<dynamic> data = response.data;
-      _cachedProperties = data
-          .map((json) => PropertyModel.fromJson(json))
-          .toList();
+      _cachedProperties = await compute(_parseProperties, data);
       return _cachedProperties;
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
@@ -44,7 +47,7 @@ class PropertyRepository {
       },
     );
     final List<dynamic> data = response.data;
-    return data.map((json) => PropertyModel.fromJson(json)).toList();
+    return compute(_parseProperties, data);
   }
 
   List<PropertyModel> getPropertiesByStatus(String status) {
