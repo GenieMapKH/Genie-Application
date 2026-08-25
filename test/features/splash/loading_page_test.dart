@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/splash/presentation/loading_page.dart';
+import 'package:genie/features/splash/presentation/screens/loading_page.dart';
 
 void main() {
   testWidgets('LoadingPage renders core logo image', (
@@ -42,3 +42,4 @@ void main() {
     expect(finished, isTrue);
   });
 }
+

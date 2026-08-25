@@ -2,16 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import '../../utils/ocr_parser.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../shared/utils/app_popup.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:utm/utm.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-part 'utm_locate_bottom_sheet_ui.dart';
+import 'utm/utm_sheet_header.dart';
+import 'utm/utm_scan_section.dart';
+import 'utm/utm_manual_entry.dart';
+import 'utm/utm_preview_button.dart';
 
 class UtmLocateBottomSheet extends StatefulWidget {
   final List<Map<String, dynamic>>? initialCoordinates;
@@ -266,6 +266,51 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
 
   @override
   Widget build(BuildContext context) {
-    return _buildUtmSheetUI(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      height: screenHeight * 0.95,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: Column(
+        children: [
+          const UtmSheetHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  UtmScanSection(
+                    fadeAnimation1: _fadeAnimation1,
+                    slideAnimation1: _slideAnimation1,
+                    fadeAnimation2: _fadeAnimation2,
+                    slideAnimation2: _slideAnimation2,
+                    isScanning: _isScanning,
+                    uploadProgress: _uploadProgress,
+                    onScanDocument: _scanDocument,
+                  ),
+                  const SizedBox(height: 24),
+                  UtmManualEntry(
+                    fadeAnimation: _fadeAnimation3,
+                    slideAnimation: _slideAnimation3,
+                    coordinateRows: _coordinateRows,
+                    onAddRow: _addNewRow,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          UtmPreviewButton(
+            onPreview: _handlePreview,
+          ),
+        ],
+      ),
+    );
   }
 }

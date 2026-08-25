@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../storage/auth_storage.dart';
+import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 
 class AuthInterceptor extends Interceptor {
   final Dio dio;
@@ -69,3 +69,4 @@ class AuthInterceptor extends Interceptor {
     }
   }
 }
+

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/auth/presentation/terms_of_service_page.dart';
+import 'package:genie/features/auth/presentation/screens/terms_of_service_page.dart';
 
 void main() {
   testWidgets('TermsOfServicePage renders sections and enforces scroll to bottom', (
@@ -55,3 +55,4 @@ void main() {
     expect(agreed, isTrue);
   });
 }
+
