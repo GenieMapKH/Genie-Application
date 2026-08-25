@@ -4,6 +4,7 @@ part of 'main_layout.dart';
 
 extension MainLayoutMapLogic on _MainLayoutState {
   Future<void> _updateMapOverlays() async {
+    if (!mounted) return;
     final Set<Marker> newMarkers = {};
     final Set<Polyline> newPolylines = {};
     final Set<Polygon> newPolygons = {};
@@ -524,12 +525,22 @@ extension MainLayoutMapLogic on _MainLayoutState {
     _updateMapOverlays();
   }
 
-  void _showAddPropertyForm() {
+  Future<void> _showAddPropertyForm() async {
     if (_drawnPoints.length < 3) return;
+
+    final token = await AuthStorage.getAccessToken();
+    if (token == null) {
+      if (mounted) {
+        _showLoginRequiredDialog(context);
+      }
+      return;
+    }
 
     final measurements = calculateMeasurements(_drawnPoints);
     final double area = measurements?.area ?? 0.0;
     final pointsCopy = List<LatLng>.from(_drawnPoints);
+
+    if (!mounted) return;
 
     Navigator.push(
       context,

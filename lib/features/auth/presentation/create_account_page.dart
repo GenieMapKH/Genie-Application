@@ -87,8 +87,8 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
       if (_passwordController.text.isEmpty) {
         _passwordError = 'Enter a valid password';
         isValid = false;
-      } else if (_passwordController.text.length < 6) {
-        _passwordError = 'Password must be at least 6 characters';
+      } else if (_passwordController.text.length < 8) {
+        _passwordError = 'Password must be at least 8 characters';
         isValid = false;
       } else {
         _passwordError = null;

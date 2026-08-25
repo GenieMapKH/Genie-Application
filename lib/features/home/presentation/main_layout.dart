@@ -254,29 +254,44 @@ class _MainLayoutState extends ConsumerState<MainLayout>
   }
 
   bool _shouldShowEdgeLengths(double area) {
-    // Edge lengths will disappear before the area bubble,
-    // but they show up much earlier for larger properties.
-    if (area > 50000) return _currentZoom > 14.0;
-    if (area > 5000) return _currentZoom > 15.0;
-    if (area > 500) return _currentZoom > 16.0;
-    if (area > 50) return _currentZoom > 17.0;
-    return _currentZoom > 17.5;
+    // Edge lengths will disappear before the area bubble.
+    // We require much higher zoom for smaller properties so they don't overlap.
+    if (area > 1000000) return _currentZoom > 12.0; // 100 ha
+    if (area > 100000) return _currentZoom > 13.0; // 10 ha
+    if (area > 10000) return _currentZoom > 14.5;  // 1 ha
+    if (area > 5000) return _currentZoom > 15.5;
+    if (area > 1000) return _currentZoom > 16.5;
+    if (area > 500) return _currentZoom > 17.5;
+    if (area > 100) return _currentZoom > 18.5;
+    if (area > 50) return _currentZoom > 19.5;
+    return _currentZoom > 20.0;
   }
 
   double _calculateFontSize(double area, {bool isArea = false}) {
-    double size = isArea ? 14.0 : 12.0;
-
-    if (area <= 10000 && _currentZoom <= 16.0) {
-      size *= 0.75;
-    } else if (area <= 1000 && _currentZoom <= 17.5) {
-      size *= 0.75;
-    } else if (area <= 100 && _currentZoom <= 18.5) {
-      size *= 0.75;
-    } else if (area <= 50 && _currentZoom <= 19.5) {
+    double size = isArea ? 16.0 : 13.0;
+    
+    // Scale up for high zooms, so when zoomed in close it's larger and clearer
+    if (_currentZoom >= 19.0) {
+      size *= 1.2;
+    } else if (_currentZoom >= 18.0) {
+      size *= 1.1;
+    }
+    
+    // Scale down for zoomed out views to reduce clutter
+    if (_currentZoom <= 15.0) {
+      size *= 0.8;
+    } else if (_currentZoom <= 13.0) {
       size *= 0.6;
     }
 
-    return size.clamp(8.0, 16.0);
+    // Scale up for massive properties so they are more visible relative to the polygon
+    if (area > 100000) { // 10 hectares+
+      size *= 1.5;
+    } else if (area > 10000) { // 1 hectare+
+      size *= 1.3;
+    }
+
+    return size.clamp(10.0, 24.0);
   }
 
   @override

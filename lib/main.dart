@@ -10,7 +10,8 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  const envFile = kReleaseMode ? ".env.production" : ".env";
+  await dotenv.load(fileName: envFile);
 
   // Request the latest Android Map renderer which fixes lag and supports high refresh rates
   if (defaultTargetPlatform == TargetPlatform.android) {
