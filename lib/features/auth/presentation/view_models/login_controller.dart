@@ -28,8 +28,6 @@ class LoginController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
     try {
       final googleSignIn = GoogleSignIn(
-        clientId:
-            '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
         serverClientId:
             '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
       );
