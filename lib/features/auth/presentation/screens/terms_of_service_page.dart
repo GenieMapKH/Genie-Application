@@ -361,4 +361,3 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
     );
   }
 }
-

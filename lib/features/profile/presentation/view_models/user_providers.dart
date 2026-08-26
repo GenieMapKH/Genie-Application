@@ -10,4 +10,3 @@ final userProfileProvider = FutureProvider<UserProfile>((ref) async {
   final repo = ref.watch(userRepositoryProvider);
   return repo.getProfile();
 });
-

@@ -18,8 +18,7 @@ extension AddPropertyPageFormsBase on AddPropertyPageState {
               title: isLandType ? 'Size' : 'Land Size',
               required: true,
               hasError:
-                  hasAttemptedSubmit &&
-                  landSizeController.text.trim().isEmpty,
+                  hasAttemptedSubmit && landSizeController.text.trim().isEmpty,
             ),
             isLandType
                 ? InkWell(
@@ -137,8 +136,7 @@ extension AddPropertyPageFormsBase on AddPropertyPageState {
               title: 'Unit Size',
               required: true,
               hasError:
-                  hasAttemptedSubmit &&
-                  unitSizeController.text.trim().isEmpty,
+                  hasAttemptedSubmit && unitSizeController.text.trim().isEmpty,
             ),
             Row(
               children: [

@@ -61,4 +61,3 @@ void main() {
     expect(createAccountPressed, isTrue);
   });
 }
-

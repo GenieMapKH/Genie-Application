@@ -170,4 +170,3 @@ void main() {
     expect(signInHereCalled, isTrue);
   });
 }
-

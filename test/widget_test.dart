@@ -9,7 +9,9 @@ void main() {
   testWidgets('MyApp renders WelcomePage with smooth splash and actions', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: WelcomePage())));
+    await tester.pumpWidget(
+      const ProviderScope(child: MaterialApp(home: WelcomePage())),
+    );
     await tester.pumpAndSettle();
 
     // Initially displays the WelcomePage
@@ -27,5 +29,3 @@ void main() {
     expect(find.text('Create a Account'), findsOneWidget);
   });
 }
-
-

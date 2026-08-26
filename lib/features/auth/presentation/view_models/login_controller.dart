@@ -28,8 +28,10 @@ class LoginController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
     try {
       final googleSignIn = GoogleSignIn(
-        clientId: '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
-        serverClientId: '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
+        clientId:
+            '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
+        serverClientId:
+            '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
       );
 
       if (forceAccountSelection) {
@@ -42,18 +44,20 @@ class LoginController extends StateNotifier<AsyncValue<void>> {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-      
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+
       if (userCredential.user != null) {
         await _authService.firebaseLogin(userCredential.user!);
       }
-      
+
       state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);

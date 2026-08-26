@@ -307,8 +307,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
             required: true,
             controller: priceController,
             hintText: 'Enter selling price (USD)',
-            hasError:
-                hasAttemptedSubmit && priceController.text.trim().isEmpty,
+            hasError: hasAttemptedSubmit && priceController.text.trim().isEmpty,
             focusKey: priceKey,
           ),
         ),

@@ -306,9 +306,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
               ),
             ),
           ),
-          UtmPreviewButton(
-            onPreview: _handlePreview,
-          ),
+          UtmPreviewButton(onPreview: _handlePreview),
         ],
       ),
     );

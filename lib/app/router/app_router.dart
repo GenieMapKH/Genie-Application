@@ -14,17 +14,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Check if user is logged in
       final token = await AuthStorage.getAccessToken();
       final isLoggedIn = token != null && token.isNotEmpty;
-      
+
       // Determine if they are on an authentication-related screen
-      final isAuthScreen = state.matchedLocation == '/' || 
-                           state.matchedLocation == '/login' || 
-                           state.matchedLocation == '/register';
-                           
+      final isAuthScreen =
+          state.matchedLocation == '/' ||
+          state.matchedLocation == '/login' ||
+          state.matchedLocation == '/register';
+
       if (isLoggedIn && isAuthScreen) {
         // Bypass welcome/login and go straight to home
         return '/home';
       }
-      
+
       return null; // Continue normally
     },
     routes: [
@@ -38,4 +39,3 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
-

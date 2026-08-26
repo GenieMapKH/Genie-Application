@@ -9,6 +9,6 @@ class GlidingScrollPhysics extends BouncingScrollPhysics {
   }
 
   @override
-  double frictionFactor(double overscrollFraction) => super.frictionFactor(overscrollFraction) * 0.6; // Reduced friction for a smoother, longer glide
-
+  double frictionFactor(double overscrollFraction) =>
+      super.frictionFactor(overscrollFraction) * 0.6; // Reduced friction for a smoother, longer glide
 }

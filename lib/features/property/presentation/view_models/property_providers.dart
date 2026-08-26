@@ -40,4 +40,3 @@ final publicPropertiesProvider = FutureProvider<List<PropertyModel>>((
   final repo = ref.watch(propertyRepositoryProvider);
   return repo.fetchPublicMapProperties();
 });
-

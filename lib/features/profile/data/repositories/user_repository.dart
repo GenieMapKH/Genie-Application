@@ -57,7 +57,7 @@ class UserRepository {
       return UserProfile.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        // On initial Google Sign-in, the backend might have a slight delay 
+        // On initial Google Sign-in, the backend might have a slight delay
         // syncing the new user record between the Auth and User microservices.
         await Future.delayed(const Duration(milliseconds: 2000));
         final retryResponse = await dio.get('/users/me');

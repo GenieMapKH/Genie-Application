@@ -63,8 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '67344886415',
     projectId: 'genie-a0c66',
     storageBucket: 'genie-a0c66.firebasestorage.app',
-    androidClientId: '67344886415-7hfaneh8s0pjmn6s03f0ups5v74k1ef6.apps.googleusercontent.com',
-    iosClientId: '67344886415-d4oo5ehf5up4elfrsubeg9q07pgs54ib.apps.googleusercontent.com',
+    androidClientId:
+        '67344886415-7hfaneh8s0pjmn6s03f0ups5v74k1ef6.apps.googleusercontent.com',
+    iosClientId:
+        '67344886415-d4oo5ehf5up4elfrsubeg9q07pgs54ib.apps.googleusercontent.com',
     iosBundleId: 'com.example.genie',
   );
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,8 +75,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '67344886415',
     projectId: 'genie-a0c66',
     storageBucket: 'genie-a0c66.firebasestorage.app',
-    androidClientId: '67344886415-7hfaneh8s0pjmn6s03f0ups5v74k1ef6.apps.googleusercontent.com',
-    iosClientId: '67344886415-d4oo5ehf5up4elfrsubeg9q07pgs54ib.apps.googleusercontent.com',
+    androidClientId:
+        '67344886415-7hfaneh8s0pjmn6s03f0ups5v74k1ef6.apps.googleusercontent.com',
+    iosClientId:
+        '67344886415-d4oo5ehf5up4elfrsubeg9q07pgs54ib.apps.googleusercontent.com',
     iosBundleId: 'com.example.genie',
   );
 

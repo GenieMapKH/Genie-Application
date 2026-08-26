@@ -69,4 +69,3 @@ class AuthInterceptor extends Interceptor {
     }
   }
 }
-

@@ -7,8 +7,6 @@ import 'package:genie/features/home/utils/map_measurements.dart';
 
 import 'add_property_page_layout.dart';
 
-
-
 class AddPropertyPage extends ConsumerStatefulWidget {
   final List<LatLng> boundaryPoints;
   final double propertyArea;
@@ -33,15 +31,13 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
       TextEditingController();
 
   // Borey specific controllers
-  final TextEditingController developerNameController =
-      TextEditingController();
+  final TextEditingController developerNameController = TextEditingController();
   final TextEditingController projectNameController = TextEditingController();
   final TextEditingController totalProjectAreaController =
       TextEditingController();
   final TextEditingController totalUnitsTextController =
       TextEditingController();
-  final TextEditingController startingPriceController =
-      TextEditingController();
+  final TextEditingController startingPriceController = TextEditingController();
 
   // Business for Sale specific controllers
   final TextEditingController monthlyRentController = TextEditingController();

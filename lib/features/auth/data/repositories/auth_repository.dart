@@ -45,10 +45,7 @@ class AuthService {
     try {
       await dio.post(
         '/auth/register',
-        data: {
-          isEmail ? 'email' : 'phone': identifier,
-          'password': password,
-        },
+        data: {isEmail ? 'email' : 'phone': identifier, 'password': password},
       );
     } catch (e) {
       throw _handleError(e);
@@ -61,10 +58,7 @@ class AuthService {
     try {
       final response = await dio.post(
         '/auth/login',
-        data: {
-          isEmail ? 'email' : 'phone': identifier,
-          'password': password,
-        },
+        data: {isEmail ? 'email' : 'phone': identifier, 'password': password},
       );
 
       await AuthStorage.saveTokens(
@@ -108,4 +102,3 @@ class AuthService {
     await AuthStorage.clearTokens();
   }
 }
-

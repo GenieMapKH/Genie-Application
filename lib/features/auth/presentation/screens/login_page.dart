@@ -178,7 +178,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
             .read(loginControllerProvider.notifier)
             .login(_emailController.text.trim(), _passwordController.text);
       } else {
-        final cleanPhone = _phoneController.text.replaceAll(RegExp(r'[\s\-()]'), '');
+        final cleanPhone = _phoneController.text.replaceAll(
+          RegExp(r'[\s\-()]'),
+          '',
+        );
         await ref
             .read(loginControllerProvider.notifier)
             .login(cleanPhone, _passwordController.text);
@@ -383,7 +386,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
                         if (widget.onGoogleLoginPressed != null) {
                           widget.onGoogleLoginPressed!();
                         } else {
-                          ref.read(loginControllerProvider.notifier).googleLogin();
+                          ref
+                              .read(loginControllerProvider.notifier)
+                              .googleLogin();
                         }
                       },
                       onCreateAccount: widget.onCreateAccountPressed,

@@ -13,7 +13,6 @@ import 'package:genie/core/storage/map_storage.dart';
 import 'main_layout_ui.dart';
 import 'main_layout_map_logic.dart';
 
-
 class MainLayout extends ConsumerStatefulWidget {
   const MainLayout({super.key});
 
@@ -244,7 +243,7 @@ class MainLayoutState extends ConsumerState<MainLayout>
     // We require much higher zoom for smaller properties so they don't overlap.
     if (area > 1000000) return currentZoom > 12.0; // 100 ha
     if (area > 100000) return currentZoom > 13.0; // 10 ha
-    if (area > 10000) return currentZoom > 14.5;  // 1 ha
+    if (area > 10000) return currentZoom > 14.5; // 1 ha
     if (area > 5000) return currentZoom > 15.5;
     if (area > 1000) return currentZoom > 16.5;
     if (area > 500) return currentZoom > 17.5;
@@ -255,14 +254,14 @@ class MainLayoutState extends ConsumerState<MainLayout>
 
   double calculateFontSize(double area, {bool isArea = false}) {
     double size = isArea ? 16.0 : 13.0;
-    
+
     // Scale up for high zooms, so when zoomed in close it's larger and clearer
     if (currentZoom >= 19.0) {
       size *= 1.2;
     } else if (currentZoom >= 18.0) {
       size *= 1.1;
     }
-    
+
     // Scale down for zoomed out views to reduce clutter
     if (currentZoom <= 15.0) {
       size *= 0.8;
@@ -271,9 +270,11 @@ class MainLayoutState extends ConsumerState<MainLayout>
     }
 
     // Scale up for massive properties so they are more visible relative to the polygon
-    if (area > 100000) { // 10 hectares+
+    if (area > 100000) {
+      // 10 hectares+
       size *= 1.5;
-    } else if (area > 10000) { // 1 hectare+
+    } else if (area > 10000) {
+      // 1 hectare+
       size *= 1.3;
     }
 

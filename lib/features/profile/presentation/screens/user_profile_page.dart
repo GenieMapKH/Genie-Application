@@ -98,14 +98,16 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
             icon: Icons.person_outline,
             title: 'Name',
             value: profile.displayName,
-            onTap: () => _showEditDialog('Username', 'username', profile.username),
+            onTap: () =>
+                _showEditDialog('Username', 'username', profile.username),
           ),
           _buildDivider(),
           _buildListItem(
             icon: Icons.phone_outlined,
             title: 'Phone number',
             value: profile.phone ?? 'Not set',
-            onTap: () => _showEditDialog('Phone Number', 'phone', profile.phone),
+            onTap: () =>
+                _showEditDialog('Phone Number', 'phone', profile.phone),
           ),
           _buildDivider(),
           _buildListItem(
@@ -289,11 +291,15 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     );
   }
 
-  Future<void> _showEditDialog(String title, String fieldKey, String? initialValue) async {
+  Future<void> _showEditDialog(
+    String title,
+    String fieldKey,
+    String? initialValue,
+  ) async {
     final controller = TextEditingController(text: initialValue);
     String? errorMessage;
     bool isSaving = false;
-    
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -342,44 +348,58 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                   ),
                 ),
                 TextButton(
-                  onPressed: isSaving ? null : () async {
-                    if (controller.text.trim().isEmpty) return;
-                    setState(() {
-                      errorMessage = null;
-                      isSaving = true;
-                    });
-                    try {
-                      final repo = ref.read(userRepositoryProvider);
-                      if (fieldKey == 'username') {
-                        await repo.updateProfile(username: controller.text.trim());
-                      } else if (fieldKey == 'phone') {
-                        await repo.updateProfile(phone: controller.text.trim());
-                      }
-                      if (context.mounted) {
-                        ref.invalidate(userProfileProvider);
-                        Navigator.pop(context);
-                      }
-                    } on DioException catch (e) {
-                      if (e.response?.statusCode == 409) {
-                        setState(() {
-                          errorMessage = e.response?.data?['message'] ?? 'This ${title.toLowerCase()} is taken.';
-                          isSaving = false;
-                        });
-                      } else {
-                        setState(() {
-                          errorMessage = 'An error occurred. Please try again.';
-                          isSaving = false;
-                        });
-                      }
-                    } catch (e) {
-                      setState(() {
-                        errorMessage = 'An error occurred. Please try again.';
-                        isSaving = false;
-                      });
-                    }
-                  },
-                  child: isSaving 
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          if (controller.text.trim().isEmpty) return;
+                          setState(() {
+                            errorMessage = null;
+                            isSaving = true;
+                          });
+                          try {
+                            final repo = ref.read(userRepositoryProvider);
+                            if (fieldKey == 'username') {
+                              await repo.updateProfile(
+                                username: controller.text.trim(),
+                              );
+                            } else if (fieldKey == 'phone') {
+                              await repo.updateProfile(
+                                phone: controller.text.trim(),
+                              );
+                            }
+                            if (context.mounted) {
+                              ref.invalidate(userProfileProvider);
+                              Navigator.pop(context);
+                            }
+                          } on DioException catch (e) {
+                            if (e.response?.statusCode == 409) {
+                              setState(() {
+                                errorMessage =
+                                    e.response?.data?['message'] ??
+                                    'This ${title.toLowerCase()} is taken.';
+                                isSaving = false;
+                              });
+                            } else {
+                              setState(() {
+                                errorMessage =
+                                    'An error occurred. Please try again.';
+                                isSaving = false;
+                              });
+                            }
+                          } catch (e) {
+                            setState(() {
+                              errorMessage =
+                                  'An error occurred. Please try again.';
+                              isSaving = false;
+                            });
+                          }
+                        },
+                  child: isSaving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : Text(
                           'Save',
                           style: GoogleFonts.inter(
@@ -393,8 +413,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
             );
           },
         );
-      }
+      },
     );
   }
 }
-

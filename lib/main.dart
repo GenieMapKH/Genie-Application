@@ -15,9 +15,7 @@ void main() async {
   const envFile = kReleaseMode ? ".env.production" : ".env";
   await dotenv.load(fileName: envFile);
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Request the latest Android Map renderer which fixes lag and supports high refresh rates
   if (defaultTargetPlatform == TargetPlatform.android) {

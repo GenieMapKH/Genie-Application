@@ -191,7 +191,7 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
         ref.invalidate(userProfileProvider);
         ref.invalidate(propertiesProvider);
         ref.invalidate(publicPropertiesProvider);
-        
+
         if (widget.onSignUpPressed != null) {
           widget.onSignUpPressed!();
         } else {
@@ -289,7 +289,9 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
                         if (widget.onGoogleSignUpPressed != null) {
                           widget.onGoogleSignUpPressed!();
                         } else {
-                          ref.read(loginControllerProvider.notifier).googleLogin(forceAccountSelection: true);
+                          ref
+                              .read(loginControllerProvider.notifier)
+                              .googleLogin(forceAccountSelection: true);
                         }
                       },
                       onSignInHere: _navigateToLogin,

@@ -181,7 +181,8 @@ class PublishButtonWidget extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onPressed;
 
-  const PublishButtonWidget({super.key, 
+  const PublishButtonWidget({
+    super.key,
     required this.isLoading,
     required this.onPressed,
   });
