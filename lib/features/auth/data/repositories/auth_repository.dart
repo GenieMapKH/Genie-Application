@@ -35,12 +35,20 @@ class AuthService {
     return UnknownException(e.toString());
   }
 
+  bool _isEmail(String value) {
+    return RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$').hasMatch(value.trim());
+  }
+
   // 1. Standard Registration
-  Future<void> register(String email, String password) async {
+  Future<void> register(String identifier, String password) async {
+    final isEmail = _isEmail(identifier);
     try {
       await dio.post(
         '/auth/register',
-        data: {'email': email, 'password': password},
+        data: {
+          isEmail ? 'email' : 'phone': identifier,
+          'password': password,
+        },
       );
     } catch (e) {
       throw _handleError(e);
@@ -48,11 +56,15 @@ class AuthService {
   }
 
   // 2. Standard Login
-  Future<void> login(String email, String password) async {
+  Future<void> login(String identifier, String password) async {
+    final isEmail = _isEmail(identifier);
     try {
       final response = await dio.post(
         '/auth/login',
-        data: {'email': email, 'password': password},
+        data: {
+          isEmail ? 'email' : 'phone': identifier,
+          'password': password,
+        },
       );
 
       await AuthStorage.saveTokens(

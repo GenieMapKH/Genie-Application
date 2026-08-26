@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/app/router/app_router.dart';
 
+import 'package:genie/core/theme/scroll_physics.dart';
+
 class AppScrollBehavior extends ScrollBehavior {
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
-    return const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
+    return const GlidingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
   }
 }
 

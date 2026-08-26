@@ -176,9 +176,12 @@ class _LoginPageState extends ConsumerState<LoginPage>
       if (_selectedMethod == AuthMethod.email) {
         await ref
             .read(loginControllerProvider.notifier)
-            .login(_emailController.text, _passwordController.text);
+            .login(_emailController.text.trim(), _passwordController.text);
       } else {
-        // Placeholder for phone login
+        final cleanPhone = _phoneController.text.replaceAll(RegExp(r'[\s\-()]'), '');
+        await ref
+            .read(loginControllerProvider.notifier)
+            .login(cleanPhone, _passwordController.text);
       }
     }
   }
@@ -376,7 +379,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       fadeAnimation: _actionsFade,
                       isLoading: loginState.isLoading,
                       onLogin: _handleLogin,
-                      onGoogleLogin: widget.onGoogleLoginPressed,
+                      onGoogleLogin: () {
+                        if (widget.onGoogleLoginPressed != null) {
+                          widget.onGoogleLoginPressed!();
+                        } else {
+                          ref.read(loginControllerProvider.notifier).googleLogin();
+                        }
+                      },
                       onCreateAccount: widget.onCreateAccountPressed,
                     ),
                   ],

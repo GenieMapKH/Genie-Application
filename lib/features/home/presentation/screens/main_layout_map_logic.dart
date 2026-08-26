@@ -165,9 +165,9 @@ extension MainLayoutMapLogic on MainLayoutState {
           Polygon(
             polygonId: PolygonId('final_polygon_$pIndex'),
             points: propPoints,
-            strokeColor: Colors.white,
+            strokeColor: const Color(0xFF4F5BD5),
             strokeWidth: 2,
-            fillColor: Colors.white.withValues(alpha: 0.15),
+            fillColor: const Color(0xFF4F5BD5).withValues(alpha: 0.15),
             consumeTapEvents: true,
             onTap: () {
               setState(() {

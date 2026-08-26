@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/profile/data/repositories/user_repository.dart';
@@ -97,12 +98,14 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
             icon: Icons.person_outline,
             title: 'Name',
             value: profile.displayName,
+            onTap: () => _showEditDialog('Username', 'username', profile.username),
           ),
           _buildDivider(),
           _buildListItem(
             icon: Icons.phone_outlined,
             title: 'Phone number',
             value: profile.phone ?? 'Not set',
+            onTap: () => _showEditDialog('Phone Number', 'phone', profile.phone),
           ),
           _buildDivider(),
           _buildListItem(
@@ -285,4 +288,113 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       indent: 52,
     );
   }
+
+  Future<void> _showEditDialog(String title, String fieldKey, String? initialValue) async {
+    final controller = TextEditingController(text: initialValue);
+    String? errorMessage;
+    bool isSaving = false;
+    
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: Text(
+                title,
+                style: GoogleFonts.inter(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF111827),
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      hintText: 'Enter $title',
+                      errorText: errorMessage,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFF5B5FEF)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF6B7280),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: isSaving ? null : () async {
+                    if (controller.text.trim().isEmpty) return;
+                    setState(() {
+                      errorMessage = null;
+                      isSaving = true;
+                    });
+                    try {
+                      final repo = ref.read(userRepositoryProvider);
+                      if (fieldKey == 'username') {
+                        await repo.updateProfile(username: controller.text.trim());
+                      } else if (fieldKey == 'phone') {
+                        await repo.updateProfile(phone: controller.text.trim());
+                      }
+                      if (mounted) {
+                        ref.invalidate(userProfileProvider);
+                        Navigator.pop(context);
+                      }
+                    } on DioException catch (e) {
+                      if (e.response?.statusCode == 409) {
+                        setState(() {
+                          errorMessage = e.response?.data?['message'] ?? 'This ${title.toLowerCase()} is taken.';
+                          isSaving = false;
+                        });
+                      } else {
+                        setState(() {
+                          errorMessage = 'An error occurred. Please try again.';
+                          isSaving = false;
+                        });
+                      }
+                    } catch (e) {
+                      setState(() {
+                        errorMessage = 'An error occurred. Please try again.';
+                        isSaving = false;
+                      });
+                    }
+                  },
+                  child: isSaving 
+                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                      : Text(
+                          'Save',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF5B5FEF),
+                          ),
+                        ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    );
+  }
 }
+

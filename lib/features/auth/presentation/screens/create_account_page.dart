@@ -7,6 +7,9 @@ import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/auth/presentation/screens/terms_of_service_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
+import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
+import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import '../widgets/create_account_form.dart';
 import '../widgets/create_account_actions.dart';
 
@@ -109,9 +112,15 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
     if (isValid) {
       setState(() => _isLoading = true);
       try {
+        String identifier = _identifierController.text.trim();
+        // Clean phone number if it's not an email
+        if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$').hasMatch(identifier)) {
+          identifier = identifier.replaceAll(RegExp(r'[\s\-()]'), '');
+        }
+
         await ref
             .read(authServiceProvider)
-            .register(_identifierController.text, _passwordController.text);
+            .register(identifier, _passwordController.text);
 
         if (widget.onSignUpPressed != null) {
           widget.onSignUpPressed!();
@@ -171,6 +180,26 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<void>>(loginControllerProvider, (_, state) {
+      if (!state.isLoading && state.hasError) {
+        final errorMessage = state.error is AppException
+            ? (state.error as AppException).message
+            : 'Authentication failed: ${state.error}';
+        AppPopup.showError(context, errorMessage);
+      } else if (!state.isLoading && !state.hasError && state.hasValue) {
+        AppPopup.showSuccess(context, 'Successfully authenticated!');
+        ref.invalidate(userProfileProvider);
+        ref.invalidate(propertiesProvider);
+        ref.invalidate(publicPropertiesProvider);
+        
+        if (widget.onSignUpPressed != null) {
+          widget.onSignUpPressed!();
+        } else {
+          context.go('/home');
+        }
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -256,7 +285,13 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
                     CreateAccountActions(
                       isLoading: _isLoading,
                       onSignUp: _handleSignUp,
-                      onGoogleSignUp: widget.onGoogleSignUpPressed,
+                      onGoogleSignUp: () {
+                        if (widget.onGoogleSignUpPressed != null) {
+                          widget.onGoogleSignUpPressed!();
+                        } else {
+                          ref.read(loginControllerProvider.notifier).googleLogin(forceAccountSelection: true);
+                        }
+                      },
                       onSignInHere: _navigateToLogin,
                     ),
                     const SizedBox(height: 16),

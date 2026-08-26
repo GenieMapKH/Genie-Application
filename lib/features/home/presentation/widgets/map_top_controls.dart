@@ -152,9 +152,11 @@ class _MapTopControlsState extends State<MapTopControls> {
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 4.0, top: 12.0),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
+          child: SizedBox(
+            height: 350,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,10 +236,12 @@ class _MapTopControlsState extends State<MapTopControls> {
               // Second Row: Property Types and Listing Types
               Padding(
                 padding: const EdgeInsets.only(right: 20.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  clipBehavior: Clip.hardEdge,
-                  child: Row(
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    clipBehavior: Clip.hardEdge,
+                    child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Listing Type Column
@@ -324,6 +328,7 @@ class _MapTopControlsState extends State<MapTopControls> {
                 ),
               ),
               ),
+              ),
               // Third Row is now positioned in the Stack below
             ],
           ),
@@ -351,8 +356,8 @@ class _MapTopControlsState extends State<MapTopControls> {
                         image: DecorationImage(
                           image: AssetImage(
                             widget.currentSkin == MapSkin.satellite
-                                ? 'assets/images/homescreen/mapSatellite.png'
-                                : 'assets/images/homescreen/mapDefault.png',
+                                ? 'assets/images/homescreen/mapDefault.png'
+                                : 'assets/images/homescreen/mapSatellite.png',
                           ),
                           fit: BoxFit.cover,
                         ),
@@ -361,6 +366,7 @@ class _MapTopControlsState extends State<MapTopControls> {
                   ),
                 ),
             ],
+          ),
           ),
         ),
       ),

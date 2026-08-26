@@ -5,11 +5,13 @@ import 'package:genie/features/property/data/models/property_model.dart';
 class PropertyCard extends StatelessWidget {
   final PropertyModel property;
   final VoidCallback onOptionsTapped;
+  final VoidCallback? onTap;
 
   const PropertyCard({
     super.key,
     required this.property,
     required this.onOptionsTapped,
+    this.onTap,
   });
 
   @override
@@ -37,6 +39,7 @@ class PropertyCard extends StatelessWidget {
     }
 
     return GestureDetector(
+      onTap: onTap,
       onLongPress: onOptionsTapped,
       child: Container(
         margin: const EdgeInsets.only(bottom: 24),
