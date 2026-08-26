@@ -52,19 +52,30 @@ class UserRepository {
   UserRepository(this.dio);
 
   Future<UserProfile> getProfile() async {
-    try {
-      final response = await dio.get('/users/me');
-      return UserProfile.fromJson(response.data);
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
+    int maxRetries = 3;
+    int delayMs = 1500;
+
+    for (int i = 0; i <= maxRetries; i++) {
+      try {
+        final response = await dio.get('/users/me');
+        return UserProfile.fromJson(response.data);
+      } on DioException catch (e) {
         // On initial Google Sign-in, the backend might have a slight delay
-        // syncing the new user record between the Auth and User microservices.
-        await Future.delayed(const Duration(milliseconds: 2000));
-        final retryResponse = await dio.get('/users/me');
-        return UserProfile.fromJson(retryResponse.data);
+        // syncing the new user record between the Auth and User microservices (404).
+        // Or the microservice might temporarily return 502/504 while routing.
+        if (i < maxRetries &&
+            (e.response?.statusCode == 404 ||
+                e.response?.statusCode == 502 ||
+                e.response?.statusCode == 504 ||
+                e.type == DioExceptionType.connectionError)) {
+          await Future.delayed(Duration(milliseconds: delayMs));
+          delayMs = (delayMs * 1.5).toInt(); // Exponential backoff
+          continue;
+        }
+        rethrow;
       }
-      rethrow;
     }
+    throw Exception('Failed to load profile after multiple retries.');
   }
 
   Future<UserProfile> updateProfile({String? username, String? phone}) async {
