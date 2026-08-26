@@ -8,7 +8,6 @@ import 'package:genie/features/property/presentation/widgets/property_type_selec
 import 'package:genie/features/property/presentation/widgets/property_image_picker.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'add_property_page.dart';
-import 'add_property_page_forms_base.dart';
 import 'add_property_page_forms_dynamic.dart';
 import 'add_property_page_logic.dart';
 

@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'add_property_page.dart';
-import 'add_property_page_layout.dart';
-import 'add_property_page_logic.dart';
-import 'add_property_page_forms_dynamic.dart';
 
 extension AddPropertyPageFormsBase on AddPropertyPageState {
   Widget buildLandSizeField({bool isLandType = false}) {

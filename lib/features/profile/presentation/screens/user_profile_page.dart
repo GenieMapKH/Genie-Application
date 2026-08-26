@@ -355,7 +355,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                       } else if (fieldKey == 'phone') {
                         await repo.updateProfile(phone: controller.text.trim());
                       }
-                      if (mounted) {
+                      if (context.mounted) {
                         ref.invalidate(userProfileProvider);
                         Navigator.pop(context);
                       }

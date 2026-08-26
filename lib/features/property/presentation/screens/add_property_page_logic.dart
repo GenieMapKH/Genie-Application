@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'add_property_page.dart';
-import 'add_property_page_forms_base.dart';
-import 'add_property_page_forms_dynamic.dart';
 import 'add_property_page_layout.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {

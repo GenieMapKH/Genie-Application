@@ -6,8 +6,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'add_property_page.dart';
-import 'add_property_page_layout.dart';
-import 'add_property_page_logic.dart';
 import 'add_property_page_forms_base.dart';
 
 extension AddPropertyPageFormsDynamic on AddPropertyPageState {

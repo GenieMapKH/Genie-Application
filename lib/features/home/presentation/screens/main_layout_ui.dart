@@ -2,7 +2,6 @@
 // ignore_for_file: library_private_types_in_public_api
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:genie/features/home/presentation/widgets/map_top_controls.dart';
 import 'package:genie/features/home/presentation/widgets/map_floating_menu.dart';
