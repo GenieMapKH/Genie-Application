@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/home/utils/map_measurements.dart';
 
+import 'add_property_page_layout.dart';
+
 
 
 class AddPropertyPage extends ConsumerStatefulWidget {
@@ -181,6 +183,6 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildAddPropertyLayout(context);
+    return buildAddPropertyLayout(context);
   }
 }

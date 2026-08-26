@@ -13,6 +13,8 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 import 'package:genie/features/profile/presentation/screens/user_profile_page.dart';
 import 'package:genie/core/storage/map_storage.dart';
 import 'main_layout.dart';
+import 'main_layout_map_logic.dart';
+import 'main_layout_nav.dart';
 
 extension MainLayoutUI on MainLayoutState {
   Widget buildMainLayout(BuildContext context) {

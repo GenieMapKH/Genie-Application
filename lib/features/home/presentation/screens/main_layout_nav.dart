@@ -8,6 +8,8 @@ import 'package:genie/shared/widgets/tactile_button.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
 import 'main_layout.dart';
+import 'main_layout_ui.dart';
+import 'main_layout_map_logic.dart';
 
 extension MainLayoutNav on MainLayoutState {
   Widget buildBottomNavigationBar() {

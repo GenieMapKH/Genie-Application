@@ -10,6 +10,8 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'main_layout.dart';
+import 'main_layout_ui.dart';
+import 'main_layout_nav.dart';
 
 extension MainLayoutMapLogic on MainLayoutState {
   Future<void> updateMapOverlays() async {
