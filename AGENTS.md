@@ -643,3 +643,7 @@ over:
     → "FIX LATER"
 
 **Never optimize for the number of features written. Optimize for the number of features completely delivered.**
+## 24. Final Architecture Rule
+
+> **Organize code by business feature first, then by technical responsibility. Each module owns its business logic and data access. Keep cross-cutting infrastructure in `shared`. Maintain clear dependency direction and avoid circular dependencies. Do not create abstractions, layers, or services unless they solve an actual complexity or maintainability problem.**
+

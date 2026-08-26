@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/presentation/create_account_page.dart';
+import 'package:genie/features/auth/presentation/screens/create_account_page.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
-import 'package:genie/core/services/auth_service.dart';
+import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:dio/dio.dart';
 
 class MockAuthService extends AuthService {
