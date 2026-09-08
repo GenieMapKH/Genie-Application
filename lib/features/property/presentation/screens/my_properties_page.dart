@@ -9,6 +9,7 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 
 import '../widgets/my_properties/property_card.dart';
 import '../widgets/my_properties/empty_properties_state.dart';
+import 'package:genie/shared/utils/app_popup.dart';
 
 class MyPropertiesPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -121,28 +122,96 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
           children: [
             const SizedBox(height: 42), // Increased margin on top
             _buildHeader(),
+            if (propertiesAsync.hasError && propertiesAsync.hasValue && !propertiesAsync.isLoading)
+              Container(
+                margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF2F2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFECACA)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.wifi_off, size: 16, color: Color(0xFFEF4444)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'You are offline. Please connect to internet for updates.',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: const Color(0xFFB91C1C),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             const SizedBox(height: 32), // Increased margin below
             Expanded(
-              child: propertiesAsync.when(
-                data: (properties) {
-                  _properties = properties;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _buildTabsRow(),
-                      const SizedBox(height: 24),
-                      Expanded(child: _buildBody()),
+              child: RefreshIndicator(
+                color: const Color(0xFF5B5FEF),
+                onRefresh: () => ref.read(propertiesProvider.notifier).refresh(),
+                child: propertiesAsync.when(
+                  skipLoadingOnReload: true,
+                  skipError: true,
+                  data: (properties) {
+                    _properties = properties;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildTabsRow(),
+                        const SizedBox(height: 24),
+                        Expanded(child: _buildBody()),
+                      ],
+                    );
+                  },
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
+                  ),
+                  error: (error, stack) => CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: Color(0xFF9CA3AF),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Could not load properties',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF6B7280),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                TextButton(
+                                  onPressed: () => ref.read(propertiesProvider.notifier).refresh(),
+                                  child: Text(
+                                    'Retry',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF5B5FEF),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
-                  );
-                },
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
-                ),
-                error: (error, stack) => Center(
-                  child: TextButton(
-                    onPressed: () =>
-                        ref.read(propertiesProvider.notifier).refresh(),
-                    child: const Text('Retry'),
                   ),
                 ),
               ),
@@ -278,10 +347,16 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
 
   Widget _buildBody() {
     if (_properties.isEmpty) {
-      return const EmptyPropertiesState();
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: const [
+          EmptyPropertiesState(),
+        ],
+      );
     }
 
     return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       itemCount: _properties.length,
       itemBuilder: (context, index) {
@@ -374,21 +449,36 @@ class _MyPropertiesPageState extends ConsumerState<MyPropertiesPage> {
     );
   }
 
-  void _changePropertyStatus(String id, bool publish) {
-    // In a real app, call a provider method here
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
+  Future<void> _changePropertyStatus(String id, bool publish) async {
+    try {
+      if (publish) {
+        await ref.read(propertiesProvider.notifier).publishProperty(id);
+      } else {
+        await ref.read(propertiesProvider.notifier).unpublishProperty(id);
+      }
+      if (mounted) {
+        AppPopup.showSuccess(
+          context,
           publish ? 'Property published' : 'Property moved to draft',
-        ),
-      ),
-    );
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        AppPopup.showError(context, 'Failed to update property status: $e');
+      }
+    }
   }
 
-  void _deleteProperty(String id) {
-    // In a real app, call a provider method here
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Property deleted')));
+  Future<void> _deleteProperty(String id) async {
+    try {
+      await ref.read(propertiesProvider.notifier).removeProperty(id);
+      if (mounted) {
+        AppPopup.showSuccess(context, 'Property deleted');
+      }
+    } catch (e) {
+      if (mounted) {
+        AppPopup.showError(context, 'Failed to delete property: $e');
+      }
+    }
   }
 }

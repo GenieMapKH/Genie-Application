@@ -27,25 +27,30 @@ class LoginController extends StateNotifier<AsyncValue<void>> {
   Future<void> googleLogin({bool forceAccountSelection = false}) async {
     state = const AsyncLoading();
     try {
-      final googleSignIn = GoogleSignIn(
+      await GoogleSignIn.instance.initialize(
         serverClientId:
             '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
       );
 
       if (forceAccountSelection) {
-        await googleSignIn.signOut();
+        await GoogleSignIn.instance.signOut();
       }
 
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        state = const AsyncData(null); // User canceled
-        return;
+      GoogleSignInAccount? googleUser;
+      try {
+        // authenticate() is the new v7 method for interactive sign-in
+        googleUser = await GoogleSignIn.instance.authenticate();
+      } on GoogleSignInException catch (e) {
+        // Handle user cancellation gracefully
+        if (e.code == GoogleSignInExceptionCode.canceled) {
+          state = const AsyncData(null);
+          return;
+        }
+        rethrow; // Other GoogleSignIn exceptions
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 

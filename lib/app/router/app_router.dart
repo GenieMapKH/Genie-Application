@@ -6,6 +6,7 @@ import 'package:genie/features/auth/presentation/screens/create_account_page.dar
 import 'package:genie/features/home/presentation/screens/main_layout.dart';
 
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:genie/shared/transitions/app_transition_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -29,13 +30,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null; // Continue normally
     },
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const WelcomePage()),
-      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(
+        path: '/',
+        pageBuilder: (context, state) =>
+            AppTransitionPage(child: const WelcomePage(), key: state.pageKey),
+      ),
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) =>
+            AppTransitionPage(child: const LoginPage(), key: state.pageKey),
+      ),
       GoRoute(
         path: '/register',
-        builder: (context, state) => const CreateAccountPage(),
+        pageBuilder: (context, state) => AppTransitionPage(
+          child: const CreateAccountPage(),
+          key: state.pageKey,
+        ),
       ),
-      GoRoute(path: '/home', builder: (context, state) => const MainLayout()),
+      GoRoute(
+        path: '/home',
+        pageBuilder: (context, state) =>
+            AppTransitionPage(child: const MainLayout(), key: state.pageKey),
+      ),
     ],
   );
 });

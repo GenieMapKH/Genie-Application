@@ -104,8 +104,45 @@ class PropertyModel {
       if (bedrooms != null) 'bedrooms': bedrooms,
       if (bathrooms != null) 'bathrooms': bathrooms,
       if (landSize != null) 'landSize': landSize,
-      if (buildingSize != null) 'buildingSize': buildingSize,
       if (unitSize != null) 'unitSize': unitSize,
     };
+  }
+
+  PropertyModel copyWith({
+    String? id,
+    String? title,
+    String? price,
+    String? propertyType,
+    String? status,
+    DateTime? createdAt,
+    List<String>? imageUrls,
+    List<LatLng>? boundaryPoints,
+    String? description,
+    int? bedrooms,
+    int? bathrooms,
+    double? landSize,
+    double? buildingSize,
+    double? unitSize,
+    double? lat,
+    double? lng,
+  }) {
+    return PropertyModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      price: price ?? this.price,
+      propertyType: propertyType ?? this.propertyType,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      imageUrls: imageUrls ?? this.imageUrls,
+      boundaryPoints: boundaryPoints ?? this.boundaryPoints,
+      description: description ?? this.description,
+      bedrooms: bedrooms ?? this.bedrooms,
+      bathrooms: bathrooms ?? this.bathrooms,
+      landSize: landSize ?? this.landSize,
+      buildingSize: buildingSize ?? this.buildingSize,
+      unitSize: unitSize ?? this.unitSize,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+    );
   }
 }

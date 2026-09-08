@@ -4,11 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
 import 'package:genie/core/network/api_client.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/auth/presentation/screens/create_account_page.dart';
-import 'package:genie/features/auth/presentation/screens/login_page.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
 import 'package:genie/shared/widgets/app_button.dart';
-import 'package:genie/features/home/presentation/screens/main_layout.dart';
+import 'package:go_router/go_router.dart';
 
 /// Optimized, high-performance Welcome / Auth landing screen.
 ///
@@ -243,9 +240,7 @@ class _WelcomePageState extends State<WelcomePage>
                             onPressed:
                                 widget.onLoginPressed ??
                                 () {
-                                  Navigator.of(
-                                    context,
-                                  ).push(AppPageRoute(page: const LoginPage()));
+                                  context.push('/login');
                                 },
                           ),
                           const SizedBox(height: 10),
@@ -283,9 +278,7 @@ class _WelcomePageState extends State<WelcomePage>
                                   }
 
                                   if (context.mounted) {
-                                    Navigator.of(context).pushReplacement(
-                                      AppPageRoute(page: const MainLayout()),
-                                    );
+                                    context.go('/home');
                                   }
                                 },
                           ),
@@ -298,11 +291,7 @@ class _WelcomePageState extends State<WelcomePage>
                               onTap:
                                   widget.onCreateAccountPressed ??
                                   () {
-                                    Navigator.of(context).push(
-                                      AppPageRoute(
-                                        page: const CreateAccountPage(),
-                                      ),
-                                    );
+                                    context.push('/register');
                                   },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),

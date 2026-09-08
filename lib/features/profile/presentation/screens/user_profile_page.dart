@@ -35,50 +35,93 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
           children: [
             const SizedBox(height: 42),
             _buildHeader(),
+            if (profileAsync.hasError && profileAsync.hasValue && !profileAsync.isLoading)
+              Container(
+                margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF2F2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFECACA)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.wifi_off, size: 16, color: Color(0xFFEF4444)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'You are offline, Please connect to internet for updates.',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: const Color(0xFFB91C1C),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             const SizedBox(height: 32),
             Expanded(
-              child: profileAsync.when(
-                skipLoadingOnReload: false,
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
-                ),
-                error: (error, _) => Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: Color(0xFF9CA3AF),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Could not load profile',
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF6B7280),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        TextButton(
-                          onPressed: () => ref.invalidate(userProfileProvider),
-                          child: Text(
-                            'Retry',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF5B5FEF),
+              child: RefreshIndicator(
+                color: const Color(0xFF5B5FEF),
+                onRefresh: () async {
+                  ref.invalidate(userProfileProvider);
+                  try {
+                    await ref.read(userProfileProvider.future);
+                  } catch (_) {}
+                },
+                child: profileAsync.when(
+                  skipLoadingOnReload: true,
+                  skipError: true,
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
+                  ),
+                  error: (error, _) => CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: Color(0xFF9CA3AF),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Could not load profile',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF6B7280),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                TextButton(
+                                  onPressed: () => ref.invalidate(userProfileProvider),
+                                  child: Text(
+                                    'Retry',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF5B5FEF),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  data: (profile) => _buildProfileContent(profile),
                 ),
-                data: (profile) => _buildProfileContent(profile),
               ),
             ),
           ],
@@ -89,6 +132,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
 
   Widget _buildProfileContent(UserProfile profile) {
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       children: [
         _buildSectionTitle('Personal information'),
@@ -300,116 +344,235 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     String? errorMessage;
     bool isSaving = false;
 
+    final isPhone = fieldKey == 'phone';
+    final iconData = isPhone ? Icons.phone_android : Icons.person_outline;
+    final hintText = isPhone ? 'e.g. +855 12 345 678' : 'e.g. john_doe';
+    final description = isPhone
+        ? 'Update your phone number. This may be used for account recovery and notifications.'
+        : 'Choose a unique username. This will be visible to other users.';
+
     await showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return AlertDialog(
+            return Dialog(
               backgroundColor: Colors.white,
-              title: Text(
-                title,
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF111827),
-                ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextField(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEF2FF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(iconData, color: const Color(0xFF5B5FEF), size: 24),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          'Update $title',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF111827),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    description,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: const Color(0xFF6B7280),
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
                     controller: controller,
+                    keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: const Color(0xFF111827),
+                      fontWeight: FontWeight.w500,
+                    ),
                     decoration: InputDecoration(
-                      hintText: 'Enter $title',
+                      labelText: title,
+                      hintText: hintText,
                       errorText: errorMessage,
+                      errorMaxLines: 2,
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      filled: true,
+                      fillColor: const Color(0xFFF9FAFB),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF5B5FEF)),
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF5B5FEF), width: 1.5),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFEF4444)),
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            side: const BorderSide(color: Color(0xFFE5E7EB)),
+                          ),
+                          child: Text(
+                            'Cancel',
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF4B5563),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: isSaving
+                              ? null
+                              : () async {
+                                  final newValue = controller.text.trim();
+                                  if (newValue.isEmpty || newValue == initialValue) {
+                                    Navigator.pop(context);
+                                    return;
+                                  }
+
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                      title: Text('Confirm Change', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
+                                      content: Text(
+                                        'Are you sure you want to change your ${title.toLowerCase()} to "$newValue"?',
+                                        style: GoogleFonts.inter(color: const Color(0xFF4B5563)),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(ctx, false),
+                                          child: Text('No, cancel', style: GoogleFonts.inter(color: const Color(0xFF6B7280))),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => Navigator.pop(ctx, true),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(0xFF5B5FEF),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                          ),
+                                          child: Text('Yes, save', style: GoogleFonts.inter(color: Colors.white)),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (confirm != true) return;
+
+                                  setState(() {
+                                    errorMessage = null;
+                                    isSaving = true;
+                                  });
+
+                                  try {
+                                    final repo = ref.read(userRepositoryProvider);
+                                    if (fieldKey == 'username') {
+                                      await repo.updateProfile(username: newValue);
+                                    } else if (fieldKey == 'phone') {
+                                      await repo.updateProfile(phone: newValue);
+                                    }
+                                    if (context.mounted) {
+                                      ref.invalidate(userProfileProvider);
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('$title updated successfully!'),
+                                          backgroundColor: const Color(0xFF10B981),
+                                          behavior: SnackBarBehavior.floating,
+                                        ),
+                                      );
+                                    }
+                                  } on DioException catch (e) {
+                                    if (e.response?.statusCode == 409) {
+                                      setState(() {
+                                        errorMessage = e.response?.data?['message'] ??
+                                            'This ${title.toLowerCase()} is taken.';
+                                        isSaving = false;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        errorMessage = 'An error occurred. Please try again.';
+                                        isSaving = false;
+                                      });
+                                    }
+                                  } catch (e) {
+                                    setState(() {
+                                      errorMessage = 'An error occurred. Please try again.';
+                                      isSaving = false;
+                                    });
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF5B5FEF),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: isSaving
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'Save Changes',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    'Cancel',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF6B7280),
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: isSaving
-                      ? null
-                      : () async {
-                          if (controller.text.trim().isEmpty) return;
-                          setState(() {
-                            errorMessage = null;
-                            isSaving = true;
-                          });
-                          try {
-                            final repo = ref.read(userRepositoryProvider);
-                            if (fieldKey == 'username') {
-                              await repo.updateProfile(
-                                username: controller.text.trim(),
-                              );
-                            } else if (fieldKey == 'phone') {
-                              await repo.updateProfile(
-                                phone: controller.text.trim(),
-                              );
-                            }
-                            if (context.mounted) {
-                              ref.invalidate(userProfileProvider);
-                              Navigator.pop(context);
-                            }
-                          } on DioException catch (e) {
-                            if (e.response?.statusCode == 409) {
-                              setState(() {
-                                errorMessage =
-                                    e.response?.data?['message'] ??
-                                    'This ${title.toLowerCase()} is taken.';
-                                isSaving = false;
-                              });
-                            } else {
-                              setState(() {
-                                errorMessage =
-                                    'An error occurred. Please try again.';
-                                isSaving = false;
-                              });
-                            }
-                          } catch (e) {
-                            setState(() {
-                              errorMessage =
-                                  'An error occurred. Please try again.';
-                              isSaving = false;
-                            });
-                          }
-                        },
-                  child: isSaving
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(
-                          'Save',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF5B5FEF),
-                          ),
-                        ),
-                ),
-              ],
+            ),
             );
           },
         );

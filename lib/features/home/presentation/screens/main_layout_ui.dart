@@ -55,7 +55,6 @@ extension MainLayoutUI on MainLayoutState {
                     bottom:
                         -40, // Push the map off-screen to hide the Google logo
                     child: GoogleMap(
-                      key: ValueKey(currentSkin),
                       mapType: currentSkin == MapSkin.satellite
                           ? MapType.hybrid
                           : MapType.normal,
@@ -126,7 +125,7 @@ extension MainLayoutUI on MainLayoutState {
                       polylines: polylines,
                       zoomControlsEnabled: false,
                       myLocationButtonEnabled: false,
-                      minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
+                      minMaxZoomPreference: const MinMaxZoomPreference(0, null),
                       compassEnabled: false,
                       mapToolbarEnabled: false,
                       myLocationEnabled: true,
@@ -188,7 +187,7 @@ extension MainLayoutUI on MainLayoutState {
                           updateMapOverlays();
                           mapController.future.then((controller) {
                             controller.animateCamera(
-                              CameraUpdate.newLatLngZoom(result.first, 18),
+                              CameraUpdate.newLatLngZoom(result.first, 21.5),
                             );
                           });
                         }
@@ -217,7 +216,7 @@ extension MainLayoutUI on MainLayoutState {
                           updateMapOverlays();
                           mapController.future.then((controller) {
                             controller.animateCamera(
-                              CameraUpdate.newLatLngZoom(result.first, 18),
+                              CameraUpdate.newLatLngZoom(result.first, 21.5),
                             );
                           });
                         }

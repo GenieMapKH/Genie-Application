@@ -25,7 +25,7 @@ class MainLayoutState extends ConsumerState<MainLayout>
   int currentIndex = 0;
   int previousIndex = 0;
   MapSkin currentSkin = MapSkin.defaultMap;
-  final Completer<GoogleMapController> mapController =
+  Completer<GoogleMapController> mapController =
       Completer<GoogleMapController>();
 
   late AnimationController animationController;
@@ -157,7 +157,7 @@ class MainLayoutState extends ConsumerState<MainLayout>
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(position.latitude, position.longitude),
-            zoom: 16.0,
+            zoom: 22,
           ),
         ),
       );
@@ -194,7 +194,7 @@ class MainLayoutState extends ConsumerState<MainLayout>
 
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: center, zoom: 19.5, tilt: 60.0),
+        CameraPosition(target: center, zoom: 22, tilt: 60.0),
       ),
     );
 
@@ -215,7 +215,7 @@ class MainLayoutState extends ConsumerState<MainLayout>
         timer.cancel();
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
-            CameraPosition(target: center, zoom: 19.5, tilt: 0, bearing: 0),
+            CameraPosition(target: center, zoom: 22, tilt: 0, bearing: 0),
           ),
         );
         return;
@@ -229,7 +229,7 @@ class MainLayoutState extends ConsumerState<MainLayout>
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: center,
-            zoom: 19.5,
+            zoom: 22,
             tilt: 60.0,
             bearing: bearing,
           ),
