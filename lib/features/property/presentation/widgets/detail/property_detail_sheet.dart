@@ -46,7 +46,7 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
     return PageRouteBuilder<void>(
       opaque: false,
       barrierColor: Colors.black.withValues(alpha: 0.25),
-      transitionDuration: const Duration(milliseconds: 400),
+      transitionDuration: const Duration(milliseconds: 350),
       reverseTransitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (_, _, _) => PropertyDetailSheet(
         property: property,
@@ -57,7 +57,7 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
         final curveAnimation = CurvedAnimation(
           parent: animation,
           curve: const Cubic(0.16, 1.0, 0.3, 1.0),
-          reverseCurve: Curves.easeOutCubic,
+          reverseCurve: const Cubic(0.16, 1.0, 0.3, 1.0),
         );
         return FadeTransition(
           opacity: curveAnimation,
@@ -74,6 +74,21 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
 
 class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
   bool _isDismissing = false;
+  bool _isReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Future.delayed(const Duration(milliseconds: 120), () {
+          if (mounted) {
+            setState(() => _isReady = true);
+          }
+        });
+      }
+    });
+  }
 
   void _dismiss() {
     if (!_isDismissing && mounted) {
@@ -113,69 +128,72 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(20),
                     ),
-                    child: ColoredBox(
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              children: [
-                                NotificationListener<ScrollNotification>(
-                                  onNotification: (notification) {
-                                    if (notification.metrics.axis == Axis.vertical) {
-                                      if (notification is ScrollUpdateNotification) {
-                                        if (notification.metrics.pixels < -40) {
-                                          _dismiss();
-                                        }
-                                      } else if (notification is OverscrollNotification) {
-                                        if (notification.overscroll < -15) {
-                                          _dismiss();
-                                        }
-                                      } else if (notification is ScrollEndNotification) {
-                                        if (notification.metrics.pixels < -15) {
-                                          _dismiss();
+                    child: RepaintBoundary(
+                      child: ColoredBox(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  NotificationListener<ScrollNotification>(
+                                    onNotification: (notification) {
+                                      if (notification.metrics.axis == Axis.vertical) {
+                                        if (notification is ScrollUpdateNotification) {
+                                          if (notification.metrics.pixels < -40) {
+                                            _dismiss();
+                                          }
+                                        } else if (notification is OverscrollNotification) {
+                                          if (notification.overscroll < -15) {
+                                            _dismiss();
+                                          }
+                                        } else if (notification is ScrollEndNotification) {
+                                          if (notification.metrics.pixels < -15) {
+                                            _dismiss();
+                                          }
                                         }
                                       }
-                                    }
-                                    return false;
-                                  },
-                                  child: CustomScrollView(
-                                    physics: const BouncingScrollPhysics(
-                                      parent: AlwaysScrollableScrollPhysics(),
-                                    ),
-                                    slivers: [
-                                      PropertyDetailGallery(
-                                        imageUrls: widget.property.imageUrls,
+                                      return false;
+                                    },
+                                    child: CustomScrollView(
+                                      physics: const BouncingScrollPhysics(
+                                        parent: AlwaysScrollableScrollPhysics(),
                                       ),
-                                      SliverToBoxAdapter(
-                                        child: _Body(
-                                          property: widget.property,
-                                          recommendations: recommendations,
-                                          onOpenProperty: widget.onOpenProperty,
-                                          onDismiss: _dismiss,
+                                      slivers: [
+                                        PropertyDetailGallery(
+                                          imageUrls: widget.property.imageUrls,
                                         ),
-                                      ),
-                                    ],
+                                        SliverToBoxAdapter(
+                                          child: _Body(
+                                            property: widget.property,
+                                            recommendations: recommendations,
+                                            onOpenProperty: widget.onOpenProperty,
+                                            onDismiss: _dismiss,
+                                            isReady: _isReady,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                PropertyDetailActions(
-                                  isFavorite: ref
-                                          .watch(savedPropertiesProvider)
-                                          .valueOrNull
-                                          ?.any((p) => p.id == widget.property.id) ??
-                                      false,
-                                  onClose: _dismiss,
-                                  onFavoriteToggled: () {
-                                    ref
-                                        .read(savedPropertiesProvider.notifier)
-                                        .toggleFavorite(widget.property);
-                                  },
-                                ),
-                              ],
+                                  PropertyDetailActions(
+                                    isFavorite: ref
+                                            .watch(savedPropertiesProvider)
+                                            .valueOrNull
+                                            ?.any((p) => p.id == widget.property.id) ??
+                                        false,
+                                    onClose: _dismiss,
+                                    onFavoriteToggled: () {
+                                      ref
+                                          .read(savedPropertiesProvider.notifier)
+                                          .toggleFavorite(widget.property);
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          PropertyContactBar(onChat: () {}, onCall: () {}),
-                        ],
+                            PropertyContactBar(onChat: () {}, onCall: () {}),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -195,12 +213,14 @@ class _Body extends StatelessWidget {
   final PropertyRecommendations recommendations;
   final void Function(PropertyModel property)? onOpenProperty;
   final VoidCallback? onDismiss;
+  final bool isReady;
 
   const _Body({
     required this.property,
     required this.recommendations,
     this.onOpenProperty,
     this.onDismiss,
+    this.isReady = false,
   });
 
   @override
@@ -219,30 +239,34 @@ class _Body extends StatelessWidget {
           _DragHandle(onDismiss: onDismiss),
           const SizedBox(height: 14),
           PropertyDetailSummary(property: property),
-          const _SectionGap(),
-          PropertyHighlights(property: property),
-          const _SectionGap(),
-          PropertyMapPreview(
-            property: property,
-            onTap: () => Navigator.of(context).maybePop(),
-          ),
-          const _SectionGap(),
-          PropertyShareSection(property: property),
-          if (recommendations.similar.isNotEmpty) ...[
+          if (isReady) ...[
             const _SectionGap(),
-            PropertyGridSection(
-              title: 'Similar Property',
-              properties: recommendations.similar,
-              onPropertyTapped: (p) => onOpenProperty?.call(p),
-            ),
-          ],
-          if (recommendations.forYou.isNotEmpty) ...[
+            PropertyHighlights(property: property),
             const _SectionGap(),
-            PropertyGridSection(
-              title: 'Property for you',
-              properties: recommendations.forYou,
-              onPropertyTapped: (p) => onOpenProperty?.call(p),
+            PropertyMapPreview(
+              property: property,
+              onTap: () => Navigator.of(context).maybePop(),
             ),
+            const _SectionGap(),
+            PropertyShareSection(property: property),
+            if (recommendations.similar.isNotEmpty) ...[
+              const _SectionGap(),
+              PropertyGridSection(
+                title: 'Similar Property',
+                properties: recommendations.similar,
+                onPropertyTapped: (p) => onOpenProperty?.call(p),
+              ),
+            ],
+            if (recommendations.forYou.isNotEmpty) ...[
+              const _SectionGap(),
+              PropertyGridSection(
+                title: 'Property for you',
+                properties: recommendations.forYou,
+                onPropertyTapped: (p) => onOpenProperty?.call(p),
+              ),
+            ],
+          ] else ...[
+            const SizedBox(height: 300),
           ],
         ],
       ),

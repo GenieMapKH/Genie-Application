@@ -178,31 +178,29 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
     }
   }
 
+  void _onAuthSuccess() {
+    if (!mounted) return;
+    AppPopup.showSuccess(context, 'Successfully authenticated!');
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(propertiesProvider);
+    ref.invalidate(publicPropertiesProvider);
+    context.go('/home');
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<bool>>(loginControllerProvider, (previous, next) {
       if (next.isLoading) return;
 
       if (next.hasError) {
+        if (!mounted) return;
         final errorMessage = next.error is AppException
             ? (next.error as AppException).message
             : 'Authentication failed: ${next.error}';
         AppPopup.showError(context, errorMessage);
       } else if (next.hasValue && next.value == true) {
-        AppPopup.showSuccess(context, 'Successfully authenticated!');
-        ref.invalidate(userProfileProvider);
-        ref.invalidate(propertiesProvider);
-        ref.invalidate(publicPropertiesProvider);
-
-        Future.microtask(() {
-          if (mounted) {
-            if (widget.onSignUpPressed != null) {
-              widget.onSignUpPressed!();
-            } else {
-              context.go('/home');
-            }
-          }
-        });
+        if (!mounted) return;
+        _onAuthSuccess();
       }
     });
 
@@ -291,13 +289,16 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
                     CreateAccountActions(
                       isLoading: _isLoading,
                       onSignUp: _handleSignUp,
-                      onGoogleSignUp: () {
+                      onGoogleSignUp: () async {
                         if (widget.onGoogleSignUpPressed != null) {
                           widget.onGoogleSignUpPressed!();
                         } else {
-                          ref
+                          final success = await ref
                               .read(loginControllerProvider.notifier)
                               .googleLogin(forceAccountSelection: true);
+                          if (success && mounted) {
+                            _onAuthSuccess();
+                          }
                         }
                       },
                       onSignInHere: _navigateToLogin,

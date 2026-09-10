@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'api_cache_manager.dart';
 import 'auth_interceptor.dart';
 
 Dio createApiClient() {
@@ -13,6 +14,7 @@ Dio createApiClient() {
     ),
   );
 
+  dio.interceptors.add(CacheInterceptor());
   dio.interceptors.add(AuthInterceptor(dio));
   dio.interceptors.add(
     LogInterceptor(

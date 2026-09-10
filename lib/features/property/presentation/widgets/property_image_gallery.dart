@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 /// Swipeable image gallery with a dot indicator, shared by the map card and the
@@ -20,23 +21,7 @@ class PropertyImageGallery extends StatefulWidget {
   });
 
   static List<String> fallbackImages(String? id, String? type) {
-    final lowerType = type?.toLowerCase() ?? '';
-    if (lowerType.contains('land')) {
-      return const [
-        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80',
-        'https://images.unsplash.com/photo-1628624747186-a941c476b7ef?auto=format&fit=crop&w=1000&q=80',
-      ];
-    }
-    if (lowerType.contains('building') || lowerType.contains('condo')) {
-      return const [
-        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80',
-        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80',
-      ];
-    }
-    return const [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80',
-    ];
+    return const [];
   }
 
   @override
@@ -55,9 +40,13 @@ class _PropertyImageGalleryState extends State<PropertyImageGallery> {
 
   @override
   Widget build(BuildContext context) {
-    final images = widget.imageUrls.isNotEmpty
-        ? widget.imageUrls
-        : PropertyImageGallery.fallbackImages(null, null);
+    if (widget.imageUrls.isEmpty) {
+      final placeholder = const PropertyImagePlaceholder();
+      if (widget.borderRadius == null) return placeholder;
+      return ClipRRect(borderRadius: widget.borderRadius!, child: placeholder);
+    }
+
+    final images = widget.imageUrls;
 
     final gallery = Stack(
       fit: StackFit.expand,
@@ -75,11 +64,25 @@ class _PropertyImageGalleryState extends State<PropertyImageGallery> {
                 errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
               );
             }
-            return Image.network(
-              url,
+            return CachedNetworkImage(
+              imageUrl: url,
               fit: BoxFit.cover,
-              cacheWidth: 900,
-              errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
+              memCacheWidth: 900,
+              placeholder: (context, url) => Container(
+                color: const Color(0xFFF3F4F6),
+                child: const Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Color(0xFF5B5FEF),
+                    ),
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) =>
+                  const PropertyImagePlaceholder(),
             );
           },
         ),

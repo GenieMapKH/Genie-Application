@@ -59,6 +59,7 @@ dependencies:
   intl: ^0.20.3
   qr_flutter: 4.1.0
   animations: ^3.0.0
+  cached_network_image: ^3.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

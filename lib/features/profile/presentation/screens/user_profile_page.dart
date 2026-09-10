@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/shared/widgets/app_header_bar.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/profile/presentation/widgets/profile_info_section.dart';
 
@@ -25,13 +26,15 @@ class UserProfilePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 42),
-            _buildHeader(context),
+            AppHeaderBar(
+              title: 'Account',
+              onBackPressed: onBackPressed,
+            ),
             
             if (profileAsync.hasError && profileAsync.hasValue && !profileAsync.isLoading)
               _buildOfflineWarning(),
               
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
                 color: const Color(0xFF5B5FEF),
@@ -54,38 +57,6 @@ class UserProfilePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: GestureDetector(
-              onTap: () {
-                if (onBackPressed != null) {
-                  onBackPressed!();
-                } else if (Navigator.of(context).canPop()) {
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Icon(Icons.arrow_back, color: Color(0xFF6B7280)),
-            ),
-          ),
-          Text(
-            'Account',
-            style: GoogleFonts.inter(
-              color: const Color(0xFF111827),
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
       ),
     );
   }

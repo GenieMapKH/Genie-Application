@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -31,98 +32,147 @@ class SavedPropertyCard extends StatelessWidget {
           type: MaterialType.transparency,
           child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16.0),
               border: Border.all(color: const Color(0xFFF3F4F6)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-              // Property image aspect-ratio container
-              AspectRatio(
-                aspectRatio: 1.35,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    PropertyImageGallery(imageUrls: property.imageUrls),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: _AnimatedFavoriteButton(
-                        isFavorite: isFavorite,
-                        onPressed: onFavoriteToggled,
-                      ),
+                  // Property image gallery container matching PropertyItemCard
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        PropertyImageGallery(imageUrls: property.imageUrls),
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: _TypePill(propertyType: property.propertyType),
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: _AnimatedFavoriteButton(
+                            isFavorite: isFavorite,
+                            onPressed: onFavoriteToggled,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              // Details section
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      PropertyFormat.price(property.price),
-                      style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF111827),
-                      ),
+                  // Details section
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          PropertyFormat.price(property.price),
+                          style: GoogleFonts.inter(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF111827),
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          PropertyFormat.cardSpecLine(property),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF374151),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          property.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF6B7280),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Listing by: ${property.ownerName ?? 'Genie'}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF9CA3AF),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      PropertyFormat.cardSpecLine(property),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF374151),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      property.propertyType,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      property.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF6B7280),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Listing by: ${property.ownerName ?? 'Genie'}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF9CA3AF),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TypePill extends StatelessWidget {
+  final String propertyType;
+
+  const _TypePill({required this.propertyType});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            PropertyFormat.typeIconPath(propertyType),
+            width: 12,
+            height: 12,
+            colorFilter: const ColorFilter.mode(
+              Color(0xFF4B5563),
+              BlendMode.srcIn,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            propertyType,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF111827),
+            ),
+          ),
+        ],
       ),
     );
   }

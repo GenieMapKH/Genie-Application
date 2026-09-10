@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/shared/widgets/app_header_bar.dart';
 import 'package:genie/features/property/presentation/screens/add_property_page.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
@@ -32,11 +33,13 @@ class MyPropertiesPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 42),
-            _buildHeader(context),
+            AppHeaderBar(
+              title: 'My Properties',
+              onBackPressed: onBackPressed,
+            ),
             if (propertiesAsync.hasError && propertiesAsync.hasValue && !propertiesAsync.isLoading)
               _buildOfflineWarning(),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
                 color: const Color(0xFF5B5FEF),
@@ -121,52 +124,6 @@ class MyPropertiesPage extends ConsumerWidget {
           onOptionsTapped: () => PropertyOptionsSheet.show(context, ref, property),
         );
       },
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isEmbedded && onBackPressed != null)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: InkWell(
-                onTap: onBackPressed,
-                borderRadius: BorderRadius.circular(24),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: Color(0xFF1E293B),
-                    size: 24,
-                  ),
-                ),
-              ),
-            ),
-          Text(
-            'My Properties',
-            style: GoogleFonts.inter(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF111827),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

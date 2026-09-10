@@ -121,7 +121,7 @@ class PropertyRepository {
     try {
       final response = await dio.get('/properties/my/favorites');
       final List<dynamic> data = response.data;
-      return compute(_parseProperties, data);
+      return await compute(_parseProperties, data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         return [];

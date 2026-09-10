@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/shared/widgets/app_header_bar.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/screens/sort_order_page.dart';
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
@@ -44,40 +45,19 @@ class SavedPropertiesPage extends ConsumerWidget {
         child: Column(
           children: [
             // Top App Bar Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 12, 16, 12),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Color(0xFF111827)),
-                    onPressed: () {
-                      if (onBackPressed != null) {
-                        onBackPressed!();
-                      } else {
-                        Navigator.of(context).maybePop();
-                      }
-                    },
+            AppHeaderBar(
+              title: 'Saved Properties',
+              onBackPressed: onBackPressed,
+              trailing: Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: Text(
+                  '$count Saved',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF5B5FEF),
                   ),
-                  Expanded(
-                    child: Text(
-                      'Saved Properties',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '$count Saved',
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF5B5FEF),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
 
@@ -241,7 +221,7 @@ class SavedPropertiesPage extends ConsumerWidget {
         crossAxisCount: 2,
         mainAxisSpacing: 16,
         crossAxisSpacing: 12,
-        childAspectRatio: 0.58,
+        childAspectRatio: 0.68,
       ),
       itemCount: properties.length,
       itemBuilder: (context, index) {

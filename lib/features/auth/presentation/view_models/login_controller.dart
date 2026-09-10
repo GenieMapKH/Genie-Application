@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 
@@ -14,17 +15,23 @@ class LoginController extends StateNotifier<AsyncValue<bool>> {
 
   LoginController(this._authService) : super(const AsyncData(false));
 
-  Future<void> login(String identifier, String password) async {
+  void reset() {
+    state = const AsyncData(false);
+  }
+
+  Future<bool> login(String identifier, String password) async {
     state = const AsyncLoading();
     try {
       await _authService.login(identifier, password);
       state = const AsyncData(true);
+      return true;
     } catch (e, st) {
       state = AsyncError(e, st);
+      return false;
     }
   }
 
-  Future<void> googleLogin({bool forceAccountSelection = false}) async {
+  Future<bool> googleLogin({bool forceAccountSelection = false}) async {
     state = const AsyncLoading();
     try {
       final googleSignIn = GoogleSignIn(
@@ -40,7 +47,7 @@ class LoginController extends StateNotifier<AsyncValue<bool>> {
       if (googleUser == null) {
         // User canceled account picker
         state = const AsyncData(false);
-        return;
+        return false;
       }
 
       final GoogleSignInAuthentication googleAuth =
@@ -58,9 +65,11 @@ class LoginController extends StateNotifier<AsyncValue<bool>> {
       }
 
       state = const AsyncData(true);
+      return true;
     } catch (e, st) {
-      print('Google login error: $e\n$st');
+      debugPrint('Google login error: $e\n$st');
       state = AsyncError(e, st);
+      return false;
     }
   }
 }

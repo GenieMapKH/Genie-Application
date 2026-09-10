@@ -14,9 +14,17 @@ class PropertyDetailGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final images = imageUrls.isNotEmpty
-        ? imageUrls
-        : PropertyImageGallery.fallbackImages(null, null);
+    if (imageUrls.isEmpty) {
+      return const SliverToBoxAdapter(
+        child: SizedBox(
+          height: photoHeight,
+          width: double.infinity,
+          child: PropertyImagePlaceholder(),
+        ),
+      );
+    }
+
+    final images = imageUrls;
 
     return SliverList.builder(
       itemCount: images.length,

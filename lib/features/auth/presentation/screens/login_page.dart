@@ -114,6 +114,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
         );
 
     _entryController.forward();
+    Future.microtask(() {
+      ref.read(loginControllerProvider.notifier).reset();
+    });
   }
 
   @override
@@ -170,11 +173,21 @@ class _LoginPageState extends ConsumerState<LoginPage>
     return isValid;
   }
 
+  void _onAuthSuccess() {
+    if (!mounted) return;
+    AppPopup.showSuccess(context, 'Successfully logged in!');
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(propertiesProvider);
+    ref.invalidate(publicPropertiesProvider);
+    context.go('/home');
+  }
+
   Future<void> _handleLogin() async {
     final isValid = _validateForm();
     if (isValid) {
+      bool success = false;
       if (_selectedMethod == AuthMethod.email) {
-        await ref
+        success = await ref
             .read(loginControllerProvider.notifier)
             .login(_emailController.text.trim(), _passwordController.text);
       } else {
@@ -182,9 +195,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
           RegExp(r'[\s\-()]'),
           '',
         );
-        await ref
+        success = await ref
             .read(loginControllerProvider.notifier)
             .login(cleanPhone, _passwordController.text);
+      }
+
+      if (success && mounted) {
+        _onAuthSuccess();
       }
     }
   }
@@ -281,25 +298,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
       if (next.isLoading) return;
 
       if (next.hasError) {
+        if (!mounted) return;
         final errorMessage = next.error is AppException
             ? (next.error as AppException).message
             : 'Login failed. Please check your credentials and try again.';
         AppPopup.showError(context, errorMessage);
       } else if (next.hasValue && next.value == true) {
-        AppPopup.showSuccess(context, 'Successfully logged in!');
-        ref.invalidate(userProfileProvider);
-        ref.invalidate(propertiesProvider);
-        ref.invalidate(publicPropertiesProvider);
-
-        Future.microtask(() {
-          if (mounted) {
-            if (widget.onLoginPressed != null) {
-              widget.onLoginPressed!();
-            } else {
-              context.go('/home');
-            }
-          }
-        });
+        if (!mounted) return;
+        _onAuthSuccess();
       }
     });
 
@@ -388,13 +394,16 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       fadeAnimation: _actionsFade,
                       isLoading: loginState.isLoading,
                       onLogin: _handleLogin,
-                      onGoogleLogin: () {
+                      onGoogleLogin: () async {
                         if (widget.onGoogleLoginPressed != null) {
                           widget.onGoogleLoginPressed!();
                         } else {
-                          ref
+                          final success = await ref
                               .read(loginControllerProvider.notifier)
                               .googleLogin();
+                          if (success && mounted) {
+                            _onAuthSuccess();
+                          }
                         }
                       },
                       onCreateAccount: widget.onCreateAccountPressed,

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 
@@ -72,9 +73,22 @@ final savedPropertiesProvider =
 final sortedSavedPropertiesProvider = Provider<List<PropertyModel>>((ref) {
   final savedState = ref.watch(savedPropertiesProvider);
   final sortOption = ref.watch(savedSortOptionProvider);
+  final mapProps = ref.watch(mapPropertiesProvider).properties;
 
   if (!savedState.hasValue) return [];
-  final list = List<PropertyModel>.from(savedState.value!);
+  
+  final list = savedState.value!.map((saved) {
+    if (saved.imageUrls.isEmpty) {
+      final match = mapProps.firstWhere(
+        (p) => p.id == saved.id && p.imageUrls.isNotEmpty,
+        orElse: () => saved,
+      );
+      if (match.imageUrls.isNotEmpty) {
+        return saved.copyWith(imageUrls: match.imageUrls);
+      }
+    }
+    return saved;
+  }).toList();
 
   switch (sortOption) {
     case SortOption.propertyForYou:
