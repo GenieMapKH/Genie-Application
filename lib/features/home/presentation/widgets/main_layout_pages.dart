@@ -4,18 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/profile/presentation/screens/user_profile_page.dart';
 import 'package:genie/features/property/presentation/screens/my_properties_page.dart';
+import 'package:genie/features/property/presentation/screens/saved_properties_page.dart';
 
-/// The full-screen pages that slide in over the map for the "My Properties" and
+/// The full-screen pages that slide in over the map for the "Saved", "My Properties" and
 /// "User" tabs.
 class MainLayoutPages extends ConsumerWidget {
   final MainNavState navState;
 
   const MainLayoutPages({super.key, required this.navState});
 
+  static const int _savedPropertiesIndex = 1;
   static const int _myPropertiesIndex = 3;
   static const int _userProfileIndex = 4;
 
   String get _currentKey => switch (navState.currentIndex) {
+        _savedPropertiesIndex => 'saved_properties',
         _myPropertiesIndex => 'my_properties',
         _userProfileIndex => 'user_profile',
         _ => 'empty',
@@ -25,17 +28,26 @@ class MainLayoutPages extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     void onBack() => ref.read(mainNavProvider.notifier).resetToHome();
 
+    final bool isPageVisible = navState.currentIndex == _savedPropertiesIndex ||
+        navState.currentIndex == _myPropertiesIndex ||
+        navState.currentIndex == _userProfileIndex;
+    final bool isPrevVisible = navState.previousIndex == _savedPropertiesIndex ||
+        navState.previousIndex == _myPropertiesIndex ||
+        navState.previousIndex == _userProfileIndex;
+
     return Container(
-      // Opaque only while sliding between two full-screen pages, so the map
+      // Opaque only while sliding between full-screen pages, so the map
       // stays visible when returning home.
-      color: (navState.currentIndex >= _myPropertiesIndex &&
-              navState.previousIndex >= _myPropertiesIndex)
-          ? Colors.white
-          : Colors.transparent,
+      color: (isPageVisible && isPrevVisible) ? Colors.white : Colors.transparent,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: _buildTransition,
         child: switch (navState.currentIndex) {
+          _savedPropertiesIndex => SavedPropertiesPage(
+              key: const ValueKey('saved_properties'),
+              isEmbedded: true,
+              onBackPressed: onBack,
+            ),
           _myPropertiesIndex => MyPropertiesPage(
               key: const ValueKey('my_properties'),
               isEmbedded: true,

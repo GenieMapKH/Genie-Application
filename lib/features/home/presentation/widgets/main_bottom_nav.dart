@@ -58,7 +58,7 @@ class MainBottomNav extends ConsumerWidget {
 
     return TactileButton(
       onPressed: () async {
-        if (index == 3 || index == 4) {
+        if (index == 1 || index == 3 || index == 4) {
           final token = await AuthStorage.getAccessToken();
           if (token == null) {
             if (context.mounted) {

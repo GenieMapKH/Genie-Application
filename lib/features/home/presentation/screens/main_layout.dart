@@ -39,7 +39,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final token = await AuthStorage.getAccessToken();
     if ((token == null || token.isEmpty) && mounted) {
       final currentIdx = ref.read(mainNavProvider).currentIndex;
-      if (currentIdx == 3 || currentIdx == 4) {
+      if (currentIdx == 1 || currentIdx == 3 || currentIdx == 4) {
         ref.read(mainNavProvider.notifier).resetToHome();
       }
     }
@@ -115,7 +115,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final navState = ref.watch(mainNavProvider);
     final isHome = navState.currentIndex == 0;
     final isCardVisible = ref.watch(propertyCarouselProvider).isVisible;
-    final bool overlayPage = navState.currentIndex == 3 || navState.currentIndex == 4;
+    final bool overlayPage = navState.currentIndex == 1 || navState.currentIndex == 3 || navState.currentIndex == 4;
 
     return PopScope(
       canPop: isHome && !isCardVisible,

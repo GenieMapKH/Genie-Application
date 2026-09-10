@@ -135,9 +135,14 @@ class MapOverlayBuilder {
         markers,
         isHighlighted,
         mapState.currentZoom,
-        (index, property) => property != null
-            ? callbacks.onSelectProperty(property)
-            : callbacks.onHighlightLocalPolygon(index),
+        (index, property) {
+          if (mapState.isDrawing) return;
+          if (property != null) {
+            callbacks.onSelectProperty(property);
+          } else {
+            callbacks.onHighlightLocalPolygon(index);
+          }
+        },
         callbacks.onEditProperty,
       );
     } else {
@@ -149,9 +154,14 @@ class MapOverlayBuilder {
         icons.selectedDot,
         icons.newBadge,
         isHighlighted,
-        (index, property) => property != null
-            ? callbacks.onSelectProperty(property)
-            : callbacks.onHighlightLocalPolygon(index),
+        (index, property) {
+          if (mapState.isDrawing) return;
+          if (property != null) {
+            callbacks.onSelectProperty(property);
+          } else {
+            callbacks.onHighlightLocalPolygon(index);
+          }
+        },
       );
     }
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/property/presentation/widgets/property_item_card.dart';
 
 /// Horizontally swipeable strip of property cards that slides in above the
@@ -66,8 +67,8 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
     } else if (_controller.page?.round() != next.index) {
       _controller.animateToPage(
         next.index,
-        duration: const Duration(milliseconds: 320),
-        curve: Curves.easeOutCubic,
+        duration: const Duration(milliseconds: 360),
+        curve: const Cubic(0.16, 1.0, 0.3, 1.0),
       );
     }
   }
@@ -89,11 +90,12 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
     if (state.items.isNotEmpty) _items = state.items;
 
     return AnimatedSlide(
-      duration: const Duration(milliseconds: 360),
-      curve: Curves.easeOutCubic,
+      duration: const Duration(milliseconds: 400),
+      curve: const Cubic(0.16, 1.0, 0.3, 1.0),
       offset: state.isVisible ? Offset.zero : const Offset(0, 1.25),
       child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 220),
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
         opacity: state.isVisible ? 1 : 0,
         child: SizedBox(
           height: PropertyCarousel.height,
@@ -111,8 +113,20 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
                           ref.read(propertyCarouselProvider.notifier).setIndex,
                       itemBuilder: (context, index) {
                         final property = _items[index];
+                        final savedList = ref
+                            .watch(savedPropertiesProvider)
+                            .valueOrNull ?? [];
+                        final isSaved =
+                            savedList.any((p) => p.id == property.id);
+
                         return PropertyItemCard(
                           property: property,
+                          isFavorite: isSaved,
+                          onFavoriteToggled: () {
+                            ref
+                                .read(savedPropertiesProvider.notifier)
+                                .toggleFavorite(property);
+                          },
                           onTap: () => widget.onOpenDetail(property),
                         );
                       },

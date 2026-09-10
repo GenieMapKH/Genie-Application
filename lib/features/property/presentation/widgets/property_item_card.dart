@@ -186,33 +186,86 @@ class _TypePill extends StatelessWidget {
   }
 }
 
-class _FavoriteButton extends StatelessWidget {
+class _FavoriteButton extends StatefulWidget {
   final bool isFavorite;
   final VoidCallback? onPressed;
 
   const _FavoriteButton({required this.isFavorite, this.onPressed});
 
   @override
+  State<_FavoriteButton> createState() => _FavoriteButtonState();
+}
+
+class _FavoriteButtonState extends State<_FavoriteButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+    );
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.28), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.28, end: 1.0), weight: 50),
+    ]).animate(CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void didUpdateWidget(covariant _FavoriteButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isFavorite != widget.isFavorite) {
+      _animController.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _animController.forward(from: 0.0);
+    widget.onPressed?.call();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.all(7),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+      onTap: _handleTap,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+            child: Icon(
+              widget.isFavorite ? Icons.favorite : Icons.favorite_border,
+              key: ValueKey<bool>(widget.isFavorite),
+              size: 19,
+              color: widget.isFavorite ? const Color(0xFF5B5FEF) : const Color(0xFF111827),
             ),
-          ],
-        ),
-        child: Icon(
-          isFavorite ? Icons.favorite : Icons.favorite_border,
-          size: 19,
-          color: isFavorite ? const Color(0xFFE5484D) : const Color(0xFF111827),
+          ),
         ),
       ),
     );

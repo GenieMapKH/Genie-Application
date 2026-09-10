@@ -272,52 +272,84 @@ class MapLayerBuilder {
         ),
       );
 
+      final selectedVertexIconFuture = DynamicMapMarkers.createSelectedVertexMarker();
+      final defaultWhiteDotFuture = DynamicMapMarkers.createSmallWhiteDotMarker();
+
       final measurements = calculateMeasurements(drawnPoints);
+      final List<Future<BitmapDescriptor>> lengthIconFutures = [];
+      Future<BitmapDescriptor>? areaIconFuture;
+
       if (measurements != null) {
         final double area = measurements.area;
         final bool showEdgeLengths = _shouldShowEdgeLengths(area, currentZoom);
         final double edgeFontSize = _calculateFontSize(area, currentZoom, isArea: false);
 
-        if (measurements.sides.isNotEmpty) {
-          if (showEdgeLengths) {
-            for (int i = 0; i < drawnPoints.length; i++) {
-              final LatLng p1 = drawnPoints[i];
-              final LatLng p2 = drawnPoints[(i + 1) % drawnPoints.length];
-              final LatLng midPoint = LatLng(
-                (p1.latitude + p2.latitude) / 2,
-                (p1.longitude + p2.longitude) / 2,
-              );
-
-              newMarkers.add(
-                Marker(
-                  markerId: MarkerId('edit_midpoint_$i'),
-                  position: midPoint,
-                  icon: smallWhiteDotIcon ??
-                      BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueRed,
-                      ),
-                  anchor: const Offset(0.5, 0.5),
-                  consumeTapEvents: true,
-                  draggable: true,
-                  onDragEnd: (newPosition) {
-                    onInsertPoint(i + 1, newPosition);
-                  },
-                  onTap: () {
-                    onInsertPoint(i + 1, midPoint);
-                  },
-                ),
-              );
-
-              final lengthStr = '${measurements.sides[i].toStringAsFixed(0)} m';
-              final lengthIcon = await DynamicMapMarkers.createTextMarker(
+        if (measurements.sides.isNotEmpty && showEdgeLengths) {
+          for (int i = 0; i < drawnPoints.length; i++) {
+            final lengthStr = '${measurements.sides[i].toStringAsFixed(0)} m';
+            lengthIconFutures.add(
+              DynamicMapMarkers.createTextMarker(
                 lengthStr,
                 fontSize: edgeFontSize,
-              );
+              ),
+            );
+          }
+        }
+
+        areaIconFuture = DynamicMapMarkers.createTextMarker(
+          formatArea(measurements.area),
+          isArea: true,
+          fontSize: _calculateFontSize(area, currentZoom, isArea: true),
+        );
+      }
+
+      final selectedVertexIcon = await selectedVertexIconFuture;
+      final defaultWhiteDot = smallWhiteDotIcon ?? await defaultWhiteDotFuture;
+      final lengthIcons = await Future.wait(lengthIconFutures);
+      final areaIcon = areaIconFuture != null ? await areaIconFuture : null;
+
+      if (measurements != null) {
+        final double area = measurements.area;
+        final bool showEdgeLengths = _shouldShowEdgeLengths(area, currentZoom);
+
+        if (measurements.sides.isNotEmpty && showEdgeLengths) {
+          for (int i = 0; i < drawnPoints.length; i++) {
+            final LatLng p1 = drawnPoints[i];
+            final LatLng p2 = drawnPoints[(i + 1) % drawnPoints.length];
+            final LatLng midPoint = LatLng(
+              (p1.latitude + p2.latitude) / 2,
+              (p1.longitude + p2.longitude) / 2,
+            );
+
+            newMarkers.add(
+              Marker(
+                markerId: MarkerId('edit_midpoint_$i'),
+                position: midPoint,
+                icon: defaultWhiteDot,
+                anchor: const Offset(0.5, 0.5),
+                consumeTapEvents: true,
+                draggable: true,
+                onDragStart: (pos) {
+                  onInsertPoint(i + 1, pos);
+                },
+                onDrag: (newPosition) {
+                  onUpdatePoint(i + 1, newPosition);
+                },
+                onDragEnd: (newPosition) {
+                  onUpdatePoint(i + 1, newPosition);
+                },
+                onTap: () {
+                  onInsertPoint(i + 1, midPoint);
+                },
+              ),
+            );
+
+            if (i < lengthIcons.length) {
               newMarkers.add(
                 Marker(
                   markerId: MarkerId('edit_length_$i'),
                   position: midPoint,
-                  icon: lengthIcon,
+                  icon: lengthIcons[i],
                   anchor: const Offset(0.5, 0.5),
                   zIndexInt: 2,
                 ),
@@ -326,30 +358,26 @@ class MapLayerBuilder {
           }
         }
 
-        double sumLat = 0, sumLng = 0;
-        for (var p in drawnPoints) {
-          sumLat += p.latitude;
-          sumLng += p.longitude;
+        if (areaIcon != null) {
+          double sumLat = 0, sumLng = 0;
+          for (var p in drawnPoints) {
+            sumLat += p.latitude;
+            sumLng += p.longitude;
+          }
+          final LatLng centroid = LatLng(
+            sumLat / drawnPoints.length,
+            sumLng / drawnPoints.length,
+          );
+          newMarkers.add(
+            Marker(
+              markerId: const MarkerId('edit_area_marker'),
+              position: centroid,
+              icon: areaIcon,
+              anchor: const Offset(0.5, 0.5),
+              zIndexInt: 1,
+            ),
+          );
         }
-        final LatLng centroid = LatLng(
-          sumLat / drawnPoints.length,
-          sumLng / drawnPoints.length,
-        );
-        final areaStr = formatArea(measurements.area);
-        final areaIcon = await DynamicMapMarkers.createTextMarker(
-          areaStr,
-          isArea: true,
-          fontSize: _calculateFontSize(area, currentZoom, isArea: true),
-        );
-        newMarkers.add(
-          Marker(
-            markerId: const MarkerId('edit_area_marker'),
-            position: centroid,
-            icon: areaIcon,
-            anchor: const Offset(0.5, 0.5),
-            zIndexInt: 1,
-          ),
-        );
       }
 
       for (int i = 0; i < drawnPoints.length; i++) {
@@ -359,7 +387,12 @@ class MapLayerBuilder {
             markerId: MarkerId('edit_point_$i'),
             position: drawnPoints[i],
             consumeTapEvents: true,
-            draggable: isSelected,
+            draggable: true,
+            onDragStart: (_) {
+              if (!isSelected) {
+                onSelectVertex(i);
+              }
+            },
             onDrag: (newPosition) {
               onUpdatePoint(i, newPosition);
             },
@@ -369,16 +402,9 @@ class MapLayerBuilder {
             onTap: () {
               onSelectVertex(i);
             },
-            icon: isSelected
-                ? (pinIcon ??
-                    BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed,
-                    ))
-                : (smallWhiteDotIcon ??
-                    BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed,
-                    )),
-            anchor: isSelected ? const Offset(0.5, 0.126) : const Offset(0.5, 0.5),
+            icon: isSelected ? selectedVertexIcon : defaultWhiteDot,
+            anchor: const Offset(0.5, 0.5),
+            zIndexInt: isSelected ? 10 : 5,
           ),
         );
       }

@@ -27,7 +27,7 @@ class PropertyDetailActions extends StatelessWidget {
           const Spacer(),
           _CircleButton(
             icon: isFavorite ? Icons.favorite : Icons.favorite_border,
-            iconColor: isFavorite ? const Color(0xFFE5484D) : null,
+            iconColor: isFavorite ? const Color(0xFF5B5FEF) : null,
             onPressed: onFavoriteToggled,
           ),
           const SizedBox(width: 10),

@@ -70,8 +70,8 @@ class MainMapControls extends ConsumerWidget {
         // Current Position Icon (Bottom Right)
         if (!mapState.isDrawing)
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 360),
-            curve: Curves.easeOutCubic,
+            duration: const Duration(milliseconds: 400),
+            curve: const Cubic(0.16, 1.0, 0.3, 1.0),
             right: 0,
             bottom: sideButtonBottom,
             child: TactileButton(

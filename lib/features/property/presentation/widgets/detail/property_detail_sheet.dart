@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_recommendations_provider.dart';
+import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_contact_bar.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_actions.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_gallery.dart';
@@ -21,6 +22,7 @@ import 'package:genie/features/property/presentation/widgets/detail/property_sha
 /// scrolling the content — continues into the full stage in one gesture.
 class PropertyDetailSheet extends ConsumerStatefulWidget {
   final PropertyModel property;
+  final String? heroTag;
 
   /// Opens another property from the recommendation grids.
   final void Function(PropertyModel property)? onOpenProperty;
@@ -28,6 +30,7 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
   const PropertyDetailSheet({
     super.key,
     required this.property,
+    this.heroTag,
     this.onOpenProperty,
   });
 
@@ -37,19 +40,30 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
   /// Slides the sheet up over the map without hiding it at the brief stage.
   static Route<void> route(
     PropertyModel property, {
+    String? heroTag,
     void Function(PropertyModel property)? onOpenProperty,
   }) {
     return PageRouteBuilder<void>(
       opaque: false,
       barrierColor: Colors.black.withValues(alpha: 0.25),
-      transitionDuration: const Duration(milliseconds: 360),
-      reverseTransitionDuration: const Duration(milliseconds: 260),
+      transitionDuration: const Duration(milliseconds: 400),
+      reverseTransitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (_, _, _) => PropertyDetailSheet(
         property: property,
+        heroTag: heroTag,
         onOpenProperty: onOpenProperty,
       ),
-      transitionsBuilder: (_, animation, _, child) =>
-          FadeTransition(opacity: animation, child: child),
+      transitionsBuilder: (_, animation, _, child) {
+        final curveAnimation = CurvedAnimation(
+          parent: animation,
+          curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+          reverseCurve: Curves.easeOutCubic,
+        );
+        return FadeTransition(
+          opacity: curveAnimation,
+          child: child,
+        );
+      },
     );
   }
 
@@ -59,7 +73,6 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
 }
 
 class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
-  bool _isFavorite = false;
   bool _isDismissing = false;
 
   void _dismiss() {
@@ -74,6 +87,8 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
     final recommendations = ref.watch(
       propertyRecommendationsProvider(widget.property.id),
     );
+
+    final heroTag = widget.heroTag ?? 'property_card_hero_${widget.property.id}';
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -91,7 +106,7 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
             child: FractionallySizedBox(
               heightFactor: 0.9,
               child: Hero(
-                tag: 'property_card_hero_${widget.property.id}',
+                tag: heroTag,
                 child: Material(
                   type: MaterialType.transparency,
                   child: ClipRRect(
@@ -144,11 +159,17 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                   ),
                                 ),
                                 PropertyDetailActions(
-                                  isFavorite: _isFavorite,
+                                  isFavorite: ref
+                                          .watch(savedPropertiesProvider)
+                                          .valueOrNull
+                                          ?.any((p) => p.id == widget.property.id) ??
+                                      false,
                                   onClose: _dismiss,
-                                  onFavoriteToggled: () => setState(
-                                    () => _isFavorite = !_isFavorite,
-                                  ),
+                                  onFavoriteToggled: () {
+                                    ref
+                                        .read(savedPropertiesProvider.notifier)
+                                        .toggleFavorite(widget.property);
+                                  },
                                 ),
                               ],
                             ),

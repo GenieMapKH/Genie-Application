@@ -9,14 +9,14 @@ class AppTransitionPage<T> extends CustomTransitionPage<T> {
     super.key,
     SlideDirection direction = SlideDirection.fromRight,
   }) : super(
-         transitionDuration: const Duration(milliseconds: 260),
-         reverseTransitionDuration: const Duration(milliseconds: 240),
+         transitionDuration: const Duration(milliseconds: 340),
+         reverseTransitionDuration: const Duration(milliseconds: 280),
          opaque: true,
          transitionsBuilder: (context, animation, secondaryAnimation, child) {
            final primaryAnimation = CurvedAnimation(
              parent: animation,
-             curve: Curves.easeOutCubic,
-             reverseCurve: Curves.easeInCubic,
+             curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+             reverseCurve: Curves.easeOutCubic,
            );
 
            Offset beginOffset;

@@ -5,8 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DynamicMapMarkers {
+  static final Map<int, BitmapDescriptor> _numberedMarkerCache = {};
+  static final Map<String, BitmapDescriptor> _textMarkerCache = {};
+  static BitmapDescriptor? _selectedVertexCache;
+  static BitmapDescriptor? _smallWhiteDotCache;
+
+  /// Clear caches if needed
+  static void clearCache() {
+    _numberedMarkerCache.clear();
+    _textMarkerCache.clear();
+    _selectedVertexCache = null;
+    _smallWhiteDotCache = null;
+  }
+
   /// Creates a circular marker with a number inside (e.g. for vertices)
   static Future<BitmapDescriptor> createNumberedMarker(int number) async {
+    if (_numberedMarkerCache.containsKey(number)) {
+      return _numberedMarkerCache[number]!;
+    }
+
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 36.0;
@@ -55,11 +72,13 @@ class DynamicMapMarkers {
       (size * pixelRatio).toInt(),
     );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(
+    final descriptor = BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: size,
       height: size,
     );
+    _numberedMarkerCache[number] = descriptor;
+    return descriptor;
   }
 
   /// Creates a pill-shaped marker with text (e.g. for area and lengths)
@@ -68,13 +87,17 @@ class DynamicMapMarkers {
     bool isArea = false,
     double? fontSize,
   }) async {
+    final double actualFontSize = fontSize ?? (isArea ? 14.0 : 12.0);
+    final String cacheKey = '$text-${actualFontSize.toStringAsFixed(1)}-$isArea';
+    if (_textMarkerCache.containsKey(cacheKey)) {
+      return _textMarkerCache[cacheKey]!;
+    }
+
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double pixelRatio = 3.0;
 
     canvas.scale(pixelRatio, pixelRatio);
-
-    final double actualFontSize = fontSize ?? (isArea ? 14.0 : 12.0);
 
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
@@ -132,11 +155,13 @@ class DynamicMapMarkers {
     );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
 
-    return BitmapDescriptor.bytes(
+    final descriptor = BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: canvasWidth.toDouble(),
       height: canvasHeight.toDouble(),
     );
+    _textMarkerCache[cacheKey] = descriptor;
+    return descriptor;
   }
 
   /// Creates a green dot marker with a white border and drop shadow.
@@ -325,8 +350,53 @@ class DynamicMapMarkers {
     );
   }
 
+  /// Creates a highlighted vertex marker for selected edit handles (centered anchor 0.5, 0.5)
+  static Future<BitmapDescriptor> createSelectedVertexMarker() async {
+    if (_selectedVertexCache != null) return _selectedVertexCache!;
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double size = 32.0;
+    const double pixelRatio = 3.0;
+
+    canvas.scale(pixelRatio, pixelRatio);
+
+    // Draw shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.25)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2 + 1),
+      size / 2.5,
+      shadowPaint,
+    );
+
+    // White ring
+    final Paint whiteRing = Paint()..color = Colors.white;
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 2.5, whiteRing);
+
+    // Red inner dot
+    final Paint accentFill = Paint()..color = const Color(0xFFE5484D);
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 3.8, accentFill);
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (size * pixelRatio).toInt(),
+      (size * pixelRatio).toInt(),
+    );
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+    final descriptor = BitmapDescriptor.bytes(
+      data!.buffer.asUint8List(),
+      width: size,
+      height: size,
+    );
+    _selectedVertexCache = descriptor;
+    return descriptor;
+  }
+
   /// Creates a small white dot marker
   static Future<BitmapDescriptor> createSmallWhiteDotMarker() async {
+    if (_smallWhiteDotCache != null) return _smallWhiteDotCache!;
+
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 24.0;
@@ -353,10 +423,12 @@ class DynamicMapMarkers {
       (size * pixelRatio).toInt(),
     );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(
+    final descriptor = BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: size,
       height: size,
     );
+    _smallWhiteDotCache = descriptor;
+    return descriptor;
   }
 }

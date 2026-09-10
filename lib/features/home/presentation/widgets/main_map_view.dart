@@ -80,14 +80,22 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     if (!mounted) return;
 
     final notifier = ref.read(mapStateProvider.notifier);
+    final mapState = ref.read(mapStateProvider);
+
+    if (mapState.isDrawing) {
+      ref.read(propertyCarouselProvider.notifier).clear();
+    }
+
     final overlays = await MapOverlayBuilder.build(
-      mapState: ref.read(mapStateProvider),
+      mapState: mapState,
       mapProperties: ref.read(mapPropertiesProvider),
       selectedProperty: ref.read(propertyCarouselProvider).selected,
       icons: _icons,
       callbacks: MapOverlayCallbacks(
-        onSelectProperty: (property) =>
-            ref.read(propertyCarouselProvider.notifier).select(property),
+        onSelectProperty: (property) {
+          if (ref.read(mapStateProvider).isDrawing) return;
+          ref.read(propertyCarouselProvider.notifier).select(property);
+        },
         onHighlightLocalPolygon: notifier.highlightLocalPolygon,
         onEditProperty: notifier.editProperty,
         onUpdatePoint: notifier.updatePoint,

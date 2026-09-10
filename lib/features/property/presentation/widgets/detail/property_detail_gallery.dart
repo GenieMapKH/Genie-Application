@@ -14,27 +14,33 @@ class PropertyDetailGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrls.isEmpty) {
-      return const SliverToBoxAdapter(
-        child: SizedBox(
-          height: photoHeight,
-          child: PropertyImagePlaceholder(),
-        ),
-      );
-    }
+    final images = imageUrls.isNotEmpty
+        ? imageUrls
+        : PropertyImageGallery.fallbackImages(null, null);
 
     return SliverList.builder(
-      itemCount: imageUrls.length,
-      itemBuilder: (context, index) => SizedBox(
-        height: photoHeight,
-        width: double.infinity,
-        child: Image.network(
-          imageUrls[index],
-          fit: BoxFit.cover,
-          cacheWidth: 1200,
-          errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
-        ),
-      ),
+      itemCount: images.length,
+      itemBuilder: (context, index) {
+        final url = images[index];
+        final child = url.startsWith('assets/') || url.startsWith('assets\\')
+            ? Image.asset(
+                url,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
+              )
+            : Image.network(
+                url,
+                fit: BoxFit.cover,
+                cacheWidth: 1200,
+                errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
+              );
+
+        return SizedBox(
+          height: photoHeight,
+          width: double.infinity,
+          child: child,
+        );
+      },
     );
   }
 }

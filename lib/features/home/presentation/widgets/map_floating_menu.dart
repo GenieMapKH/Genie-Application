@@ -35,12 +35,12 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 320),
     );
     _expandAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutBack,
-      reverseCurve: Curves.easeIn,
+      curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+      reverseCurve: Curves.easeOutCubic,
     );
   }
 
@@ -137,8 +137,8 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
   @override
   Widget build(BuildContext context) {
     return AnimatedPositioned(
-      duration: const Duration(milliseconds: 360),
-      curve: Curves.easeOutCubic,
+      duration: const Duration(milliseconds: 400),
+      curve: const Cubic(0.16, 1.0, 0.3, 1.0),
       left: 0,
       bottom: widget.bottom,
       child: GestureDetector(
@@ -179,7 +179,8 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
               onPressed: _toggleMenu,
               child: AnimatedRotation(
                 turns: _isMenuOpen ? 0.125 : 0, // 45 degree rotation
-                duration: const Duration(milliseconds: 250),
+                duration: const Duration(milliseconds: 320),
+                curve: const Cubic(0.16, 1.0, 0.3, 1.0),
                 child: SvgPicture.asset(
                   'assets/icons/plus.svg',
                   width: 76,
