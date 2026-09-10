@@ -19,6 +19,9 @@ class PropertyModel {
   final double? unitSize;
   final double? lat;
   final double? lng;
+  final String? ownerName;
+  final int saveCount;
+  final int contactCount;
 
   PropertyModel({
     required this.id,
@@ -37,7 +40,25 @@ class PropertyModel {
     this.unitSize,
     this.lat,
     this.lng,
+    this.ownerName,
+    this.saveCount = 0,
+    this.contactCount = 0,
   });
+
+  /// Days elapsed since the listing was published.
+  int get daysListed => DateTime.now().difference(createdAt).inDays;
+
+  /// Listings younger than two weeks get the "New" badge on the map.
+  bool get isNew => daysListed <= 14;
+
+  /// The size shown on cards: land properties report land size, built
+  /// properties report the unit or building footprint.
+  double? get displaySize {
+    if (landSize != null && landSize! > 0) return landSize;
+    if (unitSize != null && unitSize! > 0) return unitSize;
+    if (buildingSize != null && buildingSize! > 0) return buildingSize;
+    return null;
+  }
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
     List<LatLng> points = [];
@@ -69,6 +90,9 @@ class PropertyModel {
           .toList();
     }
 
+    final counts = json['_count'];
+    final owner = json['user'];
+
     return PropertyModel(
       id: json['id'],
       title: json['title'] ?? 'Untitled',
@@ -92,6 +116,9 @@ class PropertyModel {
           : null,
       lat: json['lat'] != null ? (json['lat'] as num).toDouble() : null,
       lng: json['lng'] != null ? (json['lng'] as num).toDouble() : null,
+      ownerName: owner is Map ? owner['username'] as String? : null,
+      saveCount: counts is Map ? (counts['favorites'] as int? ?? 0) : 0,
+      contactCount: counts is Map ? (counts['contacts'] as int? ?? 0) : 0,
     );
   }
 
@@ -125,6 +152,9 @@ class PropertyModel {
     double? unitSize,
     double? lat,
     double? lng,
+    String? ownerName,
+    int? saveCount,
+    int? contactCount,
   }) {
     return PropertyModel(
       id: id ?? this.id,
@@ -143,6 +173,9 @@ class PropertyModel {
       unitSize: unitSize ?? this.unitSize,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,
+      ownerName: ownerName ?? this.ownerName,
+      saveCount: saveCount ?? this.saveCount,
+      contactCount: contactCount ?? this.contactCount,
     );
   }
 }

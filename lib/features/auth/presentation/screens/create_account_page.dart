@@ -180,23 +180,29 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<void>>(loginControllerProvider, (_, state) {
-      if (!state.isLoading && state.hasError) {
-        final errorMessage = state.error is AppException
-            ? (state.error as AppException).message
-            : 'Authentication failed: ${state.error}';
+    ref.listen<AsyncValue<bool>>(loginControllerProvider, (previous, next) {
+      if (next.isLoading) return;
+
+      if (next.hasError) {
+        final errorMessage = next.error is AppException
+            ? (next.error as AppException).message
+            : 'Authentication failed: ${next.error}';
         AppPopup.showError(context, errorMessage);
-      } else if (!state.isLoading && !state.hasError && state.hasValue) {
+      } else if (next.hasValue && next.value == true) {
         AppPopup.showSuccess(context, 'Successfully authenticated!');
         ref.invalidate(userProfileProvider);
         ref.invalidate(propertiesProvider);
         ref.invalidate(publicPropertiesProvider);
 
-        if (widget.onSignUpPressed != null) {
-          widget.onSignUpPressed!();
-        } else {
-          context.go('/home');
-        }
+        Future.microtask(() {
+          if (mounted) {
+            if (widget.onSignUpPressed != null) {
+              widget.onSignUpPressed!();
+            } else {
+              context.go('/home');
+            }
+          }
+        });
       }
     });
 

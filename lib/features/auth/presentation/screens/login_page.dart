@@ -277,23 +277,29 @@ class _LoginPageState extends ConsumerState<LoginPage>
   Widget build(BuildContext context) {
     final loginState = ref.watch(loginControllerProvider);
 
-    ref.listen<AsyncValue<void>>(loginControllerProvider, (_, state) {
-      if (!state.isLoading && state.hasError) {
-        final errorMessage = state.error is AppException
-            ? (state.error as AppException).message
+    ref.listen<AsyncValue<bool>>(loginControllerProvider, (previous, next) {
+      if (next.isLoading) return;
+
+      if (next.hasError) {
+        final errorMessage = next.error is AppException
+            ? (next.error as AppException).message
             : 'Login failed. Please check your credentials and try again.';
         AppPopup.showError(context, errorMessage);
-      } else if (!state.isLoading && !state.hasError && state.hasValue) {
+      } else if (next.hasValue && next.value == true) {
         AppPopup.showSuccess(context, 'Successfully logged in!');
         ref.invalidate(userProfileProvider);
         ref.invalidate(propertiesProvider);
         ref.invalidate(publicPropertiesProvider);
 
-        if (widget.onLoginPressed != null) {
-          widget.onLoginPressed!();
-        } else {
-          context.go('/home');
-        }
+        Future.microtask(() {
+          if (mounted) {
+            if (widget.onLoginPressed != null) {
+              widget.onLoginPressed!();
+            } else {
+              context.go('/home');
+            }
+          }
+        });
       }
     });
 

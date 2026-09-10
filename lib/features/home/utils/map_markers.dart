@@ -139,12 +139,18 @@ class DynamicMapMarkers {
     );
   }
 
-  /// Creates a green dot marker with a white border and drop shadow
-  static Future<BitmapDescriptor> createGreenDotMarker() async {
+  /// Creates a green dot marker with a white border and drop shadow.
+  ///
+  /// When [isSelected] the dot grows and gains a white ring so the property
+  /// tied to the open card is identifiable at a glance.
+  static Future<BitmapDescriptor> createGreenDotMarker({
+    bool isSelected = false,
+  }) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 57.0;
     const double pixelRatio = 3.0;
+    final double radius = isSelected ? 17.0 : 12.5;
 
     canvas.scale(pixelRatio, pixelRatio);
 
@@ -153,18 +159,32 @@ class DynamicMapMarkers {
       ..color = Colors.black.withValues(alpha: 0.16)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8.0);
     // Draw shadow offset down by 4
-    canvas.drawCircle(const Offset(size / 2, size / 2 + 4), 12.5, shadowPaint);
+    canvas.drawCircle(const Offset(size / 2, size / 2 + 4), radius, shadowPaint);
+
+    if (isSelected) {
+      // White halo ring behind the dot
+      final Paint haloPaint = Paint()..color = Colors.white;
+      canvas.drawCircle(const Offset(size / 2, size / 2), radius, haloPaint);
+    }
 
     // Draw green circle
     final Paint paint = Paint()..color = const Color(0xFF028752);
-    canvas.drawCircle(const Offset(size / 2, size / 2), 12.5, paint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      isSelected ? radius - 3.5 : radius,
+      paint,
+    );
 
     // Draw border
     final Paint borderPaint = Paint()
-      ..color = const Color(0xFFE5E7EB)
+      ..color = isSelected ? Colors.white : const Color(0xFFE5E7EB)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-    canvas.drawCircle(const Offset(size / 2, size / 2), 12.0, borderPaint);
+      ..strokeWidth = isSelected ? 3.0 : 1.0;
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      isSelected ? radius - 1.75 : 12.0,
+      borderPaint,
+    );
 
     final ui.Image img = await pictureRecorder.endRecording().toImage(
       (size * pixelRatio).toInt(),
@@ -176,6 +196,64 @@ class DynamicMapMarkers {
       data!.buffer.asUint8List(),
       width: size,
       height: size,
+    );
+  }
+
+  /// Creates the green "New" pill shown above recently listed properties.
+  static Future<BitmapDescriptor> createNewBadgeMarker() async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double pixelRatio = 3.0;
+
+    canvas.scale(pixelRatio, pixelRatio);
+
+    final TextPainter textPainter = TextPainter(
+      text: const TextSpan(
+        text: 'New',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+
+    final double width = textPainter.width + 20;
+    final double height = textPainter.height + 10;
+
+    // Draw shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.18)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
+    canvas.drawRRect(
+      RRect.fromLTRBR(0, 2, width, height + 2, const Radius.circular(24.0)),
+      shadowPaint,
+    );
+
+    // Draw green pill
+    final Paint paint = Paint()..color = const Color(0xFF028752);
+    canvas.drawRRect(
+      RRect.fromLTRBR(0, 0, width, height, const Radius.circular(24.0)),
+      paint,
+    );
+
+    textPainter.paint(canvas, const Offset(10, 5));
+
+    final int canvasWidth = (width + 8).toInt();
+    final int canvasHeight = (height + 8).toInt();
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (canvasWidth * pixelRatio).toInt(),
+      (canvasHeight * pixelRatio).toInt(),
+    );
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+
+    return BitmapDescriptor.bytes(
+      data!.buffer.asUint8List(),
+      width: canvasWidth.toDouble(),
+      height: canvasHeight.toDouble(),
     );
   }
 

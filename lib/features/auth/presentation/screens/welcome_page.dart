@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
 import 'package:genie/core/network/api_client.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,7 +15,7 @@ import 'package:go_router/go_router.dart';
 /// 1. Holds logo centered briefly.
 /// 2. Glides logo upwards smoothly.
 /// 3. Staggered fade and slide for headlines, buttons, and bottom action links.
-class WelcomePage extends StatefulWidget {
+class WelcomePage extends ConsumerStatefulWidget {
   final VoidCallback? onLoginPressed;
   final VoidCallback? onExplorePressed;
   final VoidCallback? onCreateAccountPressed;
@@ -34,10 +36,10 @@ class WelcomePage extends StatefulWidget {
   static const String logoAssetPath = 'assets/images/login/image.png';
 
   @override
-  State<WelcomePage> createState() => _WelcomePageState();
+  ConsumerState<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage>
+class _WelcomePageState extends ConsumerState<WelcomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   Timer? _delayTimer;
@@ -276,6 +278,10 @@ class _WelcomePageState extends State<WelcomePage>
                                   } catch (e) {
                                     debugPrint('Guest session init failed: $e');
                                   }
+
+                                  ref
+                                      .read(mainNavProvider.notifier)
+                                      .resetToHome();
 
                                   if (context.mounted) {
                                     context.go('/home');

@@ -9,10 +9,15 @@ class MapFloatingMenu extends StatefulWidget {
   final VoidCallback onDrawPressed;
   final void Function(List<LatLng>) onCoordinatesScanned;
 
+  /// Distance from the bottom of the screen. Raised while the property card is
+  /// on screen so the menu clears it.
+  final double bottom;
+
   const MapFloatingMenu({
     super.key,
     required this.onDrawPressed,
     required this.onCoordinatesScanned,
+    this.bottom = 110,
   });
 
   @override
@@ -131,9 +136,11 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutCubic,
       left: 0,
-      bottom: 110, // Offset for extendBody bottom navigation bar
+      bottom: widget.bottom,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {}, // Prevent taps from bleeding to map
