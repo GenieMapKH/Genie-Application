@@ -5,8 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DynamicMapMarkers {
+  static final Map<int, BitmapDescriptor> _numberedMarkerCache = {};
+  static final Map<String, BitmapDescriptor> _textMarkerCache = {};
+  static BitmapDescriptor? _selectedVertexCache;
+  static BitmapDescriptor? _smallWhiteDotCache;
+
+  /// Clear caches if needed
+  static void clearCache() {
+    _numberedMarkerCache.clear();
+    _textMarkerCache.clear();
+    _selectedVertexCache = null;
+    _smallWhiteDotCache = null;
+  }
+
   /// Creates a circular marker with a number inside (e.g. for vertices)
   static Future<BitmapDescriptor> createNumberedMarker(int number) async {
+    if (_numberedMarkerCache.containsKey(number)) {
+      return _numberedMarkerCache[number]!;
+    }
+
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 36.0;
@@ -55,11 +72,13 @@ class DynamicMapMarkers {
       (size * pixelRatio).toInt(),
     );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(
+    final descriptor = BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: size,
       height: size,
     );
+    _numberedMarkerCache[number] = descriptor;
+    return descriptor;
   }
 
   /// Creates a pill-shaped marker with text (e.g. for area and lengths)
@@ -68,13 +87,17 @@ class DynamicMapMarkers {
     bool isArea = false,
     double? fontSize,
   }) async {
+    final double actualFontSize = fontSize ?? (isArea ? 14.0 : 12.0);
+    final String cacheKey = '$text-${actualFontSize.toStringAsFixed(1)}-$isArea';
+    if (_textMarkerCache.containsKey(cacheKey)) {
+      return _textMarkerCache[cacheKey]!;
+    }
+
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double pixelRatio = 3.0;
 
     canvas.scale(pixelRatio, pixelRatio);
-
-    final double actualFontSize = fontSize ?? (isArea ? 14.0 : 12.0);
 
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
@@ -132,19 +155,27 @@ class DynamicMapMarkers {
     );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
 
-    return BitmapDescriptor.bytes(
+    final descriptor = BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: canvasWidth.toDouble(),
       height: canvasHeight.toDouble(),
     );
+    _textMarkerCache[cacheKey] = descriptor;
+    return descriptor;
   }
 
-  /// Creates a green dot marker with a white border and drop shadow
-  static Future<BitmapDescriptor> createGreenDotMarker() async {
+  /// Creates a green dot marker with a white border and drop shadow.
+  ///
+  /// When [isSelected] the dot grows and gains a white ring so the property
+  /// tied to the open card is identifiable at a glance.
+  static Future<BitmapDescriptor> createGreenDotMarker({
+    bool isSelected = false,
+  }) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 57.0;
     const double pixelRatio = 3.0;
+    final double radius = isSelected ? 17.0 : 12.5;
 
     canvas.scale(pixelRatio, pixelRatio);
 
@@ -153,18 +184,32 @@ class DynamicMapMarkers {
       ..color = Colors.black.withValues(alpha: 0.16)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8.0);
     // Draw shadow offset down by 4
-    canvas.drawCircle(const Offset(size / 2, size / 2 + 4), 12.5, shadowPaint);
+    canvas.drawCircle(const Offset(size / 2, size / 2 + 4), radius, shadowPaint);
+
+    if (isSelected) {
+      // White halo ring behind the dot
+      final Paint haloPaint = Paint()..color = Colors.white;
+      canvas.drawCircle(const Offset(size / 2, size / 2), radius, haloPaint);
+    }
 
     // Draw green circle
     final Paint paint = Paint()..color = const Color(0xFF028752);
-    canvas.drawCircle(const Offset(size / 2, size / 2), 12.5, paint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      isSelected ? radius - 3.5 : radius,
+      paint,
+    );
 
     // Draw border
     final Paint borderPaint = Paint()
-      ..color = const Color(0xFFE5E7EB)
+      ..color = isSelected ? Colors.white : const Color(0xFFE5E7EB)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-    canvas.drawCircle(const Offset(size / 2, size / 2), 12.0, borderPaint);
+      ..strokeWidth = isSelected ? 3.0 : 1.0;
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      isSelected ? radius - 1.75 : 12.0,
+      borderPaint,
+    );
 
     final ui.Image img = await pictureRecorder.endRecording().toImage(
       (size * pixelRatio).toInt(),
@@ -176,6 +221,64 @@ class DynamicMapMarkers {
       data!.buffer.asUint8List(),
       width: size,
       height: size,
+    );
+  }
+
+  /// Creates the green "New" pill shown above recently listed properties.
+  static Future<BitmapDescriptor> createNewBadgeMarker() async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double pixelRatio = 3.0;
+
+    canvas.scale(pixelRatio, pixelRatio);
+
+    final TextPainter textPainter = TextPainter(
+      text: const TextSpan(
+        text: 'New',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+
+    final double width = textPainter.width + 20;
+    final double height = textPainter.height + 10;
+
+    // Draw shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.18)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
+    canvas.drawRRect(
+      RRect.fromLTRBR(0, 2, width, height + 2, const Radius.circular(24.0)),
+      shadowPaint,
+    );
+
+    // Draw green pill
+    final Paint paint = Paint()..color = const Color(0xFF028752);
+    canvas.drawRRect(
+      RRect.fromLTRBR(0, 0, width, height, const Radius.circular(24.0)),
+      paint,
+    );
+
+    textPainter.paint(canvas, const Offset(10, 5));
+
+    final int canvasWidth = (width + 8).toInt();
+    final int canvasHeight = (height + 8).toInt();
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (canvasWidth * pixelRatio).toInt(),
+      (canvasHeight * pixelRatio).toInt(),
+    );
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+
+    return BitmapDescriptor.bytes(
+      data!.buffer.asUint8List(),
+      width: canvasWidth.toDouble(),
+      height: canvasHeight.toDouble(),
     );
   }
 
@@ -247,8 +350,53 @@ class DynamicMapMarkers {
     );
   }
 
+  /// Creates a highlighted vertex marker for selected edit handles (centered anchor 0.5, 0.5)
+  static Future<BitmapDescriptor> createSelectedVertexMarker() async {
+    if (_selectedVertexCache != null) return _selectedVertexCache!;
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double size = 32.0;
+    const double pixelRatio = 3.0;
+
+    canvas.scale(pixelRatio, pixelRatio);
+
+    // Draw shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.25)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2 + 1),
+      size / 2.5,
+      shadowPaint,
+    );
+
+    // White ring
+    final Paint whiteRing = Paint()..color = Colors.white;
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 2.5, whiteRing);
+
+    // Red inner dot
+    final Paint accentFill = Paint()..color = const Color(0xFFE5484D);
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 3.8, accentFill);
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (size * pixelRatio).toInt(),
+      (size * pixelRatio).toInt(),
+    );
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+    final descriptor = BitmapDescriptor.bytes(
+      data!.buffer.asUint8List(),
+      width: size,
+      height: size,
+    );
+    _selectedVertexCache = descriptor;
+    return descriptor;
+  }
+
   /// Creates a small white dot marker
   static Future<BitmapDescriptor> createSmallWhiteDotMarker() async {
+    if (_smallWhiteDotCache != null) return _smallWhiteDotCache!;
+
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 24.0;
@@ -275,10 +423,12 @@ class DynamicMapMarkers {
       (size * pixelRatio).toInt(),
     );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(
+    final descriptor = BitmapDescriptor.bytes(
       data!.buffer.asUint8List(),
       width: size,
       height: size,
     );
+    _smallWhiteDotCache = descriptor;
+    return descriptor;
   }
 }

@@ -43,8 +43,8 @@ class _TactileButtonState extends State<TactileButton> {
       behavior: HitTestBehavior.opaque,
       child: RepaintBoundary(
         child: AnimatedScale(
-          scale: _isPressed ? 0.97 : 1.0,
-          duration: const Duration(milliseconds: 80),
+          scale: _isPressed ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 120),
           curve: Curves.easeOutCubic,
           child: widget.child,
         ),

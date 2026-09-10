@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:genie/features/property/presentation/widgets/forms/types/property_type_forms.dart';
 import 'add_property_page.dart';
-import 'add_property_page_forms_base.dart';
 
 extension AddPropertyPageFormsDynamic on AddPropertyPageState {
   Widget buildMapPreview() {
@@ -297,214 +297,26 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
     );
   }
 
-  Widget _buildDefaultPriceListingSettings() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: PropertyTextField(
-            label: 'Price',
-            required: true,
-            controller: priceController,
-            hintText: 'Enter selling price (USD)',
-            hasError: hasAttemptedSubmit && priceController.text.trim().isEmpty,
-            focusKey: priceKey,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: buildDropdown(
-            label: 'Listing Settings',
-            required: true,
-            value: selectedListingSetting,
-            items: ['Sale', 'Rent', 'To Let'],
-            hasError: hasAttemptedSubmit && selectedListingSetting.isEmpty,
-            focusKey: listingSettingsKey,
-            onChanged: (val) {
-              if (val != null) setState(() => selectedListingSetting = val);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget buildDynamicFields() {
-    List<Widget> fields = [];
-    void addSpacing() => fields.add(const SizedBox(height: 16));
-
-    if (selectedPropertyType == 'Land' || selectedPropertyType.isEmpty) {
-      fields.add(_buildDefaultPriceListingSettings());
-      addSpacing();
-      fields.add(buildLandSizeField(isLandType: true));
-      addSpacing();
-      fields.add(buildTitleTypeField());
-    } else if (selectedPropertyType == 'House' ||
-        selectedPropertyType == 'Warehouse') {
-      fields.add(_buildDefaultPriceListingSettings());
-      addSpacing();
-      fields.add(buildLandSizeField());
-      addSpacing();
-      fields.add(buildBuildingSizeField());
-      addSpacing();
-      fields.add(buildBedroomsField());
-      addSpacing();
-      fields.add(buildBathroomsField());
-      addSpacing();
-      fields.add(buildFloorsField());
-      addSpacing();
-      fields.add(buildParkingField());
-      addSpacing();
-      fields.add(buildFurnishedField());
-      addSpacing();
-      fields.add(buildTitleTypeField());
-    } else if (selectedPropertyType == 'Building') {
-      fields.add(_buildDefaultPriceListingSettings());
-      addSpacing();
-      fields.add(buildBuildingTypeField());
-      addSpacing();
-      fields.add(buildLandSizeField());
-      addSpacing();
-      fields.add(buildBuildingSizeField());
-      addSpacing();
-      fields.add(buildNumberofFloorsField());
-      addSpacing();
-      fields.add(buildTotalUnitsField());
-      addSpacing();
-      fields.add(buildParkingField());
-      addSpacing();
-      fields.add(buildTitleTypeField());
-    } else if (selectedPropertyType == 'Condo') {
-      fields.add(_buildDefaultPriceListingSettings());
-      addSpacing();
-      fields.add(buildUnitSizeField());
-      addSpacing();
-      fields.add(buildFloorNumberField());
-      addSpacing();
-      fields.add(buildTotalFloorsField());
-      addSpacing();
-      fields.add(buildBedroomsField(isCondo: true));
-      addSpacing();
-      fields.add(buildBathroomsField());
-      addSpacing();
-      fields.add(buildBalconyField());
-      addSpacing();
-      fields.add(buildFurnishedField());
-      addSpacing();
-      fields.add(buildCompletionStatusField());
-      addSpacing();
-      fields.add(buildViewTypeField());
-      addSpacing();
-      fields.add(buildMaintenanceFeeField());
-      addSpacing();
-      fields.add(buildTitleTypeField());
-    } else if (selectedPropertyType == 'Borey') {
-      fields.add(
-        PropertyTextField(
-          label: 'Developer Name',
-          required: false,
-          controller: developerNameController,
-          hintText: 'Example: ABC Development Co., Ltd',
-        ),
-      );
-      addSpacing();
-      fields.add(
-        PropertyTextField(
-          label: 'Project Name',
-          required: false,
-          controller: projectNameController,
-          hintText: 'Project name',
-          infoText: 'Official name of the development project',
-        ),
-      );
-      addSpacing();
-      fields.add(buildProjectTypeField());
-      addSpacing();
-      fields.add(
-        PropertyTextField(
-          label: 'Total Project Area',
-          required: false,
-          controller: totalProjectAreaController,
-          hintText: 'Enter total land size',
-          infoText: 'Total land area of entire project',
-        ),
-      );
-      addSpacing();
-      fields.add(
-        PropertyTextField(
-          label: 'Total Units',
-          required: false,
-          controller: totalUnitsTextController,
-          hintText: 'Total number of units in project',
-        ),
-      );
-      addSpacing();
-      fields.add(buildBoreyCompletionStatusField());
-      addSpacing();
-      fields.add(
-        PropertyTextField(
-          label: 'Starting Price',
-          required: false,
-          controller: startingPriceController,
-          hintText: 'Starting price in USD',
-          infoText: 'Lowest available unit price',
-        ),
-      );
-      addSpacing();
-      fields.add(buildTitleTypeField());
-    } else if (selectedPropertyType == 'Business for Sale') {
-      fields.add(buildLandSizeField(isLandType: true));
-      addSpacing();
-      fields.add(
-        PropertyTextField(
-          label: 'Monthly Rent',
-          required: false,
-          controller: monthlyRentController,
-          hintText: 'Enter monthly shop rent (USD)',
-          infoText: 'Lower rent = higher profit potential',
-        ),
-      );
-      addSpacing();
-      fields.add(
-        buildDropdown(
-          label: 'Listing Settings',
-          required: true,
-          value: selectedListingSetting,
-          items: ['Sale', 'Rent', 'To Let'],
-          hasError: hasAttemptedSubmit && selectedListingSetting.isEmpty,
-          focusKey: listingSettingsKey,
-          onChanged: (val) {
-            if (val != null) setState(() => selectedListingSetting = val);
-          },
-        ),
-      );
-      addSpacing();
-      fields.add(buildLeaseRemainingField());
-      addSpacing();
-      fields.add(
-        PropertyTextField(
-          label: 'Equipment Included',
-          required: false,
-          controller: equipmentIncludedController,
-          hintText:
-              'List furniture, kitchen equipment, machines, POS system, etc.',
-          infoText: 'Describe assets included in sale',
-        ),
-      );
-      addSpacing();
-      fields.add(
-        PropertyTextField(
-          label: 'Reason for Selling',
-          required: false,
-          controller: reasonForSellingController,
-          hintText: 'Example: Owner relocating abroad',
-        ),
-      );
+    void updateState(VoidCallback fn) {
+      setState(fn);
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: fields,
-    );
+    if (selectedPropertyType == 'Land' || selectedPropertyType.isEmpty) {
+      return LandPropertyForm(state: this, updateState: updateState);
+    } else if (selectedPropertyType == 'House' ||
+        selectedPropertyType == 'Warehouse') {
+      return HousePropertyForm(state: this, updateState: updateState);
+    } else if (selectedPropertyType == 'Building') {
+      return BuildingPropertyForm(state: this, updateState: updateState);
+    } else if (selectedPropertyType == 'Condo') {
+      return CondoPropertyForm(state: this, updateState: updateState);
+    } else if (selectedPropertyType == 'Borey') {
+      return BoreyPropertyForm(state: this, updateState: updateState);
+    } else if (selectedPropertyType == 'Business for Sale') {
+      return BusinessPropertyForm(state: this, updateState: updateState);
+    }
+
+    return const SizedBox.shrink();
   }
 }

@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
 import 'package:genie/core/network/api_client.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/auth/presentation/screens/create_account_page.dart';
-import 'package:genie/features/auth/presentation/screens/login_page.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
+import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/shared/widgets/app_button.dart';
-import 'package:genie/features/home/presentation/screens/main_layout.dart';
+import 'package:go_router/go_router.dart';
 
 /// Optimized, high-performance Welcome / Auth landing screen.
 ///
@@ -16,7 +15,7 @@ import 'package:genie/features/home/presentation/screens/main_layout.dart';
 /// 1. Holds logo centered briefly.
 /// 2. Glides logo upwards smoothly.
 /// 3. Staggered fade and slide for headlines, buttons, and bottom action links.
-class WelcomePage extends StatefulWidget {
+class WelcomePage extends ConsumerStatefulWidget {
   final VoidCallback? onLoginPressed;
   final VoidCallback? onExplorePressed;
   final VoidCallback? onCreateAccountPressed;
@@ -37,10 +36,10 @@ class WelcomePage extends StatefulWidget {
   static const String logoAssetPath = 'assets/images/login/image.png';
 
   @override
-  State<WelcomePage> createState() => _WelcomePageState();
+  ConsumerState<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage>
+class _WelcomePageState extends ConsumerState<WelcomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   Timer? _delayTimer;
@@ -243,9 +242,7 @@ class _WelcomePageState extends State<WelcomePage>
                             onPressed:
                                 widget.onLoginPressed ??
                                 () {
-                                  Navigator.of(
-                                    context,
-                                  ).push(AppPageRoute(page: const LoginPage()));
+                                  context.push('/login');
                                 },
                           ),
                           const SizedBox(height: 10),
@@ -282,10 +279,12 @@ class _WelcomePageState extends State<WelcomePage>
                                     debugPrint('Guest session init failed: $e');
                                   }
 
+                                  ref
+                                      .read(mainNavProvider.notifier)
+                                      .resetToHome();
+
                                   if (context.mounted) {
-                                    Navigator.of(context).pushReplacement(
-                                      AppPageRoute(page: const MainLayout()),
-                                    );
+                                    context.go('/home');
                                   }
                                 },
                           ),
@@ -298,11 +297,7 @@ class _WelcomePageState extends State<WelcomePage>
                               onTap:
                                   widget.onCreateAccountPressed ??
                                   () {
-                                    Navigator.of(context).push(
-                                      AppPageRoute(
-                                        page: const CreateAccountPage(),
-                                      ),
-                                    );
+                                    context.push('/register');
                                   },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),

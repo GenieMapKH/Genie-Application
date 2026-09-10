@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/core/network/api_client.dart';
+import 'package:genie/core/network/api_cache_manager.dart';
 
 final apiClientProvider = Provider<Dio>((ref) {
   return createApiClient();
@@ -100,5 +101,6 @@ class AuthService {
       }
     }
     await AuthStorage.clearTokens();
+    ApiCacheManager().clearAll();
   }
 }

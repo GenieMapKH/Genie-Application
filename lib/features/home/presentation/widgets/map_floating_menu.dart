@@ -9,10 +9,15 @@ class MapFloatingMenu extends StatefulWidget {
   final VoidCallback onDrawPressed;
   final void Function(List<LatLng>) onCoordinatesScanned;
 
+  /// Distance from the bottom of the screen. Raised while the property card is
+  /// on screen so the menu clears it.
+  final double bottom;
+
   const MapFloatingMenu({
     super.key,
     required this.onDrawPressed,
     required this.onCoordinatesScanned,
+    this.bottom = 110,
   });
 
   @override
@@ -30,12 +35,12 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 320),
     );
     _expandAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutBack,
-      reverseCurve: Curves.easeIn,
+      curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+      reverseCurve: Curves.easeOutCubic,
     );
   }
 
@@ -131,9 +136,11 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 400),
+      curve: const Cubic(0.16, 1.0, 0.3, 1.0),
       left: 0,
-      bottom: 110, // Offset for extendBody bottom navigation bar
+      bottom: widget.bottom,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {}, // Prevent taps from bleeding to map
@@ -172,7 +179,8 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
               onPressed: _toggleMenu,
               child: AnimatedRotation(
                 turns: _isMenuOpen ? 0.125 : 0, // 45 degree rotation
-                duration: const Duration(milliseconds: 250),
+                duration: const Duration(milliseconds: 320),
+                curve: const Cubic(0.16, 1.0, 0.3, 1.0),
                 child: SvgPicture.asset(
                   'assets/icons/plus.svg',
                   width: 76,

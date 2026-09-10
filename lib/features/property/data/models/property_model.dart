@@ -19,6 +19,9 @@ class PropertyModel {
   final double? unitSize;
   final double? lat;
   final double? lng;
+  final String? ownerName;
+  final int saveCount;
+  final int contactCount;
 
   PropertyModel({
     required this.id,
@@ -37,7 +40,25 @@ class PropertyModel {
     this.unitSize,
     this.lat,
     this.lng,
+    this.ownerName,
+    this.saveCount = 0,
+    this.contactCount = 0,
   });
+
+  /// Days elapsed since the listing was published.
+  int get daysListed => DateTime.now().difference(createdAt).inDays;
+
+  /// Listings younger than two weeks get the "New" badge on the map.
+  bool get isNew => daysListed <= 14;
+
+  /// The size shown on cards: land properties report land size, built
+  /// properties report the unit or building footprint.
+  double? get displaySize {
+    if (landSize != null && landSize! > 0) return landSize;
+    if (unitSize != null && unitSize! > 0) return unitSize;
+    if (buildingSize != null && buildingSize! > 0) return buildingSize;
+    return null;
+  }
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
     List<LatLng> points = [];
@@ -65,9 +86,32 @@ class PropertyModel {
     List<String> images = [];
     if (json['images'] != null && json['images'] is List) {
       images = (json['images'] as List)
-          .map((img) => img['url'] as String)
+          .map((img) {
+            if (img is Map) {
+              return (img['url'] ?? img['path'] ?? img['imageUrl'] ?? img['src'] ?? '').toString();
+            } else if (img != null) {
+              return img.toString();
+            }
+            return '';
+          })
+          .where((url) => url.isNotEmpty)
           .toList();
+    } else if (json['imageUrls'] != null && json['imageUrls'] is List) {
+      images = (json['imageUrls'] as List)
+          .map((e) => e?.toString() ?? '')
+          .where((url) => url.isNotEmpty)
+          .toList();
+    } else if (json['photos'] != null && json['photos'] is List) {
+      images = (json['photos'] as List)
+          .map((e) => (e is Map ? (e['url'] ?? e['path'] ?? '') : e)?.toString() ?? '')
+          .where((url) => url.isNotEmpty)
+          .toList();
+    } else if (json['image'] != null && json['image'] is String && (json['image'] as String).isNotEmpty) {
+      images = [json['image'] as String];
     }
+
+    final counts = json['_count'];
+    final owner = json['user'];
 
     return PropertyModel(
       id: json['id'],
@@ -92,6 +136,9 @@ class PropertyModel {
           : null,
       lat: json['lat'] != null ? (json['lat'] as num).toDouble() : null,
       lng: json['lng'] != null ? (json['lng'] as num).toDouble() : null,
+      ownerName: owner is Map ? owner['username'] as String? : null,
+      saveCount: counts is Map ? (counts['favorites'] as int? ?? 0) : 0,
+      contactCount: counts is Map ? (counts['contacts'] as int? ?? 0) : 0,
     );
   }
 
@@ -104,8 +151,51 @@ class PropertyModel {
       if (bedrooms != null) 'bedrooms': bedrooms,
       if (bathrooms != null) 'bathrooms': bathrooms,
       if (landSize != null) 'landSize': landSize,
-      if (buildingSize != null) 'buildingSize': buildingSize,
       if (unitSize != null) 'unitSize': unitSize,
     };
+  }
+
+  PropertyModel copyWith({
+    String? id,
+    String? title,
+    String? price,
+    String? propertyType,
+    String? status,
+    DateTime? createdAt,
+    List<String>? imageUrls,
+    List<LatLng>? boundaryPoints,
+    String? description,
+    int? bedrooms,
+    int? bathrooms,
+    double? landSize,
+    double? buildingSize,
+    double? unitSize,
+    double? lat,
+    double? lng,
+    String? ownerName,
+    int? saveCount,
+    int? contactCount,
+  }) {
+    return PropertyModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      price: price ?? this.price,
+      propertyType: propertyType ?? this.propertyType,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      imageUrls: imageUrls ?? this.imageUrls,
+      boundaryPoints: boundaryPoints ?? this.boundaryPoints,
+      description: description ?? this.description,
+      bedrooms: bedrooms ?? this.bedrooms,
+      bathrooms: bathrooms ?? this.bathrooms,
+      landSize: landSize ?? this.landSize,
+      buildingSize: buildingSize ?? this.buildingSize,
+      unitSize: unitSize ?? this.unitSize,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      ownerName: ownerName ?? this.ownerName,
+      saveCount: saveCount ?? this.saveCount,
+      contactCount: contactCount ?? this.contactCount,
+    );
   }
 }

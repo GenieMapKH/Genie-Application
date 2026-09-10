@@ -14,8 +14,8 @@ class AppPageRoute<T> extends PageRouteBuilder<T> {
     required this.page,
     this.direction = SlideDirection.fromRight,
     super.settings,
-    super.transitionDuration = const Duration(milliseconds: 260),
-    super.reverseTransitionDuration = const Duration(milliseconds: 240),
+    super.transitionDuration = const Duration(milliseconds: 340),
+    super.reverseTransitionDuration = const Duration(milliseconds: 280),
     super.opaque = true,
   }) : super(
          pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -23,8 +23,8 @@ class AppPageRoute<T> extends PageRouteBuilder<T> {
            // Primary transition for incoming screen
            final primaryAnimation = CurvedAnimation(
              parent: animation,
-             curve: Curves.easeOutCubic,
-             reverseCurve: Curves.easeInCubic,
+             curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+             reverseCurve: Curves.easeOutCubic,
            );
 
            Offset beginOffset;

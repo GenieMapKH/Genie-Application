@@ -117,6 +117,27 @@ class PropertyRepository {
     _cachedProperties.removeWhere((p) => p.id == id);
   }
 
+  Future<List<PropertyModel>> fetchFavorites() async {
+    try {
+      final response = await dio.get('/properties/my/favorites');
+      final List<dynamic> data = response.data;
+      return await compute(_parseProperties, data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        return [];
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> favorite(String id) async {
+    await dio.post('/properties/$id/favorite');
+  }
+
+  Future<void> unfavorite(String id) async {
+    await dio.delete('/properties/$id/favorite');
+  }
+
   void invalidateCache() {
     _cachedProperties = [];
   }

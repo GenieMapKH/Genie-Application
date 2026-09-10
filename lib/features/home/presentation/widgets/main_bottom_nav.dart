@@ -1,16 +1,19 @@
-// ignore_for_file: invalid_use_of_protected_member
-// ignore_for_file: library_private_types_in_public_api
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/tactile_button.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
-import 'main_layout.dart';
+import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 
-extension MainLayoutNav on MainLayoutState {
-  Widget buildBottomNavigationBar() {
+class MainBottomNav extends ConsumerWidget {
+  const MainBottomNav({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(mainNavProvider).currentIndex;
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
     Widget navContent = Container(
@@ -27,31 +30,11 @@ extension MainLayoutNav on MainLayoutState {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildNavItem(
-              index: 0,
-              iconPath: 'assets/icons/explore.svg',
-              label: 'Explore',
-            ),
-            buildNavItem(
-              index: 1,
-              iconPath: 'assets/icons/saved.svg',
-              label: 'Saved',
-            ),
-            buildNavItem(
-              index: 2,
-              iconPath: 'assets/icons/chat.svg',
-              label: 'Chat',
-            ),
-            buildNavItem(
-              index: 3,
-              iconPath: 'assets/icons/property.svg',
-              label: 'My Properties',
-            ),
-            buildNavItem(
-              index: 4,
-              iconPath: 'assets/icons/user.svg',
-              label: 'User',
-            ),
+            _buildNavItem(context, ref, 0, 'assets/icons/explore.svg', 'Explore', currentIndex),
+            _buildNavItem(context, ref, 1, 'assets/icons/saved.svg', 'Saved', currentIndex),
+            _buildNavItem(context, ref, 2, 'assets/icons/chat.svg', 'Chat', currentIndex),
+            _buildNavItem(context, ref, 3, 'assets/icons/property.svg', 'My Properties', currentIndex),
+            _buildNavItem(context, ref, 4, 'assets/icons/user.svg', 'User', currentIndex),
           ],
         ),
       ),
@@ -69,31 +52,22 @@ extension MainLayoutNav on MainLayoutState {
     return navContent;
   }
 
-  Widget buildNavItem({
-    required int index,
-    required String iconPath,
-    required String label,
-  }) {
+  Widget _buildNavItem(BuildContext context, WidgetRef ref, int index, String iconPath, String label, int currentIndex) {
     final isSelected = currentIndex == index;
-    final color = isSelected
-        ? const Color(0xFF3E49C7)
-        : const Color(0xFF6B7280);
+    final color = isSelected ? const Color(0xFF3E49C7) : const Color(0xFF6B7280);
 
     return TactileButton(
       onPressed: () async {
-        if (index == 3 || index == 4) {
+        if (index == 1 || index == 3 || index == 4) {
           final token = await AuthStorage.getAccessToken();
           if (token == null) {
-            if (mounted) {
-              showLoginRequiredDialog(context);
+            if (context.mounted) {
+              _showLoginRequiredDialog(context);
             }
             return;
           }
         }
-        setState(() {
-          previousIndex = currentIndex;
-          currentIndex = index;
-        });
+        ref.read(mainNavProvider.notifier).setIndex(index);
       },
       child: SizedBox(
         width: 70,
@@ -124,7 +98,7 @@ extension MainLayoutNav on MainLayoutState {
     );
   }
 
-  void showLoginRequiredDialog(BuildContext context) {
+  void _showLoginRequiredDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
