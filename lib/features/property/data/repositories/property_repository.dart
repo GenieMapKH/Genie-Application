@@ -50,6 +50,19 @@ class PropertyRepository {
     return compute(_parseProperties, data);
   }
 
+  Future<PropertyModel> fetchPropertyDetail(String id) async {
+    try {
+      final response = await dio.get('/properties/$id');
+      return PropertyModel.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 404) {
+        final publicRes = await dio.get('/public/properties/$id');
+        return PropertyModel.fromJson(publicRes.data);
+      }
+      rethrow;
+    }
+  }
+
   List<PropertyModel> getPropertiesByStatus(String status) {
     return _cachedProperties.where((p) => p.status == status).toList();
   }

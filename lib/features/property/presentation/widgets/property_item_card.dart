@@ -52,7 +52,9 @@ class PropertyItemCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    PropertyImageGallery(imageUrls: property.imageUrls),
+                    PropertyImageGallery(
+                      imageUrls: property.imageUrls,
+                    ),
                     Positioned(
                       top: 12,
                       left: 12,
@@ -241,29 +243,35 @@ class _FavoriteButtonState extends State<_FavoriteButton>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _handleTap,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Container(
-          padding: const EdgeInsets.all(7),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 44,
+        height: 44,
+        alignment: Alignment.center,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+              child: Icon(
+                widget.isFavorite ? Icons.favorite : Icons.favorite_border,
+                key: ValueKey<bool>(widget.isFavorite),
+                size: 19,
+                color: widget.isFavorite ? const Color(0xFF5B5FEF) : const Color(0xFF111827),
               ),
-            ],
-          ),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
-            child: Icon(
-              widget.isFavorite ? Icons.favorite : Icons.favorite_border,
-              key: ValueKey<bool>(widget.isFavorite),
-              size: 19,
-              color: widget.isFavorite ? const Color(0xFF5B5FEF) : const Color(0xFF111827),
             ),
           ),
         ),

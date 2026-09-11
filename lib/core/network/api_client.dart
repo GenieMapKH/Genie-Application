@@ -8,7 +8,7 @@ Dio createApiClient() {
     BaseOptions(
       baseUrl:
           dotenv.env['API_BASE_URL'] ??
-          'https://geniebackend-production-ef56.up.railway.app',
+          'https://gateway-production-c0c5.up.railway.app',
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
     ),

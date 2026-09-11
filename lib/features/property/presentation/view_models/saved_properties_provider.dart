@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
@@ -21,6 +22,10 @@ final savedSortOptionProvider = StateProvider<SortOption>((ref) {
 class SavedPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
   @override
   Future<List<PropertyModel>> build() async {
+    final token = await AuthStorage.getAccessToken();
+    if (token == null) {
+      return state.valueOrNull ?? [];
+    }
     final repo = ref.watch(propertyRepositoryProvider);
     return repo.fetchFavorites();
   }
@@ -34,24 +39,29 @@ class SavedPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
     final repo = ref.read(propertyRepositoryProvider);
     final currentList = state.value ?? [];
     final exists = currentList.any((p) => p.id == property.id);
+    final token = await AuthStorage.getAccessToken();
 
     if (exists) {
       // Optimistically remove
       state = AsyncData(currentList.where((p) => p.id != property.id).toList());
-      try {
-        await repo.unfavorite(property.id);
-      } catch (e) {
-        // Rollback on failure
-        state = AsyncData(currentList);
+      if (token != null) {
+        try {
+          await repo.unfavorite(property.id);
+        } catch (e) {
+          // Rollback on failure
+          state = AsyncData(currentList);
+        }
       }
     } else {
       // Optimistically add
       state = AsyncData([property, ...currentList]);
-      try {
-        await repo.favorite(property.id);
-      } catch (e) {
-        // Rollback on failure
-        state = AsyncData(currentList);
+      if (token != null) {
+        try {
+          await repo.favorite(property.id);
+        } catch (e) {
+          // Rollback on failure
+          state = AsyncData(currentList);
+        }
       }
     }
   }

@@ -11,6 +11,7 @@ class PropertyImageGallery extends StatefulWidget {
   /// Max dots to render; galleries with more images cap the indicator so it
   /// doesn't overflow a narrow card.
   final int maxIndicatorDots;
+  final ScrollPhysics? physics;
 
   const PropertyImageGallery({
     super.key,
@@ -18,6 +19,7 @@ class PropertyImageGallery extends StatefulWidget {
     this.borderRadius,
     this.showIndicator = true,
     this.maxIndicatorDots = 5,
+    this.physics,
   });
 
   static List<String> fallbackImages(String? id, String? type) {
@@ -48,43 +50,21 @@ class _PropertyImageGalleryState extends State<PropertyImageGallery> {
 
     final images = widget.imageUrls;
 
+    if (images.length == 1) {
+      final single = _buildImageItem(images.first);
+      if (widget.borderRadius == null) return single;
+      return ClipRRect(borderRadius: widget.borderRadius!, child: single);
+    }
+
     final gallery = Stack(
       fit: StackFit.expand,
       children: [
         PageView.builder(
           controller: _controller,
+          physics: widget.physics,
           itemCount: images.length,
           onPageChanged: (index) => setState(() => _index = index),
-          itemBuilder: (context, index) {
-            final url = images[index];
-            if (url.startsWith('assets/') || url.startsWith('assets\\')) {
-              return Image.asset(
-                url,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
-              );
-            }
-            return CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.cover,
-              memCacheWidth: 900,
-              placeholder: (context, url) => Container(
-                color: const Color(0xFFF3F4F6),
-                child: const Center(
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Color(0xFF5B5FEF),
-                    ),
-                  ),
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-                  const PropertyImagePlaceholder(),
-            );
-          },
+          itemBuilder: (context, index) => _buildImageItem(images[index]),
         ),
         if (widget.showIndicator && images.length > 1)
           Positioned(
@@ -102,6 +82,36 @@ class _PropertyImageGalleryState extends State<PropertyImageGallery> {
 
     if (widget.borderRadius == null) return gallery;
     return ClipRRect(borderRadius: widget.borderRadius!, child: gallery);
+  }
+
+  Widget _buildImageItem(String url) {
+    if (url.startsWith('assets/') || url.startsWith('assets\\')) {
+      return Image.asset(
+        url,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
+      );
+    }
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      memCacheWidth: 900,
+      placeholder: (context, url) => Container(
+        color: const Color(0xFFF3F4F6),
+        child: const Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Color(0xFF5B5FEF),
+            ),
+          ),
+        ),
+      ),
+      errorWidget: (context, url, error) =>
+          const PropertyImagePlaceholder(),
+    );
   }
 }
 
