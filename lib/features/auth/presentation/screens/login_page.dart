@@ -6,6 +6,7 @@ import 'package:genie/features/auth/presentation/view_models/login_controller.da
 import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 import '../widgets/login_header.dart';
@@ -179,7 +180,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
     ref.invalidate(userProfileProvider);
     ref.invalidate(propertiesProvider);
     ref.invalidate(publicPropertiesProvider);
-    context.go('/home');
+    ref.invalidate(savedPropertiesProvider);
+    if (GoRouter.maybeOf(context) != null) {
+      context.go('/home');
+    }
   }
 
   Future<void> _handleLogin() async {
@@ -201,6 +205,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
       }
 
       if (success && mounted) {
+        widget.onLoginPressed?.call();
         _onAuthSuccess();
       }
     }

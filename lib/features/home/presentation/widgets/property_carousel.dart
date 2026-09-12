@@ -65,11 +65,14 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
     if (isNewList) {
       _controller.jumpToPage(next.index);
     } else if (_controller.page?.round() != next.index) {
-      _controller.animateToPage(
-        next.index,
-        duration: const Duration(milliseconds: 360),
-        curve: const Cubic(0.16, 1.0, 0.3, 1.0),
-      );
+      final isUserScrolling = _controller.position.isScrollingNotifier.value;
+      if (!isUserScrolling) {
+        _controller.animateToPage(
+          next.index,
+          duration: const Duration(milliseconds: 360),
+          curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+        );
+      }
     }
   }
 
@@ -113,21 +116,25 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
                           ref.read(propertyCarouselProvider.notifier).setIndex,
                       itemBuilder: (context, index) {
                         final property = _items[index];
-                        final savedList = ref
-                            .watch(savedPropertiesProvider)
-                            .valueOrNull ?? [];
-                        final isSaved =
-                            savedList.any((p) => p.id == property.id);
+                        return Consumer(
+                          builder: (context, ref, _) {
+                            final savedList = ref
+                                .watch(savedPropertiesProvider)
+                                .valueOrNull ?? [];
+                            final isSaved =
+                                savedList.any((p) => p.id == property.id);
 
-                        return PropertyItemCard(
-                          property: property,
-                          isFavorite: isSaved,
-                          onFavoriteToggled: () {
-                            ref
-                                .read(savedPropertiesProvider.notifier)
-                                .toggleFavorite(property);
+                            return PropertyItemCard(
+                              property: property,
+                              isFavorite: isSaved,
+                              onFavoriteToggled: () {
+                                ref
+                                    .read(savedPropertiesProvider.notifier)
+                                    .toggleFavorite(property);
+                              },
+                              onTap: () => widget.onOpenDetail(property),
+                            );
                           },
-                          onTap: () => widget.onOpenDetail(property),
                         );
                       },
                     ),

@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/utils/map_layer_builder.dart';
+import 'package:genie/features/home/utils/map_measurements.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 
 /// The icon set the overlay builder draws with. Loaded once by the map view.
@@ -74,7 +75,6 @@ class MapOverlayBuilder {
     final Set<Polygon> polygons = {};
 
     final bool isClusteredView = mapState.currentZoom <= clusterZoomThreshold;
-    final bool isDetailedView = mapState.currentZoom > detailZoomThreshold;
 
     // Locally drawn polygons come first so their indices stay stable; they have
     // no backend model, hence the null entries.
@@ -111,11 +111,26 @@ class MapOverlayBuilder {
         sumLat += point.latitude;
         sumLng += point.longitude;
       }
-      allCentroids.add(LatLng(sumLat / points.length, sumLng / points.length));
-      allCentroidModels.add(allPropModels[i]);
-      detailedProps.add(points);
-      detailedPropsIsOwned.add(allPropsIsOwned[i]);
-      detailedPropModels.add(allPropModels[i]);
+      final centroid = LatLng(sumLat / points.length, sumLng / points.length);
+      final model = allPropModels[i];
+      
+      bool isDetailed = mapState.currentZoom > detailZoomThreshold || (selectedProperty != null && selectedProperty.id == model?.id);
+      
+      if (!isDetailed) {
+        final measurements = calculateMeasurements(points);
+        if (measurements != null) {
+          isDetailed = MapLayerBuilder.shouldShowDetailedView(measurements.area, mapState.currentZoom);
+        }
+      }
+
+      if (isDetailed) {
+        detailedProps.add(points);
+        detailedPropsIsOwned.add(allPropsIsOwned[i]);
+        detailedPropModels.add(model);
+      } else {
+        allCentroids.add(centroid);
+        allCentroidModels.add(model);
+      }
     }
 
     /// Backend properties match on id; locally drawn ones fall back to index.
@@ -126,43 +141,47 @@ class MapOverlayBuilder {
 
     if (isClusteredView) {
       MapLayerBuilder.buildClusteredView(allCentroids, markers, icons.greenDot);
-    } else if (isDetailedView) {
-      await MapLayerBuilder.buildDetailedView(
-        detailedProps,
-        detailedPropsIsOwned,
-        detailedPropModels,
-        polygons,
-        markers,
-        isHighlighted,
-        mapState.currentZoom,
-        (index, property) {
-          if (mapState.isDrawing) return;
-          if (property != null) {
-            callbacks.onSelectProperty(property);
-          } else {
-            callbacks.onHighlightLocalPolygon(index);
-          }
-        },
-        callbacks.onEditProperty,
-      );
     } else {
-      MapLayerBuilder.buildIndividualDotsView(
-        allCentroids,
-        allCentroidModels,
-        markers,
-        icons.greenDot,
-        icons.selectedDot,
-        icons.newBadge,
-        isHighlighted,
-        (index, property) {
-          if (mapState.isDrawing) return;
-          if (property != null) {
-            callbacks.onSelectProperty(property);
-          } else {
-            callbacks.onHighlightLocalPolygon(index);
-          }
-        },
-      );
+      if (detailedProps.isNotEmpty) {
+        await MapLayerBuilder.buildDetailedView(
+          detailedProps,
+          detailedPropsIsOwned,
+          detailedPropModels,
+          polygons,
+          markers,
+          isHighlighted,
+          mapState.currentZoom,
+          (index, property) {
+            if (mapState.isDrawing) return;
+            if (property != null) {
+              callbacks.onSelectProperty(property);
+            } else {
+              callbacks.onHighlightLocalPolygon(index);
+            }
+          },
+          callbacks.onEditProperty,
+        );
+      }
+      
+      if (allCentroids.isNotEmpty) {
+        await MapLayerBuilder.buildIndividualDotsView(
+          allCentroids,
+          allCentroidModels,
+          markers,
+          icons.greenDot,
+          icons.selectedDot,
+          icons.newBadge,
+          isHighlighted,
+          (index, property) {
+            if (mapState.isDrawing) return;
+            if (property != null) {
+              callbacks.onSelectProperty(property);
+            } else {
+              callbacks.onHighlightLocalPolygon(index);
+            }
+          },
+        );
+      }
     }
 
     if (mapState.isDrawing) {

@@ -4,8 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapCameraFocus {
   static const double _tileSize = 256.0;
-  static const double _minZoom = 15.0;
-  static const double _maxZoom = 19.5;
+  static const double _minZoom = 11.0;
+  static const double _maxZoom = 21.0;
 
   /// Zoom used for properties that only have a pin, with no drawn boundary.
   static const double pinZoom = 18.0;

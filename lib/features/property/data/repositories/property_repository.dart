@@ -36,18 +36,36 @@ class PropertyRepository {
     }
   }
 
-  Future<List<PropertyModel>> fetchPublicMapProperties() async {
+  Future<List<PropertyModel>> fetchPublicMapProperties({
+    double minLat = -90,
+    double maxLat = 90,
+    double minLng = -180,
+    double maxLng = 180,
+  }) async {
     final response = await dio.get(
       '/public/properties/map',
       queryParameters: {
-        'minLat': -90,
-        'maxLat': 90,
-        'minLng': -180,
-        'maxLng': 180,
+        'minLat': minLat,
+        'maxLat': maxLat,
+        'minLng': minLng,
+        'maxLng': maxLng,
       },
     );
     final List<dynamic> data = response.data;
     return compute(_parseProperties, data);
+  }
+
+  Future<PropertyModel> fetchPropertyDetail(String id) async {
+    try {
+      final response = await dio.get('/properties/$id');
+      return PropertyModel.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 404) {
+        final publicRes = await dio.get('/public/properties/$id');
+        return PropertyModel.fromJson(publicRes.data);
+      }
+      rethrow;
+    }
   }
 
   List<PropertyModel> getPropertiesByStatus(String status) {
@@ -115,6 +133,14 @@ class PropertyRepository {
   Future<void> remove(String id) async {
     await dio.delete('/properties/$id');
     _cachedProperties.removeWhere((p) => p.id == id);
+  }
+
+  Future<void> markAsViewed(String id) async {
+    try {
+      await dio.post('/properties/$id/view');
+    } catch (e) {
+      // Ignore errors for tracking views
+    }
   }
 
   Future<List<PropertyModel>> fetchFavorites() async {

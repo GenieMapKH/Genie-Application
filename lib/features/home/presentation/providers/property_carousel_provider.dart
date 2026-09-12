@@ -31,13 +31,18 @@ class PropertyCarouselNotifier extends Notifier<PropertyCarouselState> {
 
   @override
   PropertyCarouselState build() {
-    // Drop a stale selection if the underlying property disappears (deleted,
-    // unpublished, or filtered out of the map feed).
+    // Keep carousel items in sync with the map feed (e.g. when isVisited changes).
+    // We intentionally do NOT auto-close the carousel if the selected property 
+    // falls outside the map bounds during a swipe/pan, as that causes annoying glitches.
     ref.listen(mapPropertiesProvider, (previous, next) {
-      final current = state.selected;
-      if (current == null) return;
-      final stillExists = next.properties.any((p) => p.id == current.id);
-      if (!stillExists) state = const PropertyCarouselState();
+      if (state.items.isEmpty) return;
+      
+      final updatedItems = state.items.map((item) {
+        final newVersion = next.properties.where((p) => p.id == item.id).firstOrNull;
+        return newVersion ?? item;
+      }).toList();
+
+      state = PropertyCarouselState(items: updatedItems, index: state.index);
     });
 
     return const PropertyCarouselState();

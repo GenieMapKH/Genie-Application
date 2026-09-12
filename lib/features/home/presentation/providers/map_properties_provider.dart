@@ -18,6 +18,7 @@ class MapProperties {
 final mapPropertiesProvider = Provider<MapProperties>((ref) {
   final mine = ref.watch(propertiesProvider);
   final public = ref.watch(publicPropertiesProvider);
+  final visitedIds = ref.watch(visitedPropertyIdsProvider);
 
   final Map<String, PropertyModel> merged = {};
   final Set<String> ownedIds = {};
@@ -35,8 +36,15 @@ final mapPropertiesProvider = Provider<MapProperties>((ref) {
     }
   }
 
+  final List<PropertyModel> finalProperties = merged.values.map((p) {
+    if (visitedIds.contains(p.id) && !p.isVisited) {
+      return p.copyWith(isVisited: true);
+    }
+    return p;
+  }).toList();
+
   return MapProperties(
-    properties: merged.values.toList(),
+    properties: finalProperties,
     ownedIds: ownedIds,
   );
 });

@@ -36,8 +36,8 @@ void main() {
       const huge = [LatLng(10.0, 103.0), LatLng(14.0, 107.0)];
       final zoom = MapCameraFocus.zoomToFit(huge, 400, 600);
 
-      expect(zoom, greaterThanOrEqualTo(15.0));
-      expect(zoom, lessThanOrEqualTo(19.5));
+      expect(zoom, greaterThanOrEqualTo(11.0));
+      expect(zoom, lessThanOrEqualTo(21.0));
     });
   });
 
