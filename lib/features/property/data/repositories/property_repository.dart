@@ -100,20 +100,43 @@ class PropertyRepository {
   }
 
   Future<PropertyModel> uploadImages(String id, List<XFile> images) async {
-    final formData = FormData();
-    for (XFile image in images) {
-      formData.files.add(
-        MapEntry(
-          'images',
-          MultipartFile.fromBytes(
-            await image.readAsBytes(),
-            filename: image.name,
+    // 1. Get presigned URLs
+    final fileNames = images.map((i) => i.name).toList();
+    final presignedResponse = await dio.post(
+      '/properties/$id/images/presigned-url',
+      data: {'fileNames': fileNames},
+    );
+    
+    final List<dynamic> presignedData = presignedResponse.data;
+
+    // 2. Upload directly to Supabase Storage
+    for (int i = 0; i < images.length; i++) {
+      final image = images[i];
+      final urlData = presignedData.firstWhere((d) => d['fileName'].toString().endsWith(image.name), orElse: () => null);
+      if (urlData != null) {
+        final signedUrl = urlData['signedUrl'];
+        final bytes = await image.readAsBytes();
+        
+        final dioUpload = Dio(); // Use new Dio instance to avoid interceptors
+        await dioUpload.put(
+          signedUrl,
+          data: bytes,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/octet-stream', // Supabase requires content-type
+            },
           ),
-        ),
-      );
+        );
+      }
     }
 
-    final response = await dio.post('/properties/$id/images', data: formData);
+    // 3. Confirm upload
+    final uploadedFileNames = presignedData.map((d) => d['fileName'].toString()).toList();
+    final response = await dio.post(
+      '/properties/$id/images/confirm',
+      data: {'fileNames': uploadedFileNames},
+    );
+
     _refreshCache();
     return PropertyModel.fromJson(response.data);
   }

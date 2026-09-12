@@ -1,0 +1,371 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/features/auth/data/repositories/auth_repository.dart';
+import 'package:genie/shared/utils/app_popup.dart';
+
+class OtpVerificationPage extends ConsumerStatefulWidget {
+  final String email;
+
+  const OtpVerificationPage({super.key, required this.email});
+
+  @override
+  ConsumerState<OtpVerificationPage> createState() =>
+      _OtpVerificationPageState();
+}
+
+class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
+    with SingleTickerProviderStateMixin {
+  static const int _otpLength = 6;
+
+  final List<TextEditingController> _controllers =
+      List.generate(_otpLength, (_) => TextEditingController());
+  final List<FocusNode> _focusNodes =
+      List.generate(_otpLength, (_) => FocusNode());
+
+  bool _isLoading = false;
+  int _resendCountdown = 30;
+  Timer? _resendTimer;
+
+  late AnimationController _entryController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _entryController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
+    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
+    );
+    _entryController.forward();
+    _startResendTimer();
+  }
+
+  @override
+  void dispose() {
+    _resendTimer?.cancel();
+    _entryController.dispose();
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    for (final f in _focusNodes) {
+      f.dispose();
+    }
+    super.dispose();
+  }
+
+  void _startResendTimer() {
+    _resendCountdown = 30;
+    _resendTimer?.cancel();
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() {
+        if (_resendCountdown > 0) {
+          _resendCountdown--;
+        } else {
+          timer.cancel();
+        }
+      });
+    });
+  }
+
+  String get _otpValue =>
+      _controllers.map((c) => c.text).join();
+
+  void _onOtpChanged(int index, String value) {
+    if (value.length > 1) {
+      // Handle paste: distribute digits across boxes
+      final digits = value.replaceAll(RegExp(r'[^0-9]'), '');
+      for (int i = 0; i < _otpLength && i < digits.length; i++) {
+        _controllers[i].text = digits[i];
+      }
+      // Focus the last filled box or the next empty one
+      final focusIndex =
+          digits.length >= _otpLength ? _otpLength - 1 : digits.length;
+      if (focusIndex < _otpLength) {
+        _focusNodes[focusIndex].requestFocus();
+      }
+      setState(() {});
+      if (digits.length >= _otpLength) {
+        _handleVerify();
+      }
+      return;
+    }
+
+    if (value.isNotEmpty && index < _otpLength - 1) {
+      _focusNodes[index + 1].requestFocus();
+    }
+    setState(() {});
+  }
+
+  void _onKeyDown(int index, KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.backspace) {
+      if (_controllers[index].text.isEmpty && index > 0) {
+        _controllers[index - 1].clear();
+        _focusNodes[index - 1].requestFocus();
+        setState(() {});
+      }
+    }
+  }
+
+  Future<void> _handleVerify() async {
+    final otp = _otpValue;
+    if (otp.length != _otpLength) {
+      AppPopup.showError(context, 'Please enter all 6 digits');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final verified =
+          await ref.read(authServiceProvider).verifyOtp(widget.email, otp);
+      if (!mounted) return;
+      if (verified) {
+        context.push(
+          '/reset-password?email=${Uri.encodeComponent(widget.email)}&otp=${Uri.encodeComponent(otp)}',
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      AppPopup.showError(context, e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleResend() async {
+    if (_resendCountdown > 0) return;
+
+    try {
+      await ref.read(authServiceProvider).forgotPassword(widget.email);
+      if (!mounted) return;
+      AppPopup.showSuccess(context, 'New verification code sent');
+      _startResendTimer();
+      // Clear existing OTP
+      for (final c in _controllers) {
+        c.clear();
+      }
+      _focusNodes[0].requestFocus();
+    } catch (e) {
+      if (!mounted) return;
+      AppPopup.showError(context, e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 408.0),
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Back button
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back,
+                            size: 20,
+                            color: Color(0xFF1E293B),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Title
+                      Text(
+                        'OTP Verification',
+                        style: GoogleFonts.inter(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1E293B),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Enter the verification code we just sent to your email.',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          color: const Color(0xFF64748B),
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+
+                      // OTP boxes
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(_otpLength, (index) {
+                          final isFilled =
+                              _controllers[index].text.isNotEmpty;
+                          final isFocused = _focusNodes[index].hasFocus;
+
+                          return Container(
+                            width: 48,
+                            height: 56,
+                            margin: EdgeInsets.only(
+                              right: index < _otpLength - 1 ? 10 : 0,
+                            ),
+                            child: KeyboardListener(
+                              focusNode: FocusNode(),
+                              onKeyEvent: (event) => _onKeyDown(index, event),
+                              child: TextField(
+                                controller: _controllers[index],
+                                focusNode: _focusNodes[index],
+                                textAlign: TextAlign.center,
+                                maxLength: _otpLength,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                style: GoogleFonts.inter(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF1E293B),
+                                ),
+                                decoration: InputDecoration(
+                                  counterText: '',
+                                  contentPadding: EdgeInsets.zero,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: isFocused || isFilled
+                                          ? const Color(0xFF4F5BD5)
+                                          : const Color(0xFFE2E8F0),
+                                      width: isFocused ? 2 : 1.5,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: isFilled
+                                          ? const Color(0xFF4F5BD5)
+                                          : const Color(0xFFE2E8F0),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFF4F5BD5),
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                onChanged: (value) =>
+                                    _onOtpChanged(index, value),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Verify button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _handleVerify,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4F5BD5),
+                            disabledBackgroundColor: const Color(0x994F5BD5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'Verify',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Resend OTP
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Resend OTP in ${_resendCountdown}s',
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1E293B),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            GestureDetector(
+                              onTap:
+                                  _resendCountdown == 0 ? _handleResend : null,
+                              child: Text(
+                                'Resend OTP',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: _resendCountdown == 0
+                                      ? const Color(0xFF4F5BD5)
+                                      : const Color(0xFFA0AEC0),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

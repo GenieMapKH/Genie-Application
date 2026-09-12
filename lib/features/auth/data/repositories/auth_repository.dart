@@ -103,4 +103,38 @@ class AuthService {
     await AuthStorage.clearTokens();
     ApiCacheManager().clearAll();
   }
+
+  // 5. Forgot Password — Request OTP
+  Future<void> forgotPassword(String email) async {
+    try {
+      await dio.post('/auth/forgot-password', data: {'email': email});
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // 6. Verify OTP
+  Future<bool> verifyOtp(String email, String otp) async {
+    try {
+      final response = await dio.post(
+        '/auth/verify-otp',
+        data: {'email': email, 'otp': otp},
+      );
+      return response.data['verified'] == true;
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // 7. Reset Password
+  Future<void> resetPassword(String email, String otp, String newPassword) async {
+    try {
+      await dio.post(
+        '/auth/reset-password',
+        data: {'email': email, 'otp': otp, 'newPassword': newPassword},
+      );
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
 }

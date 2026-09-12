@@ -391,7 +391,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           _keepMeSignedIn = val ?? false;
                         });
                       },
-                      onForgotPasswordPressed: widget.onForgotPasswordPressed,
+                      onForgotPasswordPressed: () {
+                        if (widget.onForgotPasswordPressed != null) {
+                          widget.onForgotPasswordPressed!();
+                        } else {
+                          context.push('/forgot-password');
+                        }
+                      },
                     ),
                     const SizedBox(height: 28),
                     LoginActions(
@@ -411,7 +417,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           }
                         }
                       },
-                      onCreateAccount: widget.onCreateAccountPressed,
+                      onCreateAccount: () {
+                        if (widget.onCreateAccountPressed != null) {
+                          widget.onCreateAccountPressed!();
+                        } else {
+                          context.push('/register');
+                        }
+                      },
                     ),
                   ],
                 ),
