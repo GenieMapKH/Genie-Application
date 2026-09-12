@@ -22,6 +22,7 @@ class PropertyModel {
   final String? ownerName;
   final int saveCount;
   final int contactCount;
+  final bool isVisited;
 
   PropertyModel({
     required this.id,
@@ -43,13 +44,29 @@ class PropertyModel {
     this.ownerName,
     this.saveCount = 0,
     this.contactCount = 0,
+    this.isVisited = false,
   });
+
+  /// Hours elapsed since the listing was published.
+  int get hoursListed => DateTime.now().difference(createdAt).inHours;
 
   /// Days elapsed since the listing was published.
   int get daysListed => DateTime.now().difference(createdAt).inDays;
 
-  /// Listings younger than two weeks get the "New" badge on the map.
-  bool get isNew => daysListed <= 14;
+  /// Listings younger than 12 hours get the "New" badge on the map.
+  bool get isNew => hoursListed <= 12;
+
+  /// Formatted price for map markers (e.g. 10000 -> 10K, 1500000 -> 1.5M)
+  String get formattedPrice {
+    final double? val = double.tryParse(price);
+    if (val == null) return price;
+    if (val >= 1000000) {
+      return '${(val / 1000000).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}M';
+    } else if (val >= 1000) {
+      return '${(val / 1000).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}K';
+    }
+    return val.toStringAsFixed(0);
+  }
 
   /// The size shown on cards: land properties report land size, built
   /// properties report the unit or building footprint.
@@ -139,6 +156,7 @@ class PropertyModel {
       ownerName: owner is Map ? owner['username'] as String? : null,
       saveCount: counts is Map ? (counts['favorites'] as int? ?? 0) : 0,
       contactCount: counts is Map ? (counts['contacts'] as int? ?? 0) : 0,
+      isVisited: json['isVisited'] == true,
     );
   }
 
@@ -175,6 +193,7 @@ class PropertyModel {
     String? ownerName,
     int? saveCount,
     int? contactCount,
+    bool? isVisited,
   }) {
     return PropertyModel(
       id: id ?? this.id,
@@ -196,6 +215,7 @@ class PropertyModel {
       ownerName: ownerName ?? this.ownerName,
       saveCount: saveCount ?? this.saveCount,
       contactCount: contactCount ?? this.contactCount,
+      isVisited: isVisited ?? this.isVisited,
     );
   }
 }

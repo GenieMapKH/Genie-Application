@@ -76,7 +76,7 @@ class MapLayerBuilder {
     }
   }
 
-  static void buildIndividualDotsView(
+  static Future<void> buildIndividualDotsView(
     List<LatLng> allCentroids,
     List<PropertyModel?> allCentroidModels,
     Set<Marker> newMarkers,
@@ -85,42 +85,44 @@ class MapLayerBuilder {
     BitmapDescriptor? newBadgeIcon,
     bool Function(int index, PropertyModel? property) isHighlighted,
     Function(int index, PropertyModel? property) onViewProperty,
-  ) {
+  ) async {
+    final List<Future<void>> futures = [];
+    
     for (int i = 0; i < allCentroids.length; i++) {
-      final property = allCentroidModels[i];
-      final bool isSelected = isHighlighted(i, property);
-      final BitmapDescriptor? icon = isSelected ? selectedDotIcon : greenDotIcon;
+      futures.add((() async {
+        final property = allCentroidModels[i];
+        final bool isSelected = isHighlighted(i, property);
+        
+        BitmapDescriptor icon;
+        if (property != null) {
+          icon = await DynamicMapMarkers.createPriceMarker(
+            price: property.formattedPrice,
+            isNew: property.isNew,
+            isSelected: isSelected,
+            propertyType: property.propertyType,
+            isVisited: property.isVisited,
+          );
+        } else {
+          icon = isSelected
+              ? (selectedDotIcon ?? BitmapDescriptor.defaultMarker)
+              : (greenDotIcon ?? BitmapDescriptor.defaultMarker);
+        }
 
-      newMarkers.add(
-        Marker(
-          markerId: MarkerId('city_dot_$i'),
-          position: allCentroids[i],
-          icon: icon ??
-              BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueGreen,
-              ),
-          anchor: const Offset(0.5, 0.5),
-          consumeTapEvents: true,
-          zIndexInt: isSelected ? 4 : 1,
-          onTap: () => onViewProperty(i, property),
-        ),
-      );
-
-      // "New" pill above recently listed properties.
-      if (newBadgeIcon != null && property != null && property.isNew) {
         newMarkers.add(
           Marker(
-            markerId: MarkerId('new_badge_$i'),
+            markerId: MarkerId('city_dot_$i'),
             position: allCentroids[i],
-            icon: newBadgeIcon,
-            anchor: const Offset(0.5, 1.3),
-            zIndexInt: 2,
+            icon: icon,
+            anchor: const Offset(0.5, 0.5),
             consumeTapEvents: true,
+            zIndexInt: isSelected ? 4 : 1,
             onTap: () => onViewProperty(i, property),
           ),
         );
-      }
+      })());
     }
+
+    await Future.wait(futures);
   }
 
   static Future<void> buildDetailedView(
@@ -281,7 +283,7 @@ class MapLayerBuilder {
 
       if (measurements != null) {
         final double area = measurements.area;
-        final bool showEdgeLengths = _shouldShowEdgeLengths(area, currentZoom);
+        final bool showEdgeLengths = shouldShowDetailedView(area, currentZoom);
         final double edgeFontSize = _calculateFontSize(area, currentZoom, isArea: false);
 
         if (measurements.sides.isNotEmpty && showEdgeLengths) {
@@ -310,7 +312,7 @@ class MapLayerBuilder {
 
       if (measurements != null) {
         final double area = measurements.area;
-        final bool showEdgeLengths = _shouldShowEdgeLengths(area, currentZoom);
+        final bool showEdgeLengths = shouldShowDetailedView(area, currentZoom);
 
         if (measurements.sides.isNotEmpty && showEdgeLengths) {
           for (int i = 0; i < drawnPoints.length; i++) {
@@ -476,7 +478,7 @@ class MapLayerBuilder {
     }
   }
 
-  static bool _shouldShowEdgeLengths(double area, double currentZoom) {
+  static bool shouldShowDetailedView(double area, double currentZoom) {
     if (area > 1000000) return currentZoom > 12.0; // 100 ha
     if (area > 100000) return currentZoom > 13.0; // 10 ha
     if (area > 10000) return currentZoom > 14.5; // 1 ha
@@ -489,12 +491,12 @@ class MapLayerBuilder {
   }
 
   static double _calculateFontSize(double area, double currentZoom, {bool isArea = false}) {
-    double size = isArea ? 16.0 : 13.0;
+    double size = isArea ? 13.5 : 11.0;
 
     if (currentZoom >= 19.0) {
-      size *= 1.2;
-    } else if (currentZoom >= 18.0) {
       size *= 1.1;
+    } else if (currentZoom >= 18.0) {
+      size *= 1.05;
     }
 
     if (currentZoom <= 15.0) {
@@ -509,6 +511,6 @@ class MapLayerBuilder {
       size *= 1.3;
     }
 
-    return size.clamp(10.0, 24.0);
+    return size.clamp(10.0, 20.0);
   }
 }

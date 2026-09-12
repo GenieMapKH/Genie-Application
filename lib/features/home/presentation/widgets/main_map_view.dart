@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
+import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/home/utils/map_camera_focus.dart';
@@ -58,7 +59,9 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     final icons = MapIcons(
       pin: await getSvgMarker('assets/icons/pin.svg'),
       greenDot: await DynamicMapMarkers.createGreenDotMarker(),
-      selectedDot: await DynamicMapMarkers.createGreenDotMarker(isSelected: true),
+      selectedDot: await DynamicMapMarkers.createGreenDotMarker(
+        isSelected: true,
+      ),
       newBadge: await DynamicMapMarkers.createNewBadgeMarker(),
       smallWhiteDot: await DynamicMapMarkers.createSmallWhiteDotMarker(),
     );
@@ -95,6 +98,13 @@ class MainMapViewState extends ConsumerState<MainMapView> {
         onSelectProperty: (property) {
           if (ref.read(mapStateProvider).isDrawing) return;
           ref.read(propertyCarouselProvider.notifier).select(property);
+          
+          if (!property.isVisited) {
+            // Optimistically mark as visited in UI
+            ref.read(visitedPropertyIdsProvider.notifier).add(property.id);
+            // Send to backend
+            ref.read(propertyRepositoryProvider).markAsViewed(property.id);
+          }
         },
         onHighlightLocalPolygon: notifier.highlightLocalPolygon,
         onEditProperty: notifier.editProperty,
@@ -122,12 +132,12 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     final topInset = topPadding + 140.0;
     // Add extra bottom offset to move the property "to the bottom a little bit" as requested
     final extraBottomOffset = 40.0;
-    
+
     // When a property is clicked, the parent widget may not have rebuilt yet with the updated bottomInset.
     // Since _focusOnProperty is only called for selected properties, we know the carousel will be visible,
     // so we proactively use PropertyCarousel.mapInset for the target calculations.
     final targetBottomInset = PropertyCarousel.mapInset;
-    
+
     final visibleHeight = size.height - targetBottomInset - topInset;
 
     final double zoom = property.boundaryPoints.length >= 3
@@ -167,7 +177,21 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     final state = ref.read(mapStateProvider);
     if (state.currentMapCenter != null) {
       MapStorage.saveLastPosition(
-        CameraPosition(target: state.currentMapCenter!, zoom: state.currentZoom),
+        CameraPosition(
+          target: state.currentMapCenter!,
+          zoom: state.currentZoom,
+        ),
+      );
+    }
+
+    if (widget.mapControllerCompleter.isCompleted) {
+      final controller = await widget.mapControllerCompleter.future;
+      final visibleRegion = await controller.getVisibleRegion();
+      ref.read(mapBoundsProvider.notifier).state = MapBounds(
+        minLat: visibleRegion.southwest.latitude,
+        maxLat: visibleRegion.northeast.latitude,
+        minLng: visibleRegion.southwest.longitude,
+        maxLng: visibleRegion.northeast.longitude,
       );
     }
 
@@ -178,10 +202,12 @@ class MainMapViewState extends ConsumerState<MainMapView> {
         state.drawnPoints.length >= 3 &&
         state.currentMapCenter != null) {
       final controller = await widget.mapControllerCompleter.future;
-      final firstPointScreen =
-          await controller.getScreenCoordinate(state.drawnPoints.first);
-      final crosshairScreen =
-          await controller.getScreenCoordinate(state.currentMapCenter!);
+      final firstPointScreen = await controller.getScreenCoordinate(
+        state.drawnPoints.first,
+      );
+      final crosshairScreen = await controller.getScreenCoordinate(
+        state.currentMapCenter!,
+      );
 
       final dx = firstPointScreen.x - crosshairScreen.x;
       final dy = firstPointScreen.y - crosshairScreen.y;
@@ -208,7 +234,9 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     final bool bandChanged =
         zoomBand(mapState.currentZoom) != zoomBand(position.zoom);
 
-    ref.read(mapStateProvider.notifier).updateCamera(position.target, position.zoom);
+    ref
+        .read(mapStateProvider.notifier)
+        .updateCamera(position.target, position.zoom);
 
     if (bandChanged && !mapState.isDrawing) _updateMapOverlays();
   }
@@ -223,7 +251,18 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     ref.listen(propertyCarouselProvider, (previous, next) {
       if (previous?.selected?.id == next.selected?.id) return;
       _updateMapOverlays();
-      if (next.selected != null) _focusOnProperty(next.selected!);
+      
+      final property = next.selected;
+      if (property != null) {
+        _focusOnProperty(property);
+        
+        if (!property.isVisited) {
+          // Optimistically mark as visited in UI when swiped to
+          ref.read(visitedPropertyIdsProvider.notifier).add(property.id);
+          // Send to backend
+          ref.read(propertyRepositoryProvider).markAsViewed(property.id);
+        }
+      }
     });
 
     return IgnorePointer(
@@ -252,7 +291,9 @@ class MainMapViewState extends ConsumerState<MainMapView> {
                 if (mapState.isDrawing) return;
                 ref.read(propertyCarouselProvider.notifier).clear();
                 if (mapState.highlightedLocalPolygon != null) {
-                  ref.read(mapStateProvider.notifier).highlightLocalPolygon(null);
+                  ref
+                      .read(mapStateProvider.notifier)
+                      .highlightLocalPolygon(null);
                 }
               },
               markers: _overlays.markers,
@@ -272,7 +313,10 @@ class MainMapViewState extends ConsumerState<MainMapView> {
             IgnorePointer(
               child: Center(
                 child: Transform.translate(
-                  offset: const Offset(0, 20), // Align with map center due to bottom: -40
+                  offset: const Offset(
+                    0,
+                    20,
+                  ), // Align with map center due to bottom: -40
                   child: Container(
                     width: 48,
                     height: 48,

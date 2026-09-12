@@ -26,7 +26,7 @@ class DynamicMapMarkers {
 
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    const double size = 36.0;
+    const double size = 26.0;
     const double pixelRatio = 3.0;
 
     canvas.scale(pixelRatio, pixelRatio);
@@ -50,7 +50,7 @@ class DynamicMapMarkers {
         text: number.toString(),
         style: const TextStyle(
           color: Color(0xFF6B7280), // Gray text
-          fontSize: 14,
+          fontSize: 12,
           fontWeight: FontWeight.bold,
           fontFamily:
               'Inter', // Note: Using default if Inter isn't loaded on Canvas yet
@@ -280,6 +280,139 @@ class DynamicMapMarkers {
       width: canvasWidth.toDouble(),
       height: canvasHeight.toDouble(),
     );
+  }
+
+  /// Creates a price marker, shaped like a pill or rounded rectangle with "New" badge.
+  static Future<BitmapDescriptor> createPriceMarker({
+    required String price,
+    bool isNew = false,
+    bool isSelected = false,
+    String propertyType = 'Sell',
+    bool isVisited = false,
+  }) async {
+    final String cacheKey = 'price-$price-$isNew-$isSelected-$propertyType-$isVisited';
+    if (_textMarkerCache.containsKey(cacheKey)) {
+      return _textMarkerCache[cacheKey]!;
+    }
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double pixelRatio = 3.0;
+
+    canvas.scale(pixelRatio, pixelRatio);
+
+    final TextPainter pricePainter = TextPainter(
+      text: TextSpan(
+        text: price,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: isSelected ? 16.0 : 14.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    pricePainter.layout();
+
+    TextPainter? newPainter;
+    if (isNew) {
+      newPainter = TextPainter(
+        text: const TextSpan(
+          text: 'New',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      newPainter.layout();
+    }
+
+    final double paddingHorizontal = isNew ? 12.0 : 10.0;
+    final double paddingVertical = isNew ? 8.0 : 6.0;
+
+    double contentWidth = pricePainter.width;
+    double contentHeight = pricePainter.height;
+
+    if (isNew && newPainter != null) {
+      contentWidth = [pricePainter.width, newPainter.width].reduce((a, b) => a > b ? a : b);
+      contentHeight += newPainter.height + 2; // spacing
+    }
+
+    final double width = contentWidth + paddingHorizontal * 2;
+    final double height = contentHeight + paddingVertical * 2;
+    final double radius = isNew ? 10.0 : height / 2; // Pill shape for non-new
+
+    // Draw shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.18)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
+    final RRect shadowRRect = RRect.fromLTRBR(
+      0,
+      2,
+      width,
+      height + 2,
+      Radius.circular(radius),
+    );
+    canvas.drawRRect(shadowRRect, shadowPaint);
+
+    Color getBaseColor() {
+      if (propertyType.toLowerCase() == 'sell') {
+        return isVisited ? const Color(0xFF6AE0B1) : const Color(0xFF028752);
+      } else if (propertyType.toLowerCase() == 'rent') {
+        return isVisited ? const Color(0xFFEFB6B8) : const Color(0xFFE5484D);
+      } else if (propertyType.toLowerCase() == 'to let') {
+        return isVisited ? const Color(0xFFEFDDB5) : const Color(0xFFDBA122);
+      }
+      return isVisited ? const Color(0xFF6AE0B1) : const Color(0xFF028752);
+    }
+
+    final Color bgColor = isSelected ? getBaseColor().withValues(alpha: 0.8) : getBaseColor();
+
+    // Draw background
+    final Paint paint = Paint()..color = bgColor;
+    final RRect rrect = RRect.fromLTRBR(
+      0,
+      0,
+      width,
+      height,
+      Radius.circular(radius),
+    );
+    canvas.drawRRect(rrect, paint);
+
+    // Draw border
+    final Paint borderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = isSelected ? 2.5 : 1.5;
+    canvas.drawRRect(rrect, borderPaint);
+
+    // Draw text
+    double currentY = paddingVertical;
+    if (isNew && newPainter != null) {
+      newPainter.paint(canvas, Offset((width - newPainter.width) / 2, currentY));
+      currentY += newPainter.height + 2;
+    }
+    pricePainter.paint(canvas, Offset((width - pricePainter.width) / 2, currentY));
+
+    final int canvasWidth = (width + 8).toInt();
+    final int canvasHeight = (height + 8).toInt();
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      (canvasWidth * pixelRatio).toInt(),
+      (canvasHeight * pixelRatio).toInt(),
+    );
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+
+    final descriptor = BitmapDescriptor.bytes(
+      data!.buffer.asUint8List(),
+      width: canvasWidth.toDouble(),
+      height: canvasHeight.toDouble(),
+    );
+    _textMarkerCache[cacheKey] = descriptor;
+    return descriptor;
   }
 
   /// Creates a circular edit marker with a pen icon
