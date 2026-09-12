@@ -47,7 +47,8 @@ class PropertyFormat {
   }
 
   /// The detail sheet's spec row uses long labels: `2 Beds`, `2 Baths`.
-  static String bedroomLabel(int count) => '$count ${count == 1 ? 'Bed' : 'Beds'}';
+  static String bedroomLabel(int count) =>
+      '$count ${count == 1 ? 'Bed' : 'Beds'}';
 
   static String bathroomLabel(int count) =>
       '$count ${count == 1 ? 'Bath' : 'Baths'}';

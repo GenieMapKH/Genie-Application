@@ -231,9 +231,7 @@ class SavedPropertiesPage extends ConsumerWidget {
           isFavorite: true,
           onTap: () => _openDetail(context, property),
           onFavoriteToggled: () {
-            ref
-                .read(savedPropertiesProvider.notifier)
-                .toggleFavorite(property);
+            ref.read(savedPropertiesProvider.notifier).toggleFavorite(property);
           },
         );
       },

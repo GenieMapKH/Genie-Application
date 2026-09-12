@@ -43,8 +43,5 @@ final mapPropertiesProvider = Provider<MapProperties>((ref) {
     return p;
   }).toList();
 
-  return MapProperties(
-    properties: finalProperties,
-    ownedIds: ownedIds,
-  );
+  return MapProperties(properties: finalProperties, ownedIds: ownedIds);
 });

@@ -19,7 +19,12 @@ class ProfileEditDialog extends ConsumerStatefulWidget {
   @override
   ConsumerState<ProfileEditDialog> createState() => _ProfileEditDialogState();
 
-  static Future<void> show(BuildContext context, String title, String fieldKey, String? initialValue) {
+  static Future<void> show(
+    BuildContext context,
+    String title,
+    String fieldKey,
+    String? initialValue,
+  ) {
     return showDialog(
       context: context,
       builder: (context) => ProfileEditDialog(
@@ -59,9 +64,7 @@ class _ProfileEditDialogState extends ConsumerState<ProfileEditDialog> {
 
     return Dialog(
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -76,7 +79,11 @@ class _ProfileEditDialogState extends ConsumerState<ProfileEditDialog> {
                     color: const Color(0xFFEEF2FF),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(iconData, color: const Color(0xFF5B5FEF), size: 24),
+                  child: Icon(
+                    iconData,
+                    color: const Color(0xFF5B5FEF),
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -127,7 +134,10 @@ class _ProfileEditDialogState extends ConsumerState<ProfileEditDialog> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF5B5FEF), width: 1.5),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF5B5FEF),
+                    width: 1.5,
+                  ),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -209,7 +219,10 @@ class _ProfileEditDialogState extends ConsumerState<ProfileEditDialog> {
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Confirm Change', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
+        title: Text(
+          'Confirm Change',
+          style: GoogleFonts.inter(fontWeight: FontWeight.w700),
+        ),
         content: Text(
           'Are you sure you want to change your ${widget.title.toLowerCase()} to "$newValue"?',
           style: GoogleFonts.inter(color: const Color(0xFF4B5563)),
@@ -217,15 +230,23 @@ class _ProfileEditDialogState extends ConsumerState<ProfileEditDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('No, cancel', style: GoogleFonts.inter(color: const Color(0xFF6B7280))),
+            child: Text(
+              'No, cancel',
+              style: GoogleFonts.inter(color: const Color(0xFF6B7280)),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF5B5FEF),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
-            child: Text('Yes, save', style: GoogleFonts.inter(color: Colors.white)),
+            child: Text(
+              'Yes, save',
+              style: GoogleFonts.inter(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -245,7 +266,7 @@ class _ProfileEditDialogState extends ConsumerState<ProfileEditDialog> {
       } else if (widget.fieldKey == 'phone') {
         await repo.updateProfile(phone: newValue);
       }
-      
+
       if (mounted) {
         ref.invalidate(userProfileProvider);
         Navigator.pop(context);
@@ -261,7 +282,9 @@ class _ProfileEditDialogState extends ConsumerState<ProfileEditDialog> {
       if (mounted) {
         setState(() {
           if (e.response?.statusCode == 409) {
-            _errorMessage = e.response?.data?['message'] ?? 'This ${widget.title.toLowerCase()} is taken.';
+            _errorMessage =
+                e.response?.data?['message'] ??
+                'This ${widget.title.toLowerCase()} is taken.';
           } else {
             _errorMessage = 'An error occurred. Please try again.';
           }

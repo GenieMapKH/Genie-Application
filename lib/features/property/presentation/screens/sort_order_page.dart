@@ -11,9 +11,7 @@ class SortOrderPage extends ConsumerWidget {
   const SortOrderPage({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(
-      builder: (_) => const SortOrderPage(),
-    );
+    return MaterialPageRoute<void>(builder: (_) => const SortOrderPage());
   }
 
   @override

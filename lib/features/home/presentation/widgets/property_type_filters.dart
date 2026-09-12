@@ -56,10 +56,8 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
               const SizedBox(width: 8),
               // Property Types
               ..._propertyTypes.map(
-                (type) => _buildPropertyTypePill(
-                  type['name']!,
-                  type['iconPath']!,
-                ),
+                (type) =>
+                    _buildPropertyTypePill(type['name']!, type['iconPath']!),
               ),
               const SizedBox(width: 8), // End padding
             ],
@@ -113,8 +111,9 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
                 color: isListingTypeSelected
                     ? const Color(0xFF3E49C7)
                     : const Color(0xFF4B5563),
-                fontWeight:
-                    isListingTypeSelected ? FontWeight.w600 : FontWeight.w500,
+                fontWeight: isListingTypeSelected
+                    ? FontWeight.w600
+                    : FontWeight.w500,
                 fontSize: 14,
               ),
             ),
@@ -167,7 +166,9 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
         child: Text(
           text,
           style: GoogleFonts.inter(
-            color: isSelected ? const Color(0xFF3E49C7) : const Color(0xFF4B5563),
+            color: isSelected
+                ? const Color(0xFF3E49C7)
+                : const Color(0xFF4B5563),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 14,
           ),
@@ -222,7 +223,9 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
             Text(
               text,
               style: GoogleFonts.inter(
-                color: isSelected ? const Color(0xFF3E49C7) : const Color(0xFF4B5563),
+                color: isSelected
+                    ? const Color(0xFF3E49C7)
+                    : const Color(0xFF4B5563),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 fontSize: 14,
               ),

@@ -72,10 +72,7 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
 
           // Trailing Widget (e.g. Saved count badge or Action button)
           if (trailing != null)
-            Align(
-              alignment: Alignment.centerRight,
-              child: trailing!,
-            ),
+            Align(alignment: Alignment.centerRight, child: trailing!),
         ],
       ),
     );

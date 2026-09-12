@@ -79,7 +79,10 @@ class _SpecRow extends StatelessWidget {
     final specs = <(IconData, String)>[];
 
     if (property.bedrooms != null && property.bedrooms! > 0) {
-      specs.add((Icons.bed_outlined, PropertyFormat.bedroomLabel(property.bedrooms!)));
+      specs.add((
+        Icons.bed_outlined,
+        PropertyFormat.bedroomLabel(property.bedrooms!),
+      ));
     }
     if (property.bathrooms != null && property.bathrooms! > 0) {
       specs.add((

@@ -79,10 +79,16 @@ class MapOverlayBuilder {
     // Locally drawn polygons come first so their indices stay stable; they have
     // no backend model, hence the null entries.
     final List<List<LatLng>> allProps = List.from(mapState.finalizedProperties);
-    final List<bool> allPropsIsOwned =
-        List.filled(mapState.finalizedProperties.length, true, growable: true);
-    final List<PropertyModel?> allPropModels =
-        List.filled(mapState.finalizedProperties.length, null, growable: true);
+    final List<bool> allPropsIsOwned = List.filled(
+      mapState.finalizedProperties.length,
+      true,
+      growable: true,
+    );
+    final List<PropertyModel?> allPropModels = List.filled(
+      mapState.finalizedProperties.length,
+      null,
+      growable: true,
+    );
 
     final List<LatLng> allCentroids = [];
     final List<PropertyModel?> allCentroidModels = [];
@@ -113,13 +119,18 @@ class MapOverlayBuilder {
       }
       final centroid = LatLng(sumLat / points.length, sumLng / points.length);
       final model = allPropModels[i];
-      
-      bool isDetailed = mapState.currentZoom > detailZoomThreshold || (selectedProperty != null && selectedProperty.id == model?.id);
-      
+
+      bool isDetailed =
+          mapState.currentZoom > detailZoomThreshold ||
+          (selectedProperty != null && selectedProperty.id == model?.id);
+
       if (!isDetailed) {
         final measurements = calculateMeasurements(points);
         if (measurements != null) {
-          isDetailed = MapLayerBuilder.shouldShowDetailedView(measurements.area, mapState.currentZoom);
+          isDetailed = MapLayerBuilder.shouldShowDetailedView(
+            measurements.area,
+            mapState.currentZoom,
+          );
         }
       }
 
@@ -162,7 +173,7 @@ class MapOverlayBuilder {
           callbacks.onEditProperty,
         );
       }
-      
+
       if (allCentroids.isNotEmpty) {
         await MapLayerBuilder.buildIndividualDotsView(
           allCentroids,

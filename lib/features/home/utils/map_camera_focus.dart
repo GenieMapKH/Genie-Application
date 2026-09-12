@@ -65,7 +65,8 @@ class MapCameraFocus {
 
     final worldPixels = _tileSize * math.pow(2, zoom);
     final targetY =
-        (_mercatorY(center.latitude) + ((bottomInset - topInset) / 2) / worldPixels)
+        (_mercatorY(center.latitude) +
+                ((bottomInset - topInset) / 2) / worldPixels)
             .clamp(0.0, 1.0);
 
     return LatLng(_latFromMercatorY(targetY), center.longitude);

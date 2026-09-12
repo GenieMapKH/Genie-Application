@@ -26,7 +26,8 @@ class LandSizeFieldWidget extends StatelessWidget {
               title: isLandType ? 'Size' : 'Land Size',
               required: true,
               hasError:
-                  state.hasAttemptedSubmit && state.landSizeController.text.trim().isEmpty,
+                  state.hasAttemptedSubmit &&
+                  state.landSizeController.text.trim().isEmpty,
             ),
             isLandType
                 ? InkWell(
@@ -65,7 +66,8 @@ class LandSizeFieldWidget extends StatelessWidget {
           decoration: defaultPropertyInputDecoration(
             isLandType ? 'Size Area' : 'Enter land size',
             hasError:
-                state.hasAttemptedSubmit && state.landSizeController.text.trim().isEmpty,
+                state.hasAttemptedSubmit &&
+                state.landSizeController.text.trim().isEmpty,
           ),
         ),
       ],
@@ -146,7 +148,8 @@ class UnitSizeFieldWidget extends StatelessWidget {
               title: 'Unit Size',
               required: true,
               hasError:
-                  state.hasAttemptedSubmit && state.unitSizeController.text.trim().isEmpty,
+                  state.hasAttemptedSubmit &&
+                  state.unitSizeController.text.trim().isEmpty,
             ),
             Row(
               children: [
@@ -173,7 +176,8 @@ class UnitSizeFieldWidget extends StatelessWidget {
           decoration: defaultPropertyInputDecoration(
             'Enter unit size',
             hasError:
-                state.hasAttemptedSubmit && state.unitSizeController.text.trim().isEmpty,
+                state.hasAttemptedSubmit &&
+                state.unitSizeController.text.trim().isEmpty,
           ),
         ),
       ],

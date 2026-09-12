@@ -22,40 +22,44 @@ class PropertyRecommendations {
 /// for the map so the sheet needs no extra network round trip.
 final propertyRecommendationsProvider =
     Provider.family<PropertyRecommendations, String>((ref, propertyId) {
-  final all = ref.watch(mapPropertiesProvider).properties;
-  final source = all.firstWhere(
-    (p) => p.id == propertyId,
-    orElse: () => all.isEmpty ? _missing : all.first,
-  );
+      final all = ref.watch(mapPropertiesProvider).properties;
+      final source = all.firstWhere(
+        (p) => p.id == propertyId,
+        orElse: () => all.isEmpty ? _missing : all.first,
+      );
 
-  final candidates = all.where((p) => p.id != propertyId).toList();
-  final origin = PropertyCarouselNotifier.centerOf(source);
+      final candidates = all.where((p) => p.id != propertyId).toList();
+      final origin = PropertyCarouselNotifier.centerOf(source);
 
-  // Nearest first when we know where the viewed property is.
-  if (origin != null) {
-    candidates.sort((a, b) {
-      final ca = PropertyCarouselNotifier.centerOf(a);
-      final cb = PropertyCarouselNotifier.centerOf(b);
-      if (ca == null) return 1;
-      if (cb == null) return -1;
-      final da = (ca.latitude - origin.latitude).abs() +
-          (ca.longitude - origin.longitude).abs();
-      final db = (cb.latitude - origin.latitude).abs() +
-          (cb.longitude - origin.longitude).abs();
-      return da.compareTo(db);
+      // Nearest first when we know where the viewed property is.
+      if (origin != null) {
+        candidates.sort((a, b) {
+          final ca = PropertyCarouselNotifier.centerOf(a);
+          final cb = PropertyCarouselNotifier.centerOf(b);
+          if (ca == null) return 1;
+          if (cb == null) return -1;
+          final da =
+              (ca.latitude - origin.latitude).abs() +
+              (ca.longitude - origin.longitude).abs();
+          final db =
+              (cb.latitude - origin.latitude).abs() +
+              (cb.longitude - origin.longitude).abs();
+          return da.compareTo(db);
+        });
+      }
+
+      final similar = candidates
+          .where((p) => p.propertyType == source.propertyType)
+          .take(2)
+          .toList();
+      final similarIds = similar.map((p) => p.id).toSet();
+      final forYou = candidates
+          .where((p) => !similarIds.contains(p.id))
+          .take(2)
+          .toList();
+
+      return PropertyRecommendations(similar: similar, forYou: forYou);
     });
-  }
-
-  final similar = candidates
-      .where((p) => p.propertyType == source.propertyType)
-      .take(2)
-      .toList();
-  final similarIds = similar.map((p) => p.id).toSet();
-  final forYou =
-      candidates.where((p) => !similarIds.contains(p.id)).take(2).toList();
-
-  return PropertyRecommendations(similar: similar, forYou: forYou);
-});
 
 /// Sentinel used only when the property list is empty, so `firstWhere` has a
 /// non-null fallback; both recommendation lists end up empty in that case.

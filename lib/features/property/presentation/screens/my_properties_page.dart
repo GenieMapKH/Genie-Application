@@ -33,17 +33,17 @@ class MyPropertiesPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppHeaderBar(
-              title: 'My Properties',
-              onBackPressed: onBackPressed,
-            ),
-            if (propertiesAsync.hasError && propertiesAsync.hasValue && !propertiesAsync.isLoading)
+            AppHeaderBar(title: 'My Properties', onBackPressed: onBackPressed),
+            if (propertiesAsync.hasError &&
+                propertiesAsync.hasValue &&
+                !propertiesAsync.isLoading)
               _buildOfflineWarning(),
             const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
                 color: const Color(0xFF5B5FEF),
-                onRefresh: () => ref.read(propertiesProvider.notifier).refresh(),
+                onRefresh: () =>
+                    ref.read(propertiesProvider.notifier).refresh(),
                 child: propertiesAsync.when(
                   skipLoadingOnReload: true,
                   skipError: true,
@@ -105,7 +105,11 @@ class MyPropertiesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref, List<PropertyModel> properties) {
+  Widget _buildBody(
+    BuildContext context,
+    WidgetRef ref,
+    List<PropertyModel> properties,
+  ) {
     if (properties.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -121,7 +125,8 @@ class MyPropertiesPage extends ConsumerWidget {
         final property = properties[index];
         return PropertyCard(
           property: property,
-          onOptionsTapped: () => PropertyOptionsSheet.show(context, ref, property),
+          onOptionsTapped: () =>
+              PropertyOptionsSheet.show(context, ref, property),
         );
       },
     );
@@ -182,7 +187,8 @@ class MyPropertiesPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   TextButton(
-                    onPressed: () => ref.read(propertiesProvider.notifier).refresh(),
+                    onPressed: () =>
+                        ref.read(propertiesProvider.notifier).refresh(),
                     child: Text(
                       'Retry',
                       style: GoogleFonts.inter(

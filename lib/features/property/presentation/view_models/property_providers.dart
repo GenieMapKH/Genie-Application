@@ -126,9 +126,10 @@ class VisitedPropertyIdsNotifier extends Notifier<Set<String>> {
   }
 }
 
-final visitedPropertyIdsProvider = NotifierProvider<VisitedPropertyIdsNotifier, Set<String>>(() {
-  return VisitedPropertyIdsNotifier();
-});
+final visitedPropertyIdsProvider =
+    NotifierProvider<VisitedPropertyIdsNotifier, Set<String>>(() {
+      return VisitedPropertyIdsNotifier();
+    });
 
 class PublicPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
   @override
@@ -181,5 +182,5 @@ class PublicPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
 
 final publicPropertiesProvider =
     AsyncNotifierProvider<PublicPropertiesNotifier, List<PropertyModel>>(() {
-  return PublicPropertiesNotifier();
-});
+      return PublicPropertiesNotifier();
+    });

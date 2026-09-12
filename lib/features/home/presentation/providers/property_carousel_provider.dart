@@ -32,13 +32,15 @@ class PropertyCarouselNotifier extends Notifier<PropertyCarouselState> {
   @override
   PropertyCarouselState build() {
     // Keep carousel items in sync with the map feed (e.g. when isVisited changes).
-    // We intentionally do NOT auto-close the carousel if the selected property 
+    // We intentionally do NOT auto-close the carousel if the selected property
     // falls outside the map bounds during a swipe/pan, as that causes annoying glitches.
     ref.listen(mapPropertiesProvider, (previous, next) {
       if (state.items.isEmpty) return;
-      
+
       final updatedItems = state.items.map((item) {
-        final newVersion = next.properties.where((p) => p.id == item.id).firstOrNull;
+        final newVersion = next.properties
+            .where((p) => p.id == item.id)
+            .firstOrNull;
         return newVersion ?? item;
       }).toList();
 
@@ -64,7 +66,8 @@ class PropertyCarouselNotifier extends Notifier<PropertyCarouselState> {
 
   /// Called when the user swipes the PageView to a different card.
   void setIndex(int index) {
-    if (index < 0 || index >= state.items.length || index == state.index) return;
+    if (index < 0 || index >= state.items.length || index == state.index)
+      return;
     state = PropertyCarouselState(items: state.items, index: index);
   }
 

@@ -109,8 +109,7 @@ class _PropertyImageGalleryState extends State<PropertyImageGallery> {
           ),
         ),
       ),
-      errorWidget: (context, url, error) =>
-          const PropertyImagePlaceholder(),
+      errorWidget: (context, url, error) => const PropertyImagePlaceholder(),
     );
   }
 }
@@ -146,7 +145,9 @@ class _Indicator extends StatelessWidget {
           width: isActive ? 14 : 6,
           height: 6,
           decoration: BoxDecoration(
-            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.6),
+            color: isActive
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(3),
           ),
         );

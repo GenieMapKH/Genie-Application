@@ -88,7 +88,8 @@ class DynamicMapMarkers {
     double? fontSize,
   }) async {
     final double actualFontSize = fontSize ?? (isArea ? 14.0 : 12.0);
-    final String cacheKey = '$text-${actualFontSize.toStringAsFixed(1)}-$isArea';
+    final String cacheKey =
+        '$text-${actualFontSize.toStringAsFixed(1)}-$isArea';
     if (_textMarkerCache.containsKey(cacheKey)) {
       return _textMarkerCache[cacheKey]!;
     }
@@ -184,7 +185,11 @@ class DynamicMapMarkers {
       ..color = Colors.black.withValues(alpha: 0.16)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8.0);
     // Draw shadow offset down by 4
-    canvas.drawCircle(const Offset(size / 2, size / 2 + 4), radius, shadowPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2 + 4),
+      radius,
+      shadowPaint,
+    );
 
     if (isSelected) {
       // White halo ring behind the dot
@@ -290,7 +295,8 @@ class DynamicMapMarkers {
     String propertyType = 'Sell',
     bool isVisited = false,
   }) async {
-    final String cacheKey = 'price-$price-$isNew-$isSelected-$propertyType-$isVisited';
+    final String cacheKey =
+        'price-$price-$isNew-$isSelected-$propertyType-$isVisited';
     if (_textMarkerCache.containsKey(cacheKey)) {
       return _textMarkerCache[cacheKey]!;
     }
@@ -337,7 +343,10 @@ class DynamicMapMarkers {
     double contentHeight = pricePainter.height;
 
     if (isNew && newPainter != null) {
-      contentWidth = [pricePainter.width, newPainter.width].reduce((a, b) => a > b ? a : b);
+      contentWidth = [
+        pricePainter.width,
+        newPainter.width,
+      ].reduce((a, b) => a > b ? a : b);
       contentHeight += newPainter.height + 2; // spacing
     }
 
@@ -369,7 +378,9 @@ class DynamicMapMarkers {
       return isVisited ? const Color(0xFF6AE0B1) : const Color(0xFF028752);
     }
 
-    final Color bgColor = isSelected ? getBaseColor().withValues(alpha: 0.8) : getBaseColor();
+    final Color bgColor = isSelected
+        ? getBaseColor().withValues(alpha: 0.8)
+        : getBaseColor();
 
     // Draw background
     final Paint paint = Paint()..color = bgColor;
@@ -392,10 +403,16 @@ class DynamicMapMarkers {
     // Draw text
     double currentY = paddingVertical;
     if (isNew && newPainter != null) {
-      newPainter.paint(canvas, Offset((width - newPainter.width) / 2, currentY));
+      newPainter.paint(
+        canvas,
+        Offset((width - newPainter.width) / 2, currentY),
+      );
       currentY += newPainter.height + 2;
     }
-    pricePainter.paint(canvas, Offset((width - pricePainter.width) / 2, currentY));
+    pricePainter.paint(
+      canvas,
+      Offset((width - pricePainter.width) / 2, currentY),
+    );
 
     final int canvasWidth = (width + 8).toInt();
     final int canvasHeight = (height + 8).toInt();

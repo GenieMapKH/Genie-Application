@@ -5,7 +5,11 @@ class TitleTypeFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const TitleTypeFieldWidget({super.key, required this.value, required this.onChanged});
+  const TitleTypeFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +58,11 @@ class BathroomsFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const BathroomsFieldWidget({super.key, required this.value, required this.onChanged});
+  const BathroomsFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +81,11 @@ class FloorsFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const FloorsFieldWidget({super.key, required this.value, required this.onChanged});
+  const FloorsFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +104,11 @@ class NumberOfFloorsFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const NumberOfFloorsFieldWidget({super.key, required this.value, required this.onChanged});
+  const NumberOfFloorsFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +127,11 @@ class FloorNumberFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const FloorNumberFieldWidget({super.key, required this.value, required this.onChanged});
+  const FloorNumberFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +150,11 @@ class TotalFloorsFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const TotalFloorsFieldWidget({super.key, required this.value, required this.onChanged});
+  const TotalFloorsFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +173,11 @@ class ParkingFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const ParkingFieldWidget({super.key, required this.value, required this.onChanged});
+  const ParkingFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +196,11 @@ class FurnishedFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const FurnishedFieldWidget({super.key, required this.value, required this.onChanged});
+  const FurnishedFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +219,11 @@ class BuildingTypeFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const BuildingTypeFieldWidget({super.key, required this.value, required this.onChanged});
+  const BuildingTypeFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +248,11 @@ class TotalUnitsFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const TotalUnitsFieldWidget({super.key, required this.value, required this.onChanged});
+  const TotalUnitsFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +271,11 @@ class BalconyFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const BalconyFieldWidget({super.key, required this.value, required this.onChanged});
+  const BalconyFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +294,11 @@ class CompletionStatusFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const CompletionStatusFieldWidget({super.key, required this.value, required this.onChanged});
+  const CompletionStatusFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -269,7 +317,11 @@ class ViewTypeFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const ViewTypeFieldWidget({super.key, required this.value, required this.onChanged});
+  const ViewTypeFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +330,13 @@ class ViewTypeFieldWidget extends StatelessWidget {
       required: false,
       value: value,
       hintText: 'Select view type',
-      items: const ['City View', 'River View', 'Garden View', 'Pool View', 'No View'],
+      items: const [
+        'City View',
+        'River View',
+        'Garden View',
+        'Pool View',
+        'No View',
+      ],
       onChanged: onChanged,
     );
   }
@@ -288,7 +346,11 @@ class ProjectTypeFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const ProjectTypeFieldWidget({super.key, required this.value, required this.onChanged});
+  const ProjectTypeFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +359,13 @@ class ProjectTypeFieldWidget extends StatelessWidget {
       required: false,
       value: value,
       hintText: 'Select project type',
-      items: const ['Borey', 'Condo', 'Commercial', 'Mixed-use', 'Land Subdivision'],
+      items: const [
+        'Borey',
+        'Condo',
+        'Commercial',
+        'Mixed-use',
+        'Land Subdivision',
+      ],
       onChanged: onChanged,
     );
   }
@@ -307,7 +375,11 @@ class BoreyCompletionStatusFieldWidget extends StatelessWidget {
   final String? value;
   final ValueChanged<String?> onChanged;
 
-  const BoreyCompletionStatusFieldWidget({super.key, required this.value, required this.onChanged});
+  const BoreyCompletionStatusFieldWidget({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

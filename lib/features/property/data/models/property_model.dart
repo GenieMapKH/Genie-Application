@@ -105,7 +105,12 @@ class PropertyModel {
       images = (json['images'] as List)
           .map((img) {
             if (img is Map) {
-              return (img['url'] ?? img['path'] ?? img['imageUrl'] ?? img['src'] ?? '').toString();
+              return (img['url'] ??
+                      img['path'] ??
+                      img['imageUrl'] ??
+                      img['src'] ??
+                      '')
+                  .toString();
             } else if (img != null) {
               return img.toString();
             }
@@ -120,10 +125,16 @@ class PropertyModel {
           .toList();
     } else if (json['photos'] != null && json['photos'] is List) {
       images = (json['photos'] as List)
-          .map((e) => (e is Map ? (e['url'] ?? e['path'] ?? '') : e)?.toString() ?? '')
+          .map(
+            (e) =>
+                (e is Map ? (e['url'] ?? e['path'] ?? '') : e)?.toString() ??
+                '',
+          )
           .where((url) => url.isNotEmpty)
           .toList();
-    } else if (json['image'] != null && json['image'] is String && (json['image'] as String).isNotEmpty) {
+    } else if (json['image'] != null &&
+        json['image'] is String &&
+        (json['image'] as String).isNotEmpty) {
       images = [json['image'] as String];
     }
 

@@ -86,10 +86,7 @@ class PropertyShareSection extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: _ShareButton(
-                      label: 'Share',
-                      onPressed: onShare,
-                    ),
+                    child: _ShareButton(label: 'Share', onPressed: onShare),
                   ),
                   const SizedBox(width: 12),
                   Expanded(

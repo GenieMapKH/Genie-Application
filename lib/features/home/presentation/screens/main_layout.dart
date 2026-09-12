@@ -78,10 +78,12 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
 
     // Tapping near the first vertex closes the polygon instead of adding a point.
     if (mapState.drawnPoints.length >= 3) {
-      final firstPointScreen =
-          await controller.getScreenCoordinate(mapState.drawnPoints.first);
-      final crosshairScreen =
-          await controller.getScreenCoordinate(mapState.currentMapCenter!);
+      final firstPointScreen = await controller.getScreenCoordinate(
+        mapState.drawnPoints.first,
+      );
+      final crosshairScreen = await controller.getScreenCoordinate(
+        mapState.currentMapCenter!,
+      );
 
       final dx = firstPointScreen.x - crosshairScreen.x;
       final dy = firstPointScreen.y - crosshairScreen.y;
@@ -115,7 +117,10 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final navState = ref.watch(mainNavProvider);
     final isHome = navState.currentIndex == 0;
     final isCardVisible = ref.watch(propertyCarouselProvider).isVisible;
-    final bool overlayPage = navState.currentIndex == 1 || navState.currentIndex == 3 || navState.currentIndex == 4;
+    final bool overlayPage =
+        navState.currentIndex == 1 ||
+        navState.currentIndex == 3 ||
+        navState.currentIndex == 4;
 
     return PopScope(
       canPop: isHome && !isCardVisible,

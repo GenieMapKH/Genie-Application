@@ -31,7 +31,9 @@ class PropertyMapPreview extends StatelessWidget {
           )
         : MapCameraFocus.pinZoom;
 
-    final measurements = points.length >= 3 ? calculateMeasurements(points) : null;
+    final measurements = points.length >= 3
+        ? calculateMeasurements(points)
+        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +55,10 @@ class PropertyMapPreview extends StatelessWidget {
               children: [
                 // Lite mode keeps this cheap: a static snapshot, no gestures.
                 GoogleMap(
-                  initialCameraPosition: CameraPosition(target: center, zoom: zoom),
+                  initialCameraPosition: CameraPosition(
+                    target: center,
+                    zoom: zoom,
+                  ),
                   liteModeEnabled: true,
                   mapType: MapType.hybrid,
                   zoomControlsEnabled: false,
@@ -67,8 +72,9 @@ class PropertyMapPreview extends StatelessWidget {
                             points: points,
                             strokeColor: const Color(0xFF4F5BD5),
                             strokeWidth: 2,
-                            fillColor:
-                                const Color(0xFF4F5BD5).withValues(alpha: 0.2),
+                            fillColor: const Color(
+                              0xFF4F5BD5,
+                            ).withValues(alpha: 0.2),
                           ),
                         }
                       : const {},

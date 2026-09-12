@@ -18,46 +18,50 @@ class MainLayoutPages extends ConsumerWidget {
   static const int _userProfileIndex = 4;
 
   String get _currentKey => switch (navState.currentIndex) {
-        _savedPropertiesIndex => 'saved_properties',
-        _myPropertiesIndex => 'my_properties',
-        _userProfileIndex => 'user_profile',
-        _ => 'empty',
-      };
+    _savedPropertiesIndex => 'saved_properties',
+    _myPropertiesIndex => 'my_properties',
+    _userProfileIndex => 'user_profile',
+    _ => 'empty',
+  };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onBack() => ref.read(mainNavProvider.notifier).resetToHome();
 
-    final bool isPageVisible = navState.currentIndex == _savedPropertiesIndex ||
+    final bool isPageVisible =
+        navState.currentIndex == _savedPropertiesIndex ||
         navState.currentIndex == _myPropertiesIndex ||
         navState.currentIndex == _userProfileIndex;
-    final bool isPrevVisible = navState.previousIndex == _savedPropertiesIndex ||
+    final bool isPrevVisible =
+        navState.previousIndex == _savedPropertiesIndex ||
         navState.previousIndex == _myPropertiesIndex ||
         navState.previousIndex == _userProfileIndex;
 
     return Container(
       // Opaque only while sliding between full-screen pages, so the map
       // stays visible when returning home.
-      color: (isPageVisible && isPrevVisible) ? Colors.white : Colors.transparent,
+      color: (isPageVisible && isPrevVisible)
+          ? Colors.white
+          : Colors.transparent,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: _buildTransition,
         child: switch (navState.currentIndex) {
           _savedPropertiesIndex => SavedPropertiesPage(
-              key: const ValueKey('saved_properties'),
-              isEmbedded: true,
-              onBackPressed: onBack,
-            ),
+            key: const ValueKey('saved_properties'),
+            isEmbedded: true,
+            onBackPressed: onBack,
+          ),
           _myPropertiesIndex => MyPropertiesPage(
-              key: const ValueKey('my_properties'),
-              isEmbedded: true,
-              onBackPressed: onBack,
-            ),
+            key: const ValueKey('my_properties'),
+            isEmbedded: true,
+            onBackPressed: onBack,
+          ),
           _userProfileIndex => UserProfilePage(
-              key: const ValueKey('user_profile'),
-              isEmbedded: true,
-              onBackPressed: onBack,
-            ),
+            key: const ValueKey('user_profile'),
+            isEmbedded: true,
+            onBackPressed: onBack,
+          ),
           _ => const SizedBox.shrink(key: ValueKey('empty')),
         },
       ),
@@ -75,9 +79,10 @@ class MainLayoutPages extends ConsumerWidget {
         : (isIncoming ? const Offset(-1.0, 0.0) : const Offset(1.0, 0.0));
 
     return SlideTransition(
-      position: Tween<Offset>(begin: begin, end: Offset.zero).animate(
-        CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-      ),
+      position: Tween<Offset>(
+        begin: begin,
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
       child: child,
     );
   }

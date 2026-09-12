@@ -30,11 +30,46 @@ class MainBottomNav extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildNavItem(context, ref, 0, 'assets/icons/explore.svg', 'Explore', currentIndex),
-            _buildNavItem(context, ref, 1, 'assets/icons/saved.svg', 'Saved', currentIndex),
-            _buildNavItem(context, ref, 2, 'assets/icons/chat.svg', 'Chat', currentIndex),
-            _buildNavItem(context, ref, 3, 'assets/icons/property.svg', 'My Properties', currentIndex),
-            _buildNavItem(context, ref, 4, 'assets/icons/user.svg', 'User', currentIndex),
+            _buildNavItem(
+              context,
+              ref,
+              0,
+              'assets/icons/explore.svg',
+              'Explore',
+              currentIndex,
+            ),
+            _buildNavItem(
+              context,
+              ref,
+              1,
+              'assets/icons/saved.svg',
+              'Saved',
+              currentIndex,
+            ),
+            _buildNavItem(
+              context,
+              ref,
+              2,
+              'assets/icons/chat.svg',
+              'Chat',
+              currentIndex,
+            ),
+            _buildNavItem(
+              context,
+              ref,
+              3,
+              'assets/icons/property.svg',
+              'My Properties',
+              currentIndex,
+            ),
+            _buildNavItem(
+              context,
+              ref,
+              4,
+              'assets/icons/user.svg',
+              'User',
+              currentIndex,
+            ),
           ],
         ),
       ),
@@ -52,9 +87,18 @@ class MainBottomNav extends ConsumerWidget {
     return navContent;
   }
 
-  Widget _buildNavItem(BuildContext context, WidgetRef ref, int index, String iconPath, String label, int currentIndex) {
+  Widget _buildNavItem(
+    BuildContext context,
+    WidgetRef ref,
+    int index,
+    String iconPath,
+    String label,
+    int currentIndex,
+  ) {
     final isSelected = currentIndex == index;
-    final color = isSelected ? const Color(0xFF3E49C7) : const Color(0xFF6B7280);
+    final color = isSelected
+        ? const Color(0xFF3E49C7)
+        : const Color(0xFF6B7280);
 
     return TactileButton(
       onPressed: () async {

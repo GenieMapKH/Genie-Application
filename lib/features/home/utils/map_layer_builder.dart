@@ -66,10 +66,9 @@ class MapLayerBuilder {
         Marker(
           markerId: MarkerId('cluster_${clusterIndex++}'),
           position: cluster,
-          icon: greenDotIcon ??
-              BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueGreen,
-              ),
+          icon:
+              greenDotIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
           anchor: const Offset(0.5, 0.5),
         ),
       );
@@ -87,39 +86,41 @@ class MapLayerBuilder {
     Function(int index, PropertyModel? property) onViewProperty,
   ) async {
     final List<Future<void>> futures = [];
-    
-    for (int i = 0; i < allCentroids.length; i++) {
-      futures.add((() async {
-        final property = allCentroidModels[i];
-        final bool isSelected = isHighlighted(i, property);
-        
-        BitmapDescriptor icon;
-        if (property != null) {
-          icon = await DynamicMapMarkers.createPriceMarker(
-            price: property.formattedPrice,
-            isNew: property.isNew,
-            isSelected: isSelected,
-            propertyType: property.propertyType,
-            isVisited: property.isVisited,
-          );
-        } else {
-          icon = isSelected
-              ? (selectedDotIcon ?? BitmapDescriptor.defaultMarker)
-              : (greenDotIcon ?? BitmapDescriptor.defaultMarker);
-        }
 
-        newMarkers.add(
-          Marker(
-            markerId: MarkerId('city_dot_$i'),
-            position: allCentroids[i],
-            icon: icon,
-            anchor: const Offset(0.5, 0.5),
-            consumeTapEvents: true,
-            zIndexInt: isSelected ? 4 : 1,
-            onTap: () => onViewProperty(i, property),
-          ),
-        );
-      })());
+    for (int i = 0; i < allCentroids.length; i++) {
+      futures.add(
+        (() async {
+          final property = allCentroidModels[i];
+          final bool isSelected = isHighlighted(i, property);
+
+          BitmapDescriptor icon;
+          if (property != null) {
+            icon = await DynamicMapMarkers.createPriceMarker(
+              price: property.formattedPrice,
+              isNew: property.isNew,
+              isSelected: isSelected,
+              propertyType: property.propertyType,
+              isVisited: property.isVisited,
+            );
+          } else {
+            icon = isSelected
+                ? (selectedDotIcon ?? BitmapDescriptor.defaultMarker)
+                : (greenDotIcon ?? BitmapDescriptor.defaultMarker);
+          }
+
+          newMarkers.add(
+            Marker(
+              markerId: MarkerId('city_dot_$i'),
+              position: allCentroids[i],
+              icon: icon,
+              anchor: const Offset(0.5, 0.5),
+              consumeTapEvents: true,
+              zIndexInt: isSelected ? 4 : 1,
+              onTap: () => onViewProperty(i, property),
+            ),
+          );
+        })(),
+      );
     }
 
     await Future.wait(futures);
@@ -147,7 +148,9 @@ class MapLayerBuilder {
           points: propPoints,
           strokeColor: const Color(0xFF4F5BD5),
           strokeWidth: isViewed ? 3 : 2,
-          fillColor: const Color(0xFF4F5BD5).withValues(alpha: isViewed ? 0.25 : 0.15),
+          fillColor: const Color(
+            0xFF4F5BD5,
+          ).withValues(alpha: isViewed ? 0.25 : 0.15),
           consumeTapEvents: true,
           onTap: () => onViewProperty(pIndex, detailedPropModels[pIndex]),
         ),
@@ -159,12 +162,22 @@ class MapLayerBuilder {
         final double area = measurements.area;
 
         if (isViewed) {
-          final double areaFontSize = _calculateFontSize(area, currentZoom, isArea: true);
-          final double edgeFontSize = _calculateFontSize(area, currentZoom, isArea: false);
+          final double areaFontSize = _calculateFontSize(
+            area,
+            currentZoom,
+            isArea: true,
+          );
+          final double edgeFontSize = _calculateFontSize(
+            area,
+            currentZoom,
+            isArea: false,
+          );
 
           // Vertex numbers
           for (int i = 0; i < propPoints.length; i++) {
-            final markerIcon = await DynamicMapMarkers.createNumberedMarker(i + 1);
+            final markerIcon = await DynamicMapMarkers.createNumberedMarker(
+              i + 1,
+            );
             newMarkers.add(
               Marker(
                 markerId: MarkerId('vertex_${pIndex}_$i'),
@@ -274,8 +287,10 @@ class MapLayerBuilder {
         ),
       );
 
-      final selectedVertexIconFuture = DynamicMapMarkers.createSelectedVertexMarker();
-      final defaultWhiteDotFuture = DynamicMapMarkers.createSmallWhiteDotMarker();
+      final selectedVertexIconFuture =
+          DynamicMapMarkers.createSelectedVertexMarker();
+      final defaultWhiteDotFuture =
+          DynamicMapMarkers.createSmallWhiteDotMarker();
 
       final measurements = calculateMeasurements(drawnPoints);
       final List<Future<BitmapDescriptor>> lengthIconFutures = [];
@@ -284,7 +299,11 @@ class MapLayerBuilder {
       if (measurements != null) {
         final double area = measurements.area;
         final bool showEdgeLengths = shouldShowDetailedView(area, currentZoom);
-        final double edgeFontSize = _calculateFontSize(area, currentZoom, isArea: false);
+        final double edgeFontSize = _calculateFontSize(
+          area,
+          currentZoom,
+          isArea: false,
+        );
 
         if (measurements.sides.isNotEmpty && showEdgeLengths) {
           for (int i = 0; i < drawnPoints.length; i++) {
@@ -427,14 +446,16 @@ class MapLayerBuilder {
             },
             icon: isLastPoint
                 ? (pinIcon ??
-                    BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed,
-                    ))
+                      BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed,
+                      ))
                 : (smallWhiteDotIcon ??
-                    BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed,
-                    )),
-            anchor: isLastPoint ? const Offset(0.5, 0.126) : const Offset(0.5, 0.5),
+                      BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed,
+                      )),
+            anchor: isLastPoint
+                ? const Offset(0.5, 0.126)
+                : const Offset(0.5, 0.5),
           ),
         );
       }
@@ -458,7 +479,11 @@ class MapLayerBuilder {
             (p1.longitude + p2.longitude) / 2,
           );
           final lengthStr = '${dist.toStringAsFixed(0)} m';
-          final double edgeFontSize = _calculateFontSize(0, currentZoom, isArea: false);
+          final double edgeFontSize = _calculateFontSize(
+            0,
+            currentZoom,
+            isArea: false,
+          );
           final lengthIcon = await DynamicMapMarkers.createTextMarker(
             lengthStr,
             fontSize: edgeFontSize,
@@ -490,7 +515,11 @@ class MapLayerBuilder {
     return currentZoom > 20.0;
   }
 
-  static double _calculateFontSize(double area, double currentZoom, {bool isArea = false}) {
+  static double _calculateFontSize(
+    double area,
+    double currentZoom, {
+    bool isArea = false,
+  }) {
     double size = isArea ? 13.5 : 11.0;
 
     if (currentZoom >= 19.0) {

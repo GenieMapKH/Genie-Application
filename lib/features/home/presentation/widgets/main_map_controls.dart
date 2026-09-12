@@ -49,9 +49,12 @@ class MainMapControls extends ConsumerWidget {
         if (!mapState.isDrawing)
           MapTopControls(
             currentSkin: mapState.currentSkin,
-            onToggleMapType: () => ref.read(mapStateProvider.notifier).toggleSkin(),
+            onToggleMapType: () =>
+                ref.read(mapStateProvider.notifier).toggleSkin(),
             onCoordinatesScanned: (result) {
-              ref.read(mapStateProvider.notifier).startDrawing(initialPoints: result);
+              ref
+                  .read(mapStateProvider.notifier)
+                  .startDrawing(initialPoints: result);
               onAnimateToCoordinates(result);
             },
           ),
@@ -60,9 +63,12 @@ class MainMapControls extends ConsumerWidget {
         if (!mapState.isDrawing)
           MapFloatingMenu(
             bottom: sideButtonBottom,
-            onDrawPressed: () => ref.read(mapStateProvider.notifier).startDrawing(),
+            onDrawPressed: () =>
+                ref.read(mapStateProvider.notifier).startDrawing(),
             onCoordinatesScanned: (result) {
-              ref.read(mapStateProvider.notifier).startDrawing(initialPoints: result);
+              ref
+                  .read(mapStateProvider.notifier)
+                  .startDrawing(initialPoints: result);
               onAnimateToCoordinates(result);
             },
           ),
@@ -90,15 +96,20 @@ class MainMapControls extends ConsumerWidget {
             isEditingPolygon: mapState.isEditingPolygon,
             onRevertPressed: () {
               if (mapState.isEditingPolygon) {
-                if (mapState.selectedVertexIndex != null && mapState.drawnPoints.length > 3) {
-                  ref.read(mapStateProvider.notifier).removeVertex(mapState.selectedVertexIndex!);
+                if (mapState.selectedVertexIndex != null &&
+                    mapState.drawnPoints.length > 3) {
+                  ref
+                      .read(mapStateProvider.notifier)
+                      .removeVertex(mapState.selectedVertexIndex!);
                 }
               } else {
                 ref.read(mapStateProvider.notifier).removeLastPoint();
               }
             },
-            onDeletePressed: () => ref.read(mapStateProvider.notifier).clearDrawing(),
-            onCancelPressed: () => ref.read(mapStateProvider.notifier).cancelDrawing(),
+            onDeletePressed: () =>
+                ref.read(mapStateProvider.notifier).clearDrawing(),
+            onCancelPressed: () =>
+                ref.read(mapStateProvider.notifier).cancelDrawing(),
             onSavePressed: () {
               if (mapState.drawnPoints.length >= 3) {
                 _showAddPropertyForm(context, ref, mapState.drawnPoints);
@@ -112,7 +123,11 @@ class MainMapControls extends ConsumerWidget {
     );
   }
 
-  Future<void> _showAddPropertyForm(BuildContext context, WidgetRef ref, List<LatLng> drawnPoints) async {
+  Future<void> _showAddPropertyForm(
+    BuildContext context,
+    WidgetRef ref,
+    List<LatLng> drawnPoints,
+  ) async {
     final token = await AuthStorage.getAccessToken();
     if (token == null) {
       if (context.mounted) {
@@ -130,7 +145,8 @@ class MainMapControls extends ConsumerWidget {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddPropertyPage(boundaryPoints: pointsCopy, propertyArea: area),
+        builder: (context) =>
+            AddPropertyPage(boundaryPoints: pointsCopy, propertyArea: area),
       ),
     );
 

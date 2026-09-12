@@ -26,14 +26,13 @@ class UserProfilePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppHeaderBar(
-              title: 'Account',
-              onBackPressed: onBackPressed,
-            ),
-            
-            if (profileAsync.hasError && profileAsync.hasValue && !profileAsync.isLoading)
+            AppHeaderBar(title: 'Account', onBackPressed: onBackPressed),
+
+            if (profileAsync.hasError &&
+                profileAsync.hasValue &&
+                !profileAsync.isLoading)
               _buildOfflineWarning(),
-              
+
             const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(

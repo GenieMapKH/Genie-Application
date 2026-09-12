@@ -31,8 +31,9 @@ class PropertyCarousel extends ConsumerStatefulWidget {
 }
 
 class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
-  late final PageController _controller =
-      PageController(viewportFraction: 0.88);
+  late final PageController _controller = PageController(
+    viewportFraction: 0.88,
+  );
 
   /// The last non-empty list. Held so the cards stay on screen through the
   /// slide-out animation after the selection is cleared, and so the PageView
@@ -50,7 +51,10 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
   }
 
   /// Keeps the PageView aligned with selections made on the map.
-  void _syncToState(PropertyCarouselState? previous, PropertyCarouselState next) {
+  void _syncToState(
+    PropertyCarouselState? previous,
+    PropertyCarouselState next,
+  ) {
     if (next.items.isEmpty) {
       _loadedAnchorId = null;
       return;
@@ -112,17 +116,21 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
                     child: PageView.builder(
                       controller: _controller,
                       itemCount: _items.length,
-                      onPageChanged:
-                          ref.read(propertyCarouselProvider.notifier).setIndex,
+                      onPageChanged: ref
+                          .read(propertyCarouselProvider.notifier)
+                          .setIndex,
                       itemBuilder: (context, index) {
                         final property = _items[index];
                         return Consumer(
                           builder: (context, ref, _) {
-                            final savedList = ref
-                                .watch(savedPropertiesProvider)
-                                .valueOrNull ?? [];
-                            final isSaved =
-                                savedList.any((p) => p.id == property.id);
+                            final savedList =
+                                ref
+                                    .watch(savedPropertiesProvider)
+                                    .valueOrNull ??
+                                [];
+                            final isSaved = savedList.any(
+                              (p) => p.id == property.id,
+                            );
 
                             return PropertyItemCard(
                               property: property,

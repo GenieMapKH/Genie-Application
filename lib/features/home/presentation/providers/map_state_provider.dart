@@ -61,9 +61,13 @@ class MapState {
           : (highlightedLocalPolygon ?? this.highlightedLocalPolygon),
       isDrawing: isDrawing ?? this.isDrawing,
       isEditingPolygon: isEditingPolygon ?? this.isEditingPolygon,
-      selectedVertexIndex: clearSelectedVertex ? null : (selectedVertexIndex ?? this.selectedVertexIndex),
+      selectedVertexIndex: clearSelectedVertex
+          ? null
+          : (selectedVertexIndex ?? this.selectedVertexIndex),
       drawnPoints: drawnPoints ?? this.drawnPoints,
-      backupPoints: clearBackupPoints ? null : (backupPoints ?? this.backupPoints),
+      backupPoints: clearBackupPoints
+          ? null
+          : (backupPoints ?? this.backupPoints),
       finalizedProperties: finalizedProperties ?? this.finalizedProperties,
     );
   }
@@ -79,8 +83,8 @@ class MapStateNotifier extends StateNotifier<MapState> {
   void toggleSkin() {
     state = state.copyWith(
       currentSkin: state.currentSkin == MapSkin.defaultMap
-        ? MapSkin.satellite
-        : MapSkin.defaultMap
+          ? MapSkin.satellite
+          : MapSkin.defaultMap,
     );
   }
 
@@ -108,11 +112,13 @@ class MapStateNotifier extends StateNotifier<MapState> {
   }
 
   void cancelDrawing() {
-    final List<List<LatLng>> newFinalized = List.from(state.finalizedProperties);
+    final List<List<LatLng>> newFinalized = List.from(
+      state.finalizedProperties,
+    );
     if (state.backupPoints != null) {
       newFinalized.add(state.backupPoints!);
     }
-    
+
     state = state.copyWith(
       isDrawing: false,
       isEditingPolygon: false,
@@ -139,9 +145,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
   }
 
   void addPoint(LatLng point) {
-    state = state.copyWith(
-      drawnPoints: [...state.drawnPoints, point]
-    );
+    state = state.copyWith(drawnPoints: [...state.drawnPoints, point]);
   }
 
   void removeLastPoint() {
@@ -154,10 +158,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
   void removeVertex(int index) {
     if (index >= 0 && index < state.drawnPoints.length) {
       final newPoints = List<LatLng>.from(state.drawnPoints)..removeAt(index);
-      state = state.copyWith(
-        drawnPoints: newPoints,
-        clearSelectedVertex: true,
-      );
+      state = state.copyWith(drawnPoints: newPoints, clearSelectedVertex: true);
     }
   }
 
@@ -170,11 +171,9 @@ class MapStateNotifier extends StateNotifier<MapState> {
   }
 
   void insertPoint(int index, LatLng point) {
-    final newPoints = List<LatLng>.from(state.drawnPoints)..insert(index, point);
-    state = state.copyWith(
-      drawnPoints: newPoints,
-      selectedVertexIndex: index,
-    );
+    final newPoints = List<LatLng>.from(state.drawnPoints)
+      ..insert(index, point);
+    state = state.copyWith(drawnPoints: newPoints, selectedVertexIndex: index);
   }
 
   void selectVertex(int? index) {
@@ -187,7 +186,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
   void editProperty(List<LatLng> propertyPoints) {
     final newFinalized = List<List<LatLng>>.from(state.finalizedProperties)
       ..removeWhere((p) => p.toString() == propertyPoints.toString());
-      
+
     state = state.copyWith(
       drawnPoints: List.from(propertyPoints),
       backupPoints: List.from(propertyPoints),
@@ -201,7 +200,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
   void finalizeDrawing() {
     final newFinalized = List<List<LatLng>>.from(state.finalizedProperties);
     newFinalized.add(List.from(state.drawnPoints));
-    
+
     state = state.copyWith(
       isDrawing: false,
       isEditingPolygon: false,
@@ -213,6 +212,8 @@ class MapStateNotifier extends StateNotifier<MapState> {
   }
 }
 
-final mapStateProvider = StateNotifierProvider<MapStateNotifier, MapState>((ref) {
+final mapStateProvider = StateNotifierProvider<MapStateNotifier, MapState>((
+  ref,
+) {
   return MapStateNotifier();
 });

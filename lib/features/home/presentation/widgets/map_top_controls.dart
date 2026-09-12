@@ -162,7 +162,7 @@ class MapTopControls extends StatelessWidget {
 
   Future<void> _handleScanClick(BuildContext context) async {
     final coordinates = await DocumentScannerService.scanCoordinates();
-    
+
     if (coordinates == null) return; // User cancelled
 
     if (context.mounted) {
@@ -180,7 +180,8 @@ class MapTopControls extends StatelessWidget {
         isScrollControlled: true,
         useRootNavigator: false,
         backgroundColor: Colors.transparent,
-        builder: (context) => UtmLocateBottomSheet(initialCoordinates: coordinates),
+        builder: (context) =>
+            UtmLocateBottomSheet(initialCoordinates: coordinates),
       );
 
       if (result != null && result.isNotEmpty) {

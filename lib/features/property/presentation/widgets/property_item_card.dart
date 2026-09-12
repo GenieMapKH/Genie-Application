@@ -44,42 +44,40 @@ class PropertyItemCard extends StatelessWidget {
               ],
             ),
             child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    PropertyImageGallery(
-                      imageUrls: property.imageUrls,
+              borderRadius: BorderRadius.circular(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        PropertyImageGallery(imageUrls: property.imageUrls),
+                        Positioned(
+                          top: 12,
+                          left: 12,
+                          child: _TypePill(propertyType: property.propertyType),
+                        ),
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: _FavoriteButton(
+                            isFavorite: isFavorite,
+                            onPressed: onFavoriteToggled,
+                          ),
+                        ),
+                      ],
                     ),
-                    Positioned(
-                      top: 12,
-                      left: 12,
-                      child: _TypePill(propertyType: property.propertyType),
-                    ),
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: _FavoriteButton(
-                        isFavorite: isFavorite,
-                        onPressed: onFavoriteToggled,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                    child: _Details(property: property),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-                child: _Details(property: property),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-      ),
       ),
     );
   }
@@ -211,13 +209,13 @@ class _FavoriteButtonState extends State<_FavoriteButton>
       duration: const Duration(milliseconds: 280),
     );
 
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.28), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.28, end: 1.0), weight: 50),
-    ]).animate(CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.28), weight: 50),
+          TweenSequenceItem(tween: Tween(begin: 1.28, end: 1.0), weight: 50),
+        ]).animate(
+          CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
+        );
   }
 
   @override
@@ -265,12 +263,15 @@ class _FavoriteButtonState extends State<_FavoriteButton>
             ),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+              transitionBuilder: (child, anim) =>
+                  ScaleTransition(scale: anim, child: child),
               child: Icon(
                 widget.isFavorite ? Icons.favorite : Icons.favorite_border,
                 key: ValueKey<bool>(widget.isFavorite),
                 size: 19,
-                color: widget.isFavorite ? const Color(0xFF5B5FEF) : const Color(0xFF111827),
+                color: widget.isFavorite
+                    ? const Color(0xFF5B5FEF)
+                    : const Color(0xFF111827),
               ),
             ),
           ),

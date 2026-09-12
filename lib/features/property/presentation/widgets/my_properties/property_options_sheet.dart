@@ -5,7 +5,11 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 import 'package:genie/shared/utils/app_popup.dart';
 
 class PropertyOptionsSheet {
-  static void show(BuildContext context, WidgetRef ref, PropertyModel property) {
+  static void show(
+    BuildContext context,
+    WidgetRef ref,
+    PropertyModel property,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -72,7 +76,12 @@ class PropertyOptionsSheet {
     );
   }
 
-  static Future<void> _changePropertyStatus(BuildContext context, WidgetRef ref, String id, bool publish) async {
+  static Future<void> _changePropertyStatus(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+    bool publish,
+  ) async {
     try {
       if (publish) {
         await ref.read(propertiesProvider.notifier).publishProperty(id);
@@ -92,7 +101,11 @@ class PropertyOptionsSheet {
     }
   }
 
-  static Future<void> _deleteProperty(BuildContext context, WidgetRef ref, String id) async {
+  static Future<void> _deleteProperty(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+  ) async {
     try {
       await ref.read(propertiesProvider.notifier).removeProperty(id);
       if (context.mounted) {

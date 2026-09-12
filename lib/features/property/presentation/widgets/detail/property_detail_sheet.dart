@@ -59,10 +59,7 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
           curve: const Cubic(0.16, 1.0, 0.3, 1.0),
           reverseCurve: const Cubic(0.16, 1.0, 0.3, 1.0),
         );
-        return FadeTransition(
-          opacity: curveAnimation,
-          child: child,
-        );
+        return FadeTransition(opacity: curveAnimation, child: child);
       },
     );
   }
@@ -103,7 +100,8 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
       propertyRecommendationsProvider(widget.property.id),
     );
 
-    final heroTag = widget.heroTag ?? 'property_card_hero_${widget.property.id}';
+    final heroTag =
+        widget.heroTag ?? 'property_card_hero_${widget.property.id}';
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -138,17 +136,23 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                 children: [
                                   NotificationListener<ScrollNotification>(
                                     onNotification: (notification) {
-                                      if (notification.metrics.axis == Axis.vertical) {
-                                        if (notification is ScrollUpdateNotification) {
-                                          if (notification.metrics.pixels < -40) {
+                                      if (notification.metrics.axis ==
+                                          Axis.vertical) {
+                                        if (notification
+                                            is ScrollUpdateNotification) {
+                                          if (notification.metrics.pixels <
+                                              -40) {
                                             _dismiss();
                                           }
-                                        } else if (notification is OverscrollNotification) {
+                                        } else if (notification
+                                            is OverscrollNotification) {
                                           if (notification.overscroll < -15) {
                                             _dismiss();
                                           }
-                                        } else if (notification is ScrollEndNotification) {
-                                          if (notification.metrics.pixels < -15) {
+                                        } else if (notification
+                                            is ScrollEndNotification) {
+                                          if (notification.metrics.pixels <
+                                              -15) {
                                             _dismiss();
                                           }
                                         }
@@ -167,7 +171,8 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                           child: _Body(
                                             property: widget.property,
                                             recommendations: recommendations,
-                                            onOpenProperty: widget.onOpenProperty,
+                                            onOpenProperty:
+                                                widget.onOpenProperty,
                                             onDismiss: _dismiss,
                                             isReady: _isReady,
                                           ),
@@ -176,15 +181,20 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                     ),
                                   ),
                                   PropertyDetailActions(
-                                    isFavorite: ref
+                                    isFavorite:
+                                        ref
                                             .watch(savedPropertiesProvider)
                                             .valueOrNull
-                                            ?.any((p) => p.id == widget.property.id) ??
+                                            ?.any(
+                                              (p) => p.id == widget.property.id,
+                                            ) ??
                                         false,
                                     onClose: _dismiss,
                                     onFavoriteToggled: () {
                                       ref
-                                          .read(savedPropertiesProvider.notifier)
+                                          .read(
+                                            savedPropertiesProvider.notifier,
+                                          )
                                           .toggleFavorite(widget.property);
                                     },
                                   ),
@@ -316,4 +326,3 @@ class _DragHandle extends StatelessWidget {
     );
   }
 }
-

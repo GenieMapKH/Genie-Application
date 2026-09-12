@@ -157,7 +157,9 @@ class DefaultPriceListingSettingsWidget extends StatelessWidget {
             required: true,
             controller: state.priceController,
             hintText: 'Enter selling price (USD)',
-            hasError: state.hasAttemptedSubmit && state.priceController.text.trim().isEmpty,
+            hasError:
+                state.hasAttemptedSubmit &&
+                state.priceController.text.trim().isEmpty,
             focusKey: state.priceKey,
           ),
         ),
@@ -168,7 +170,9 @@ class DefaultPriceListingSettingsWidget extends StatelessWidget {
             required: true,
             value: state.selectedListingSetting,
             items: const ['Sale', 'Rent', 'To Let'],
-            hasError: state.hasAttemptedSubmit && state.selectedListingSetting.isEmpty,
+            hasError:
+                state.hasAttemptedSubmit &&
+                state.selectedListingSetting.isEmpty,
             focusKey: state.listingSettingsKey,
             onChanged: onListingSettingChanged,
           ),

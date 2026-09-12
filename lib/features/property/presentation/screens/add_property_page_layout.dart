@@ -32,7 +32,9 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Error saving draft: ${e.toString()}'),
+                            content: Text(
+                              'Error saving draft: ${e.toString()}',
+                            ),
                           ),
                         );
                       }
@@ -79,13 +81,17 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                         controller: titleController,
                         hintText: 'Example: 10x30 Land Near National Road 1',
                         hasError:
-                            hasAttemptedSubmit && titleController.text.trim().isEmpty,
+                            hasAttemptedSubmit &&
+                            titleController.text.trim().isEmpty,
                         focusKey: titleKey,
                       ),
                       const SizedBox(height: 16),
                       buildDynamicFields(),
                       const SizedBox(height: 24),
-                      const PropertySectionTitle(title: 'Description', required: false),
+                      const PropertySectionTitle(
+                        title: 'Description',
+                        required: false,
+                      ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: descriptionController,
@@ -98,15 +104,21 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE5E7EB),
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFE5E7EB),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
-                            borderSide: const BorderSide(color: Color(0xFF3E49C7)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF3E49C7),
+                            ),
                           ),
                         ),
                       ),
@@ -139,7 +151,9 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                         controller: phoneController,
                         hintText: 'Phone Number (0...)',
                       ),
-                      const SizedBox(height: 100), // Bottom padding for sticky button
+                      const SizedBox(
+                        height: 100,
+                      ), // Bottom padding for sticky button
                     ],
                   ),
                 ),

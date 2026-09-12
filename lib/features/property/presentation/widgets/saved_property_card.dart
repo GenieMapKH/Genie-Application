@@ -185,7 +185,8 @@ class _AnimatedFavoriteButton extends StatefulWidget {
   const _AnimatedFavoriteButton({required this.isFavorite, this.onPressed});
 
   @override
-  State<_AnimatedFavoriteButton> createState() => _AnimatedFavoriteButtonState();
+  State<_AnimatedFavoriteButton> createState() =>
+      _AnimatedFavoriteButtonState();
 }
 
 class _AnimatedFavoriteButtonState extends State<_AnimatedFavoriteButton>
@@ -201,13 +202,13 @@ class _AnimatedFavoriteButtonState extends State<_AnimatedFavoriteButton>
       duration: const Duration(milliseconds: 280),
     );
 
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.28), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.28, end: 1.0), weight: 50),
-    ]).animate(CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.28), weight: 50),
+          TweenSequenceItem(tween: Tween(begin: 1.28, end: 1.0), weight: 50),
+        ]).animate(
+          CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
+        );
   }
 
   @override
@@ -255,12 +256,15 @@ class _AnimatedFavoriteButtonState extends State<_AnimatedFavoriteButton>
             ),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+              transitionBuilder: (child, anim) =>
+                  ScaleTransition(scale: anim, child: child),
               child: Icon(
                 widget.isFavorite ? Icons.favorite : Icons.favorite_border,
                 key: ValueKey<bool>(widget.isFavorite),
                 size: 18,
-                color: widget.isFavorite ? const Color(0xFF5B5FEF) : const Color(0xFF6B7280),
+                color: widget.isFavorite
+                    ? const Color(0xFF5B5FEF)
+                    : const Color(0xFF6B7280),
               ),
             ),
           ),

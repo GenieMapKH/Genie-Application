@@ -100,18 +100,12 @@ class _StatsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _Stat(
-          value: PropertyFormat.daysListed(property),
-          label: 'Genie',
-        ),
+        _Stat(value: PropertyFormat.daysListed(property), label: 'Genie'),
         const SizedBox(width: 24),
         // TODO(backend): no view counter exists yet; placeholder until it does.
         const _Stat(value: '1,688', label: 'Views'),
         const SizedBox(width: 24),
-        _Stat(
-          value: PropertyFormat.count(property.saveCount),
-          label: 'Saves',
-        ),
+        _Stat(value: PropertyFormat.count(property.saveCount), label: 'Saves'),
       ],
     );
   }

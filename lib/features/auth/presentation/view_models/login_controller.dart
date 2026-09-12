@@ -73,4 +73,3 @@ class LoginController extends StateNotifier<AsyncValue<bool>> {
     }
   }
 }
-

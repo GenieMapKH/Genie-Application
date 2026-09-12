@@ -98,7 +98,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
         onSelectProperty: (property) {
           if (ref.read(mapStateProvider).isDrawing) return;
           ref.read(propertyCarouselProvider.notifier).select(property);
-          
+
           if (!property.isVisited) {
             // Optimistically mark as visited in UI
             ref.read(visitedPropertyIdsProvider.notifier).add(property.id);
@@ -251,11 +251,11 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     ref.listen(propertyCarouselProvider, (previous, next) {
       if (previous?.selected?.id == next.selected?.id) return;
       _updateMapOverlays();
-      
+
       final property = next.selected;
       if (property != null) {
         _focusOnProperty(property);
-        
+
         if (!property.isVisited) {
           // Optimistically mark as visited in UI when swiped to
           ref.read(visitedPropertyIdsProvider.notifier).add(property.id);

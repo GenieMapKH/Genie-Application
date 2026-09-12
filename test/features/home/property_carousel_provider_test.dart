@@ -58,8 +58,9 @@ void main() {
     });
 
     test('falls back to the pin when there is no boundary', () {
-      final center =
-          PropertyCarouselNotifier.centerOf(_property('a', lat: 11.5, lng: 104.9));
+      final center = PropertyCarouselNotifier.centerOf(
+        _property('a', lat: 11.5, lng: 104.9),
+      );
 
       expect(center, const LatLng(11.5, 104.9));
     });
@@ -80,10 +81,7 @@ void main() {
       container.read(propertyCarouselProvider.notifier).select(anchor);
 
       final state = container.read(propertyCarouselProvider);
-      expect(
-        state.items.map((p) => p.id),
-        ['anchor', 'near', 'mid', 'far'],
-      );
+      expect(state.items.map((p) => p.id), ['anchor', 'near', 'mid', 'far']);
       expect(state.index, 0);
       expect(state.selected?.id, 'anchor');
       expect(state.isVisible, isTrue);
@@ -97,10 +95,10 @@ void main() {
       final container = _containerWith([anchor, located, unlocated]);
       container.read(propertyCarouselProvider.notifier).select(anchor);
 
-      expect(
-        container.read(propertyCarouselProvider).items.map((p) => p.id),
-        ['anchor', 'located'],
-      );
+      expect(container.read(propertyCarouselProvider).items.map((p) => p.id), [
+        'anchor',
+        'located',
+      ]);
     });
 
     test('moves the index without rebuilding when already in the list', () {

@@ -77,8 +77,8 @@ class SavedPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
 
 final savedPropertiesProvider =
     AsyncNotifierProvider<SavedPropertiesNotifier, List<PropertyModel>>(() {
-  return SavedPropertiesNotifier();
-});
+      return SavedPropertiesNotifier();
+    });
 
 final sortedSavedPropertiesProvider = Provider<List<PropertyModel>>((ref) {
   final savedState = ref.watch(savedPropertiesProvider);
@@ -86,7 +86,7 @@ final sortedSavedPropertiesProvider = Provider<List<PropertyModel>>((ref) {
   final mapProps = ref.watch(mapPropertiesProvider).properties;
 
   if (!savedState.hasValue) return [];
-  
+
   final list = savedState.value!.map((saved) {
     if (saved.imageUrls.isEmpty) {
       final match = mapProps.firstWhere(

@@ -57,10 +57,16 @@ void main() {
     });
 
     test('shifts less at higher zoom, where a pixel spans less ground', () {
-      final atLowZoom =
-          MapCameraFocus.offsetForBottomInset(center, 15, 360).latitude;
-      final atHighZoom =
-          MapCameraFocus.offsetForBottomInset(center, 19, 360).latitude;
+      final atLowZoom = MapCameraFocus.offsetForBottomInset(
+        center,
+        15,
+        360,
+      ).latitude;
+      final atHighZoom = MapCameraFocus.offsetForBottomInset(
+        center,
+        19,
+        360,
+      ).latitude;
 
       final lowShift = center.latitude - atLowZoom;
       final highShift = center.latitude - atHighZoom;

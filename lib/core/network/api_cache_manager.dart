@@ -32,7 +32,9 @@ class ApiCacheManager {
       return path;
     }
     final sortedKeys = queryParameters.keys.toList()..sort();
-    final queryString = sortedKeys.map((k) => '$k=${queryParameters[k]}').join('&');
+    final queryString = sortedKeys
+        .map((k) => '$k=${queryParameters[k]}')
+        .join('&');
     return '$path?$queryString';
   }
 
@@ -48,7 +50,12 @@ class ApiCacheManager {
   }
 
   /// Put response into cache
-  void set(String key, dynamic data, {String? etag, Duration ttl = const Duration(minutes: 5)}) {
+  void set(
+    String key,
+    dynamic data, {
+    String? etag,
+    Duration ttl = const Duration(minutes: 5),
+  }) {
     if (_cache.length >= _maxCacheEntries) {
       // Remove oldest entry
       final firstKey = _cache.keys.first;
@@ -94,7 +101,7 @@ class CacheInterceptor extends Interceptor {
       if (cached.etag != null && cached.etag!.isNotEmpty) {
         options.headers['If-None-Match'] = cached.etag;
       }
-      
+
       // Store cached data in extra so onResponse / onError can utilize it
       options.extra['cached_entry'] = cached;
     }

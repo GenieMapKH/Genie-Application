@@ -11,7 +11,11 @@ class LandPropertyForm extends StatelessWidget {
   final AddPropertyPageState state;
   final Function(VoidCallback) updateState;
 
-  const LandPropertyForm({super.key, required this.state, required this.updateState});
+  const LandPropertyForm({
+    super.key,
+    required this.state,
+    required this.updateState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,8 @@ class LandPropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null) updateState(() => state.selectedListingSetting = val);
+            if (val != null)
+              updateState(() => state.selectedListingSetting = val);
           },
         ),
         _buildSpacing(),
@@ -42,7 +47,11 @@ class HousePropertyForm extends StatelessWidget {
   final AddPropertyPageState state;
   final Function(VoidCallback) updateState;
 
-  const HousePropertyForm({super.key, required this.state, required this.updateState});
+  const HousePropertyForm({
+    super.key,
+    required this.state,
+    required this.updateState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +61,8 @@ class HousePropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null) updateState(() => state.selectedListingSetting = val);
+            if (val != null)
+              updateState(() => state.selectedListingSetting = val);
           },
         ),
         _buildSpacing(),
@@ -100,7 +110,11 @@ class BuildingPropertyForm extends StatelessWidget {
   final AddPropertyPageState state;
   final Function(VoidCallback) updateState;
 
-  const BuildingPropertyForm({super.key, required this.state, required this.updateState});
+  const BuildingPropertyForm({
+    super.key,
+    required this.state,
+    required this.updateState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -110,13 +124,15 @@ class BuildingPropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null) updateState(() => state.selectedListingSetting = val);
+            if (val != null)
+              updateState(() => state.selectedListingSetting = val);
           },
         ),
         _buildSpacing(),
         BuildingTypeFieldWidget(
           value: state.selectedBuildingType,
-          onChanged: (val) => updateState(() => state.selectedBuildingType = val),
+          onChanged: (val) =>
+              updateState(() => state.selectedBuildingType = val),
         ),
         _buildSpacing(),
         LandSizeFieldWidget(state: state),
@@ -153,7 +169,11 @@ class CondoPropertyForm extends StatelessWidget {
   final AddPropertyPageState state;
   final Function(VoidCallback) updateState;
 
-  const CondoPropertyForm({super.key, required this.state, required this.updateState});
+  const CondoPropertyForm({
+    super.key,
+    required this.state,
+    required this.updateState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +183,8 @@ class CondoPropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null) updateState(() => state.selectedListingSetting = val);
+            if (val != null)
+              updateState(() => state.selectedListingSetting = val);
           },
         ),
         _buildSpacing(),
@@ -171,7 +192,8 @@ class CondoPropertyForm extends StatelessWidget {
         _buildSpacing(),
         FloorNumberFieldWidget(
           value: state.selectedFloorNumber,
-          onChanged: (val) => updateState(() => state.selectedFloorNumber = val),
+          onChanged: (val) =>
+              updateState(() => state.selectedFloorNumber = val),
         ),
         _buildSpacing(),
         TotalFloorsFieldWidget(
@@ -202,7 +224,8 @@ class CondoPropertyForm extends StatelessWidget {
         _buildSpacing(),
         CompletionStatusFieldWidget(
           value: state.selectedCompletionStatus,
-          onChanged: (val) => updateState(() => state.selectedCompletionStatus = val),
+          onChanged: (val) =>
+              updateState(() => state.selectedCompletionStatus = val),
         ),
         _buildSpacing(),
         ViewTypeFieldWidget(
@@ -227,7 +250,11 @@ class BoreyPropertyForm extends StatelessWidget {
   final AddPropertyPageState state;
   final Function(VoidCallback) updateState;
 
-  const BoreyPropertyForm({super.key, required this.state, required this.updateState});
+  const BoreyPropertyForm({
+    super.key,
+    required this.state,
+    required this.updateState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +278,8 @@ class BoreyPropertyForm extends StatelessWidget {
         _buildSpacing(),
         ProjectTypeFieldWidget(
           value: state.selectedProjectType,
-          onChanged: (val) => updateState(() => state.selectedProjectType = val),
+          onChanged: (val) =>
+              updateState(() => state.selectedProjectType = val),
         ),
         _buildSpacing(),
         PropertyTextField(
@@ -271,7 +299,8 @@ class BoreyPropertyForm extends StatelessWidget {
         _buildSpacing(),
         BoreyCompletionStatusFieldWidget(
           value: state.selectedCompletionStatus,
-          onChanged: (val) => updateState(() => state.selectedCompletionStatus = val),
+          onChanged: (val) =>
+              updateState(() => state.selectedCompletionStatus = val),
         ),
         _buildSpacing(),
         PropertyTextField(
@@ -297,7 +326,11 @@ class BusinessPropertyForm extends StatelessWidget {
   final AddPropertyPageState state;
   final Function(VoidCallback) updateState;
 
-  const BusinessPropertyForm({super.key, required this.state, required this.updateState});
+  const BusinessPropertyForm({
+    super.key,
+    required this.state,
+    required this.updateState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -319,23 +352,27 @@ class BusinessPropertyForm extends StatelessWidget {
           required: true,
           value: state.selectedListingSetting,
           items: const ['Sale', 'Rent', 'To Let'],
-          hasError: state.hasAttemptedSubmit && state.selectedListingSetting.isEmpty,
+          hasError:
+              state.hasAttemptedSubmit && state.selectedListingSetting.isEmpty,
           focusKey: state.listingSettingsKey,
           onChanged: (val) {
-            if (val != null) updateState(() => state.selectedListingSetting = val);
+            if (val != null)
+              updateState(() => state.selectedListingSetting = val);
           },
         ),
         _buildSpacing(),
         LeaseRemainingFieldWidget(
           state: state,
-          onUnitChanged: (val) => updateState(() => state.selectedLeaseUnit = val),
+          onUnitChanged: (val) =>
+              updateState(() => state.selectedLeaseUnit = val),
         ),
         _buildSpacing(),
         PropertyTextField(
           label: 'Equipment Included',
           required: false,
           controller: state.equipmentIncludedController,
-          hintText: 'List furniture, kitchen equipment, machines, POS system, etc.',
+          hintText:
+              'List furniture, kitchen equipment, machines, POS system, etc.',
           infoText: 'Describe assets included in sale',
         ),
         _buildSpacing(),

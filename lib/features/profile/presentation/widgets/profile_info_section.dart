@@ -28,14 +28,24 @@ class ProfileInfoSection extends ConsumerWidget {
             icon: Icons.person_outline,
             title: 'Name',
             value: profile.displayName,
-            onTap: () => ProfileEditDialog.show(context, 'Username', 'username', profile.username),
+            onTap: () => ProfileEditDialog.show(
+              context,
+              'Username',
+              'username',
+              profile.username,
+            ),
           ),
           _buildDivider(),
           _buildListItem(
             icon: Icons.phone_outlined,
             title: 'Phone number',
             value: profile.phone ?? 'Not set',
-            onTap: () => ProfileEditDialog.show(context, 'Phone Number', 'phone', profile.phone),
+            onTap: () => ProfileEditDialog.show(
+              context,
+              'Phone Number',
+              'phone',
+              profile.phone,
+            ),
           ),
           _buildDivider(),
           _buildListItem(
