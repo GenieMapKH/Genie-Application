@@ -25,8 +25,9 @@ class LandPropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null)
+            if (val != null) {
               updateState(() => state.selectedListingSetting = val);
+            }
           },
         ),
         _buildSpacing(),
@@ -61,8 +62,9 @@ class HousePropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null)
+            if (val != null) {
               updateState(() => state.selectedListingSetting = val);
+            }
           },
         ),
         _buildSpacing(),
@@ -124,8 +126,9 @@ class BuildingPropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null)
+            if (val != null) {
               updateState(() => state.selectedListingSetting = val);
+            }
           },
         ),
         _buildSpacing(),
@@ -183,8 +186,9 @@ class CondoPropertyForm extends StatelessWidget {
         DefaultPriceListingSettingsWidget(
           state: state,
           onListingSettingChanged: (val) {
-            if (val != null)
+            if (val != null) {
               updateState(() => state.selectedListingSetting = val);
+            }
           },
         ),
         _buildSpacing(),
@@ -356,8 +360,9 @@ class BusinessPropertyForm extends StatelessWidget {
               state.hasAttemptedSubmit && state.selectedListingSetting.isEmpty,
           focusKey: state.listingSettingsKey,
           onChanged: (val) {
-            if (val != null)
+            if (val != null) {
               updateState(() => state.selectedListingSetting = val);
+            }
           },
         ),
         _buildSpacing(),

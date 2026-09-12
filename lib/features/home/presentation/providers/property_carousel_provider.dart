@@ -66,8 +66,9 @@ class PropertyCarouselNotifier extends Notifier<PropertyCarouselState> {
 
   /// Called when the user swipes the PageView to a different card.
   void setIndex(int index) {
-    if (index < 0 || index >= state.items.length || index == state.index)
+    if (index < 0 || index >= state.items.length || index == state.index) {
       return;
+    }
     state = PropertyCarouselState(items: state.items, index: index);
   }
 
