@@ -135,7 +135,7 @@ class ChatSocketService {
     }
   }
 
-  Future<ChatMessage?> decryptMessagePayload(Map<String, dynamic> data) async {
+  Future<ChatMessage?> decryptMessagePayload(Map<String, dynamic> data, {String? currentUserId}) async {
     try {
       final senderId = data['senderId'];
       final recipientId = data['recipientId'];
@@ -143,10 +143,23 @@ class ChatSocketService {
       final keyPair = await keyService.getIdentityKeyPair();
       if (keyPair == null) return null;
 
-      // Fetch public key of the other party in the conversation
-      final otherUserId = (senderId == keyPair.userId) ? recipientId : senderId;
-      final response = await dio.get('/chat/keys/$otherUserId');
-      final otherPubKeyBase64 = response.data['identityPublicKey'];
+      // Determine which participant's public key we need:
+      String otherUserId;
+      if (currentUserId != null && senderId == currentUserId) {
+        otherUserId = recipientId;
+      } else {
+        otherUserId = senderId;
+      }
+
+      var response = await dio.get('/chat/keys/$otherUserId');
+      var otherPubKeyBase64 = response.data['identityPublicKey'];
+
+      if (otherPubKeyBase64 == null && otherUserId != recipientId) {
+        otherUserId = recipientId;
+        response = await dio.get('/chat/keys/$otherUserId');
+        otherPubKeyBase64 = response.data['identityPublicKey'];
+      }
+
       if (otherPubKeyBase64 == null) return null;
 
       final otherPubKey = base64Decode(otherPubKeyBase64);
@@ -166,8 +179,34 @@ class ChatSocketService {
         createdAt: DateTime.parse(data['createdAt']),
       );
     } catch (e) {
-      print('Failed to decrypt message payload: $e');
-      return null;
+      try {
+        final recipientId = data['recipientId'];
+        final senderId = data['senderId'];
+        final keyPair = await keyService.getIdentityKeyPair();
+        if (keyPair == null) return null;
+
+        final response = await dio.get('/chat/keys/$recipientId');
+        final pubKeyBase64 = response.data['identityPublicKey'];
+        if (pubKeyBase64 == null) return null;
+
+        final plaintext = cryptoService.decryptMessage(
+          data['ciphertext'],
+          data['nonce'],
+          base64Decode(pubKeyBase64),
+          keyPair.secretKey,
+        );
+
+        return ChatMessage(
+          id: data['id'],
+          senderId: senderId,
+          recipientId: recipientId,
+          text: plaintext,
+          createdAt: DateTime.parse(data['createdAt']),
+        );
+      } catch (_) {
+        print('Failed to decrypt message payload: $e');
+        return null;
+      }
     }
   }
 }
