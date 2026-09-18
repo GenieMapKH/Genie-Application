@@ -27,17 +27,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        final profile = await ref.read(userProfileProvider.future);
-        if (mounted) {
-          final initService = ref.read(e2eeInitServiceProvider);
-          await initService.initializeE2EE(context, profile.id);
-        }
-      } catch (e) {
-        debugPrint('Failed to initialize E2EE in ChatList: $e');
-      }
-    });
+    // PIN prompt will only occur when navigating to a ChatConversationPage
   }
 
   @override
