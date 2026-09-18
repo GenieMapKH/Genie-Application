@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:genie/services/crypto_service.dart';
 import 'package:genie/services/key_service.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
@@ -42,8 +43,10 @@ class ChatSocketService {
     final token = await AuthStorage.getAccessToken();
     if (token == null) return;
 
+    final baseUrl = dotenv.env['API_BASE_URL'] ?? 'https://gateway-production-c0c5.up.railway.app';
+
     _socket = IO.io(
-      'http://10.0.2.2:4000/chat', // Adjust this to match your gateway URL
+      '$baseUrl/chat', // Adjust this to match your gateway URL
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
