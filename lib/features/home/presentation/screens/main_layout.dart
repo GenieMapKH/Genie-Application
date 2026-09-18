@@ -12,10 +12,12 @@ import 'package:genie/features/home/presentation/widgets/main_map_controls.dart'
 import 'package:genie/features/home/presentation/widgets/main_bottom_nav.dart';
 import 'package:genie/features/home/presentation/widgets/property_carousel.dart';
 import 'package:genie/features/home/presentation/widgets/main_layout_pages.dart';
-import 'package:genie/features/home/utils/map_location_service.dart';
+import 'package:genie/features/home/utils/map/map_location_service.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:genie/features/chat/providers/chat_provider.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
   const MainLayout({super.key});
@@ -39,7 +41,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final token = await AuthStorage.getAccessToken();
     if ((token == null || token.isEmpty) && mounted) {
       final currentIdx = ref.read(mainNavProvider).currentIndex;
-      if (currentIdx == 1 || currentIdx == 3 || currentIdx == 4) {
+      if (currentIdx == 1 || currentIdx == 2 || currentIdx == 3 || currentIdx == 4) {
         ref.read(mainNavProvider.notifier).resetToHome();
       }
     }
@@ -119,6 +121,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final isCardVisible = ref.watch(propertyCarouselProvider).isVisible;
     final bool overlayPage =
         navState.currentIndex == 1 ||
+        navState.currentIndex == 2 ||
         navState.currentIndex == 3 ||
         navState.currentIndex == 4;
 

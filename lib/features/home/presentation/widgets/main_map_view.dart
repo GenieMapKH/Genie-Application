@@ -8,10 +8,10 @@ import 'package:genie/features/home/presentation/providers/map_state_provider.da
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
-import 'package:genie/features/home/utils/map_camera_focus.dart';
-import 'package:genie/features/home/utils/map_markers.dart';
-import 'package:genie/features/home/utils/map_overlay_builder.dart';
-import 'package:genie/features/home/utils/svg_marker.dart';
+import 'package:genie/features/home/utils/map/map_camera_focus.dart';
+import 'package:genie/features/home/utils/map/map_markers.dart';
+import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
+import 'package:genie/features/home/utils/map/svg_marker.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/storage/map_storage.dart';
 import 'package:genie/features/home/presentation/widgets/property_carousel.dart';

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
+import 'package:genie/features/auth/presentation/view_models/login_form_provider.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
@@ -12,8 +13,6 @@ import 'package:genie/features/profile/presentation/view_models/user_providers.d
 import '../widgets/login_header.dart';
 import '../widgets/login_form.dart';
 import '../widgets/social_login_buttons.dart';
-
-enum AuthMethod { email, phone }
 
 /// Login screen supporting Email and Phone Number authentication methods,
 /// Google OAuth login, "Keep me signed in" preference, and custom error states.
@@ -39,18 +38,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
 
-  AuthMethod _selectedMethod = AuthMethod.email;
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  String? _emailError;
-  String? _phoneError;
-  String? _passwordError;
-
-  bool _obscurePassword = true;
-  bool _keepMeSignedIn = true;
 
   late AnimationController _entryController;
   late Animation<double> _headerFade;
@@ -129,51 +119,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
     super.dispose();
   }
 
-  bool _validateEmail(String value) {
-    final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$');
-    return emailRegex.hasMatch(value.trim());
-  }
-
-  bool _validatePhone(String value) {
-    final clean = value.replaceAll(RegExp(r'[\s\-()]'), '');
-    final phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-    return phoneRegex.hasMatch(clean);
-  }
-
-  bool _validateForm() {
-    var isValid = true;
-
-    setState(() {
-      if (_selectedMethod == AuthMethod.email) {
-        if (!_validateEmail(_emailController.text)) {
-          _emailError = 'Enter a valid email address';
-          isValid = false;
-        } else {
-          _emailError = null;
-        }
-      } else {
-        if (!_validatePhone(_phoneController.text)) {
-          _phoneError = 'Enter a valid phone number';
-          isValid = false;
-        } else {
-          _phoneError = null;
-        }
-      }
-
-      if (_passwordController.text.isEmpty) {
-        _passwordError = 'Enter a valid password';
-        isValid = false;
-      } else if (_passwordController.text.length < 6) {
-        _passwordError = 'Password must be at least 6 characters';
-        isValid = false;
-      } else {
-        _passwordError = null;
-      }
-    });
-
-    return isValid;
-  }
-
   void _onAuthSuccess() {
     if (!mounted) return;
     AppPopup.showSuccess(context, 'Successfully logged in!');
@@ -187,32 +132,15 @@ class _LoginPageState extends ConsumerState<LoginPage>
   }
 
   Future<void> _handleLogin() async {
-    final isValid = _validateForm();
-    if (isValid) {
-      bool success = false;
-      if (_selectedMethod == AuthMethod.email) {
-        success = await ref
-            .read(loginControllerProvider.notifier)
-            .login(_emailController.text.trim(), _passwordController.text);
-      } else {
-        final cleanPhone = _phoneController.text.replaceAll(
-          RegExp(r'[\s\-()]'),
-          '',
-        );
-        success = await ref
-            .read(loginControllerProvider.notifier)
-            .login(cleanPhone, _passwordController.text);
-      }
-
-      if (success && mounted) {
-        widget.onLoginPressed?.call();
-        _onAuthSuccess();
-      }
+    final success = await ref.read(loginFormProvider.notifier).submit();
+    if (success && mounted) {
+      widget.onLoginPressed?.call();
+      _onAuthSuccess();
     }
   }
 
-  Widget _buildAnimatedTabBar() {
-    final isEmail = _selectedMethod == AuthMethod.email;
+  Widget _buildAnimatedTabBar(AuthMethod selectedMethod) {
+    final isEmail = selectedMethod == AuthMethod.email;
 
     return SizedBox(
       height: 34,
@@ -223,12 +151,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
             children: [
               GestureDetector(
                 onTap: () {
-                  if (_selectedMethod != AuthMethod.email) {
-                    setState(() {
-                      _selectedMethod = AuthMethod.email;
-                      _phoneError = null;
-                    });
-                  }
+                  ref.read(loginFormProvider.notifier).setMethod(AuthMethod.email);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 6.0),
@@ -249,12 +172,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
               const SizedBox(width: 24),
               GestureDetector(
                 onTap: () {
-                  if (_selectedMethod != AuthMethod.phone) {
-                    setState(() {
-                      _selectedMethod = AuthMethod.phone;
-                      _emailError = null;
-                    });
-                  }
+                  ref.read(loginFormProvider.notifier).setMethod(AuthMethod.phone);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 6.0),
@@ -298,6 +216,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
   @override
   Widget build(BuildContext context) {
     final loginState = ref.watch(loginControllerProvider);
+    final formState = ref.watch(loginFormProvider);
+    final formNotifier = ref.read(loginFormProvider.notifier);
 
     ref.listen<AsyncValue<bool>>(loginControllerProvider, (previous, next) {
       if (next.isLoading) return;
@@ -335,61 +255,34 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       fadeAnimation: _headerFade,
                     ),
                     const SizedBox(height: 32),
-                    _buildAnimatedTabBar(),
+                    _buildAnimatedTabBar(formState.selectedMethod),
                     const SizedBox(height: 24),
                     LoginForm(
                       slideAnimation: _formSlide,
                       fadeAnimation: _formFade,
-                      selectedMethod: _selectedMethod,
+                      selectedMethod: formState.selectedMethod,
                       emailController: _emailController,
                       phoneController: _phoneController,
                       passwordController: _passwordController,
-                      emailError: _emailError,
-                      phoneError: _phoneError,
-                      passwordError: _passwordError,
-                      obscurePassword: _obscurePassword,
-                      keepMeSignedIn: _keepMeSignedIn,
+                      emailError: formState.emailError,
+                      phoneError: formState.phoneError,
+                      passwordError: formState.passwordError,
+                      obscurePassword: formState.obscurePassword,
+                      keepMeSignedIn: formState.keepMeSignedIn,
                       onEmailChanged: (val) {
-                        if (_emailError != null) {
-                          setState(() {
-                            _emailError = _validateEmail(val)
-                                ? null
-                                : 'Enter a valid email address';
-                          });
-                        }
+                        formNotifier.setEmail(val);
                       },
                       onPhoneChanged: (val) {
-                        if (_phoneError != null) {
-                          setState(() {
-                            _phoneError = _validatePhone(val)
-                                ? null
-                                : 'Enter a valid phone number';
-                          });
-                        }
+                        formNotifier.setPhone(val);
                       },
                       onPasswordChanged: (val) {
-                        if (_passwordError != null) {
-                          setState(() {
-                            if (val.isEmpty) {
-                              _passwordError = 'Enter a valid password';
-                            } else if (val.length < 6) {
-                              _passwordError =
-                                  'Password must be at least 6 characters';
-                            } else {
-                              _passwordError = null;
-                            }
-                          });
-                        }
+                        formNotifier.setPassword(val);
                       },
                       onTogglePasswordVisibility: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
+                        formNotifier.togglePasswordVisibility();
                       },
                       onKeepMeSignedInChanged: (val) {
-                        setState(() {
-                          _keepMeSignedIn = val ?? false;
-                        });
+                        formNotifier.setKeepMeSignedIn(val ?? false);
                       },
                       onForgotPasswordPressed: () {
                         if (widget.onForgotPasswordPressed != null) {

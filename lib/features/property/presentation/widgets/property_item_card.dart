@@ -125,7 +125,7 @@ class _Details extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Listing by: ${property.ownerName ?? 'Genie'}',
+          'Listing by: ${property.ownerName ?? 'Unknown'}',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.inter(

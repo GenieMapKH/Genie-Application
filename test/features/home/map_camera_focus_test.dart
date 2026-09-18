@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/utils/map_camera_focus.dart';
+import 'package:genie/features/home/utils/map/map_camera_focus.dart';
 
 void main() {
   group('zoomToFit', () {

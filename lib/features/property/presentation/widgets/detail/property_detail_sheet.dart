@@ -12,6 +12,7 @@ import 'package:genie/features/property/presentation/widgets/detail/property_gri
 import 'package:genie/features/property/presentation/widgets/detail/property_highlights.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_map_preview.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_share_section.dart';
+import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 
 /// Full-detail view for a property, opened by tapping or flicking up the map
 /// card.
@@ -201,7 +202,25 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                 ],
                               ),
                             ),
-                            PropertyContactBar(onChat: () {}, onCall: () {}),
+                            PropertyContactBar(
+                              onChat: () {
+                                if (widget.property.ownerId != null) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatConversationPage(
+                                        participantId: widget.property.ownerId!,
+                                        participantName: widget.property.ownerName ?? 'Property Owner',
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Cannot chat: owner information missing.')),
+                                  );
+                                }
+                              },
+                              onCall: () {},
+                            ),
                           ],
                         ),
                       ),
@@ -326,3 +345,4 @@ class _DragHandle extends StatelessWidget {
     );
   }
 }
+

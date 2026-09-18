@@ -9,7 +9,7 @@ import 'package:genie/shared/utils/app_popup.dart';
 
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/presentation/widgets/property_type_filters.dart';
-import 'package:genie/features/home/utils/document_scanner_service.dart';
+import 'package:genie/features/home/utils/scanner/document_scanner_service.dart';
 
 class MapTopControls extends StatelessWidget {
   final MapSkin currentSkin;

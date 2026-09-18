@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genie/services/crypto_service.dart';
+import 'package:genie/features/chat/providers/chat_provider.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -27,5 +29,12 @@ void main() async {
     }
   }
 
-  runApp(const ProviderScope(child: MyApp()));
+  final cryptoService = await CryptoService.init();
+
+  runApp(ProviderScope(
+    overrides: [
+      cryptoServiceProvider.overrideWithValue(cryptoService),
+    ],
+    child: const MyApp(),
+  ));
 }

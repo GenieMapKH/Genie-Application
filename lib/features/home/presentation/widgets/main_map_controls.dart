@@ -14,7 +14,7 @@ import 'package:genie/features/property/presentation/screens/add_property_page.d
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/features/home/utils/map_measurements.dart';
+import 'package:genie/features/home/utils/map/map_measurements.dart';
 
 class MainMapControls extends ConsumerWidget {
   final VoidCallback onGoToCurrentPosition;

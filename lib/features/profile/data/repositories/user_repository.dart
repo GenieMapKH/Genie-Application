@@ -8,6 +8,7 @@ class UserProfile {
   final String role;
   final DateTime createdAt;
   final String? firebaseUid;
+  final String? avatarUrl;
 
   UserProfile({
     required this.id,
@@ -17,6 +18,7 @@ class UserProfile {
     required this.role,
     required this.createdAt,
     this.firebaseUid,
+    this.avatarUrl,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class UserProfile {
       role: json['role'] ?? 'user',
       createdAt: DateTime.parse(json['createdAt']),
       firebaseUid: json['firebaseUid'],
+      avatarUrl: json['avatarUrl'],
     );
   }
 
@@ -78,10 +81,11 @@ class UserRepository {
     throw Exception('Failed to load profile after multiple retries.');
   }
 
-  Future<UserProfile> updateProfile({String? username, String? phone}) async {
+  Future<UserProfile> updateProfile({String? username, String? phone, String? avatarUrl}) async {
     final data = <String, dynamic>{};
     if (username != null) data['username'] = username;
     if (phone != null) data['phone'] = phone;
+    if (avatarUrl != null) data['avatarUrl'] = avatarUrl;
 
     final response = await dio.patch('/users/me', data: data);
     return UserProfile.fromJson(response.data);

@@ -3,8 +3,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/utils/map_layer_builder.dart';
-import 'package:genie/features/home/utils/map_measurements.dart';
+import 'package:genie/features/home/utils/map/map_layer_builder.dart';
+import 'package:genie/features/home/utils/map/map_measurements.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 
 /// The icon set the overlay builder draws with. Loaded once by the map view.

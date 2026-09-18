@@ -3,71 +3,76 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
 import 'add_property_page.dart';
-import 'add_property_page_layout.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {
-  void validateForm() {
+  
+  void validateAndSubmit() async {
     setState(() => hasAttemptedSubmit = true);
 
-    GlobalKey? firstErrorKey;
+    final validation = ref.read(addPropertyControllerProvider.notifier).validatePropertyForm(
+      title: titleController.text,
+      price: priceController.text,
+      propertyType: selectedPropertyType,
+      listingSetting: selectedListingSetting,
+      landSize: landSizeController.text,
+      buildingSize: buildingSizeController.text,
+      unitSize: unitSizeController.text,
+    );
 
-    if (titleController.text.trim().isEmpty) firstErrorKey ??= titleKey;
-
-    if (selectedPropertyType == 'Land' || selectedPropertyType.isEmpty) {
-      if (priceController.text.trim().isEmpty) firstErrorKey ??= priceKey;
-      if (selectedListingSetting.isEmpty) {
-        firstErrorKey ??= listingSettingsKey;
+    if (!validation.isValid) {
+      GlobalKey? firstErrorKey;
+      switch (validation.firstErrorField) {
+        case PropertyField.title:
+          firstErrorKey = titleKey;
+          break;
+        case PropertyField.price:
+          firstErrorKey = priceKey;
+          break;
+        case PropertyField.listingSettings:
+          firstErrorKey = listingSettingsKey;
+          break;
+        case PropertyField.landSize:
+          firstErrorKey = landSizeKey;
+          break;
+        case PropertyField.buildingSize:
+          firstErrorKey = buildingSizeKey;
+          break;
+        case PropertyField.unitSize:
+          firstErrorKey = unitSizeKey;
+          break;
+        default:
+          break;
       }
-      if (landSizeController.text.trim().isEmpty) {
-        firstErrorKey ??= landSizeKey;
+      
+      if (firstErrorKey != null) {
+        showErrorDialog(firstErrorKey);
       }
-    } else if (selectedPropertyType == 'House' ||
-        selectedPropertyType == 'Warehouse') {
-      if (priceController.text.trim().isEmpty) firstErrorKey ??= priceKey;
-      if (selectedListingSetting.isEmpty) {
-        firstErrorKey ??= listingSettingsKey;
-      }
-      if (landSizeController.text.trim().isEmpty) {
-        firstErrorKey ??= landSizeKey;
-      }
-      if (buildingSizeController.text.trim().isEmpty) {
-        firstErrorKey ??= buildingSizeKey;
-      }
-    } else if (selectedPropertyType == 'Building') {
-      if (priceController.text.trim().isEmpty) firstErrorKey ??= priceKey;
-      if (selectedListingSetting.isEmpty) {
-        firstErrorKey ??= listingSettingsKey;
-      }
-      if (landSizeController.text.trim().isEmpty) {
-        firstErrorKey ??= landSizeKey;
-      }
-      if (buildingSizeController.text.trim().isEmpty) {
-        firstErrorKey ??= buildingSizeKey;
-      }
-    } else if (selectedPropertyType == 'Condo') {
-      if (priceController.text.trim().isEmpty) firstErrorKey ??= priceKey;
-      if (selectedListingSetting.isEmpty) {
-        firstErrorKey ??= listingSettingsKey;
-      }
-      if (unitSizeController.text.trim().isEmpty) {
-        firstErrorKey ??= unitSizeKey;
-      }
-    } else if (selectedPropertyType == 'Borey') {
-      // Title is already checked
-    } else if (selectedPropertyType == 'Business for Sale') {
-      if (landSizeController.text.trim().isEmpty) {
-        firstErrorKey ??= landSizeKey;
-      }
-      if (selectedListingSetting.isEmpty) {
-        firstErrorKey ??= listingSettingsKey;
-      }
+      return;
     }
 
-    if (firstErrorKey != null) {
-      showErrorDialog(firstErrorKey);
-    } else {
-      submitForm();
+    try {
+      final property = await ref.read(addPropertyControllerProvider.notifier).submitProperty(
+        title: titleController.text,
+        price: priceController.text,
+        propertyType: selectedPropertyType,
+        landSize: landSizeController.text,
+        buildingSize: buildingSizeController.text,
+        unitSize: unitSizeController.text,
+        boundaryPoints: widget.boundaryPoints,
+        selectedPhotos: selectedPhotos,
+        status: 'Active',
+      );
+      if (!mounted) return;
+      if (property != null) {
+        showSuccessDialog(property);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/profile/presentation/screens/user_profile_page.dart';
+import 'package:genie/features/chat/presentation/screens/chat_list_page.dart';
 import 'package:genie/features/property/presentation/screens/my_properties_page.dart';
 import 'package:genie/features/property/presentation/screens/saved_properties_page.dart';
 
@@ -14,11 +15,13 @@ class MainLayoutPages extends ConsumerWidget {
   const MainLayoutPages({super.key, required this.navState});
 
   static const int _savedPropertiesIndex = 1;
+  static const int _chatIndex = 2;
   static const int _myPropertiesIndex = 3;
   static const int _userProfileIndex = 4;
 
   String get _currentKey => switch (navState.currentIndex) {
     _savedPropertiesIndex => 'saved_properties',
+    _chatIndex => 'chat_list',
     _myPropertiesIndex => 'my_properties',
     _userProfileIndex => 'user_profile',
     _ => 'empty',
@@ -30,10 +33,12 @@ class MainLayoutPages extends ConsumerWidget {
 
     final bool isPageVisible =
         navState.currentIndex == _savedPropertiesIndex ||
+        navState.currentIndex == _chatIndex ||
         navState.currentIndex == _myPropertiesIndex ||
         navState.currentIndex == _userProfileIndex;
     final bool isPrevVisible =
         navState.previousIndex == _savedPropertiesIndex ||
+        navState.previousIndex == _chatIndex ||
         navState.previousIndex == _myPropertiesIndex ||
         navState.previousIndex == _userProfileIndex;
 
@@ -49,6 +54,11 @@ class MainLayoutPages extends ConsumerWidget {
         child: switch (navState.currentIndex) {
           _savedPropertiesIndex => SavedPropertiesPage(
             key: const ValueKey('saved_properties'),
+            isEmbedded: true,
+            onBackPressed: onBack,
+          ),
+          _chatIndex => ChatListPage(
+            key: const ValueKey('chat_list'),
             isEmbedded: true,
             onBackPressed: onBack,
           ),

@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/home/utils/map_measurements.dart';
+import 'package:genie/features/home/utils/map/map_measurements.dart';
 
 import 'add_property_page_layout.dart';
 

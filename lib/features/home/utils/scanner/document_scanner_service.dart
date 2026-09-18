@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
-import 'package:genie/features/home/utils/ocr_parser.dart';
+import 'package:genie/features/home/utils/scanner/ocr_parser.dart';
 
 class DocumentScannerService {
   static Future<List<Map<String, dynamic>>?> scanCoordinates() async {

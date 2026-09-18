@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import '../../utils/ocr_parser.dart';
+import '../../utils/scanner/ocr_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../shared/utils/app_popup.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:utm/utm.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'utm/utm_sheet_header.dart';
-import 'utm/utm_scan_section.dart';
-import 'utm/utm_manual_entry.dart';
-import 'utm/utm_preview_button.dart';
+import 'utm/components/utm_sheet_header.dart';
+import 'utm/entry/utm_scan_section.dart';
+import 'utm/entry/utm_manual_entry.dart';
+import 'utm/components/utm_preview_button.dart';
 
 class UtmLocateBottomSheet extends StatefulWidget {
   final List<Map<String, dynamic>>? initialCoordinates;

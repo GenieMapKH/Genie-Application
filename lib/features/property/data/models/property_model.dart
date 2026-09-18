@@ -19,7 +19,11 @@ class PropertyModel {
   final double? unitSize;
   final double? lat;
   final double? lng;
+  final String? ownerId;
   final String? ownerName;
+  final String? ownerAvatarUrl;
+  final String? ownerEmail;
+  final String? ownerPhone;
   final int saveCount;
   final int contactCount;
   final bool isVisited;
@@ -41,7 +45,11 @@ class PropertyModel {
     this.unitSize,
     this.lat,
     this.lng,
+    this.ownerId,
     this.ownerName,
+    this.ownerAvatarUrl,
+    this.ownerEmail,
+    this.ownerPhone,
     this.saveCount = 0,
     this.contactCount = 0,
     this.isVisited = false,
@@ -164,7 +172,11 @@ class PropertyModel {
           : null,
       lat: json['lat'] != null ? (json['lat'] as num).toDouble() : null,
       lng: json['lng'] != null ? (json['lng'] as num).toDouble() : null,
+      ownerId: owner is Map ? owner['id'] as String? : null,
       ownerName: owner is Map ? owner['username'] as String? : null,
+      ownerAvatarUrl: owner is Map ? owner['avatarUrl'] as String? : null,
+      ownerEmail: owner is Map ? owner['email'] as String? : null,
+      ownerPhone: owner is Map ? owner['phone'] as String? : null,
       saveCount: counts is Map ? (counts['favorites'] as int? ?? 0) : 0,
       contactCount: counts is Map ? (counts['contacts'] as int? ?? 0) : 0,
       isVisited: json['isVisited'] == true,
@@ -201,7 +213,11 @@ class PropertyModel {
     double? unitSize,
     double? lat,
     double? lng,
+    String? ownerId,
     String? ownerName,
+    String? ownerAvatarUrl,
+    String? ownerEmail,
+    String? ownerPhone,
     int? saveCount,
     int? contactCount,
     bool? isVisited,
@@ -223,10 +239,15 @@ class PropertyModel {
       unitSize: unitSize ?? this.unitSize,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,
+      ownerId: ownerId ?? this.ownerId,
       ownerName: ownerName ?? this.ownerName,
+      ownerAvatarUrl: ownerAvatarUrl ?? this.ownerAvatarUrl,
+      ownerEmail: ownerEmail ?? this.ownerEmail,
+      ownerPhone: ownerPhone ?? this.ownerPhone,
       saveCount: saveCount ?? this.saveCount,
       contactCount: contactCount ?? this.contactCount,
       isVisited: isVisited ?? this.isVisited,
     );
   }
 }
+

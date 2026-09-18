@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/app_header_bar.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:genie/features/property/presentation/widgets/property_type_selector.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_picker.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
@@ -15,6 +14,8 @@ import 'add_property_page_logic.dart';
 
 extension AddPropertyPageLayout on AddPropertyPageState {
   Widget buildAddPropertyLayout(BuildContext context) {
+    final formState = ref.watch(addPropertyControllerProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -26,8 +27,18 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                 onPressed: () {
                   () async {
                     try {
-                      final property = await savePropertyToApi('Draft');
-                      if (context.mounted) Navigator.of(context).pop(property);
+                      final property = await ref.read(addPropertyControllerProvider.notifier).submitProperty(
+                        title: titleController.text,
+                        price: priceController.text,
+                        propertyType: selectedPropertyType,
+                        landSize: landSizeController.text,
+                        buildingSize: buildingSizeController.text,
+                        unitSize: unitSizeController.text,
+                        boundaryPoints: widget.boundaryPoints,
+                        selectedPhotos: selectedPhotos,
+                        status: 'Draft',
+                      );
+                      if (context.mounted && property != null) Navigator.of(context).pop(property);
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -165,63 +176,9 @@ extension AddPropertyPageLayout on AddPropertyPageState {
       bottomNavigationBar: buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: PublishButtonWidget(
-        isLoading: isLoading,
-        onPressed: validateForm,
+        isLoading: formState.isLoading,
+        onPressed: validateAndSubmit,
       ),
     );
-  }
-
-  Future<void> submitForm() async {
-    setState(() => isLoading = true);
-    try {
-      final property = await savePropertyToApi('Active');
-      if (!mounted) return;
-      setState(() => isLoading = false);
-      showSuccessDialog(property);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-    }
-  }
-
-  Future<PropertyModel> savePropertyToApi(String status) async {
-    final repo = ref.read(propertyRepositoryProvider);
-    final data = {
-      'title': titleController.text.trim().isEmpty
-          ? 'Untitled Property'
-          : titleController.text.trim(),
-      'price': double.tryParse(priceController.text.trim()) ?? 0,
-      'propertyType': selectedPropertyType.isEmpty
-          ? 'Land'
-          : selectedPropertyType,
-      if (landSizeController.text.trim().isNotEmpty)
-        'landSize': double.tryParse(landSizeController.text.trim()),
-      if (buildingSizeController.text.trim().isNotEmpty)
-        'buildingSize': double.tryParse(buildingSizeController.text.trim()),
-      if (unitSizeController.text.trim().isNotEmpty)
-        'unitSize': double.tryParse(unitSizeController.text.trim()),
-      'status': status,
-    };
-
-    // 1. Create property
-    var property = await repo.create(data);
-
-    // 2. Attach boundary points if we have them
-    if (widget.boundaryPoints.isNotEmpty) {
-      final points = widget.boundaryPoints
-          .map((p) => {'lat': p.latitude, 'lng': p.longitude})
-          .toList();
-      property = await repo.updateBoundary(property.id, points);
-    }
-
-    // 3. Upload images if selected
-    if (selectedPhotos.isNotEmpty) {
-      property = await repo.uploadImages(property.id, selectedPhotos);
-    }
-
-    return property;
   }
 }
