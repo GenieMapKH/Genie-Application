@@ -205,7 +205,8 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                             PropertyContactBar(
                               onChat: () {
                                 if (widget.property.ownerId != null) {
-                                  Navigator.of(context).push(
+                                  // Use root navigator so chat opens as a full-screen page
+                                  Navigator.of(context, rootNavigator: true).push(
                                     MaterialPageRoute(
                                       builder: (context) => ChatConversationPage(
                                         participantId: widget.property.ownerId!,
