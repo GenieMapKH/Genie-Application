@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
@@ -141,10 +142,27 @@ class ProfileInfoSection extends ConsumerWidget {
     try {
       final response = await initService.dio.get('/chat/backup');
       backupData = response.data;
+    } on DioException catch (e) {
+      if (context.mounted) {
+        if (e.response?.statusCode == 404) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No backup found. Please open Chat first to set up your keys.')),
+          );
+        } else if (e.response?.statusCode == 429) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Too many requests. Please try again in 15 minutes.')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not fetch backup from server.')),
+          );
+        }
+      }
+      return;
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not fetch backup from server.')),
+          const SnackBar(content: Text('An unexpected error occurred.')),
         );
       }
       return;
