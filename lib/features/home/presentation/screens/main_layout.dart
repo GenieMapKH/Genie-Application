@@ -16,8 +16,6 @@ import 'package:genie/features/home/utils/map/map_location_service.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
   const MainLayout({super.key});

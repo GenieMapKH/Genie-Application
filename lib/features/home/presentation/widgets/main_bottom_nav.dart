@@ -7,6 +7,7 @@ import 'package:genie/shared/widgets/tactile_button.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:genie/features/chat/providers/chat_provider.dart';
 
 class MainBottomNav extends ConsumerWidget {
   const MainBottomNav({super.key});
@@ -100,6 +101,48 @@ class MainBottomNav extends ConsumerWidget {
         ? const Color(0xFF3E49C7)
         : const Color(0xFF6B7280);
 
+    final unreadCount = index == 2 ? ref.watch(unreadCountProvider) : 0;
+
+    Widget iconWidget = SvgPicture.asset(
+      iconPath,
+      width: 24,
+      height: 24,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+    );
+
+    if (index == 2 && unreadCount > 0) {
+      iconWidget = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          iconWidget,
+          Positioned(
+            top: -4,
+            right: -8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEF4444),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: Text(
+                unreadCount > 99 ? '99+' : '$unreadCount',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return TactileButton(
       onPressed: () async {
         if (index == 1 || index == 2 || index == 3 || index == 4) {
@@ -118,12 +161,7 @@ class MainBottomNav extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
-              iconPath,
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            ),
+            iconWidget,
             const SizedBox(height: 4),
             Text(
               label,

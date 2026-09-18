@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_input_bar.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';

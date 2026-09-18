@@ -7,7 +7,6 @@ import 'package:genie/features/chat/presentation/screens/chat_conversation_page.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 class ChatListPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -42,22 +41,27 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
               onBackPressed: widget.onBackPressed,
             ),
             Expanded(
-              child: mockConversations.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.separated(
-                      itemCount: mockConversations.length,
-                      separatorBuilder: (context, index) => const Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Color(0xFFF3F4F6),
-                        indent: 16,
-                        endIndent: 16,
-                      ),
-                      itemBuilder: (context, index) {
-                        final chat = mockConversations[index];
-                        return _buildChatItem(context, chat);
-                      },
+              child: ref.watch(conversationsProvider).when(
+                data: (conversations) {
+                  if (conversations.isEmpty) return _buildEmptyState();
+                  return ListView.separated(
+                    itemCount: conversations.length,
+                    separatorBuilder: (context, index) => const Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Color(0xFFF3F4F6),
+                      indent: 16,
+                      endIndent: 16,
                     ),
+                    itemBuilder: (context, index) {
+                      final chat = conversations[index];
+                      return _buildChatItem(context, chat);
+                    },
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => _buildEmptyState(),
+              ),
             ),
           ],
         ),

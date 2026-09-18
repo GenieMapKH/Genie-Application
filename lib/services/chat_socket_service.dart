@@ -62,7 +62,7 @@ class ChatSocketService {
     });
 
     _socket?.on('newMessage', (data) async {
-      final decrypted = await _decryptMessagePayload(data);
+      final decrypted = await decryptMessagePayload(data);
       if (decrypted != null) {
         _messagesController.add(decrypted);
       }
@@ -125,7 +125,7 @@ class ChatSocketService {
       final List messages = response.data;
 
       for (var msg in messages) {
-        final decrypted = await _decryptMessagePayload(msg);
+        final decrypted = await decryptMessagePayload(msg);
         if (decrypted != null) {
           _messagesController.add(decrypted);
         }
@@ -135,36 +135,38 @@ class ChatSocketService {
     }
   }
 
-  Future<ChatMessage?> _decryptMessagePayload(Map<String, dynamic> data) async {
+  Future<ChatMessage?> decryptMessagePayload(Map<String, dynamic> data) async {
     try {
       final senderId = data['senderId'];
-      
-      // 1. Fetch sender's public key
-      final response = await dio.get('/chat/keys/$senderId');
-      final senderPubKeyBase64 = response.data['identityPublicKey'];
-      final senderPubKey = base64Decode(senderPubKeyBase64);
+      final recipientId = data['recipientId'];
 
-      // 2. Get our private key
       final keyPair = await keyService.getIdentityKeyPair();
       if (keyPair == null) return null;
 
-      // 3. Decrypt
+      // Fetch public key of the other party in the conversation
+      final otherUserId = (senderId == keyPair.userId) ? recipientId : senderId;
+      final response = await dio.get('/chat/keys/$otherUserId');
+      final otherPubKeyBase64 = response.data['identityPublicKey'];
+      if (otherPubKeyBase64 == null) return null;
+
+      final otherPubKey = base64Decode(otherPubKeyBase64);
+
       final plaintext = cryptoService.decryptMessage(
         data['ciphertext'],
         data['nonce'],
-        senderPubKey,
+        otherPubKey,
         keyPair.secretKey,
       );
 
       return ChatMessage(
         id: data['id'],
         senderId: senderId,
-        recipientId: data['recipientId'],
+        recipientId: recipientId,
         text: plaintext,
         createdAt: DateTime.parse(data['createdAt']),
       );
     } catch (e) {
-      print('Failed to decrypt incoming message: $e');
+      print('Failed to decrypt message payload: $e');
       return null;
     }
   }

@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:genie/core/network/api_client.dart';
 import 'package:genie/services/backup_service.dart';
 import 'package:genie/services/e2ee_init_service.dart';
+import 'package:genie/features/chat/models/chat_models.dart';
 
 final cryptoServiceProvider = Provider<CryptoService>((ref) {
   throw UnimplementedError('Initialize CryptoService in main.dart');
@@ -30,8 +31,65 @@ final chatSocketServiceProvider = Provider((ref) {
     keyService: ref.watch(keyServiceProvider),
     dio: createApiClient(),
   );
-  // Auto-connect when provider is created? Better to connect during E2EE Init.
   return service;
+});
+
+class ConversationsNotifier extends StateNotifier<AsyncValue<List<ChatConversation>>> {
+  final Dio dio;
+  final ChatSocketService socketService;
+
+  ConversationsNotifier({required this.dio, required this.socketService})
+      : super(const AsyncValue.loading()) {
+    fetchConversations();
+    socketService.onMessageReceived.listen((_) {
+      fetchConversations();
+    });
+  }
+
+  Future<void> fetchConversations() async {
+    try {
+      final response = await dio.get('/chat/conversations');
+      final List data = response.data;
+      final conversations = data.map((json) => ChatConversation.fromJson(json)).toList();
+      state = AsyncValue.data(conversations);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> markAsRead(String participantId) async {
+    try {
+      await dio.post('/chat/messages/$participantId/read');
+      if (state.hasValue) {
+        final current = state.value!;
+        final updated = current.map((conv) {
+          if (conv.participantId == participantId) {
+            return conv.copyWith(unreadCount: 0);
+          }
+          return conv;
+        }).toList();
+        state = AsyncValue.data(updated);
+      }
+    } catch (e) {
+      print('Failed to mark messages as read: $e');
+    }
+  }
+}
+
+final conversationsProvider =
+    StateNotifierProvider<ConversationsNotifier, AsyncValue<List<ChatConversation>>>((ref) {
+  return ConversationsNotifier(
+    dio: createApiClient(),
+    socketService: ref.watch(chatSocketServiceProvider),
+  );
+});
+
+final unreadCountProvider = Provider<int>((ref) {
+  final convsState = ref.watch(conversationsProvider);
+  return convsState.maybeWhen(
+    data: (conversations) => conversations.fold(0, (sum, item) => sum + item.unreadCount),
+    orElse: () => 0,
+  );
 });
 
 class ActiveChatState {
@@ -60,8 +118,10 @@ class ActiveChatState {
 
 class ChatNotifier extends StateNotifier<ActiveChatState?> {
   final ChatSocketService socketService;
+  final Dio dio;
+  final Ref ref;
 
-  ChatNotifier(this.socketService) : super(null) {
+  ChatNotifier(this.socketService, this.dio, this.ref) : super(null) {
     socketService.onMessageReceived.listen((message) {
       if (state != null && 
          (message.senderId == state!.participantId || message.recipientId == state!.participantId)) {
@@ -72,14 +132,43 @@ class ChatNotifier extends StateNotifier<ActiveChatState?> {
     });
   }
 
-  void setActiveChat(String participantId, String participantName) {
-    // Note: We don't have local SQLite yet, so we start with an empty list for this session,
-    // unless they were already synced in memory. For now, just reset the list.
+  Future<void> setActiveChat(String participantId, String participantName) async {
     state = ActiveChatState(
       participantId: participantId,
       participantName: participantName,
-      messages: [], // Ideally we would load from a local DB here
+      messages: [],
     );
+
+    // 1. Mark as read
+    ref.read(conversationsProvider.notifier).markAsRead(participantId);
+
+    // 2. Load history
+    try {
+      final response = await dio.get('/chat/messages/$participantId');
+      final List rawMessages = response.data;
+      final List<ChatMessage> loaded = [];
+
+      for (var raw in rawMessages) {
+        final decrypted = await socketService.decryptMessagePayload(raw);
+        if (decrypted != null) {
+          loaded.add(decrypted);
+        } else {
+          loaded.add(ChatMessage(
+            id: raw['id'],
+            senderId: raw['senderId'],
+            recipientId: raw['recipientId'],
+            text: '[Message]',
+            createdAt: DateTime.parse(raw['createdAt']),
+          ));
+        }
+      }
+
+      if (state?.participantId == participantId) {
+        state = state!.copyWith(messages: loaded);
+      }
+    } catch (e) {
+      print('Failed to load chat history: $e');
+    }
   }
 
   void clearActiveChat() {
@@ -91,10 +180,9 @@ class ChatNotifier extends StateNotifier<ActiveChatState?> {
     
     final participantId = state!.participantId;
     
-    // Add the message optimistically to the UI
     final tempMsg = ChatMessage(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      senderId: 'me', // Represents the current user
+      senderId: 'me',
       recipientId: participantId,
       text: text,
       createdAt: DateTime.now(),
@@ -105,9 +193,14 @@ class ChatNotifier extends StateNotifier<ActiveChatState?> {
     );
 
     await socketService.sendMessage(participantId, text);
+    ref.read(conversationsProvider.notifier).fetchConversations();
   }
 }
 
 final activeChatProvider = StateNotifierProvider<ChatNotifier, ActiveChatState?>((ref) {
-  return ChatNotifier(ref.watch(chatSocketServiceProvider));
+  return ChatNotifier(
+    ref.watch(chatSocketServiceProvider),
+    createApiClient(),
+    ref,
+  );
 });
