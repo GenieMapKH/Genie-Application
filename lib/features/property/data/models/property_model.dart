@@ -173,7 +173,9 @@ class PropertyModel {
       lat: json['lat'] != null ? (json['lat'] as num).toDouble() : null,
       lng: json['lng'] != null ? (json['lng'] as num).toDouble() : null,
       ownerId: owner is Map ? owner['id'] as String? : null,
-      ownerName: owner is Map ? owner['username'] as String? : null,
+      ownerName: owner is Map 
+          ? (owner['username'] as String? ?? owner['email'] as String? ?? owner['phone'] as String?) 
+          : null,
       ownerAvatarUrl: owner is Map ? owner['avatarUrl'] as String? : null,
       ownerEmail: owner is Map ? owner['email'] as String? : null,
       ownerPhone: owner is Map ? owner['phone'] as String? : null,

@@ -133,7 +133,7 @@ class _PropertyTile extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            'Listing by: ${property.ownerName ?? 'Unknown'}',
+            'Listing by: ${property.ownerName ?? 'Property Owner'}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(

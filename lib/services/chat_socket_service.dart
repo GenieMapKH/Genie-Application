@@ -49,6 +49,7 @@ class ChatSocketService {
       '$baseUrl/chat', // Adjust this to match your gateway URL
       IO.OptionBuilder()
           .setTransports(['websocket'])
+          .setExtraHeaders({'authorization': 'Bearer $token'})
           .disableAutoConnect()
           .setAuth({'token': token})
           .build(),

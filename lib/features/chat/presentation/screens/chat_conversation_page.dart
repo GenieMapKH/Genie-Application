@@ -77,14 +77,6 @@ class _ChatConversationPageState extends ConsumerState<ChatConversationPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              Text(
-                'Property Owner',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF6B7280),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
             ],
           ),
           centerTitle: true,
