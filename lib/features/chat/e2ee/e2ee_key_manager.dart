@@ -1,6 +1,7 @@
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/backup_service.dart';
+import 'package:genie/features/chat/e2ee/key_backup_vault.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 
 enum ChangePinResult {
@@ -25,6 +26,11 @@ class E2eeKeyManager {
   final BackupService backupService;
   final ChatBackupRepository backupRepository;
 
+  late final KeyBackupVault _vault = KeyBackupVault(
+    backupService: backupService,
+    backupRepository: backupRepository,
+  );
+
   E2eeKeyManager({
     required this.keyService,
     required this.backupService,
@@ -36,7 +42,7 @@ class E2eeKeyManager {
     required PinRequest askCurrentPin,
     required PinRequest askNewPin,
   }) async {
-    final EncryptedBackup? backup;
+    final StoredBackup? backup;
     try {
       backup = await backupRepository.fetchBackup();
     } on BackupRateLimitedException {
@@ -52,22 +58,21 @@ class E2eeKeyManager {
 
     final List<int> privateKey;
     try {
-      privateKey = await backupService.restoreBackup(
-        currentPin,
-        backup.salt,
-        backup.nonce,
-        backup.blob,
-      );
+      privateKey = await _vault.open(currentPin, backup);
+    } on WrongPinException {
+      return ChangePinResult.wrongPin;
+    } on BackupRateLimitedException {
+      return ChangePinResult.rateLimited;
     } catch (e) {
       AppLogger.error('Backup unlock failed', e);
-      return ChangePinResult.wrongPin;
+      return ChangePinResult.fetchFailed;
     }
 
     final newPin = await askNewPin();
     if (newPin == null) return ChangePinResult.cancelled;
 
     try {
-      await _uploadBackup(newPin, privateKey);
+      await _vault.save(newPin, privateKey);
       return ChangePinResult.changed;
     } catch (e) {
       AppLogger.error('Could not save new backup', e);
@@ -86,7 +91,7 @@ class E2eeKeyManager {
 
     try {
       final keyPair = keyService.cryptoService.generateKeyPair();
-      await _uploadBackup(newPin, keyPair.secretKey.extractBytes());
+      await _vault.save(newPin, keyPair.secretKey.extractBytes());
       await keyService.saveIdentityKeyPair(userId, keyPair);
       await keyService.uploadPublicKeyIfNeeded(userId);
       return ResetKeysResult.reset;
@@ -94,16 +99,5 @@ class E2eeKeyManager {
       AppLogger.error('Could not reset keys', e);
       return ResetKeysResult.saveFailed;
     }
-  }
-
-  Future<void> _uploadBackup(String pin, List<int> privateKey) async {
-    final created = await backupService.createBackup(pin, privateKey);
-    await backupRepository.saveBackup(
-      EncryptedBackup(
-        blob: created['blob']!,
-        salt: created['salt']!,
-        nonce: created['nonce']!,
-      ),
-    );
   }
 }

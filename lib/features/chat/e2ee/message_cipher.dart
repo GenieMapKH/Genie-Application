@@ -7,6 +7,7 @@ import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/crypto_service.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 import 'package:genie/features/chat/e2ee/peer_key_store.dart';
+import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 
 /// Thrown when a message cannot be encrypted for the other person.
@@ -34,7 +35,7 @@ enum PeerKeyStatus {
 
 /// A decrypted message. [id] is the id the sender gave it, or null for a
 /// message from before messages carried one.
-typedef OpenedMessage = ({String? id, String text});
+typedef OpenedMessage = ({String? id, String text, ChatAttachment? attachment});
 
 /// Encrypts and decrypts the messages of one signed-in user.
 ///
@@ -103,10 +104,13 @@ class MessageCipher {
 
   /// Seals [text] for [peerId]. [id] is the message's id; it travels inside
   /// the sealed text so a stored copy cannot be replayed as a new message.
+  /// An [attachment]'s key travels the same way, so only the two people in
+  /// the conversation can open the file.
   Future<({String ciphertext, String nonce})> encrypt(
     String text, {
     required String id,
     required String peerId,
+    ChatAttachment? attachment,
   }) async {
     final keyPair = await keyService.getIdentityKeyPair(userId);
     if (keyPair == null) {
@@ -133,6 +137,7 @@ class MessageCipher {
         'from': userId,
         'to': peerId,
         'text': text,
+        'file': ?attachment?.toJson(),
       }),
       (await _trustedKey(peerId))!,
       keyPair.secretKey,
@@ -183,7 +188,7 @@ class MessageCipher {
     }
     if (envelope is! Map || envelope['v'] != _envelopeVersion) {
       // Sent before messages named their sender: the text is the message.
-      return (id: null, text: opened);
+      return (id: null, text: opened, attachment: null);
     }
 
     final id = envelope['id'];
@@ -192,7 +197,18 @@ class MessageCipher {
         envelope['from'] == message.senderId &&
         envelope['to'] == message.recipientId;
     if (!labelledHonestly || id is! String || text is! String) return null;
-    return (id: id, text: text);
+    final attachment = ChatAttachment.tryParse(envelope['file']);
+    final attachmentIsTheirs =
+        attachment == null ||
+        attachment.belongsTo(
+          senderId: message.senderId,
+          recipientId: message.recipientId,
+        );
+    return (
+      id: id,
+      text: text,
+      attachment: attachmentIsTheirs ? attachment : null,
+    );
   }
 
   Future<PeerKeyStatus> _recentStatus(String peerId) async {

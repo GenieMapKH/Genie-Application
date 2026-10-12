@@ -22,6 +22,7 @@ import 'package:genie/features/chat/e2ee/crypto_service.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 import 'package:genie/features/chat/e2ee/message_cipher.dart';
 import 'package:genie/features/chat/e2ee/peer_key_store.dart';
+import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:sodium/sodium.ffi.dart' as ffi;
 import 'package:sodium_libs/sodium_libs.dart';
@@ -134,8 +135,16 @@ void main() {
         allowMalformed: true,
       );
       expect(wire, isNot(contains('villa')));
-      expect(await bobCipher.decrypt(message), (id: 'm1', text: text));
-      expect(await aliceCipher.decrypt(message), (id: 'm1', text: text));
+      expect(await bobCipher.decrypt(message), (
+        id: 'm1',
+        text: text,
+        attachment: null,
+      ));
+      expect(await aliceCipher.decrypt(message), (
+        id: 'm1',
+        text: text,
+        attachment: null,
+      ));
     },
   );
 
@@ -220,6 +229,93 @@ void main() {
     );
   });
 
+  test('a file is unreadable in storage and opens only with its key', () {
+    final photo = Uint8List.fromList(List.generate(5000, (i) => i % 251));
+
+    final sealed = crypto.encryptFile(photo);
+    final again = crypto.encryptFile(photo);
+
+    expect(sealed.cipher, isNot(photo));
+    expect(sealed.cipher.length, greaterThan(photo.length));
+    expect(sealed.key, isNot(again.key), reason: 'a new key for every file');
+    expect(crypto.decryptFile(sealed.cipher, sealed.key, sealed.nonce), photo);
+    expect(
+      () => crypto.decryptFile(sealed.cipher, again.key, sealed.nonce),
+      throwsA(anything),
+    );
+
+    final tampered = Uint8List.fromList(sealed.cipher)..[100] ^= 0x01;
+    expect(
+      () => crypto.decryptFile(tampered, sealed.key, sealed.nonce),
+      throwsA(anything),
+    );
+  });
+
+  test(
+    'a file reference reaches the other person, and only inside the chat',
+    () async {
+      final attachment = ChatAttachment(
+        path: '$alice/$bob/33333333-3333-4333-8333-333333333333',
+        key: 'a2V5',
+        nonce: 'bm9uY2U=',
+        name: 'villa.jpg',
+        mimeType: 'image/jpeg',
+        size: 5000,
+      );
+      final sealed = await aliceCipher.encrypt(
+        '',
+        id: 'm1',
+        peerId: bob,
+        attachment: attachment,
+      );
+      EncryptedMessage stored({String? senderId, String? recipientId}) =>
+          EncryptedMessage(
+            id: 'm1',
+            senderId: senderId ?? alice,
+            recipientId: recipientId ?? bob,
+            ciphertext: sealed.ciphertext,
+            nonce: sealed.nonce,
+            createdAt: DateTime.utc(2026),
+          );
+
+      expect(
+        utf8.decode(base64Decode(sealed.ciphertext), allowMalformed: true),
+        isNot(contains('villa')),
+      );
+      expect((await bobCipher.decrypt(stored()))!.attachment, attachment);
+
+      // A reference to a file stored under someone else's conversation is
+      // not accepted, whoever sealed the message.
+      final foreign = ChatAttachment(
+        path:
+            '99999999-9999-4999-8999-999999999999/$bob/'
+            '33333333-3333-4333-8333-333333333333',
+        key: 'a2V5',
+        nonce: 'bm9uY2U=',
+        name: 'x.jpg',
+        mimeType: 'image/jpeg',
+        size: 1,
+      );
+      final sealedForeign = await aliceCipher.encrypt(
+        '',
+        id: 'm2',
+        peerId: bob,
+        attachment: foreign,
+      );
+      final opened = await bobCipher.decrypt(
+        EncryptedMessage(
+          id: 'm2',
+          senderId: alice,
+          recipientId: bob,
+          ciphertext: sealedForeign.ciphertext,
+          nonce: sealedForeign.nonce,
+          createdAt: DateTime.utc(2026),
+        ),
+      );
+      expect(opened!.attachment, isNull);
+    },
+  );
+
   test('a secret key is recognised only with its own public key', () {
     expect(crypto.isKeyPair(aliceKeys.publicKey, aliceKeys.secretKey), isTrue);
     expect(crypto.isKeyPair(bobKeys.publicKey, aliceKeys.secretKey), isFalse);
@@ -233,9 +329,9 @@ void main() {
       '482913',
       bobKeys.secretKey.extractBytes(),
     );
-    final restoredBytes = await backups.restoreBackup(
-      '482913',
-      backup['salt']!,
+    final keys = await backups.deriveKeys('482913', backup['salt']!);
+    final restoredBytes = await backups.openBackup(
+      keys,
       backup['nonce']!,
       backup['blob']!,
     );
@@ -249,14 +345,20 @@ void main() {
       (await cipherFor(bob, restored).decrypt(message))!.text,
       'before the new phone',
     );
+    // The right PIN gives the proof the server stored; a wrong PIN gives
+    // neither that proof nor a key that opens the backup.
+    expect(keys.verifier, backup['verifier']);
+    expect(base64Decode(keys.verifier), hasLength(32));
+    final wrongKeys = await backups.deriveKeys('000000', backup['salt']!);
+    expect(wrongKeys.verifier, isNot(backup['verifier']));
     await expectLater(
-      backups.restoreBackup(
-        '000000',
-        backup['salt']!,
-        backup['nonce']!,
-        backup['blob']!,
-      ),
+      backups.openBackup(wrongKeys, backup['nonce']!, backup['blob']!),
       throwsA(anything),
+    );
+    // The proof must not be the key that encrypts the backup.
+    expect(
+      base64Encode(await keys.encryptionKey.extractBytes()),
+      isNot(keys.verifier),
     );
   });
 }

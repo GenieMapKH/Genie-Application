@@ -1,6 +1,13 @@
+import 'dart:typed_data';
+
+import 'package:genie/features/chat/models/chat_attachment.dart';
+
 class ChatConversation {
   /// Shown until the last message has been decrypted on this device.
   static const encryptedPreview = 'Encrypted message';
+
+  /// Shown for a last message that is a picture without a caption.
+  static const photoPreview = '\u{1F4F7} Photo';
 
   final String id;
   final String participantName;
@@ -157,6 +164,13 @@ class ChatMessage {
   final DateTime createdAt;
   final ChatMessageStatus status;
 
+  /// A file sent with the message, once it is stored on the server.
+  final ChatAttachment? attachment;
+
+  /// The picture being sent from this device, shown until it is uploaded
+  /// and kept so a failed send can be retried.
+  final Uint8List? localImage;
+
   ChatMessage({
     required this.id,
     required this.senderId,
@@ -164,12 +178,15 @@ class ChatMessage {
     required this.text,
     required this.createdAt,
     this.status = ChatMessageStatus.sent,
+    this.attachment,
+    this.localImage,
   });
 
   ChatMessage copyWith({
     String? id,
     DateTime? createdAt,
     ChatMessageStatus? status,
+    ChatAttachment? attachment,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -178,6 +195,8 @@ class ChatMessage {
       text: text,
       createdAt: createdAt ?? this.createdAt,
       status: status ?? this.status,
+      attachment: attachment ?? this.attachment,
+      localImage: localImage,
     );
   }
 }

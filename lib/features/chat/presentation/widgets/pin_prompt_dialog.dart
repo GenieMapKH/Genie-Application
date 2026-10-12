@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:genie/features/chat/e2ee/pin_rules.dart';
 
 /// Asks for the 6-digit backup PIN. Returns null if the user cancels.
+/// With [isNewPin] an easily guessed PIN is refused.
 Future<String?> showPinPrompt(
   BuildContext context, {
   required String title,
   required String helper,
   bool allowCancel = true,
+  bool isNewPin = false,
 }) {
   return showDialog<String>(
     context: context,
@@ -14,6 +17,7 @@ Future<String?> showPinPrompt(
       title: title,
       helper: helper,
       allowCancel: allowCancel,
+      isNewPin: isNewPin,
     ),
   );
 }
@@ -22,11 +26,13 @@ class _PinPromptDialog extends StatefulWidget {
   final String title;
   final String helper;
   final bool allowCancel;
+  final bool isNewPin;
 
   const _PinPromptDialog({
     required this.title,
     required this.helper,
     required this.allowCancel,
+    required this.isNewPin,
   });
 
   @override
@@ -34,7 +40,24 @@ class _PinPromptDialog extends StatefulWidget {
 }
 
 class _PinPromptDialogState extends State<_PinPromptDialog> {
+  static final _sixDigits = RegExp(r'^\d{6}$');
+
   final _controller = TextEditingController();
+  String? _error;
+
+  /// The PIN protects the chat keys, so a shorter one is never accepted.
+  void _submit() {
+    final pin = _controller.text;
+    if (!_sixDigits.hasMatch(pin)) {
+      setState(() => _error = 'Enter all 6 digits.');
+      return;
+    }
+    if (widget.isNewPin && isGuessablePin(pin)) {
+      setState(() => _error = 'Too easy to guess. Choose another PIN.');
+      return;
+    }
+    Navigator.pop(context, pin);
+  }
 
   @override
   void dispose() {
@@ -54,6 +77,8 @@ class _PinPromptDialogState extends State<_PinPromptDialog> {
         decoration: InputDecoration(
           hintText: '6-digit PIN',
           helperText: widget.helper,
+          helperMaxLines: 3,
+          errorText: _error,
         ),
       ),
       actions: [
@@ -62,10 +87,7 @@ class _PinPromptDialogState extends State<_PinPromptDialog> {
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, _controller.text),
-          child: const Text('Submit'),
-        ),
+        TextButton(onPressed: _submit, child: const Text('Submit')),
       ],
     );
   }

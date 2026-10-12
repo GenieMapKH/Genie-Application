@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genie/core/config/app_config.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/e2ee/crypto_service.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 
@@ -16,6 +18,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   const envFile = kReleaseMode ? '.env.production' : '.env';
   await dotenv.load(fileName: envFile);
+  // Which server this build talks to: chat only works between devices on
+  // the same one.
+  AppLogger.debug('API server: ${AppConfig.apiBaseUrl}');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 

@@ -13,6 +13,7 @@ void main() {
   late FakeChatSocket socket;
   late FakeSetupService setup;
   late FakeCipher cipher;
+  late FakeAttachmentService attachments;
   late ConversationsNotifier conversations;
   late ActiveChatNotifier chat;
 
@@ -26,6 +27,7 @@ void main() {
     socket = FakeChatSocket();
     setup = FakeSetupService();
     cipher = FakeCipher();
+    attachments = FakeAttachmentService();
     conversations = ConversationsNotifier(
       repository: repository,
       socketService: socket,
@@ -38,6 +40,7 @@ void main() {
       socketService: socket,
       setupService: setup,
       cipher: cipher,
+      attachments: attachments,
       conversations: conversations,
     );
   });
@@ -383,6 +386,7 @@ void main() {
       socketService: socket,
       setupService: setup,
       cipher: cipher,
+      attachments: attachments,
       conversations: conversations,
     );
     await closing.open(askPin: neverAskPin);

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
@@ -54,4 +56,10 @@ final chatSafetyCodeProvider = FutureProvider.autoDispose
       return ref
           .watch(messageCipherProvider(chat.userId))
           .safetyCode(chat.participantId);
+    });
+
+/// A received file, downloaded and decrypted in memory.
+final chatAttachmentBytesProvider = FutureProvider.autoDispose
+    .family<Uint8List, ChatAttachment>((ref, attachment) {
+      return ref.watch(chatAttachmentServiceProvider).open(attachment);
     });

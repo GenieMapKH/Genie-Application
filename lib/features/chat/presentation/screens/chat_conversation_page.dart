@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_conversation_header.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_image_picker.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_input_bar.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_key_changed_banner.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_message_bubble.dart';
@@ -103,11 +105,36 @@ class _ConversationState extends ConsumerState<_Conversation> {
     ref.read(activeChatProvider(widget.chat).notifier).open(askPin: _askPin);
   }
 
+  Future<void> _sendPicture() async {
+    final PickedChatImage? picture;
+    try {
+      picture = await pickChatImage(context);
+    } catch (e) {
+      // The camera or gallery refused, e.g. permission was denied.
+      AppLogger.error('Could not pick a picture', e);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open your photos.')),
+      );
+      return;
+    }
+    if (picture == null || !mounted) return;
+
+    ref
+        .read(activeChatProvider(widget.chat).notifier)
+        .sendImage(
+          picture.bytes,
+          name: picture.name,
+          mimeType: picture.mimeType,
+        );
+  }
+
   Future<String?> _askPin({required bool isNewPin}) async {
     if (!mounted) return null;
     return showPinPrompt(
       context,
       allowCancel: !isNewPin,
+      isNewPin: isNewPin,
       title: isNewPin ? 'Create Backup PIN' : 'Enter Backup PIN',
       helper: isNewPin
           ? 'This PIN encrypts your chat keys. Do not forget it!'
@@ -134,9 +161,9 @@ class _ConversationState extends ConsumerState<_Conversation> {
       ActiveChatStatus.unavailable => _ChatNotice(
         message: switch (chatState.setupResult) {
           E2eeSetupResult.wrongPin =>
-            'Failed to restore backup. Incorrect PIN?',
+            'Incorrect PIN. After 5 wrong tries the backup locks for a while.',
           E2eeSetupResult.rateLimited =>
-            'Too many attempts. Try again in 15 minutes.',
+            'Too many wrong PINs. The backup is locked; try again later.',
           E2eeSetupResult.cancelled =>
             'Your backup PIN is needed to read and send messages.',
           _ => 'Could not open this chat. Check your connection.',
@@ -159,6 +186,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
           else
             ChatInputBar(
               onSend: (text) => ref.read(provider.notifier).sendMessage(text),
+              onAttach: _sendPicture,
             ),
         ],
       ),

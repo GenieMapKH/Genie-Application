@@ -77,9 +77,12 @@ class ConversationsNotifier
     if (lastMessage == null) return conversation;
 
     final opened = await cipher!.decrypt(lastMessage);
-    return opened == null
-        ? conversation
-        : conversation.copyWith(lastMessage: opened.text);
+    if (opened == null) return conversation;
+    return conversation.copyWith(
+      lastMessage: opened.text.isEmpty && opened.attachment != null
+          ? ChatConversation.photoPreview
+          : opened.text,
+    );
   }
 
   Future<void> markAsRead(String participantId) async {

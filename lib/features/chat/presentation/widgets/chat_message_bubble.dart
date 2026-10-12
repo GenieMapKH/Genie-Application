@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_image_attachment.dart';
 
 /// One message in a conversation: the user's own on the right, the other
 /// person's on the left.
@@ -26,6 +27,9 @@ class ChatMessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final failed = message.status == ChatMessageStatus.failed;
+    final attachment = message.attachment;
+    final hasPicture =
+        message.localImage != null || (attachment?.isImage ?? false);
 
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
@@ -38,34 +42,17 @@ class ChatMessageBubble extends StatelessWidget {
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: failed ? onRetry : null,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: isMine ? _accent : Colors.white,
-                  border: isMine
-                      ? null
-                      : Border.all(color: const Color(0xFFE5E7EB)),
-                  borderRadius: BorderRadius.only(
-                    topLeft: _corner,
-                    topRight: _corner,
-                    bottomLeft: isMine ? _corner : _tail,
-                    bottomRight: isMine ? _tail : _corner,
-                  ),
-                ),
-                child: Text(
-                  message.text,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: isMine ? Colors.white : const Color(0xFF111827),
-                  ),
+            if (hasPicture)
+              Padding(
+                padding: EdgeInsets.only(bottom: message.text.isEmpty ? 0 : 6),
+                child: ChatImageAttachment(
+                  message: message,
+                  onTap: failed ? onRetry : null,
                 ),
               ),
-            ),
+            if (attachment != null && !attachment.isImage)
+              _buildText('\u{1F4CE} ${attachment.name}', failed),
+            if (message.text.isNotEmpty) _buildText(message.text, failed),
             if (message.status != ChatMessageStatus.sent)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
@@ -80,6 +67,32 @@ class ChatMessageBubble extends StatelessWidget {
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildText(String text, bool failed) {
+    return GestureDetector(
+      onTap: failed ? onRetry : null,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isMine ? _accent : Colors.white,
+          border: isMine ? null : Border.all(color: const Color(0xFFE5E7EB)),
+          borderRadius: BorderRadius.only(
+            topLeft: _corner,
+            topRight: _corner,
+            bottomLeft: isMine ? _corner : _tail,
+            bottomRight: isMine ? _tail : _corner,
+          ),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: isMine ? Colors.white : const Color(0xFF111827),
+          ),
         ),
       ),
     );

@@ -57,6 +57,45 @@ class CryptoService {
     return a.length - b.length;
   }
 
+  /// Encrypts a file with a fresh one-time key. The key and nonce are
+  /// returned so they can be sent inside the encrypted message.
+  ({Uint8List cipher, String key, String nonce}) encryptFile(Uint8List bytes) {
+    final key = sodium.crypto.secretBox.keygen();
+    final nonce = sodium.randombytes.buf(sodium.crypto.secretBox.nonceBytes);
+    try {
+      return (
+        cipher: sodium.crypto.secretBox.easy(
+          message: bytes,
+          nonce: nonce,
+          key: key,
+        ),
+        key: base64Encode(key.extractBytes()),
+        nonce: base64Encode(nonce),
+      );
+    } finally {
+      key.dispose();
+    }
+  }
+
+  /// Opens a file encrypted by [encryptFile]. Throws if the key is wrong or
+  /// a single byte was changed.
+  Uint8List decryptFile(
+    Uint8List cipher,
+    String keyBase64,
+    String nonceBase64,
+  ) {
+    final key = sodium.secureCopy(base64Decode(keyBase64));
+    try {
+      return sodium.crypto.secretBox.openEasy(
+        cipherText: cipher,
+        nonce: base64Decode(nonceBase64),
+        key: key,
+      );
+    } finally {
+      key.dispose();
+    }
+  }
+
   /// Encrypts a message using the recipient's public key and the sender's private key
   Map<String, String> encryptMessage(
     String plaintext,

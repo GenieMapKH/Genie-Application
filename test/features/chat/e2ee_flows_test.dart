@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cryptography/cryptography.dart' show SecretKey;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/backup_service.dart';
@@ -72,10 +73,26 @@ class _FakeBackupService extends Fake implements BackupService {
   Future<Map<String, String>> createBackup(
     String pin,
     List<int> privateKeyBytes,
-  ) async => {'blob': 'new-blob', 'salt': 'new-salt', 'nonce': 'new-nonce'};
+  ) async => {
+    'blob': 'new-blob',
+    'salt': 'new-salt',
+    'nonce': 'new-nonce',
+    'verifier': 'new-verifier',
+  };
 
   @override
-  Future<List<int>> restoreBackup(
+  Future<BackupKeys> deriveKeys(String pin, String saltB64) async =>
+      BackupKeys(encryptionKey: SecretKey([0]), verifier: 'proof-of-$pin');
+
+  @override
+  Future<List<int>> openBackup(
+    BackupKeys keys,
+    String nonceB64,
+    String blobB64,
+  ) async => [1, 2, 3];
+
+  @override
+  Future<List<int>> restoreLegacyBackup(
     String pin,
     String saltB64,
     String nonceB64,
@@ -87,15 +104,24 @@ class _FakeBackupService extends Fake implements BackupService {
 }
 
 class _FakeBackupRepository extends Fake implements ChatBackupRepository {
-  EncryptedBackup? stored;
+  StoredBackup? stored;
   Object? fetchError;
+  Object? unlockError;
   Object? saveError;
+  final List<String> unlockTries = [];
   final List<EncryptedBackup> saved = [];
 
   @override
-  Future<EncryptedBackup?> fetchBackup() async {
+  Future<StoredBackup?> fetchBackup() async {
     if (fetchError != null) throw fetchError!;
     return stored;
+  }
+
+  @override
+  Future<SealedKey> unlockBackup(String verifier) async {
+    unlockTries.add(verifier);
+    if (unlockError != null) throw unlockError!;
+    return const SealedKey(blob: 'b', nonce: 'n');
   }
 
   @override
@@ -109,7 +135,11 @@ class _FakeBackupRepository extends Fake implements ChatBackupRepository {
 }
 
 void main() {
-  const existingBackup = EncryptedBackup(blob: 'b', salt: 's', nonce: 'n');
+  const existingBackup = StoredBackup(salt: 's');
+  const legacyBackup = StoredBackup(
+    salt: 's',
+    legacyKey: SealedKey(blob: 'old-blob', nonce: 'old-nonce'),
+  );
 
   group('E2eeKeyManager.changeBackupPin', () {
     late _FakeKeyService keys;
@@ -140,7 +170,9 @@ void main() {
 
     test('re-encrypts the key under the new PIN', () async {
       expect(await change(), ChangePinResult.changed);
+      expect(repository.unlockTries, ['proof-of-111111']);
       expect(repository.saved.single.blob, 'new-blob');
+      expect(repository.saved.single.verifier, 'new-verifier');
     });
 
     test('reports a missing backup', () async {
@@ -156,9 +188,16 @@ void main() {
     });
 
     test('rejects a wrong current PIN without touching the backup', () async {
-      backups.pinIsCorrect = false;
+      repository.unlockError = const WrongPinException();
 
       expect(await change(), ChangePinResult.wrongPin);
+      expect(repository.saved, isEmpty);
+    });
+
+    test('reports a backup locked after too many wrong PINs', () async {
+      repository.unlockError = const BackupRateLimitedException();
+
+      expect(await change(), ChangePinResult.rateLimited);
       expect(repository.saved, isEmpty);
     });
 
@@ -311,9 +350,73 @@ void main() {
       expect(keys.savedKeyPairs, 1);
     });
 
+    test('the server decides whether the PIN is right', () async {
+      repository.stored = existingBackup;
+
+      await service.initialize(
+        'u1',
+        askPin: ({required bool isNewPin}) async => '123456',
+      );
+
+      expect(repository.unlockTries, ['proof-of-123456']);
+    });
+
+    test('a backup locked after too many wrong PINs is reported', () async {
+      repository.stored = existingBackup;
+      repository.unlockError = const BackupRateLimitedException();
+
+      final result = await service.initialize(
+        'u1',
+        askPin: ({required bool isNewPin}) async => '000000',
+      );
+
+      expect(result, E2eeSetupResult.rateLimited);
+      expect(keys.savedKeyPairs, 0);
+    });
+
+    test('an older backup is opened once and saved in the new form', () async {
+      repository.stored = legacyBackup;
+
+      final result = await service.initialize(
+        'u1',
+        askPin: ({required bool isNewPin}) async => '123456',
+      );
+
+      expect(result, E2eeSetupResult.ready);
+      expect(keys.savedKeyPairs, 1);
+      expect(repository.unlockTries, isEmpty);
+      expect(repository.saved.single.verifier, 'new-verifier');
+    });
+
+    test('an older backup still restores if the upgrade fails', () async {
+      repository.stored = legacyBackup;
+      repository.saveError = Exception('offline');
+
+      final result = await service.initialize(
+        'u1',
+        askPin: ({required bool isNewPin}) async => '123456',
+      );
+
+      expect(result, E2eeSetupResult.ready);
+      expect(keys.savedKeyPairs, 1);
+    });
+
+    test('a wrong PIN on an older backup restores nothing', () async {
+      repository.stored = legacyBackup;
+      backups.pinIsCorrect = false;
+
+      final result = await service.initialize(
+        'u1',
+        askPin: ({required bool isNewPin}) async => '000000',
+      );
+
+      expect(result, E2eeSetupResult.wrongPin);
+      expect(repository.saved, isEmpty);
+    });
+
     test('a wrong PIN restores nothing', () async {
       repository.stored = existingBackup;
-      backups.pinIsCorrect = false;
+      repository.unlockError = const WrongPinException();
 
       final result = await service.initialize(
         'u1',

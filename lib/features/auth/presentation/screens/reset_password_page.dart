@@ -64,8 +64,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       if (_passwordController.text.isEmpty) {
         _passwordError = 'Please enter a new password';
         isValid = false;
-      } else if (_passwordController.text.length < 6) {
-        _passwordError = 'Password must be at least 6 characters';
+      } else if (_passwordController.text.length < 8) {
+        _passwordError = 'Password must be at least 8 characters';
         isValid = false;
       } else {
         _passwordError = null;
@@ -193,9 +193,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                             setState(() {
                               if (val.isEmpty) {
                                 _passwordError = 'Please enter a new password';
-                              } else if (val.length < 6) {
+                              } else if (val.length < 8) {
                                 _passwordError =
-                                    'Password must be at least 6 characters';
+                                    'Password must be at least 8 characters';
                               } else {
                                 _passwordError = null;
                               }

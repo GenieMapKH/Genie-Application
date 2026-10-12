@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/chat/data/chat_access_token.dart';
+import 'package:genie/features/chat/data/chat_attachment_service.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
@@ -42,6 +43,16 @@ final chatBackupRepositoryProvider = Provider(
 final chatRepositoryProvider = Provider(
   (ref) => ChatRepository(dio: ref.watch(apiClientProvider)),
 );
+
+/// Opened files are kept in memory for the signed-in user only, so the
+/// service is rebuilt (and that memory dropped) when the user changes.
+final chatAttachmentServiceProvider = Provider<ChatAttachmentService>((ref) {
+  ref.watch(currentUserIdProvider);
+  return ChatAttachmentService(
+    repository: ref.watch(chatRepositoryProvider),
+    cryptoService: ref.watch(cryptoServiceProvider),
+  );
+});
 
 /// One connection per signed-in user, open for as long as they are signed
 /// in so new messages and unread counts arrive without opening a chat.

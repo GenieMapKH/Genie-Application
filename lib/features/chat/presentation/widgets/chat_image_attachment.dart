@@ -1,0 +1,119 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/providers/chat_participant_providers.dart';
+
+/// The picture of a chat message: the local copy while it is being sent,
+/// otherwise downloaded and decrypted on demand. Tap to view it full screen.
+class ChatImageAttachment extends ConsumerWidget {
+  static const _width = 220.0;
+  static const _height = 220.0;
+
+  final ChatMessage message;
+
+  /// Replaces opening the picture, e.g. to retry a failed send.
+  final VoidCallback? onTap;
+
+  const ChatImageAttachment({super.key, required this.message, this.onTap});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final local = message.localImage;
+    if (local != null) return _picture(context, local);
+
+    final attachment = message.attachment!;
+    return ref
+        .watch(chatAttachmentBytesProvider(attachment))
+        .when(
+          data: (bytes) => _picture(context, bytes),
+          loading: () => _placeholder(
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          error: (_, _) => GestureDetector(
+            onTap: () =>
+                ref.invalidate(chatAttachmentBytesProvider(attachment)),
+            child: _placeholder(_notice('Photo unavailable. Tap to retry.')),
+          ),
+        );
+  }
+
+  Widget _picture(BuildContext context, Uint8List bytes) {
+    return GestureDetector(
+      onTap:
+          onTap ??
+          () => Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute<void>(
+              fullscreenDialog: true,
+              builder: (_) => _ChatImageViewer(bytes: bytes),
+            ),
+          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: _width,
+            maxHeight: _height * 1.5,
+          ),
+          child: Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+            errorBuilder: (_, _, _) =>
+                _placeholder(_notice('This picture cannot be shown.')),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _placeholder(Widget child) {
+    return Container(
+      width: _width,
+      height: _height * 0.7,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(12),
+      child: child,
+    );
+  }
+
+  Widget _notice(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF6B7280)),
+    );
+  }
+}
+
+class _ChatImageViewer extends StatelessWidget {
+  final Uint8List bytes;
+
+  const _ChatImageViewer({required this.bytes});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Center(
+        child: InteractiveViewer(maxScale: 5, child: Image.memory(bytes)),
+      ),
+    );
+  }
+}

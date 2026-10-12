@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/features/chat/data/chat_attachment_service.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
@@ -29,7 +31,11 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   final ChatSocketService socketService;
   final E2eeSetupService setupService;
   final MessageCipher cipher;
+  final ChatAttachmentService attachments;
   final ConversationsNotifier conversations;
+
+  /// Name and type of pictures still being sent, by message id.
+  final _outgoingFiles = <String, ({String name, String mimeType})>{};
 
   final _subscriptions = <StreamSubscription<void>>[];
 
@@ -47,6 +53,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     required this.socketService,
     required this.setupService,
     required this.cipher,
+    required this.attachments,
     required this.conversations,
   }) : super(const ActiveChatState()) {
     _subscriptions
@@ -109,6 +116,29 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     await _deliver(message);
   }
 
+  /// Sends a picture. It is shown at once, then encrypted, uploaded and
+  /// announced to the other person in an ordinary encrypted message.
+  Future<void> sendImage(
+    Uint8List bytes, {
+    required String name,
+    required String mimeType,
+  }) async {
+    if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
+
+    final message = ChatMessage(
+      id: _newMessageId(),
+      senderId: userId,
+      recipientId: participantId,
+      text: '',
+      createdAt: DateTime.now(),
+      status: ChatMessageStatus.sending,
+      localImage: bytes,
+    );
+    _outgoingFiles[message.id] = (name: name, mimeType: mimeType);
+    state = state.copyWith(messages: [...state.messages, message]);
+    await _deliver(message);
+  }
+
   /// Sends a failed message again. It keeps its id, so the server stores it
   /// once even if the first attempt did arrive.
   Future<void> retry(String messageId) async {
@@ -145,10 +175,12 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
 
   Future<void> _deliver(ChatMessage message) async {
     try {
+      message = await _uploadPendingFile(message);
       final sealed = await cipher.encrypt(
         message.text,
         id: message.id,
         peerId: participantId,
+        attachment: message.attachment,
       );
       await socketService.send(
         id: message.id,
@@ -157,6 +189,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
         nonce: sealed.nonce,
       );
       if (!mounted) return;
+      _outgoingFiles.remove(message.id);
       _replace(message.copyWith(status: ChatMessageStatus.sent));
       unawaited(conversations.refresh());
     } catch (e, stackTrace) {
@@ -170,6 +203,26 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
             : 'Message not sent. Please try again.',
       );
     }
+  }
+
+  /// Uploads the picture of a message that has one and is not stored yet.
+  /// A retry after a later failure does not upload it a second time.
+  Future<ChatMessage> _uploadPendingFile(ChatMessage message) async {
+    final bytes = message.localImage;
+    final file = _outgoingFiles[message.id];
+    if (message.attachment != null || bytes == null || file == null) {
+      return message;
+    }
+
+    final attachment = await attachments.send(
+      bytes,
+      recipientId: participantId,
+      name: file.name,
+      mimeType: file.mimeType,
+    );
+    final uploaded = message.copyWith(attachment: attachment);
+    if (mounted) _replace(uploaded);
+    return uploaded;
   }
 
   void _queueIncoming(EncryptedMessage encrypted) {
@@ -257,6 +310,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       recipientId: encrypted.recipientId,
       text: opened?.text ?? undecryptableText,
       createdAt: encrypted.createdAt,
+      attachment: opened?.attachment,
     );
   }
 
@@ -315,6 +369,7 @@ final activeChatProvider = StateNotifierProvider.autoDispose
         socketService: ref.watch(chatSocketServiceProvider),
         setupService: ref.watch(e2eeSetupServiceProvider),
         cipher: ref.watch(messageCipherProvider(chat.userId)),
+        attachments: ref.watch(chatAttachmentServiceProvider),
         conversations: ref.watch(conversationsProvider.notifier),
       );
     });

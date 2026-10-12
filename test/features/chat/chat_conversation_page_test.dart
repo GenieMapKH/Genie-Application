@@ -17,12 +17,14 @@ void main() {
   late FakeChatSocket socket;
   late FakeSetupService setup;
   late FakeCipher cipher;
+  late FakeAttachmentService attachments;
 
   setUp(() {
     repository = FakeChatRepository();
     socket = FakeChatSocket();
     setup = FakeSetupService();
     cipher = FakeCipher();
+    attachments = FakeAttachmentService();
   });
 
   Future<void> openChat(
@@ -43,6 +45,7 @@ void main() {
           chatSocketServiceProvider.overrideWithValue(socket),
           e2eeSetupServiceProvider.overrideWithValue(setup),
           messageCipherProvider.overrideWith((ref, userId) => cipher),
+          chatAttachmentServiceProvider.overrideWithValue(attachments),
         ],
         child: MaterialApp(
           home: ChatConversationPage(
@@ -135,7 +138,9 @@ void main() {
     await openChat(tester);
 
     expect(
-      find.text('Failed to restore backup. Incorrect PIN?'),
+      find.text(
+        'Incorrect PIN. After 5 wrong tries the backup locks for a while.',
+      ),
       findsOneWidget,
     );
     expect(find.byType(TextField), findsNothing);

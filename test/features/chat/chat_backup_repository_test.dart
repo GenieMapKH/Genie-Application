@@ -38,7 +38,18 @@ ChatBackupRepository _repositoryWith(_StubAdapter adapter) {
 }
 
 void main() {
-  test('fetchBackup returns the stored backup', () async {
+  test('fetchBackup learns only the salt of a protected backup', () async {
+    final repository = _repositoryWith(
+      _StubAdapter(200, '{"backupSalt":"salt"}'),
+    );
+
+    final backup = await repository.fetchBackup();
+
+    expect(backup!.salt, 'salt');
+    expect(backup.legacyKey, isNull);
+  });
+
+  test('fetchBackup still receives an older backup whole', () async {
     final repository = _repositoryWith(
       _StubAdapter(
         200,
@@ -48,9 +59,39 @@ void main() {
 
     final backup = await repository.fetchBackup();
 
-    expect(backup!.blob, 'blob');
-    expect(backup.salt, 'salt');
-    expect(backup.nonce, 'nonce');
+    expect(backup!.salt, 'salt');
+    expect(backup.legacyKey!.blob, 'blob');
+    expect(backup.legacyKey!.nonce, 'nonce');
+  });
+
+  test('unlockBackup sends the PIN proof and returns the key', () async {
+    final adapter = _StubAdapter(
+      200,
+      '{"backupBlob":"blob","backupNonce":"nonce"}',
+    );
+    final repository = _repositoryWith(adapter);
+
+    final key = await repository.unlockBackup('proof');
+
+    expect(adapter.lastRequest!.path, '/chat/backup/unlock');
+    expect(adapter.lastRequest!.data, {'backupVerifier': 'proof'});
+    expect(key.blob, 'blob');
+    expect(key.nonce, 'nonce');
+  });
+
+  test('unlockBackup tells a wrong PIN from a locked backup', () async {
+    await expectLater(
+      _repositoryWith(_StubAdapter(403)).unlockBackup('proof'),
+      throwsA(isA<WrongPinException>()),
+    );
+    await expectLater(
+      _repositoryWith(_StubAdapter(429)).unlockBackup('proof'),
+      throwsA(isA<BackupRateLimitedException>()),
+    );
+    await expectLater(
+      _repositoryWith(_StubAdapter(503)).unlockBackup('proof'),
+      throwsA(isA<DioException>()),
+    );
   });
 
   test('fetchBackup returns null when the user has no backup yet', () async {
@@ -74,12 +115,12 @@ void main() {
     await expectLater(repository.fetchBackup(), throwsA(isA<DioException>()));
   });
 
-  test('saveBackup posts all three fields', () async {
+  test('saveBackup posts the backup with its PIN proof', () async {
     final adapter = _StubAdapter(201);
     final repository = _repositoryWith(adapter);
 
     await repository.saveBackup(
-      const EncryptedBackup(blob: 'b', salt: 's', nonce: 'n'),
+      const EncryptedBackup(blob: 'b', salt: 's', nonce: 'n', verifier: 'v'),
     );
 
     expect(adapter.lastRequest!.path, '/chat/backup');
@@ -87,6 +128,7 @@ void main() {
       'backupBlob': 'b',
       'backupSalt': 's',
       'backupNonce': 'n',
+      'backupVerifier': 'v',
     });
   });
 

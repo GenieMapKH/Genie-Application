@@ -9,6 +9,7 @@ import 'package:genie/features/chat/e2ee/crypto_service.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 import 'package:genie/features/chat/e2ee/message_cipher.dart';
 import 'package:genie/features/chat/e2ee/peer_key_store.dart';
+import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
@@ -188,8 +189,16 @@ void main() {
       final message = await sentByAlice('m1', 'hello');
 
       expect(message.ciphertext, isNot(startsWith('hello')));
-      expect(await bobCipher.decrypt(message), (id: 'm1', text: 'hello'));
-      expect(await aliceCipher.decrypt(message), (id: 'm1', text: 'hello'));
+      expect(await bobCipher.decrypt(message), (
+        id: 'm1',
+        text: 'hello',
+        attachment: null,
+      ));
+      expect(await aliceCipher.decrypt(message), (
+        id: 'm1',
+        text: 'hello',
+        attachment: null,
+      ));
     });
 
     test(
@@ -207,6 +216,7 @@ void main() {
         expect(await bobCipher.decrypt(legacy), (
           id: null,
           text: 'see you at 5',
+          attachment: null,
         ));
       },
     );
@@ -227,6 +237,64 @@ void main() {
         noKeys.encrypt('hello', id: 'm1', peerId: bob),
         throwsA(isA<ChatEncryptionException>()),
       );
+    });
+  });
+
+  group('a file sent with a message', () {
+    ChatAttachment fileBetween(String senderId, String recipientId) {
+      return ChatAttachment(
+        path: '$senderId/$recipientId/33333333-3333-4333-8333-333333333333',
+        key: 'file-key',
+        nonce: 'file-nonce',
+        name: 'contract.jpg',
+        mimeType: 'image/jpeg',
+        size: 1234,
+      );
+    }
+
+    Future<EncryptedMessage> sentWith(ChatAttachment attachment) async {
+      final sealed = await aliceCipher.encrypt(
+        '',
+        id: 'm1',
+        peerId: bob,
+        attachment: attachment,
+      );
+      return EncryptedMessage(
+        id: 'm1',
+        senderId: alice,
+        recipientId: bob,
+        ciphertext: sealed.ciphertext,
+        nonce: sealed.nonce,
+        createdAt: now,
+      );
+    }
+
+    // The fake ids are not UUIDs, so use real-looking ones for the path.
+    const aliceId = '11111111-1111-4111-8111-111111111111';
+    const bobId = '22222222-2222-4222-8222-222222222222';
+
+    test('its key travels inside the sealed message', () async {
+      final attachment = fileBetween(aliceId, bobId);
+      final sealed = await aliceCipher.encrypt(
+        'here it is',
+        id: 'm1',
+        peerId: bob,
+        attachment: attachment,
+      );
+
+      expect(sealed.ciphertext, contains('file-key'));
+      expect(sealed.ciphertext, startsWith('1-7|'));
+    });
+
+    test('is dropped when it points outside this conversation', () async {
+      // The path names two other people: the message's sender and
+      // recipient are "alice" and "bob", so this file is not theirs.
+      final message = await sentWith(fileBetween(aliceId, bobId));
+
+      final opened = await bobCipher.decrypt(message);
+
+      expect(opened!.text, '');
+      expect(opened.attachment, isNull);
     });
   });
 

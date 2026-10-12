@@ -23,6 +23,7 @@ abstract final class ProfileSecurityActions {
             context,
             title: 'Enter New PIN',
             helper: 'This new PIN will encrypt your existing keys.',
+            isNewPin: true,
           ),
         );
 
@@ -32,9 +33,10 @@ abstract final class ProfileSecurityActions {
       ChangePinResult.noBackup =>
         'No backup found. Please open Chat first to set up your keys.',
       ChangePinResult.rateLimited =>
-        'Too many requests. Please try again in 15 minutes.',
+        'Too many wrong PINs. The backup is locked; try again later.',
       ChangePinResult.fetchFailed => 'Could not fetch backup from server.',
-      ChangePinResult.wrongPin => 'Incorrect PIN. Failed to unlock backup.',
+      ChangePinResult.wrongPin =>
+        'Incorrect PIN. After 5 wrong tries the backup locks for a while.',
       ChangePinResult.saveFailed => 'Failed to update backup on server.',
       ChangePinResult.cancelled => null,
     });
@@ -56,6 +58,7 @@ abstract final class ProfileSecurityActions {
             context,
             title: 'Enter PIN for New Keys',
             helper: 'This PIN will encrypt your newly generated keys.',
+            isNewPin: true,
           ),
         );
 

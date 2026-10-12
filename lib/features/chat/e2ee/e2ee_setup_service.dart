@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/backup_service.dart';
+import 'package:genie/features/chat/e2ee/key_backup_vault.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 
 /// How [E2eeSetupService.initialize] ended. The UI turns this into a message.
@@ -18,6 +19,11 @@ class E2eeSetupService {
   final KeyService keyService;
   final BackupService backupService;
   final ChatBackupRepository backupRepository;
+
+  late final KeyBackupVault _vault = KeyBackupVault(
+    backupService: backupService,
+    backupRepository: backupRepository,
+  );
 
   E2eeSetupService({
     required this.keyService,
@@ -41,6 +47,8 @@ class E2eeSetupService {
           : await _restoreIdentity(userId, backup, askPin);
     } on BackupRateLimitedException {
       return E2eeSetupResult.rateLimited;
+    } on WrongPinException {
+      return E2eeSetupResult.wrongPin;
     } catch (e, stackTrace) {
       AppLogger.error('E2EE setup failed', e, stackTrace);
       return E2eeSetupResult.failed;
@@ -56,44 +64,22 @@ class E2eeSetupService {
 
     final pin = await askPin(isNewPin: true);
     if (pin != null) {
-      final created = await backupService.createBackup(
-        pin,
-        keyPair.secretKey.extractBytes(),
-      );
-      await backupRepository.saveBackup(
-        EncryptedBackup(
-          blob: created['blob']!,
-          salt: created['salt']!,
-          nonce: created['nonce']!,
-        ),
-      );
+      await _vault.save(pin, keyPair.secretKey.extractBytes());
     }
     return _finish(userId);
   }
 
   /// New device for an existing account: unlock the server backup with the PIN.
+  /// A wrong PIN or a locked backup is reported by [initialize].
   Future<E2eeSetupResult> _restoreIdentity(
     String userId,
-    EncryptedBackup backup,
+    StoredBackup backup,
     PinPrompt askPin,
   ) async {
     final pin = await askPin(isNewPin: false);
     if (pin == null) return E2eeSetupResult.cancelled;
 
-    final List<int> secretBytes;
-    try {
-      secretBytes = await backupService.restoreBackup(
-        pin,
-        backup.salt,
-        backup.nonce,
-        backup.blob,
-      );
-    } catch (e) {
-      // A wrong PIN fails the AES-GCM authentication check.
-      AppLogger.error('Backup restore failed', e);
-      return E2eeSetupResult.wrongPin;
-    }
-
+    final secretBytes = await _vault.open(pin, backup);
     await keyService.restoreIdentityKeyPair(
       userId,
       publicKey: base64Decode(await backupRepository.fetchPublicKey(userId)),
