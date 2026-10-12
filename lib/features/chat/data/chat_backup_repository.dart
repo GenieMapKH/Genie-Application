@@ -43,7 +43,30 @@ class BackupRateLimitedException extends AppException {
     : super('Too many backup attempts', code: '429');
 }
 
-/// Thrown when the server rejects the PIN. The try has been counted.
+/// How the owner shows that an existing key backup is theirs to replace.
+class BackupOwnerProof {
+  final String? _currentVerifier;
+  final String? _passwordProofToken;
+
+  /// The proof of the backup's current PIN (see `BackupKeys.verifier`).
+  const BackupOwnerProof.pin(String verifier)
+    : _currentVerifier = verifier,
+      _passwordProofToken = null;
+
+  /// For a forgotten PIN: the token the server gives after checking the
+  /// account password (`AccountRepository.requestPasswordProof`).
+  const BackupOwnerProof.password(String proofToken)
+    : _currentVerifier = null,
+      _passwordProofToken = proofToken;
+
+  Map<String, String> toJson() => {
+    'currentBackupVerifier': ?_currentVerifier,
+    'passwordProofToken': ?_passwordProofToken,
+  };
+}
+
+/// Thrown when the server rejects the PIN (the try has been counted), or
+/// the [BackupOwnerProof] sent to replace a backup.
 class WrongPinException extends AppException {
   const WrongPinException() : super('Wrong PIN', code: '403');
 }
@@ -95,16 +118,52 @@ class ChatBackupRepository {
     }
   }
 
-  Future<void> saveBackup(EncryptedBackup backup) async {
-    await dio.post(
-      '/chat/backup',
-      data: {
-        'backupBlob': backup.blob,
-        'backupSalt': backup.salt,
-        'backupNonce': backup.nonce,
-        'backupVerifier': backup.verifier,
-      },
+  /// Stores [backup]. When it replaces an existing backup the server wants
+  /// [ownerProof]: a wrong one throws [WrongPinException], and a wrong PIN
+  /// is counted like a wrong unlock.
+  Future<void> saveBackup(
+    EncryptedBackup backup, {
+    BackupOwnerProof? ownerProof,
+  }) {
+    return _replaceProtected(
+      () => dio.post('/chat/backup', data: _body(backup, ownerProof)),
     );
+  }
+
+  /// Replaces the account's key pair: [publicKey] and the [backup] of its
+  /// private key are swapped together. [ownerProof] as in [saveBackup].
+  Future<void> resetKeys({
+    required String publicKey,
+    required EncryptedBackup backup,
+    BackupOwnerProof? ownerProof,
+  }) {
+    return _replaceProtected(
+      () => dio.post(
+        '/chat/keys/reset',
+        data: {..._body(backup, ownerProof), 'identityPublicKey': publicKey},
+      ),
+    );
+  }
+
+  Map<String, String> _body(EncryptedBackup backup, BackupOwnerProof? proof) {
+    return {
+      'backupBlob': backup.blob,
+      'backupSalt': backup.salt,
+      'backupNonce': backup.nonce,
+      'backupVerifier': backup.verifier,
+      ...?proof?.toJson(),
+    };
+  }
+
+  Future<void> _replaceProtected(Future<void> Function() request) async {
+    try {
+      await request();
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      if (status == 403) throw const WrongPinException();
+      if (status == 429) throw const BackupRateLimitedException();
+      rethrow;
+    }
   }
 
   /// Base64 public key of [userId] as stored on the server.

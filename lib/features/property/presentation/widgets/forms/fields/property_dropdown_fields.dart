@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class TitleTypeFieldWidget extends StatelessWidget {
   final String? value;
@@ -14,7 +15,7 @@ class TitleTypeFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Title Type',
+      label: context.l10n.propertyTitleType,
       required: false,
       value: value,
       items: const ['Hard Title', 'Soft Title', 'Other'],
@@ -44,10 +45,10 @@ class BedroomsFieldWidget extends StatelessWidget {
       items.insert(0, '0');
     }
     return PropertyDropdown(
-      label: 'Bedrooms',
+      label: context.l10n.propertyBedrooms,
       required: false,
       value: value,
-      hintText: 'Number of bedrooms',
+      hintText: context.l10n.propertyNumberOfBedrooms,
       items: items,
       onChanged: onChanged,
     );
@@ -67,10 +68,10 @@ class BathroomsFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Bathrooms',
+      label: context.l10n.propertyBathrooms,
       required: false,
       value: value,
-      hintText: 'Number of bathrooms',
+      hintText: context.l10n.propertyNumberOfBathrooms,
       items: const ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
       onChanged: onChanged,
     );
@@ -90,10 +91,10 @@ class FloorsFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Floors',
+      label: context.l10n.propertyFloors,
       required: false,
       value: value,
-      hintText: 'Total floors (e.g. 2)',
+      hintText: context.l10n.propertyTotalFloorsEG2,
       items: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
       onChanged: onChanged,
     );
@@ -113,10 +114,10 @@ class NumberOfFloorsFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Number of Floors',
+      label: context.l10n.propertyNumberOfFloors,
       required: false,
       value: value,
-      hintText: 'Number of Floors',
+      hintText: context.l10n.propertyNumberOfFloors,
       items: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
       onChanged: onChanged,
     );
@@ -136,10 +137,10 @@ class FloorNumberFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Floor Number',
+      label: context.l10n.propertyFloorNumber,
       required: false,
       value: value,
-      hintText: 'Enter floor number (e.g. 12)',
+      hintText: context.l10n.propertyEnterFloorNumberEG12,
       items: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
       onChanged: onChanged,
     );
@@ -159,10 +160,10 @@ class TotalFloorsFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Total Floors',
+      label: context.l10n.propertyTotalFloors,
       required: false,
       value: value,
-      hintText: 'Total floors in building',
+      hintText: context.l10n.propertyTotalFloorsInBuilding,
       items: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
       onChanged: onChanged,
     );
@@ -182,10 +183,10 @@ class ParkingFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Parking',
+      label: context.l10n.propertyParking,
       required: false,
       value: value,
-      hintText: 'Select parking',
+      hintText: context.l10n.propertySelectParking,
       items: const ['Yes', 'No'],
       onChanged: onChanged,
     );
@@ -205,10 +206,10 @@ class FurnishedFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Furnished',
+      label: context.l10n.propertyFurnished,
       required: false,
       value: value,
-      hintText: 'Select furnished',
+      hintText: context.l10n.propertySelectFurnished,
       items: const ['Unfurnished', 'Fully Furnished', 'Electrical appliances'],
       onChanged: onChanged,
     );
@@ -228,10 +229,10 @@ class BuildingTypeFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Building Type',
+      label: context.l10n.propertyBuildingType,
       required: false,
       value: value,
-      hintText: 'Select building type',
+      hintText: context.l10n.propertySelectBuildingType,
       items: const [
         'Commercial Building',
         'Office Building',
@@ -257,10 +258,10 @@ class TotalUnitsFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Total Units',
+      label: context.l10n.propertyTotalUnits,
       required: false,
       value: value,
-      hintText: 'Number of units',
+      hintText: context.l10n.propertyNumberOfUnits,
       items: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'],
       onChanged: onChanged,
     );
@@ -280,10 +281,10 @@ class BalconyFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Balcony',
+      label: context.l10n.propertyBalcony,
       required: false,
       value: value,
-      hintText: 'Select balcony',
+      hintText: context.l10n.propertySelectBalcony,
       items: const ['Yes', 'No'],
       onChanged: onChanged,
     );
@@ -303,10 +304,10 @@ class CompletionStatusFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Completion Status',
+      label: context.l10n.propertyCompletionStatus,
       required: false,
       value: value,
-      hintText: 'Select Status',
+      hintText: context.l10n.propertySelectStatus,
       items: const ['Off-plan', 'Under Construction', 'Completed'],
       onChanged: onChanged,
     );
@@ -326,10 +327,10 @@ class ViewTypeFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'View Type',
+      label: context.l10n.propertyViewType,
       required: false,
       value: value,
-      hintText: 'Select view type',
+      hintText: context.l10n.propertySelectViewType,
       items: const [
         'City View',
         'River View',
@@ -355,10 +356,10 @@ class ProjectTypeFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Project Type',
+      label: context.l10n.propertyProjectType,
       required: false,
       value: value,
-      hintText: 'Select project type',
+      hintText: context.l10n.propertySelectProjectType,
       items: const [
         'Borey',
         'Condo',
@@ -384,10 +385,10 @@ class BoreyCompletionStatusFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyDropdown(
-      label: 'Completion Status',
+      label: context.l10n.propertyCompletionStatus,
       required: false,
       value: value,
-      hintText: 'Select status',
+      hintText: context.l10n.propertySelectStatus2,
       items: const [
         'Pre-launch',
         'Under Construction',

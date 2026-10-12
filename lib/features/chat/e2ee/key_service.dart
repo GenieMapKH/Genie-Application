@@ -125,30 +125,42 @@ class KeyService {
     }
   }
 
-  /// Compares the local public key with the server's, and uploads if missing or different
-  Future<void> uploadPublicKeyIfNeeded(String userId) async {
+  /// Forgets the key pair kept on this device for [userId].
+  Future<void> deleteIdentityKeyPair(String userId) async {
+    await secureStorage.delete(key: _publicKeyKey(userId));
+    await secureStorage.delete(key: _privateKeyKey(userId));
+    if (_loaded?.userId == userId) _loaded = null;
+  }
+
+  /// Publishes the local public key when the server has none or another one.
+  ///
+  /// Returns false when the server refuses it: the account's keys were
+  /// replaced on another device, so the pair kept here is no longer the
+  /// account's and must be restored from the backup.
+  Future<bool> uploadPublicKeyIfNeeded(String userId) async {
     final pubKeyBase64 = await secureStorage.read(key: _publicKeyKey(userId));
-    if (pubKeyBase64 == null) return;
+    if (pubKeyBase64 == null) return true;
 
     try {
       final response = await dio.get('/chat/keys/$userId');
-      final serverPubKey = response.data['identityPublicKey'];
-
-      if (serverPubKey != pubKeyBase64) {
-        await _uploadKey(pubKeyBase64);
-      }
+      if (response.data['identityPublicKey'] == pubKeyBase64) return true;
     } catch (e) {
-      // If fetching fails (e.g. 404 Not Found), try to upload it
-      await _uploadKey(pubKeyBase64);
+      // No key on the server yet (404), or it cannot say: try to publish.
     }
+    return _uploadKey(pubKeyBase64);
   }
 
-  Future<void> _uploadKey(String pubKeyBase64) async {
+  /// False only when the server answers that the account has other keys.
+  Future<bool> _uploadKey(String pubKeyBase64) async {
     try {
       await dio.post('/chat/keys', data: {'identityPublicKey': pubKeyBase64});
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 409) return false;
+      // Anything else is tried again the next time chat is opened.
+      AppLogger.error('Failed to upload public key', e);
     } catch (e) {
       AppLogger.error('Failed to upload public key', e);
-      // In production, we should handle this more gracefully, perhaps retry later.
     }
+    return true;
   }
 }

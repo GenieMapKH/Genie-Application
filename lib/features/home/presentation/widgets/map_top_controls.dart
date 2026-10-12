@@ -10,6 +10,8 @@ import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/presentation/widgets/property_type_filters.dart';
 import 'package:genie/features/home/utils/scanner/document_scanner_service.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class MapTopControls extends StatelessWidget {
   final MapSkin currentSkin;
@@ -56,7 +58,7 @@ class MapTopControls extends StatelessWidget {
                                 horizontal: 16.0,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: context.colors.surface,
                                 borderRadius: BorderRadius.circular(24.0),
                                 boxShadow: [
                                   BoxShadow(
@@ -76,9 +78,9 @@ class MapTopControls extends StatelessWidget {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      'Search by area, road, village...',
+                                      context.l10n.homeSearchByAreaRoadVillage,
                                       style: GoogleFonts.inter(
-                                        color: const Color(0xFF6B7280),
+                                        color: context.colors.textMuted,
                                         fontSize: 14,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -130,7 +132,7 @@ class MapTopControls extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: const Color(0xFFE5E7EB),
+                          color: context.colors.border,
                           width: 2,
                         ),
                         boxShadow: [
@@ -172,7 +174,10 @@ class MapTopControls extends StatelessWidget {
           'Extracted ${coordinates.length} coordinate(s)!',
         );
       } else {
-        AppPopup.showError(context, 'No coordinates found. Please try again.');
+        AppPopup.showError(
+          context,
+          context.l10n.homeNoCoordinatesFoundPleaseTryAgain,
+        );
       }
 
       final result = await showModalBottomSheet<List<LatLng>>(

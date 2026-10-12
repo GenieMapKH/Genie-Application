@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:genie/features/property/presentation/screens/add_property_page.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class MaintenanceFeeFieldWidget extends StatelessWidget {
   final AddPropertyPageState state;
@@ -16,22 +18,22 @@ class MaintenanceFeeFieldWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const PropertySectionTitle(
-              title: 'Maintenance Fee',
+            PropertySectionTitle(
+              title: context.l10n.propertyMaintenanceFee,
               required: false,
             ),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.info_outline,
                   size: 14,
-                  color: Color(0xFF6B7280),
+                  color: context.colors.textMuted,
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Building management fee per month',
+                  context.l10n.propertyBuildingManagementFeePerMonth,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -43,6 +45,7 @@ class MaintenanceFeeFieldWidget extends StatelessWidget {
         TextField(
           controller: state.maintenanceFeeController,
           decoration: defaultPropertyInputDecoration(
+            context,
             'Monthly maintenance fee (USD)',
           ),
         ),
@@ -69,22 +72,22 @@ class LeaseRemainingFieldWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const PropertySectionTitle(
-              title: 'Lease Remaining',
+            PropertySectionTitle(
+              title: context.l10n.propertyLeaseRemaining,
               required: false,
             ),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.info_outline,
                   size: 14,
-                  color: Color(0xFF6B7280),
+                  color: context.colors.textMuted,
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Remaining contract duration with landlord',
+                  context.l10n.propertyRemainingContractDurationWithLandlord,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -99,7 +102,7 @@ class LeaseRemainingFieldWidget extends StatelessWidget {
               flex: 1,
               child: TextField(
                 controller: state.leaseRemainingController,
-                decoration: defaultPropertyInputDecoration('Duration'),
+                decoration: defaultPropertyInputDecoration(context, 'Duration'),
               ),
             ),
             const SizedBox(width: 16),
@@ -108,18 +111,21 @@ class LeaseRemainingFieldWidget extends StatelessWidget {
               child: DropdownButtonFormField<String>(
                 initialValue: state.selectedLeaseUnit ?? 'Months',
                 isExpanded: true,
-                icon: const Icon(
+                icon: Icon(
                   Icons.keyboard_arrow_down,
-                  color: Color(0xFF9CA3AF),
+                  color: context.colors.textHint,
                 ),
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF111827),
+                  color: context.colors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
-                dropdownColor: Colors.white,
+                dropdownColor: context.colors.surface,
                 borderRadius: BorderRadius.circular(12.0),
-                decoration: defaultPropertyInputDecoration('Select unit'),
+                decoration: defaultPropertyInputDecoration(
+                  context,
+                  'Select unit',
+                ),
                 onChanged: onUnitChanged,
                 items: ['Months', 'Years'].map((String item) {
                   return DropdownMenuItem<String>(
@@ -153,10 +159,10 @@ class DefaultPriceListingSettingsWidget extends StatelessWidget {
       children: [
         Expanded(
           child: PropertyTextField(
-            label: 'Price',
+            label: context.l10n.propertyPrice,
             required: true,
             controller: state.priceController,
-            hintText: 'Enter selling price (USD)',
+            hintText: context.l10n.propertyEnterSellingPriceUsd,
             hasError:
                 state.hasAttemptedSubmit &&
                 state.priceController.text.trim().isEmpty,
@@ -166,7 +172,7 @@ class DefaultPriceListingSettingsWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: PropertyDropdown(
-            label: 'Listing Settings',
+            label: context.l10n.propertyListingSettings,
             required: true,
             value: state.selectedListingSetting,
             items: const ['Sale', 'Rent', 'To Let'],

@@ -5,6 +5,9 @@ import 'package:genie/core/config/app_config.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/e2ee/crypto_service.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:genie/features/settings/data/app_settings_storage.dart';
+import 'package:genie/features/settings/providers/app_settings_providers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -35,10 +38,17 @@ void main() async {
   }
 
   final cryptoService = await CryptoService.init();
+  // Read before the first frame, so the app opens in the saved theme and language.
+  final settingsStorage = AppSettingsStorage(
+    await SharedPreferences.getInstance(),
+  );
 
   runApp(
     ProviderScope(
-      overrides: [cryptoServiceProvider.overrideWithValue(cryptoService)],
+      overrides: [
+        cryptoServiceProvider.overrideWithValue(cryptoService),
+        appSettingsStorageProvider.overrideWithValue(settingsStorage),
+      ],
       child: const MyApp(),
     ),
   );

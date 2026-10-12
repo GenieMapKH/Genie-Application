@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:genie/features/property/presentation/screens/add_property_page.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class LandSizeFieldWidget extends StatelessWidget {
   final AddPropertyPageState state;
@@ -33,9 +35,9 @@ class LandSizeFieldWidget extends StatelessWidget {
                 ? InkWell(
                     onTap: () {},
                     child: Text(
-                      'Auto from map',
+                      context.l10n.propertyAutoFromMap,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF6B7280),
+                        color: context.colors.textMuted,
                         fontSize: 12,
                         decoration: TextDecoration.underline,
                       ),
@@ -43,16 +45,16 @@ class LandSizeFieldWidget extends StatelessWidget {
                   )
                 : Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.info_outline,
                         size: 14,
-                        color: Color(0xFF6B7280),
+                        color: context.colors.textMuted,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Total land area of the property',
+                        context.l10n.propertyTotalLandAreaOfTheProperty,
                         style: GoogleFonts.inter(
-                          color: const Color(0xFF6B7280),
+                          color: context.colors.textMuted,
                           fontSize: 11,
                         ),
                       ),
@@ -64,6 +66,7 @@ class LandSizeFieldWidget extends StatelessWidget {
         TextField(
           controller: state.landSizeController,
           decoration: defaultPropertyInputDecoration(
+            context,
             isLandType ? 'Size Area' : 'Enter land size',
             hasError:
                 state.hasAttemptedSubmit &&
@@ -90,7 +93,7 @@ class BuildingSizeFieldWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             PropertySectionTitle(
-              title: 'Building Size',
+              title: context.l10n.propertyBuildingSize,
               required: true,
               hasError:
                   state.hasAttemptedSubmit &&
@@ -98,16 +101,16 @@ class BuildingSizeFieldWidget extends StatelessWidget {
             ),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.info_outline,
                   size: 14,
-                  color: Color(0xFF6B7280),
+                  color: context.colors.textMuted,
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Total built-up area',
+                  context.l10n.propertyTotalBuiltUpArea,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -119,6 +122,7 @@ class BuildingSizeFieldWidget extends StatelessWidget {
         TextField(
           controller: state.buildingSizeController,
           decoration: defaultPropertyInputDecoration(
+            context,
             'Enter building size',
             hasError:
                 state.hasAttemptedSubmit &&
@@ -145,7 +149,7 @@ class UnitSizeFieldWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             PropertySectionTitle(
-              title: 'Unit Size',
+              title: context.l10n.propertyUnitSize,
               required: true,
               hasError:
                   state.hasAttemptedSubmit &&
@@ -153,16 +157,16 @@ class UnitSizeFieldWidget extends StatelessWidget {
             ),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.info_outline,
                   size: 14,
-                  color: Color(0xFF6B7280),
+                  color: context.colors.textMuted,
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Total usable area of the unit',
+                  context.l10n.propertyTotalUsableAreaOfTheUnit,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -174,6 +178,7 @@ class UnitSizeFieldWidget extends StatelessWidget {
         TextField(
           controller: state.unitSizeController,
           decoration: defaultPropertyInputDecoration(
+            context,
             'Enter unit size',
             hasError:
                 state.hasAttemptedSubmit &&

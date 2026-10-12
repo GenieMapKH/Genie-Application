@@ -8,11 +8,14 @@ import 'package:genie/features/chat/e2ee/key_service.dart';
 
 class _FakeCrypto extends Fake implements CryptoService {}
 
-/// Answers `GET /chat/keys/:id` with the public key the server lists.
+/// Answers `GET /chat/keys/:id` with the public key the server lists, and
+/// `POST /chat/keys` with [uploadStatus].
 class _KeyServer implements HttpClientAdapter {
   final Map<String, String> publicKeys;
+  final int uploadStatus;
+  int uploads = 0;
 
-  _KeyServer(this.publicKeys);
+  _KeyServer(this.publicKeys, {this.uploadStatus = 201});
 
   @override
   Future<ResponseBody> fetch(
@@ -20,6 +23,16 @@ class _KeyServer implements HttpClientAdapter {
     Stream<Uint8List>? requestStream,
     Future<void>? cancelFuture,
   ) async {
+    if (options.method == 'POST') {
+      uploads++;
+      return ResponseBody.fromString(
+        '{}',
+        uploadStatus,
+        headers: {
+          Headers.contentTypeHeader: [Headers.jsonContentType],
+        },
+      );
+    }
     final key = publicKeys[options.path.split('/').last];
     return ResponseBody.fromString(
       key == null ? '{}' : '{"identityPublicKey":"$key"}',
@@ -94,6 +107,54 @@ void main() {
       final service = _serviceWith({});
 
       expect(await service.adoptLegacyKeyPair('carol'), isFalse);
+    });
+  });
+
+  group('publishing the public key', () {
+    const aliceKeys = {
+      'identity_public_key_alice': 'alice-public',
+      'identity_private_key_alice': 'alice-private',
+    };
+
+    KeyService serviceOn(_KeyServer server) => KeyService(
+      cryptoService: _FakeCrypto(),
+      dio: Dio(BaseOptions(baseUrl: 'https://api.test'))
+        ..httpClientAdapter = server,
+    );
+
+    test('uploads it when the server has none', () async {
+      FlutterSecureStorage.setMockInitialValues({...aliceKeys});
+      final server = _KeyServer({});
+
+      expect(await serviceOn(server).uploadPublicKeyIfNeeded('alice'), isTrue);
+      expect(server.uploads, 1);
+    });
+
+    test('does nothing when the server already lists it', () async {
+      FlutterSecureStorage.setMockInitialValues({...aliceKeys});
+      final server = _KeyServer({'alice': 'alice-public'});
+
+      expect(await serviceOn(server).uploadPublicKeyIfNeeded('alice'), isTrue);
+      expect(server.uploads, 0);
+    });
+
+    test('reports keys that were replaced on another device', () async {
+      FlutterSecureStorage.setMockInitialValues({...aliceKeys});
+      final server = _KeyServer({'alice': 'newer-public'}, uploadStatus: 409);
+      final service = serviceOn(server);
+
+      expect(await service.uploadPublicKeyIfNeeded('alice'), isFalse);
+
+      // The pair kept here is no longer the account's.
+      await service.deleteIdentityKeyPair('alice');
+      expect(await service.hasLocalKeyPair('alice'), isFalse);
+    });
+
+    test('a server failure is not mistaken for replaced keys', () async {
+      FlutterSecureStorage.setMockInitialValues({...aliceKeys});
+      final server = _KeyServer({}, uploadStatus: 500);
+
+      expect(await serviceOn(server).uploadPublicKeyIfNeeded('alice'), isTrue);
     });
   });
 

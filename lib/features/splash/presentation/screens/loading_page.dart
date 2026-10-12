@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// A modern, responsive splash/loading page displaying the Genie core logo.
 /// Seamlessly transitions to [WelcomePage] after a brief splash display.
@@ -80,7 +81,7 @@ class _LoadingPageState extends State<LoadingPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: ScaleTransition(

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class PropertyImagePicker extends StatelessWidget {
   final List<XFile> selectedPhotos;
@@ -24,7 +26,7 @@ class PropertyImagePicker extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: context.colors.surfaceMuted,
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Column(
@@ -52,11 +54,11 @@ class PropertyImagePicker extends StatelessWidget {
                               : 12,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.colors.surface,
                           border: isPhoto
                               ? null
                               : Border.all(
-                                  color: const Color(0xFFD1D5DB),
+                                  color: context.colors.iconSubtle,
                                   style: BorderStyle.solid,
                                 ),
                           borderRadius: BorderRadius.circular(8.0),
@@ -96,10 +98,10 @@ class PropertyImagePicker extends StatelessWidget {
                                   ),
                                 ],
                               )
-                            : const Center(
+                            : Center(
                                 child: Icon(
                                   Icons.add,
-                                  color: Color(0xFF9CA3AF),
+                                  color: context.colors.textHint,
                                 ),
                               ),
                       );
@@ -110,17 +112,17 @@ class PropertyImagePicker extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.info_outline,
                     size: 14,
-                    color: Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                   ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      'Add at least 3 clear photos of the property and surrounding area',
+                      context.l10n.propertyAddAtLeast3ClearPhotos,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF6B7280),
+                        color: context.colors.textMuted,
                         fontSize: 11,
                       ),
                     ),
@@ -135,16 +137,16 @@ class PropertyImagePicker extends StatelessWidget {
                       onPressed: () => onPhotoPicked(ImageSource.camera),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        side: const BorderSide(color: Color(0xFFE5E7EB)),
+                        side: BorderSide(color: context.colors.border),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        backgroundColor: Colors.white,
+                        backgroundColor: context.colors.surface,
                       ),
                       child: Text(
-                        'Open camera',
+                        context.l10n.propertyOpenCamera,
                         style: GoogleFonts.inter(
-                          color: const Color(0xFF374151),
+                          color: context.colors.textSecondary,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -157,7 +159,7 @@ class PropertyImagePicker extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => onPhotoPicked(ImageSource.gallery),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF5B5FEF),
+                        backgroundColor: context.colors.accent,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -165,7 +167,7 @@ class PropertyImagePicker extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Upload property photos',
+                        context.l10n.propertyUploadPropertyPhotos,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 13,

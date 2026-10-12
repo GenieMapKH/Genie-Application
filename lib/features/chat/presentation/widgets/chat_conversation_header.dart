@@ -7,6 +7,7 @@ import 'package:genie/features/chat/presentation/widgets/chat_participant_sheet.
 import 'package:genie/features/chat/presentation/widgets/chat_presence_label.dart';
 import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// App-bar title of a conversation: who it is with and whether they are
 /// online. Tapping it opens their profile.
@@ -58,7 +59,7 @@ class ChatConversationHeader extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF111827),
+                      color: context.colors.textPrimary,
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
                     ),

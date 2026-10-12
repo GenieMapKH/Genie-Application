@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 class PropertySectionTitle extends StatelessWidget {
   final String title;
@@ -19,7 +20,9 @@ class PropertySectionTitle extends StatelessWidget {
       text: TextSpan(
         text: title,
         style: GoogleFonts.inter(
-          color: hasError ? const Color(0xFFE5484D) : const Color(0xFF111827),
+          color: hasError
+              ? const Color(0xFFE5484D)
+              : context.colors.textPrimary,
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
@@ -73,16 +76,16 @@ class PropertyTextField extends StatelessWidget {
             if (infoText != null)
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.info_outline,
                     size: 14,
-                    color: Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     infoText!,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF6B7280),
+                      color: context.colors.textMuted,
                       fontSize: 11,
                     ),
                   ),
@@ -94,6 +97,7 @@ class PropertyTextField extends StatelessWidget {
         TextField(
           controller: controller,
           decoration: defaultPropertyInputDecoration(
+            context,
             hintText,
             hasError: hasError,
           ),
@@ -144,16 +148,16 @@ class PropertyDropdown extends StatelessWidget {
             if (infoText != null)
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.info_outline,
                     size: 14,
-                    color: Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     infoText!,
                     style: GoogleFonts.inter(
-                      color: const Color(0xFF6B7280),
+                      color: context.colors.textMuted,
                       fontSize: 11,
                     ),
                   ),
@@ -165,15 +169,16 @@ class PropertyDropdown extends StatelessWidget {
         DropdownButtonFormField<String>(
           initialValue: value,
           isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF)),
+          icon: Icon(Icons.keyboard_arrow_down, color: context.colors.textHint),
           style: GoogleFonts.inter(
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
-          dropdownColor: Colors.white,
+          dropdownColor: context.colors.surface,
           borderRadius: BorderRadius.circular(12.0),
           decoration: defaultPropertyInputDecoration(
+            context,
             hintText ?? 'Select',
             hasError: hasError,
           ),
@@ -188,15 +193,16 @@ class PropertyDropdown extends StatelessWidget {
 }
 
 InputDecoration defaultPropertyInputDecoration(
+  BuildContext context,
   String hint, {
   bool hasError = false,
 }) {
   final borderColor = hasError
       ? const Color(0xFFE5484D)
-      : const Color(0xFFE5E7EB);
+      : context.colors.border;
   final hintColor = hasError
       ? const Color(0xFFE5484D)
-      : const Color(0xFF9CA3AF);
+      : context.colors.textHint;
 
   return InputDecoration(
     hintText: hint,
@@ -213,7 +219,7 @@ InputDecoration defaultPropertyInputDecoration(
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8.0),
       borderSide: BorderSide(
-        color: hasError ? borderColor : const Color(0xFF3E49C7),
+        color: hasError ? borderColor : context.colors.primaryStrong,
       ),
     ),
   );

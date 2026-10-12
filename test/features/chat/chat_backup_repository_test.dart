@@ -132,6 +132,84 @@ void main() {
     });
   });
 
+  test('replacing a backup sends the proof of its current PIN', () async {
+    final adapter = _StubAdapter(201);
+    final repository = _repositoryWith(adapter);
+
+    await repository.saveBackup(
+      const EncryptedBackup(blob: 'b', salt: 's', nonce: 'n', verifier: 'v'),
+      ownerProof: const BackupOwnerProof.pin('proof-of-current-pin'),
+    );
+
+    expect(
+      (adapter.lastRequest!.data as Map)['currentBackupVerifier'],
+      'proof-of-current-pin',
+    );
+  });
+
+  test('for a forgotten PIN the password proof is sent instead', () async {
+    final adapter = _StubAdapter(201);
+    final repository = _repositoryWith(adapter);
+
+    await repository.saveBackup(
+      const EncryptedBackup(blob: 'b', salt: 's', nonce: 'n', verifier: 'v'),
+      ownerProof: const BackupOwnerProof.password('signed-proof'),
+    );
+
+    final sent = adapter.lastRequest!.data as Map;
+    expect(sent['passwordProofToken'], 'signed-proof');
+    expect(sent.containsKey('currentBackupVerifier'), isFalse);
+  });
+
+  test(
+    'resetKeys sends the new public key with its backup and the proof',
+    () async {
+      final adapter = _StubAdapter(200);
+      final repository = _repositoryWith(adapter);
+
+      await repository.resetKeys(
+        publicKey: 'new-public-key',
+        backup: const EncryptedBackup(
+          blob: 'b',
+          salt: 's',
+          nonce: 'n',
+          verifier: 'v',
+        ),
+        ownerProof: const BackupOwnerProof.pin('proof-of-current-pin'),
+      );
+
+      expect(adapter.lastRequest!.path, '/chat/keys/reset');
+      expect(adapter.lastRequest!.data, {
+        'backupBlob': 'b',
+        'backupSalt': 's',
+        'backupNonce': 'n',
+        'backupVerifier': 'v',
+        'currentBackupVerifier': 'proof-of-current-pin',
+        'identityPublicKey': 'new-public-key',
+      });
+    },
+  );
+
+  test('a refused replacement is a wrong PIN or a locked backup', () async {
+    const backup = EncryptedBackup(
+      blob: 'b',
+      salt: 's',
+      nonce: 'n',
+      verifier: 'v',
+    );
+
+    await expectLater(
+      _repositoryWith(_StubAdapter(403)).saveBackup(backup),
+      throwsA(isA<WrongPinException>()),
+    );
+    await expectLater(
+      _repositoryWith(
+        _StubAdapter(429),
+      ).resetKeys(publicKey: 'k', backup: backup),
+      throwsA(isA<BackupRateLimitedException>()),
+    );
+  });
+
   test('fetchPublicKey reads the key of the given user', () async {
     final adapter = _StubAdapter(200, '{"identityPublicKey":"pub-key"}');
     final repository = _repositoryWith(adapter);

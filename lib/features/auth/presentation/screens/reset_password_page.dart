@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/shared/widgets/app_text_field.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class ResetPasswordPage extends ConsumerStatefulWidget {
   final String email;
@@ -97,7 +99,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       if (!mounted) return;
       AppPopup.showSuccess(
         context,
-        'Password reset successfully! Please log in with your new password.',
+        context.l10n.authPasswordResetSuccessfullyPleaseLogIn,
       );
       context.go('/login');
     } catch (e) {
@@ -111,7 +113,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -134,13 +136,13 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(color: context.colors.border),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_back,
                             size: 20,
-                            color: Color(0xFF1E293B),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                       ),
@@ -148,19 +150,19 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
                       // Title
                       Text(
-                        'Reset Password',
+                        context.l10n.authResetPassword,
                         style: GoogleFonts.inter(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF1E293B),
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your new password twice below to reset a new password',
+                        context.l10n.authEnterYourNewPasswordTwiceBelow,
                         style: GoogleFonts.inter(
                           fontSize: 15,
-                          color: const Color(0xFF64748B),
+                          color: context.colors.textMuted,
                           height: 1.5,
                         ),
                       ),
@@ -168,7 +170,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
                       // New password
                       AppTextField(
-                        label: 'Enter new password',
+                        label: context.l10n.authEnterNewPassword,
                         hintText: '123!@#\$%',
                         controller: _passwordController,
                         errorText: _passwordError,
@@ -184,7 +186,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                             _obscurePassword
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: const Color(0xFF94A3B8),
+                            color: context.colors.textHint,
                             size: 22,
                           ),
                         ),
@@ -207,7 +209,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
                       // Confirm password
                       AppTextField(
-                        label: 'Re-enter new password',
+                        label: context.l10n.authReEnterNewPassword,
                         hintText: '••••••••',
                         controller: _confirmPasswordController,
                         errorText: _confirmPasswordError,
@@ -224,7 +226,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                             _obscureConfirmPassword
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: const Color(0xFF94A3B8),
+                            color: context.colors.textHint,
                             size: 22,
                           ),
                         ),
@@ -251,7 +253,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleReset,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F5BD5),
+                            backgroundColor: context.colors.primary,
                             disabledBackgroundColor: const Color(0x994F5BD5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -268,7 +270,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                                   ),
                                 )
                               : Text(
-                                  'Reset Password',
+                                  context.l10n.authResetPassword,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -285,11 +287,11 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                         child: GestureDetector(
                           onTap: () => context.go('/register'),
                           child: Text(
-                            'Create a Account',
+                            context.l10n.authCreateAAccount,
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF4F5BD5),
+                              color: context.colors.primary,
                             ),
                           ),
                         ),

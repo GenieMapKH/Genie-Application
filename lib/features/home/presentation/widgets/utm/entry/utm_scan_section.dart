@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class UtmScanSection extends StatelessWidget {
   final Animation<double> fadeAnimation1;
@@ -35,27 +37,27 @@ class UtmScanSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Use UTM from a land document or enter coordinates manually',
+                  context.l10n.homeUseUtmFromALandDocument,
                   style: GoogleFonts.inter(
                     fontSize: 14,
-                    color: const Color(0xFF4B5563),
+                    color: context.colors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.info_outline,
                       size: 16,
-                      color: Color(0xFF6B7280),
+                      color: context.colors.textMuted,
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'CRS: WGS84 / UTM Zone 48P',
+                      context.l10n.homeCrsWgs84UtmZone48p,
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: const Color(0xFF6B7280),
+                        color: context.colors.textMuted,
                       ),
                     ),
                   ],
@@ -75,7 +77,7 @@ class UtmScanSection extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
+                color: context.colors.surfaceMuted,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -83,10 +85,10 @@ class UtmScanSection extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.document_scanner_outlined,
                         size: 40,
-                        color: Color(0xFF4B5563),
+                        color: context.colors.textSecondary,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -94,19 +96,19 @@ class UtmScanSection extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Scan UTM from Document',
+                              context.l10n.homeScanUtmFromDocument,
                               style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1F2937),
+                                color: context.colors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Use camera to detect coordinates',
+                              context.l10n.homeUseCameraToDetectCoordinates,
                               style: GoogleFonts.inter(
                                 fontSize: 13,
-                                color: const Color(0xFF6B7280),
+                                color: context.colors.textMuted,
                               ),
                             ),
                           ],
@@ -121,9 +123,9 @@ class UtmScanSection extends StatelessWidget {
                       width: double.infinity,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.colors.surface,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                        border: Border.all(color: context.colors.border),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
@@ -135,7 +137,7 @@ class UtmScanSection extends StatelessWidget {
                                   alignment: Alignment.centerLeft,
                                   widthFactor: uploadProgress,
                                   child: Container(
-                                    color: const Color(0xFFE5E7EB),
+                                    color: context.colors.border,
                                   ),
                                 ),
                               ),
@@ -148,15 +150,15 @@ class UtmScanSection extends StatelessWidget {
                                       style: GoogleFonts.inter(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF374151),
+                                        color: context.colors.textSecondary,
                                       ),
                                     )
                                   : Text(
-                                      'Start Scanning',
+                                      context.l10n.homeStartScanning,
                                       style: GoogleFonts.inter(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF374151),
+                                        color: context.colors.textSecondary,
                                       ),
                                     ),
                             ),

@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/chat/presentation/widgets/chat_emoji_panel.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class ChatInputBar extends StatefulWidget {
   final ValueChanged<String>? onSend;
@@ -77,7 +79,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          color: Colors.white,
+          color: context.colors.surface,
           padding: EdgeInsets.only(
             left: 16,
             right: 16,
@@ -94,17 +96,14 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.surface,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xFFE5E7EB),
-                      width: 2,
-                    ),
+                    border: Border.all(color: context.colors.border, width: 2),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.attach_file,
-                      color: Color(0xFF6B7280),
+                      color: context.colors.textMuted,
                       size: 22,
                     ),
                   ),
@@ -114,9 +113,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: const Color(0xFFD1D5DB)),
+                    border: Border.all(color: context.colors.iconSubtle),
                   ),
                   child: Row(
                     children: [
@@ -128,9 +127,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
                           onSubmitted: (_) => _handleSend(),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Message',
+                            hintText: context.l10n.chatMessage,
                             hintStyle: GoogleFonts.inter(
-                              color: const Color(0xFF9CA3AF),
+                              color: context.colors.textHint,
                               fontSize: 15,
                             ),
                           ),
@@ -146,7 +145,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                             _showEmojis
                                 ? Icons.keyboard_outlined
                                 : Icons.sentiment_satisfied_alt,
-                            color: const Color(0xFF6B7280),
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ),
@@ -156,7 +155,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                           padding: const EdgeInsets.all(8.0),
                           child: Icon(
                             Icons.send_outlined,
-                            color: const Color(0xFF6B7280),
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ),

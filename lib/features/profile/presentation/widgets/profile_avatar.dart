@@ -1,86 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-/// Round profile picture (or initial) with the camera button.
-class ProfileAvatar extends StatelessWidget {
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/profile/data/models/user_profile.dart';
+import 'package:genie/features/profile/presentation/widgets/avatar_options_sheet.dart';
+import 'package:genie/l10n/l10n.dart';
+
+/// Top of the account screen: the picture, the name people see and the handle.
+class ProfileHeader extends StatelessWidget {
   final UserProfile profile;
 
-  const ProfileAvatar({super.key, required this.profile});
+  const ProfileHeader({super.key, required this.profile});
 
   @override
   Widget build(BuildContext context) {
-    final avatarUrl = profile.avatarUrl;
+    final colors = context.colors;
+    final name = profile.displayName ?? context.l10n.accountDefaultName;
+    final username = profile.username;
 
-    return Center(
-      child: Stack(
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: const Color(0xFFE5E7EB),
-            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
-            child: avatarUrl == null
-                ? Text(
-                    profile.displayName.isNotEmpty
-                        ? profile.displayName[0].toUpperCase()
-                        : 'U',
-                    style: GoogleFonts.inter(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF9CA3AF),
-                    ),
-                  )
-                : null,
+    return Column(
+      children: [
+        ProfileAvatar(
+          avatarUrl: profile.avatarUrl,
+          name: name,
+          onEditPressed: () => showAvatarOptions(context, profile),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          name,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: colors.textPrimary,
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () => _showOptions(context),
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF5B5FEF),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: const Icon(
-                  Icons.camera_alt,
-                  size: 18,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+        ),
+        if (username != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            '@$username',
+            style: TextStyle(fontSize: 14, color: colors.textMuted),
           ),
         ],
-      ),
+      ],
     );
   }
+}
 
-  void _showOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // TODO: wire these options up (camera, gallery, Google sync).
-            for (final option in const [
-              (Icons.camera_alt_outlined, 'Take photo'),
-              (Icons.photo_library_outlined, 'Choose from storage'),
-              (Icons.sync, 'Sync from Google Account'),
-            ])
-              ListTile(
-                leading: Icon(option.$1),
-                title: Text(option.$2),
-                onTap: () => Navigator.pop(sheetContext),
-              ),
-          ],
+/// Round profile picture (or the first letter of [name]) with the camera
+/// button, which calls [onEditPressed].
+class ProfileAvatar extends StatelessWidget {
+  final String? avatarUrl;
+  final String name;
+  final VoidCallback onEditPressed;
+
+  const ProfileAvatar({
+    super.key,
+    required this.avatarUrl,
+    required this.name,
+    required this.onEditPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final avatarUrl = this.avatarUrl;
+
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: 50,
+          backgroundColor: colors.border,
+          backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
+          child: avatarUrl == null
+              ? Text(
+                  name.characters.first.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w600,
+                    color: colors.textHint,
+                  ),
+                )
+              : null,
         ),
-      ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: onEditPressed,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: colors.accent,
+                shape: BoxShape.circle,
+                border: Border.all(color: colors.background, width: 2),
+              ),
+              child: Icon(Icons.camera_alt, size: 18, color: colors.onPrimary),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

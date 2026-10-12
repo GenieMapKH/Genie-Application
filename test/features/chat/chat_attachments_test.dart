@@ -14,7 +14,7 @@ import 'package:genie/features/chat/presentation/widgets/chat_emoji_panel.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
+import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';

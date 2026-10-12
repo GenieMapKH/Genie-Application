@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Shown instead of the message box when the other person's encryption key
 /// is not the one this device trusts. Nothing is sent until the user decides.
@@ -51,10 +52,7 @@ class ChatKeyChangedBanner extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'This is normal if they reinstalled the app or reset their keys. '
-            'If you did not expect it, someone may be trying to read your '
-            'messages: accept the new key, then compare the security code '
-            'with them before sharing anything private.',
+            context.l10n.chatThisIsNormalIfTheyReinstalled,
             style: GoogleFonts.inter(
               fontSize: 13,
               color: const Color(0xFF92400E),
@@ -67,12 +65,12 @@ class ChatKeyChangedBanner extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: onViewSecurityCode,
-                child: const Text('Security code'),
+                child: Text(context.l10n.chatSecurityCode),
               ),
               const SizedBox(width: 8),
               FilledButton(
                 onPressed: onAccept,
-                child: const Text('Accept new key'),
+                child: Text(context.l10n.chatAcceptNewKey),
               ),
             ],
           ),

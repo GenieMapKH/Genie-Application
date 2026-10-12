@@ -64,6 +64,9 @@ dependencies:
   sodium_libs: ^3.4.6+4
   cryptography: ^2.9.0
   socket_io_client: ^3.1.6
+  device_info_plus: ^13.3.0
+  flutter_localizations:
+    sdk: flutter
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -96,6 +99,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Builds lib/l10n/generated from the .arb files (see l10n.yaml).
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:

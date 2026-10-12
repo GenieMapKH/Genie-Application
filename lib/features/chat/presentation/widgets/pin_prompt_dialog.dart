@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:genie/features/chat/e2ee/pin_rules.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Asks for the 6-digit backup PIN. Returns null if the user cancels.
 /// With [isNewPin] an easily guessed PIN is refused.
@@ -49,11 +50,11 @@ class _PinPromptDialogState extends State<_PinPromptDialog> {
   void _submit() {
     final pin = _controller.text;
     if (!_sixDigits.hasMatch(pin)) {
-      setState(() => _error = 'Enter all 6 digits.');
+      setState(() => _error = context.l10n.pinIncomplete);
       return;
     }
     if (widget.isNewPin && isGuessablePin(pin)) {
-      setState(() => _error = 'Too easy to guess. Choose another PIN.');
+      setState(() => _error = context.l10n.pinTooGuessable);
       return;
     }
     Navigator.pop(context, pin);
@@ -75,7 +76,7 @@ class _PinPromptDialogState extends State<_PinPromptDialog> {
         keyboardType: TextInputType.number,
         maxLength: 6,
         decoration: InputDecoration(
-          hintText: '6-digit PIN',
+          hintText: context.l10n.pinHint,
           helperText: widget.helper,
           helperMaxLines: 3,
           errorText: _error,
@@ -85,9 +86,9 @@ class _PinPromptDialogState extends State<_PinPromptDialog> {
         if (widget.allowCancel)
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
-        TextButton(onPressed: _submit, child: const Text('Submit')),
+        TextButton(onPressed: _submit, child: Text(context.l10n.pinSubmit)),
       ],
     );
   }

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// The picture of a chat message: the local copy while it is being sent,
 /// otherwise downloaded and decrypted on demand. Tap to view it full screen.
@@ -31,6 +32,7 @@ class ChatImageAttachment extends ConsumerWidget {
         .when(
           data: (bytes) => _picture(context, bytes),
           loading: () => _placeholder(
+            context,
             const SizedBox(
               width: 24,
               height: 24,
@@ -40,7 +42,10 @@ class ChatImageAttachment extends ConsumerWidget {
           error: (_, _) => GestureDetector(
             onTap: () =>
                 ref.invalidate(chatAttachmentBytesProvider(attachment)),
-            child: _placeholder(_notice('Photo unavailable. Tap to retry.')),
+            child: _placeholder(
+              context,
+              _notice(context, 'Photo unavailable. Tap to retry.'),
+            ),
           ),
         );
   }
@@ -66,20 +71,22 @@ class ChatImageAttachment extends ConsumerWidget {
             bytes,
             fit: BoxFit.cover,
             gaplessPlayback: true,
-            errorBuilder: (_, _, _) =>
-                _placeholder(_notice('This picture cannot be shown.')),
+            errorBuilder: (_, _, _) => _placeholder(
+              context,
+              _notice(context, 'This picture cannot be shown.'),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _placeholder(Widget child) {
+  Widget _placeholder(BuildContext context, Widget child) {
     return Container(
       width: _width,
       height: _height * 0.7,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: context.colors.divider,
         borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,
@@ -88,11 +95,11 @@ class ChatImageAttachment extends ConsumerWidget {
     );
   }
 
-  Widget _notice(String text) {
+  Widget _notice(BuildContext context, String text) {
     return Text(
       text,
       textAlign: TextAlign.center,
-      style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF6B7280)),
+      style: GoogleFonts.inter(fontSize: 13, color: context.colors.textMuted),
     );
   }
 }

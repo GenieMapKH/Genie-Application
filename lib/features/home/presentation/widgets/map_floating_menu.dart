@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:genie/shared/widgets/tactile_button.dart';
 import 'package:genie/features/home/presentation/widgets/utm_locate_bottom_sheet.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class MapFloatingMenu extends StatefulWidget {
   final VoidCallback onDrawPressed;
@@ -82,12 +84,9 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.surface,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xFFE5E7EB),
-                      width: 1,
-                    ),
+                    border: Border.all(color: context.colors.border, width: 1),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.08),
@@ -108,7 +107,7 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
                   vertical: 6.0,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.surface,
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
@@ -121,7 +120,7 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
                 child: Text(
                   label,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF374151),
+                    color: context.colors.textSecondary,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -150,7 +149,7 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
           children: [
             _buildAnimatedMenuItem(
               iconPath: 'assets/icons/utm.svg',
-              label: 'Coordinates',
+              label: context.l10n.homeCoordinates,
               onTap: () async {
                 // Close the floating menu first
                 _toggleMenu();
@@ -169,7 +168,7 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
             ),
             _buildAnimatedMenuItem(
               iconPath: 'assets/icons/draw.svg',
-              label: 'Draw',
+              label: context.l10n.homeDraw,
               onTap: () {
                 _toggleMenu();
                 widget.onDrawPressed();

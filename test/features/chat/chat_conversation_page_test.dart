@@ -7,7 +7,7 @@ import 'package:genie/features/chat/e2ee/message_cipher.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
+import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
@@ -138,11 +138,13 @@ void main() {
     await openChat(tester);
 
     expect(
-      find.text(
+      find.textContaining(
         'Incorrect PIN. After 5 wrong tries the backup locks for a while.',
       ),
       findsOneWidget,
     );
+    // Someone who cannot remember it is told where the way back is.
+    expect(find.textContaining('Forgot backup PIN'), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
 
     setup.result = E2eeSetupResult.ready;

@@ -9,8 +9,16 @@ import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/core/network/api_client.dart';
 import 'package:genie/core/network/api_cache_manager.dart';
 
+/// Goes up by one each time the server ends this device's session: it was
+/// signed out from another device, the password changed, or the account was
+/// deactivated or deleted. The app shell listens and returns to the welcome
+/// screen (`lib/app/app.dart`).
+final sessionEndedProvider = StateProvider<int>((ref) => 0);
+
 final apiClientProvider = Provider<Dio>((ref) {
-  return createApiClient();
+  return createApiClient(
+    onSessionEnded: () => ref.read(sessionEndedProvider.notifier).state++,
+  );
 });
 
 final authServiceProvider = Provider<AuthService>((ref) {

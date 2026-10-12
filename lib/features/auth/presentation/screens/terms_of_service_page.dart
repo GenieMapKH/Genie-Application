@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// Terms of Service screen for Genie Property.
 /// Enforces scrolling to the very bottom before the user can agree.
@@ -93,7 +94,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -106,9 +107,9 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_back,
-                      color: Color(0xFF1E293B),
+                      color: context.colors.textPrimary,
                       size: 24,
                     ),
                     onPressed: () => Navigator.of(context).pop(_isAgreed),
@@ -130,7 +131,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                       style: GoogleFonts.inter(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1E293B),
+                        color: context.colors.textPrimary,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -140,7 +141,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: const Color(0xFF64748B),
+                        color: context.colors.textMuted,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -245,9 +246,9 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                 vertical: 14.0,
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 border: Border(
-                  top: BorderSide(color: const Color(0xFFE5E7EB), width: 1.0),
+                  top: BorderSide(color: context.colors.border, width: 1.0),
                 ),
                 boxShadow: const [
                   BoxShadow(
@@ -266,14 +267,14 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                       height: 24,
                       child: Checkbox(
                         value: _isAgreed,
-                        activeColor: const Color(0xFF4F5BD5),
+                        activeColor: context.colors.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         side: BorderSide(
                           color: _hasScrolledToBottom
-                              ? const Color(0xFF4F5BD5)
-                              : const Color(0xFF9CA3AF),
+                              ? context.colors.primary
+                              : context.colors.textHint,
                           width: 1.5,
                         ),
                         onChanged: _hasScrolledToBottom
@@ -293,8 +294,8 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: _hasScrolledToBottom
-                                ? const Color(0xFF1E293B)
-                                : const Color(0xFF64748B),
+                                ? context.colors.textPrimary
+                                : context.colors.textMuted,
                           ),
                         ),
                       ),
@@ -317,7 +318,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
         style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF1E293B),
+          color: context.colors.textPrimary,
         ),
       ),
     );
@@ -329,7 +330,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
       style: GoogleFonts.inter(
         fontSize: 13.5,
         fontWeight: FontWeight.w400,
-        color: const Color(0xFF475569),
+        color: context.colors.textSecondary,
         height: 1.5,
       ),
     );
@@ -341,9 +342,13 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(top: 7.0, right: 8.0),
-            child: Icon(Icons.circle, size: 4.5, color: Color(0xFF475569)),
+            child: Icon(
+              Icons.circle,
+              size: 4.5,
+              color: context.colors.textSecondary,
+            ),
           ),
           Expanded(
             child: Text(
@@ -351,7 +356,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
               style: GoogleFonts.inter(
                 fontSize: 13.5,
                 fontWeight: FontWeight.w400,
-                color: const Color(0xFF475569),
+                color: context.colors.textSecondary,
                 height: 1.45,
               ),
             ),

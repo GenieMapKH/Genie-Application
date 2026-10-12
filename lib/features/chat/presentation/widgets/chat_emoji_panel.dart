@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// A compact emoji keyboard shown under the message box.
 class ChatEmojiPanel extends StatefulWidget {
@@ -47,7 +48,7 @@ class _ChatEmojiPanelState extends State<ChatEmojiPanel> {
 
     return Container(
       height: 260,
-      color: const Color(0xFFF9FAFB),
+      color: context.colors.surfaceMuted,
       child: Column(
         children: [
           Row(
@@ -59,15 +60,15 @@ class _ChatEmojiPanelState extends State<ChatEmojiPanel> {
                     icon: Icon(
                       _categories[i].icon,
                       color: i == _category
-                          ? const Color(0xFF5B5FEF)
-                          : const Color(0xFF9CA3AF),
+                          ? context.colors.accent
+                          : context.colors.textHint,
                     ),
                     onPressed: () => setState(() => _category = i),
                   ),
                 ),
             ],
           ),
-          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+          Divider(height: 1, color: context.colors.border),
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(8),

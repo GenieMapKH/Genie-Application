@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/widgets/app_text_field.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class CreateAccountForm extends StatelessWidget {
   final TextEditingController nameController;
@@ -46,8 +48,8 @@ class CreateAccountForm extends StatelessWidget {
         // Name Field
         AppTextField(
           key: const Key('name_field'),
-          label: 'Name',
-          hintText: 'Username',
+          label: context.l10n.personalInfoName,
+          hintText: context.l10n.personalInfoUsername,
           errorText: nameError,
           controller: nameController,
           textInputAction: TextInputAction.next,
@@ -58,8 +60,8 @@ class CreateAccountForm extends StatelessWidget {
         // Email Address or Phone number Field
         AppTextField(
           key: const Key('identifier_field'),
-          label: 'Email Address or Phone number',
-          hintText: 'example@gmail.com',
+          label: context.l10n.authEmailAddressOrPhoneNumber,
+          hintText: context.l10n.authExampleGmailCom,
           errorText: identifierError,
           controller: identifierController,
           keyboardType: TextInputType.emailAddress,
@@ -71,7 +73,7 @@ class CreateAccountForm extends StatelessWidget {
         // Password Field
         AppTextField(
           key: const Key('password_field'),
-          label: 'Password',
+          label: context.l10n.identityConfirmPassword,
           hintText: '••••••••••••',
           errorText: passwordError,
           controller: passwordController,
@@ -88,7 +90,7 @@ class CreateAccountForm extends StatelessWidget {
                     ? Icons.visibility_outlined
                     : Icons.visibility_off_outlined,
                 key: ValueKey<bool>(obscurePassword),
-                color: const Color(0xFF64748B),
+                color: context.colors.textMuted,
                 size: 20,
               ),
             ),
@@ -106,14 +108,14 @@ class CreateAccountForm extends StatelessWidget {
               height: 24,
               child: Checkbox(
                 value: agreeToTerms,
-                activeColor: const Color(0xFF4F5BD5),
+                activeColor: context.colors.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4.0),
                 ),
                 side: BorderSide(
                   color: termsError != null
                       ? const Color(0xFFDC2626)
-                      : const Color(0xFFCBD5E1),
+                      : context.colors.iconSubtle,
                   width: 1.5,
                 ),
                 onChanged: onTermsChanged,
@@ -129,22 +131,22 @@ class CreateAccountForm extends StatelessWidget {
                     GestureDetector(
                       onTap: onTermsTextTapped,
                       child: Text(
-                        'By continuing, you agree to out ',
+                        context.l10n.authByContinuingYouAgreeToOut,
                         style: GoogleFonts.inter(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w400,
-                          color: const Color(0xFF4B5563),
+                          color: context.colors.textSecondary,
                         ),
                       ),
                     ),
                     GestureDetector(
                       onTap: onTermsTextTapped,
                       child: Text(
-                        'terms of services.',
+                        context.l10n.authTermsOfServices,
                         style: GoogleFonts.inter(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF4F5BD5),
+                          color: context.colors.primary,
                         ),
                       ),
                     ),

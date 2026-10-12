@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 class EmptyPropertiesState extends StatelessWidget {
   const EmptyPropertiesState({super.key});
@@ -16,7 +17,7 @@ class EmptyPropertiesState extends StatelessWidget {
             vertical: 64.0,
           ), // Fixed vertical padding
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB), // Very light gray
+            color: context.colors.surfaceMuted, // Very light gray
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -27,24 +28,24 @@ class EmptyPropertiesState extends StatelessWidget {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.home_outlined,
                     size: 64,
-                    color: Color(0xFFD1D5DB),
+                    color: context.colors.iconSubtle,
                   ),
                   Positioned(
                     bottom: -4,
                     right: -4,
                     child: Container(
                       padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF9FAFB),
+                      decoration: BoxDecoration(
+                        color: context.colors.surfaceMuted,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.error,
                         size: 24,
-                        color: Color(0xFFD1D5DB),
+                        color: context.colors.iconSubtle,
                       ),
                     ),
                   ),
@@ -55,7 +56,7 @@ class EmptyPropertiesState extends StatelessWidget {
                 "You haven't listed any\nproperty yet",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF9CA3AF),
+                  color: context.colors.textHint,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                   height: 1.4,

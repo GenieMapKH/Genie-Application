@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class UtmManualEntry extends StatelessWidget {
   final Animation<double> fadeAnimation;
@@ -27,9 +29,9 @@ class UtmManualEntry extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: context.colors.surfaceMuted,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: context.colors.border),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,19 +50,19 @@ class UtmManualEntry extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Enter Coordinates Manually',
+                          context.l10n.homeEnterCoordinatesManually,
                           style: GoogleFonts.inter(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1F2937),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Type UTM Zone, Easting (X), and Northing (Y).',
+                          context.l10n.homeTypeUtmZoneEastingXAnd,
                           style: GoogleFonts.inter(
                             fontSize: 13,
-                            color: const Color(0xFF6B7280),
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ],
@@ -81,7 +83,7 @@ class UtmManualEntry extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      'Enter Coordinates',
+                      context.l10n.homeEnterCoordinates,
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -103,7 +105,7 @@ class UtmManualEntry extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF374151),
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ),
@@ -114,7 +116,7 @@ class UtmManualEntry extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF374151),
+                          color: context.colors.textSecondary,
                         ),
                       ),
                     ),
@@ -127,7 +129,7 @@ class UtmManualEntry extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF374151),
+                          color: context.colors.textSecondary,
                         ),
                       ),
                     ),
@@ -153,7 +155,7 @@ class UtmManualEntry extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF374151),
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ),
@@ -161,9 +163,9 @@ class UtmManualEntry extends StatelessWidget {
                         child: Container(
                           height: 44,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: context.colors.surface,
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFFE5E7EB)),
+                            border: Border.all(color: context.colors.border),
                           ),
                           child: TextField(
                             controller: coordinateRows[index]['x'],
@@ -176,7 +178,7 @@ class UtmManualEntry extends StatelessWidget {
                               ),
                               hintText: 'e.g. 485230',
                               hintStyle: GoogleFonts.inter(
-                                color: const Color(0xFFD1D5DB),
+                                color: context.colors.iconSubtle,
                                 fontSize: 14,
                               ),
                             ),
@@ -188,9 +190,9 @@ class UtmManualEntry extends StatelessWidget {
                         child: Container(
                           height: 44,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: context.colors.surface,
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFFE5E7EB)),
+                            border: Border.all(color: context.colors.border),
                           ),
                           child: TextField(
                             controller: coordinateRows[index]['y'],
@@ -203,7 +205,7 @@ class UtmManualEntry extends StatelessWidget {
                               ),
                               hintText: 'e.g. 1358420',
                               hintStyle: GoogleFonts.inter(
-                                color: const Color(0xFFD1D5DB),
+                                color: context.colors.iconSubtle,
                                 fontSize: 14,
                               ),
                             ),
@@ -224,14 +226,14 @@ class UtmManualEntry extends StatelessWidget {
                     width: 60,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.colors.surface,
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: const Color(0xFFE5E7EB)),
+                      border: Border.all(color: context.colors.border),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Icon(
                         Icons.add,
-                        color: Color(0xFF6B7280),
+                        color: context.colors.textMuted,
                         size: 20,
                       ),
                     ),

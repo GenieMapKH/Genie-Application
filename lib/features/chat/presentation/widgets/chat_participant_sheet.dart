@@ -6,6 +6,8 @@ import 'package:genie/features/chat/presentation/widgets/chat_avatar.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_presence_label.dart';
 import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Shows who the user is chatting with, and the code that proves the
 /// conversation is encrypted to that person and nobody else.
@@ -16,7 +18,7 @@ Future<void> showChatParticipantSheet(
 }) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: context.colors.surface,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -56,7 +58,7 @@ class _ChatParticipantSheet extends ConsumerWidget {
         .watch(chatParticipantProfileProvider(chat.participantId))
         .valueOrNull;
     final safetyCode = ref.watch(chatSafetyCodeProvider(chat));
-    final name = profile?.username ?? participantName;
+    final name = profile?.displayName ?? participantName;
     final joined = profile?.memberSince.toLocal();
 
     return SafeArea(
@@ -72,7 +74,7 @@ class _ChatParticipantSheet extends ConsumerWidget {
               style: GoogleFonts.inter(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF111827),
+                color: context.colors.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
@@ -81,24 +83,24 @@ class _ChatParticipantSheet extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 'Member since ${_months[joined.month - 1]} ${joined.year}',
-                style: _caption,
+                style: _caption(context),
               ),
             ],
-            const Divider(height: 32, color: Color(0xFFF3F4F6)),
+            Divider(height: 32, color: context.colors.divider),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.lock_outline,
                   size: 18,
-                  color: Color(0xFF6B7280),
+                  color: context.colors.textMuted,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Security code',
+                  context.l10n.chatSecurityCode,
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF111827),
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ],
@@ -107,17 +109,19 @@ class _ChatParticipantSheet extends ConsumerWidget {
             safetyCode.when(
               data: (code) => code == null
                   ? Text(
-                      'Available once you have both set up secure chat.',
-                      style: _caption,
+                      context.l10n.chatAvailableOnceYouHaveBothSet,
+                      style: _caption(context),
                     )
-                  : _buildCode(code, name),
+                  : _buildCode(context, code, name),
               loading: () => const SizedBox(
                 height: 24,
                 width: 24,
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
-              error: (_, _) =>
-                  Text('The security code is unavailable.', style: _caption),
+              error: (_, _) => Text(
+                context.l10n.chatTheSecurityCodeIsUnavailable,
+                style: _caption(context),
+              ),
             ),
           ],
         ),
@@ -125,7 +129,7 @@ class _ChatParticipantSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildCode(String code, String name) {
+  Widget _buildCode(BuildContext context, String code, String name) {
     return Column(
       children: [
         SelectableText(
@@ -135,24 +139,22 @@ class _ChatParticipantSheet extends ConsumerWidget {
             fontSize: 18,
             fontWeight: FontWeight.w600,
             letterSpacing: 1,
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
         Text(
-          'Messages are end-to-end encrypted. To be sure nobody is in '
-          'between, compare this code with $name in person or on a call: '
-          'it must be the same on both phones.',
+          context.l10n.chatSecurityCodeExplanation(name),
           textAlign: TextAlign.center,
-          style: _caption,
+          style: _caption(context),
         ),
       ],
     );
   }
 
-  TextStyle get _caption => GoogleFonts.inter(
+  TextStyle _caption(BuildContext context) => GoogleFonts.inter(
     fontSize: 13,
-    color: const Color(0xFF6B7280),
+    color: context.colors.textMuted,
     height: 1.4,
   );
 }

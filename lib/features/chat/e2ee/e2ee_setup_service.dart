@@ -38,7 +38,12 @@ class E2eeSetupService {
     try {
       if (await keyService.hasLocalKeyPair(userId) ||
           await keyService.adoptLegacyKeyPair(userId)) {
-        return await _finish(userId);
+        if (await keyService.uploadPublicKeyIfNeeded(userId)) {
+          return E2eeSetupResult.ready;
+        }
+        // The keys were reset on another device. The pair kept here no longer
+        // belongs to the account: drop it and restore the new one below.
+        await keyService.deleteIdentityKeyPair(userId);
       }
 
       final backup = await backupRepository.fetchBackup();
@@ -79,11 +84,11 @@ class E2eeSetupService {
     final pin = await askPin(isNewPin: false);
     if (pin == null) return E2eeSetupResult.cancelled;
 
-    final secretBytes = await _vault.open(pin, backup);
+    final opened = await _vault.open(pin, backup);
     await keyService.restoreIdentityKeyPair(
       userId,
       publicKey: base64Decode(await backupRepository.fetchPublicKey(userId)),
-      secretKeyBytes: secretBytes,
+      secretKeyBytes: opened.privateKey,
     );
     return _finish(userId);
   }

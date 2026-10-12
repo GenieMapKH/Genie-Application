@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// "Online", "Last seen 5 min ago", … or empty when nothing is known.
 String describePresence(ChatPresence presence, {DateTime? now}) {
@@ -46,7 +47,7 @@ class ChatPresenceLabel extends ConsumerWidget {
         fontSize: 12,
         color: presence!.online
             ? const Color(0xFF16A34A)
-            : const Color(0xFF6B7280),
+            : context.colors.textMuted,
       ),
     );
   }

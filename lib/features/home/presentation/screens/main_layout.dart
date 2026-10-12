@@ -15,6 +15,7 @@ import 'package:genie/features/home/presentation/widgets/main_layout_pages.dart'
 import 'package:genie/features/home/utils/map/map_location_service.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:genie/features/security/presentation/widgets/new_sign_in_alert.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
@@ -169,6 +170,9 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
             ),
 
             MainLayoutPages(navState: navState),
+
+            // Draws nothing: speaks up when another device signs in.
+            const NewSignInAlert(),
           ],
         ),
         bottomNavigationBar: const MainBottomNav(),

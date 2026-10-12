@@ -12,6 +12,8 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import '../widgets/create_account_form.dart';
 import '../widgets/create_account_actions.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Create an account screen for Genie.
 class CreateAccountPage extends ConsumerStatefulWidget {
@@ -128,7 +130,7 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
           if (mounted) {
             AppPopup.showSuccess(
               context,
-              'Account created successfully! Please login.',
+              context.l10n.authAccountCreatedSuccessfullyPleaseLogin,
             );
             _navigateToLogin();
           }
@@ -180,7 +182,7 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
   void _onAuthSuccess() {
     if (!mounted) return;
-    AppPopup.showSuccess(context, 'Successfully authenticated!');
+    AppPopup.showSuccess(context, context.l10n.authSuccessfullyAuthenticated);
     ref.invalidate(userProfileProvider);
     ref.invalidate(propertiesProvider);
     ref.invalidate(publicPropertiesProvider);
@@ -205,7 +207,7 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -224,11 +226,11 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
                     // Header
                     Text(
-                      'Create an account',
+                      context.l10n.authCreateAnAccount,
                       style: GoogleFonts.inter(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1E293B),
+                        color: context.colors.textPrimary,
                         letterSpacing: -0.5,
                       ),
                     ),

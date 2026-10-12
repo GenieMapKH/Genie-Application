@@ -29,6 +29,10 @@ class _FakeKeyService extends Fake implements KeyService {
   bool restoredKeyMatches = true;
   int savedKeyPairs = 0;
   int publicKeyUploads = 0;
+  int deletedKeyPairs = 0;
+
+  /// False once the account's keys were replaced on another device.
+  bool serverAcceptsLocalKey = true;
 
   _FakeKeyService();
 
@@ -37,6 +41,10 @@ class _FakeKeyService extends Fake implements KeyService {
 
   @override
   Future<bool> hasLocalKeyPair(String userId) async => hasLocal;
+
+  @override
+  Future<KeyPair?> getIdentityKeyPair(String userId) async =>
+      hasLocal ? _fakeKeyPair() : null;
 
   @override
   Future<bool> adoptLegacyKeyPair(String userId) async => hasLegacy;
@@ -62,8 +70,17 @@ class _FakeKeyService extends Fake implements KeyService {
   }
 
   @override
-  Future<void> uploadPublicKeyIfNeeded(String userId) async =>
-      publicKeyUploads++;
+  Future<bool> uploadPublicKeyIfNeeded(String userId) async {
+    publicKeyUploads++;
+    return serverAcceptsLocalKey;
+  }
+
+  @override
+  Future<void> deleteIdentityKeyPair(String userId) async {
+    deletedKeyPairs++;
+    // What is restored next is the account's current pair.
+    serverAcceptsLocalKey = true;
+  }
 }
 
 class _FakeBackupService extends Fake implements BackupService {
@@ -108,8 +125,17 @@ class _FakeBackupRepository extends Fake implements ChatBackupRepository {
   Object? fetchError;
   Object? unlockError;
   Object? saveError;
+  Object? resetError;
   final List<String> unlockTries = [];
   final List<EncryptedBackup> saved = [];
+
+  /// What was sent with each save or reset to show the backup may be
+  /// replaced: the current PIN's proof, or a password proof.
+  final List<Map<String, String>?> proofs = [];
+
+  /// The public key the server lists for the account.
+  String serverPublicKey = 'CQ=='; // base64 of [9], the fake key pair
+  final List<String> resetPublicKeys = [];
 
   @override
   Future<StoredBackup?> fetchBackup() async {
@@ -125,13 +151,29 @@ class _FakeBackupRepository extends Fake implements ChatBackupRepository {
   }
 
   @override
-  Future<void> saveBackup(EncryptedBackup backup) async {
+  Future<void> saveBackup(
+    EncryptedBackup backup, {
+    BackupOwnerProof? ownerProof,
+  }) async {
     if (saveError != null) throw saveError!;
     saved.add(backup);
+    proofs.add(ownerProof?.toJson());
   }
 
   @override
-  Future<String> fetchPublicKey(String userId) async => 'CQ=='; // base64 of [9]
+  Future<void> resetKeys({
+    required String publicKey,
+    required EncryptedBackup backup,
+    BackupOwnerProof? ownerProof,
+  }) async {
+    if (resetError != null) throw resetError!;
+    resetPublicKeys.add(publicKey);
+    saved.add(backup);
+    proofs.add(ownerProof?.toJson());
+  }
+
+  @override
+  Future<String> fetchPublicKey(String userId) async => serverPublicKey;
 }
 
 void main() {
@@ -175,6 +217,17 @@ void main() {
       expect(repository.saved.single.verifier, 'new-verifier');
     });
 
+    test(
+      'proves the current PIN to the server when it replaces the backup',
+      () async {
+        await change();
+
+        expect(repository.proofs, [
+          {'currentBackupVerifier': 'proof-of-111111'},
+        ]);
+      },
+    );
+
     test('reports a missing backup', () async {
       repository.stored = null;
 
@@ -215,63 +268,195 @@ void main() {
   });
 
   group('E2eeKeyManager.resetKeys', () {
-    test('uploads the new backup, then saves the keys locally', () async {
-      final keys = _FakeKeyService();
-      final repository = _FakeBackupRepository();
-      final manager = E2eeKeyManager(
+    late _FakeKeyService keys;
+    late _FakeBackupRepository repository;
+    late E2eeKeyManager manager;
+
+    setUp(() {
+      keys = _FakeKeyService();
+      repository = _FakeBackupRepository()..stored = existingBackup;
+      manager = E2eeKeyManager(
         keyService: keys,
         backupService: _FakeBackupService(),
         backupRepository: repository,
       );
+    });
 
-      final result = await manager.resetKeys(
+    Future<ResetKeysResult> reset({
+      String? current = '111111',
+      String? next = '222222',
+    }) {
+      return manager.resetKeys(
         'user-1',
-        askNewPin: () async => '123456',
+        askCurrentPin: () async => current,
+        askNewPin: () async => next,
       );
+    }
 
-      expect(result, ResetKeysResult.reset);
-      expect(repository.saved, hasLength(1));
+    test('asks for the current PIN and proves it to the server', () async {
+      expect(await reset(), ResetKeysResult.reset);
+
+      expect(repository.unlockTries, ['proof-of-111111']);
+      expect(repository.proofs, [
+        {'currentBackupVerifier': 'proof-of-111111'},
+      ]);
+      expect(repository.resetPublicKeys, ['CQ==']);
+      expect(repository.saved.single.verifier, 'new-verifier');
       expect(keys.savedKeyPairs, 1);
-      expect(keys.publicKeyUploads, 1);
+    });
+
+    test('a wrong current PIN resets nothing', () async {
+      repository.unlockError = const WrongPinException();
+
+      expect(await reset(), ResetKeysResult.wrongPin);
+      expect(repository.resetPublicKeys, isEmpty);
+      expect(keys.savedKeyPairs, 0);
+    });
+
+    test('a locked backup cannot be reset around', () async {
+      repository.unlockError = const BackupRateLimitedException();
+
+      expect(await reset(), ResetKeysResult.rateLimited);
+      expect(repository.resetPublicKeys, isEmpty);
     });
 
     test(
-      'keeps the old local keys when the server rejects the backup',
+      'keeps the old local keys when the server refuses the reset',
       () async {
-        final keys = _FakeKeyService();
-        final repository = _FakeBackupRepository()
-          ..saveError = Exception('500');
-        final manager = E2eeKeyManager(
-          keyService: keys,
-          backupService: _FakeBackupService(),
-          backupRepository: repository,
-        );
+        repository.resetError = const WrongPinException();
+        expect(await reset(), ResetKeysResult.wrongPin);
 
-        final result = await manager.resetKeys(
-          'user-1',
-          askNewPin: () async => '123456',
-        );
+        repository.resetError = Exception('500');
+        expect(await reset(), ResetKeysResult.saveFailed);
 
-        expect(result, ResetKeysResult.saveFailed);
         expect(keys.savedKeyPairs, 0);
       },
     );
 
-    test('changes nothing when the user cancels the PIN prompt', () async {
-      final keys = _FakeKeyService();
-      final manager = E2eeKeyManager(
-        keyService: keys,
-        backupService: _FakeBackupService(),
-        backupRepository: _FakeBackupRepository(),
-      );
+    test('cancelling either PIN prompt changes nothing', () async {
+      expect(await reset(current: null), ResetKeysResult.cancelled);
+      expect(await reset(next: null), ResetKeysResult.cancelled);
+
+      expect(repository.resetPublicKeys, isEmpty);
+      expect(keys.savedKeyPairs, 0);
+    });
+
+    test('an account without a PIN yet has nothing to prove', () async {
+      repository.stored = null;
 
       final result = await manager.resetKeys(
         'user-1',
-        askNewPin: () async => null,
+        askCurrentPin: () async => fail('there is no current PIN'),
+        askNewPin: () async => '222222',
       );
 
-      expect(result, ResetKeysResult.cancelled);
+      expect(result, ResetKeysResult.reset);
+      expect(repository.proofs, [null]);
+    });
+
+    test(
+      'an older backup is checked on the device, then upgraded and proven',
+      () async {
+        repository.stored = legacyBackup;
+
+        expect(await reset(), ResetKeysResult.reset);
+        // First the upgrade (nothing to prove yet), then the reset with its proof.
+        expect(repository.proofs, [
+          null,
+          {'currentBackupVerifier': 'new-verifier'},
+        ]);
+      },
+    );
+
+    test('reports a backup that cannot be reached', () async {
+      repository.fetchError = Exception('offline');
+
+      expect(await reset(), ResetKeysResult.fetchFailed);
+    });
+  });
+
+  group('E2eeKeyManager.recoverWithPassword (forgotten PIN)', () {
+    const passwordProof = {'passwordProofToken': 'proof-of-password'};
+    late _FakeKeyService keys;
+    late _FakeBackupRepository repository;
+    late E2eeKeyManager manager;
+
+    setUp(() {
+      keys = _FakeKeyService();
+      repository = _FakeBackupRepository()..stored = existingBackup;
+      manager = E2eeKeyManager(
+        keyService: keys,
+        backupService: _FakeBackupService(),
+        backupRepository: repository,
+      );
+    });
+
+    Future<RecoverKeysResult> recover({String? newPin = '222222'}) {
+      return manager.recoverWithPassword(
+        'user-1',
+        passwordProof: 'proof-of-password',
+        askNewPin: () async => newPin,
+      );
+    }
+
+    test(
+      'a device that still has the keys keeps them: only the PIN changes',
+      () async {
+        keys.hasLocal = true;
+
+        expect(await recover(), RecoverKeysResult.keptKeys);
+
+        // The same keys, backed up again: nothing was reset, no PIN was asked for.
+        expect(repository.resetPublicKeys, isEmpty);
+        expect(repository.saved.single.verifier, 'new-verifier');
+        expect(repository.proofs, [passwordProof]);
+        expect(repository.unlockTries, isEmpty);
+        expect(keys.savedKeyPairs, 0);
+      },
+    );
+
+    test('a device without the keys gets new ones', () async {
+      expect(await manager.holdsCurrentKeys('user-1'), isFalse);
+
+      expect(await recover(), RecoverKeysResult.newKeys);
+
+      expect(repository.resetPublicKeys, ['CQ==']);
+      expect(repository.proofs, [passwordProof]);
+      expect(keys.savedKeyPairs, 1);
+    });
+
+    test(
+      'keys that were replaced on another device are not backed up again',
+      () async {
+        keys.hasLocal = true;
+        repository.serverPublicKey = 'bmV3ZXI=';
+
+        expect(await manager.holdsCurrentKeys('user-1'), isFalse);
+        expect(await recover(), RecoverKeysResult.newKeys);
+      },
+    );
+
+    test('cancelling the new PIN changes nothing', () async {
+      expect(await recover(newPin: null), RecoverKeysResult.cancelled);
+
+      expect(repository.saved, isEmpty);
       expect(keys.savedKeyPairs, 0);
+    });
+
+    test(
+      'a password proof the server no longer accepts changes nothing here',
+      () async {
+        repository.resetError = const WrongPinException();
+
+        expect(await recover(), RecoverKeysResult.proofRejected);
+        expect(keys.savedKeyPairs, 0);
+      },
+    );
+
+    test('reports a server that cannot be reached', () async {
+      repository.resetError = Exception('offline');
+
+      expect(await recover(), RecoverKeysResult.failed);
     });
   });
 
@@ -315,6 +500,24 @@ void main() {
 
       expect(result, E2eeSetupResult.ready);
       expect(keys.savedKeyPairs, 0);
+    });
+
+    test('keys reset on another device are replaced from the backup', () async {
+      keys.hasLocal = true;
+      keys.serverAcceptsLocalKey = false;
+      repository.stored = existingBackup;
+
+      final result = await service.initialize(
+        'u1',
+        askPin: ({required bool isNewPin}) async {
+          expect(isNewPin, isFalse);
+          return '123456';
+        },
+      );
+
+      expect(result, E2eeSetupResult.ready);
+      expect(keys.deletedKeyPairs, 1);
+      expect(keys.savedKeyPairs, 1);
     });
 
     test('first use creates keys and a PIN-protected backup', () async {

@@ -13,6 +13,8 @@ import 'package:genie/features/chat/presentation/widgets/chat_participant_sheet.
 import 'package:genie/features/chat/presentation/widgets/pin_prompt_dialog.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class ChatConversationPage extends ConsumerWidget {
   final String participantId;
@@ -34,14 +36,14 @@ class ChatConversationPage extends ConsumerWidget {
         : (userId: userId, participantId: participantId);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60.0),
         child: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colors.surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF6B7280)),
+            icon: Icon(Icons.arrow_back, color: context.colors.textMuted),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: ChatConversationHeader(
@@ -55,11 +57,11 @@ class ChatConversationPage extends ConsumerWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                  border: Border.all(color: context.colors.border),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.phone_outlined,
-                  color: Color(0xFF6B7280),
+                  color: context.colors.textMuted,
                   size: 18,
                 ),
               ),
@@ -70,13 +72,13 @@ class ChatConversationPage extends ConsumerWidget {
         ),
       ),
       body: userId == participantId
-          ? const _ChatNotice(message: 'This is your own account.')
+          ? _ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)
           : chat != null
           ? _Conversation(chat: chat, participantName: participantName)
           : profile.isLoading
           ? const Center(child: CircularProgressIndicator())
           : _ChatNotice(
-              message: 'Sign in to chat, or check your connection.',
+              message: context.l10n.chatSignInToChatOrCheck,
               onRetry: () => ref.invalidate(userProfileProvider),
             ),
     );
@@ -114,7 +116,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
       AppLogger.error('Could not pick a picture', e);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open your photos.')),
+        SnackBar(content: Text(context.l10n.chatCouldNotOpenYourPhotos)),
       );
       return;
     }
@@ -161,12 +163,12 @@ class _ConversationState extends ConsumerState<_Conversation> {
       ActiveChatStatus.unavailable => _ChatNotice(
         message: switch (chatState.setupResult) {
           E2eeSetupResult.wrongPin =>
-            'Incorrect PIN. After 5 wrong tries the backup locks for a while.',
+            '${context.l10n.pinWrong}\n\n${context.l10n.pinForgotHint}',
           E2eeSetupResult.rateLimited =>
-            'Too many wrong PINs. The backup is locked; try again later.',
+            '${context.l10n.pinLocked}\n\n${context.l10n.pinForgotHint}',
           E2eeSetupResult.cancelled =>
-            'Your backup PIN is needed to read and send messages.',
-          _ => 'Could not open this chat. Check your connection.',
+            '${context.l10n.chatPinNeeded}\n\n${context.l10n.pinForgotHint}',
+          _ => context.l10n.chatOpenFailed,
         },
         onRetry: _open,
       ),
@@ -196,8 +198,8 @@ class _ConversationState extends ConsumerState<_Conversation> {
   Widget _buildMessages(ActiveChatState chatState) {
     final messages = chatState.messages;
     if (messages.isEmpty) {
-      return const _ChatNotice(
-        message: 'Messages are end-to-end encrypted. Say hello!',
+      return _ChatNotice(
+        message: context.l10n.chatMessagesAreEndToEndEncrypted,
       );
     }
 
@@ -244,7 +246,7 @@ class _ChatNotice extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 15,
-                color: const Color(0xFF6B7280),
+                color: context.colors.textMuted,
                 height: 1.5,
               ),
             ),
@@ -252,7 +254,7 @@ class _ChatNotice extends StatelessWidget {
               const SizedBox(height: 16),
               OutlinedButton(
                 onPressed: onRetry,
-                child: const Text('Try again'),
+                child: Text(context.l10n.chatTryAgain),
               ),
             ],
           ],

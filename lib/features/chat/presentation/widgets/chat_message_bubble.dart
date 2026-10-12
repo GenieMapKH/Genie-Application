@@ -3,11 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_image_attachment.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// One message in a conversation: the user's own on the right, the other
 /// person's on the left.
 class ChatMessageBubble extends StatelessWidget {
-  static const _accent = Color(0xFF5B5FEF);
   static const _corner = Radius.circular(16);
   static const _tail = Radius.circular(4);
 
@@ -51,8 +51,9 @@ class ChatMessageBubble extends StatelessWidget {
                 ),
               ),
             if (attachment != null && !attachment.isImage)
-              _buildText('\u{1F4CE} ${attachment.name}', failed),
-            if (message.text.isNotEmpty) _buildText(message.text, failed),
+              _buildText(context, '\u{1F4CE} ${attachment.name}', failed),
+            if (message.text.isNotEmpty)
+              _buildText(context, message.text, failed),
             if (message.status != ChatMessageStatus.sent)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
@@ -62,7 +63,7 @@ class ChatMessageBubble extends StatelessWidget {
                     fontSize: 11,
                     color: failed
                         ? const Color(0xFFDC2626)
-                        : const Color(0xFF9CA3AF),
+                        : context.colors.textHint,
                   ),
                 ),
               ),
@@ -72,14 +73,14 @@ class ChatMessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildText(String text, bool failed) {
+  Widget _buildText(BuildContext context, String text, bool failed) {
     return GestureDetector(
       onTap: failed ? onRetry : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isMine ? _accent : Colors.white,
-          border: isMine ? null : Border.all(color: const Color(0xFFE5E7EB)),
+          color: isMine ? context.colors.accent : context.colors.surface,
+          border: isMine ? null : Border.all(color: context.colors.border),
           borderRadius: BorderRadius.only(
             topLeft: _corner,
             topRight: _corner,
@@ -91,7 +92,9 @@ class ChatMessageBubble extends StatelessWidget {
           text,
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: isMine ? Colors.white : const Color(0xFF111827),
+            color: isMine
+                ? context.colors.onPrimary
+                : context.colors.textPrimary,
           ),
         ),
       ),

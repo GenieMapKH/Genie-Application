@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final String email;
@@ -131,7 +133,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   Future<void> _handleVerify() async {
     final otp = _otpValue;
     if (otp.length != _otpLength) {
-      AppPopup.showError(context, 'Please enter all 6 digits');
+      AppPopup.showError(context, context.l10n.authPleaseEnterAll6Digits);
       return;
     }
 
@@ -161,7 +163,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
     try {
       await ref.read(authServiceProvider).forgotPassword(widget.email);
       if (!mounted) return;
-      AppPopup.showSuccess(context, 'New verification code sent');
+      AppPopup.showSuccess(context, context.l10n.authNewVerificationCodeSent);
       _startResendTimer();
       // Clear existing OTP
       for (final c in _controllers) {
@@ -177,7 +179,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -200,13 +202,13 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(color: context.colors.border),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_back,
                             size: 20,
-                            color: Color(0xFF1E293B),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                       ),
@@ -214,19 +216,19 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
 
                       // Title
                       Text(
-                        'OTP Verification',
+                        context.l10n.authOtpVerification,
                         style: GoogleFonts.inter(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF1E293B),
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter the verification code we just sent to your email.',
+                        context.l10n.authEnterTheVerificationCodeWeJust,
                         style: GoogleFonts.inter(
                           fontSize: 15,
-                          color: const Color(0xFF64748B),
+                          color: context.colors.textMuted,
                           height: 1.5,
                         ),
                       ),
@@ -260,7 +262,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                                 style: GoogleFonts.inter(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF1E293B),
+                                  color: context.colors.textPrimary,
                                 ),
                                 decoration: InputDecoration(
                                   counterText: '',
@@ -269,8 +271,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
                                       color: isFocused || isFilled
-                                          ? const Color(0xFF4F5BD5)
-                                          : const Color(0xFFE2E8F0),
+                                          ? context.colors.primary
+                                          : context.colors.border,
                                       width: isFocused ? 2 : 1.5,
                                     ),
                                   ),
@@ -278,15 +280,15 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
                                       color: isFilled
-                                          ? const Color(0xFF4F5BD5)
-                                          : const Color(0xFFE2E8F0),
+                                          ? context.colors.primary
+                                          : context.colors.border,
                                       width: 1.5,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFF4F5BD5),
+                                    borderSide: BorderSide(
+                                      color: context.colors.primary,
                                       width: 2,
                                     ),
                                   ),
@@ -307,7 +309,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleVerify,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F5BD5),
+                            backgroundColor: context.colors.primary,
                             disabledBackgroundColor: const Color(0x994F5BD5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -324,7 +326,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                                   ),
                                 )
                               : Text(
-                                  'Verify',
+                                  context.l10n.authVerify,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -344,7 +346,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                               style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF1E293B),
+                                color: context.colors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -353,13 +355,13 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                                   ? _handleResend
                                   : null,
                               child: Text(
-                                'Resend OTP',
+                                context.l10n.authResendOtp,
                                 style: GoogleFonts.inter(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: _resendCountdown == 0
-                                      ? const Color(0xFF4F5BD5)
-                                      : const Color(0xFFA0AEC0),
+                                      ? context.colors.primary
+                                      : context.colors.textHint,
                                 ),
                               ),
                             ),

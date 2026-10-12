@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// The close, favourite and share buttons floating over the detail gallery.
 class PropertyDetailActions extends StatelessWidget {
@@ -27,7 +28,7 @@ class PropertyDetailActions extends StatelessWidget {
           const Spacer(),
           _CircleButton(
             icon: isFavorite ? Icons.favorite : Icons.favorite_border,
-            iconColor: isFavorite ? const Color(0xFF5B5FEF) : null,
+            iconColor: isFavorite ? context.colors.accent : null,
             onPressed: onFavoriteToggled,
           ),
           const SizedBox(width: 10),
@@ -53,7 +54,7 @@ class _CircleButton extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -66,7 +67,7 @@ class _CircleButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: iconColor ?? const Color(0xFF111827),
+          color: iconColor ?? context.colors.textPrimary,
         ),
       ),
     );

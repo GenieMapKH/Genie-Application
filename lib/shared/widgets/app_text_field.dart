@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// A modern, reusable text input field component designed for Genie.
 /// Features smooth animated focus glow, interactive border states, and custom error messaging.
@@ -91,8 +92,8 @@ class _AppTextFieldState extends State<AppTextField> {
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
 
     const errorColor = Color(0xFFDC2626);
-    const primaryColor = Color(0xFF4F5BD5);
-    const defaultBorderColor = Color(0xFFE5E7EB);
+    final primaryColor = context.colors.primary;
+    final defaultBorderColor = context.colors.border;
 
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(widget.borderRadius),
@@ -141,7 +142,7 @@ class _AppTextFieldState extends State<AppTextField> {
         style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w400,
-          color: const Color(0xFF111827),
+          color: context.colors.textPrimary,
         ),
         cursorColor: hasError ? errorColor : primaryColor,
         decoration: InputDecoration(
@@ -149,10 +150,10 @@ class _AppTextFieldState extends State<AppTextField> {
           hintStyle: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: hasError ? const Color(0xFFE57373) : const Color(0xFF9CA3AF),
+            color: hasError ? const Color(0xFFE57373) : context.colors.textHint,
           ),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: context.colors.surface,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16.0,
             vertical: 14.0,
@@ -207,16 +208,24 @@ class _AppTextFieldState extends State<AppTextField> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (widget.label != null)
-                AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 180),
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _isFocused
-                        ? (hasError ? errorColor : primaryColor)
-                        : const Color(0xFF1E293B),
+                // Gives way to the trailing widget: a translated label can be
+                // much longer than the English one.
+                Flexible(
+                  child: AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 180),
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: _isFocused
+                          ? (hasError ? errorColor : primaryColor)
+                          : context.colors.textPrimary,
+                    ),
+                    child: Text(
+                      widget.label!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  child: Text(widget.label!),
                 )
               else
                 const SizedBox.shrink(),

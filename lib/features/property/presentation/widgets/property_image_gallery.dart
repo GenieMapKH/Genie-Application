@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// Swipeable image gallery with a dot indicator, shared by the map card and the
 /// similar-property tiles.
@@ -97,14 +98,14 @@ class _PropertyImageGalleryState extends State<PropertyImageGallery> {
       fit: BoxFit.cover,
       memCacheWidth: 900,
       placeholder: (context, url) => Container(
-        color: const Color(0xFFF3F4F6),
-        child: const Center(
+        color: context.colors.divider,
+        child: Center(
           child: SizedBox(
             width: 24,
             height: 24,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: Color(0xFF5B5FEF),
+              color: context.colors.accent,
             ),
           ),
         ),
@@ -163,12 +164,12 @@ class PropertyImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFFF3F4F6),
-      child: const Center(
+      color: context.colors.divider,
+      child: Center(
         child: Icon(
           Icons.landscape_rounded,
           size: 44,
-          color: Color(0xFFCBD5E1),
+          color: context.colors.iconSubtle,
         ),
       ),
     );

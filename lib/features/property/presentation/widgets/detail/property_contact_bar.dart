@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// The Chat / Call Now bar pinned to the bottom of the detail sheet.
 class PropertyContactBar extends StatelessWidget {
@@ -19,9 +21,9 @@ class PropertyContactBar extends StatelessWidget {
         top: 12,
         bottom: 12 + MediaQuery.viewPaddingOf(context).bottom,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE5E7EB))),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        border: Border(top: BorderSide(color: context.colors.border)),
       ),
       child: Row(
         children: [
@@ -31,22 +33,22 @@ class PropertyContactBar extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onChat,
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFFE5E7EB)),
+                  side: BorderSide(color: context.colors.border),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                icon: const Icon(
+                icon: Icon(
                   Icons.chat_bubble_outline,
                   size: 18,
-                  color: Color(0xFF111827),
+                  color: context.colors.textPrimary,
                 ),
                 label: Text(
-                  'Chat',
+                  context.l10n.navChat,
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF111827),
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ),
@@ -59,7 +61,7 @@ class PropertyContactBar extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: onCall,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5B5FEF),
+                  backgroundColor: context.colors.accent,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -67,7 +69,7 @@ class PropertyContactBar extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.phone, size: 18, color: Colors.white),
                 label: Text(
-                  'Call Now',
+                  context.l10n.propertyCallNow,
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,

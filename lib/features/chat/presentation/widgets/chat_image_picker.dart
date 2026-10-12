@@ -2,6 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/utils/image_mime_type.dart';
 
 /// A picture the user chose to send.
 typedef PickedChatImage = ({Uint8List bytes, String name, String mimeType});
@@ -11,7 +14,7 @@ typedef PickedChatImage = ({Uint8List bytes, String name, String mimeType});
 Future<PickedChatImage?> pickChatImage(BuildContext context) async {
   final source = await showModalBottomSheet<ImageSource>(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: context.colors.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -21,12 +24,12 @@ Future<PickedChatImage?> pickChatImage(BuildContext context) async {
         children: [
           ListTile(
             leading: const Icon(Icons.photo_library_outlined),
-            title: const Text('Photo library'),
+            title: Text(context.l10n.chatPhotoLibrary),
             onTap: () => Navigator.pop(sheetContext, ImageSource.gallery),
           ),
           ListTile(
             leading: const Icon(Icons.photo_camera_outlined),
-            title: const Text('Camera'),
+            title: Text(context.l10n.chatCamera),
             onTap: () => Navigator.pop(sheetContext, ImageSource.camera),
           ),
         ],
@@ -46,17 +49,6 @@ Future<PickedChatImage?> pickChatImage(BuildContext context) async {
   return (
     bytes: await file.readAsBytes(),
     name: file.name,
-    mimeType: file.mimeType ?? _mimeTypeOf(file.name),
+    mimeType: file.mimeType ?? imageMimeTypeOf(file.name),
   );
-}
-
-String _mimeTypeOf(String fileName) {
-  final extension = fileName.split('.').last.toLowerCase();
-  return switch (extension) {
-    'png' => 'image/png',
-    'webp' => 'image/webp',
-    'gif' => 'image/gif',
-    'heic' || 'heif' => 'image/heic',
-    _ => 'image/jpeg',
-  };
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 class PropertyBottomBar extends StatelessWidget {
   const PropertyBottomBar({super.key});
@@ -10,7 +11,7 @@ class PropertyBottomBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -22,22 +23,24 @@ class PropertyBottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem('assets/icons/home.svg', 'Home', false),
-          _buildNavItem('assets/icons/chat.svg', 'Messages', false),
+          _buildNavItem(context, 'assets/icons/home.svg', 'Home', false),
+          _buildNavItem(context, 'assets/icons/chat.svg', 'Messages', false),
           const SizedBox(width: 48), // Space for FAB
           _buildNavItem(
+            context,
             'assets/icons/heart.svg',
             'Favorites',
             false,
             hasBadge: true,
           ),
-          _buildNavItem('assets/icons/user.svg', 'Profile', true),
+          _buildNavItem(context, 'assets/icons/user.svg', 'Profile', true),
         ],
       ),
     );
   }
 
   Widget _buildNavItem(
+    BuildContext context,
     String iconPath,
     String label,
     bool isActive, {
@@ -52,7 +55,7 @@ class PropertyBottomBar extends StatelessWidget {
             SvgPicture.asset(
               iconPath,
               colorFilter: ColorFilter.mode(
-                isActive ? const Color(0xFF5B5FEF) : const Color(0xFF9CA3AF),
+                isActive ? context.colors.accent : context.colors.textHint,
                 BlendMode.srcIn,
               ),
               width: 24,
@@ -79,7 +82,7 @@ class PropertyBottomBar extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 10,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-            color: isActive ? const Color(0xFF5B5FEF) : const Color(0xFF9CA3AF),
+            color: isActive ? context.colors.accent : context.colors.textHint,
           ),
         ),
       ],

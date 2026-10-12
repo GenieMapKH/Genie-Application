@@ -12,6 +12,8 @@ import 'package:genie/features/property/presentation/widgets/my_properties/empty
 import 'package:genie/features/property/presentation/widgets/my_properties/property_options_sheet.dart';
 import 'package:genie/features/property/presentation/widgets/my_properties/property_tabs.dart';
 import 'package:genie/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class MyPropertiesPage extends ConsumerWidget {
   final bool isEmbedded;
@@ -28,20 +30,23 @@ class MyPropertiesPage extends ConsumerWidget {
     final propertiesAsync = ref.watch(propertiesProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppHeaderBar(title: 'My Properties', onBackPressed: onBackPressed),
+            AppHeaderBar(
+              title: context.l10n.navMyProperties,
+              onBackPressed: onBackPressed,
+            ),
             if (propertiesAsync.hasError &&
                 propertiesAsync.hasValue &&
                 !propertiesAsync.isLoading)
-              _buildOfflineWarning(),
+              _buildOfflineWarning(context),
             const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
-                color: const Color(0xFF5B5FEF),
+                color: context.colors.accent,
                 onRefresh: () =>
                     ref.read(propertiesProvider.notifier).refresh(),
                 child: propertiesAsync.when(
@@ -55,10 +60,12 @@ class MyPropertiesPage extends ConsumerWidget {
                       Expanded(child: _buildBody(context, ref, properties)),
                     ],
                   ),
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
+                  loading: () => Center(
+                    child: CircularProgressIndicator(
+                      color: context.colors.accent,
+                    ),
                   ),
-                  error: (error, stack) => _buildErrorState(ref),
+                  error: (error, stack) => _buildErrorState(context, ref),
                 ),
               ),
             ),
@@ -85,14 +92,14 @@ class MyPropertiesPage extends ConsumerWidget {
               ref.read(propertiesProvider.notifier).refresh();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF5B5FEF),
+              backgroundColor: context.colors.accent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
               elevation: 4,
             ),
             child: Text(
-              'Add Property',
+              context.l10n.propertyAddProperty,
               style: GoogleFonts.inter(
                 color: Colors.white,
                 fontSize: 14,
@@ -132,14 +139,14 @@ class MyPropertiesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildOfflineWarning() {
+  Widget _buildOfflineWarning(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF2F2),
+        color: context.colors.dangerSoft,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFFECACA)),
+        border: Border.all(color: context.colors.dangerBorder),
       ),
       child: Row(
         children: [
@@ -147,10 +154,10 @@ class MyPropertiesPage extends ConsumerWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'You are offline. Please connect to internet for updates.',
+              context.l10n.propertyYouAreOfflinePleaseConnectTo,
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: const Color(0xFFB91C1C),
+                color: context.colors.onDangerSoft,
               ),
             ),
           ),
@@ -159,7 +166,7 @@ class MyPropertiesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(WidgetRef ref) {
+  Widget _buildErrorState(BuildContext context, WidgetRef ref) {
     return CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
@@ -171,18 +178,18 @@ class MyPropertiesPage extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.error_outline,
                     size: 48,
-                    color: Color(0xFF9CA3AF),
+                    color: context.colors.textHint,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Could not load properties',
+                    context.l10n.propertyCouldNotLoadProperties,
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: const Color(0xFF6B7280),
+                      color: context.colors.textMuted,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -190,11 +197,11 @@ class MyPropertiesPage extends ConsumerWidget {
                     onPressed: () =>
                         ref.read(propertiesProvider.notifier).refresh(),
                     child: Text(
-                      'Retry',
+                      context.l10n.commonRetry,
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF5B5FEF),
+                        color: context.colors.accent,
                       ),
                     ),
                   ),

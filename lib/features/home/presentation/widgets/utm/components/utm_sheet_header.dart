@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class UtmSheetHeader extends StatelessWidget {
   const UtmSheetHeader({super.key});
@@ -12,16 +14,16 @@ class UtmSheetHeader extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
-            child: const Icon(Icons.arrow_back, color: Color(0xFF6B7280)),
+            child: Icon(Icons.arrow_back, color: context.colors.textMuted),
           ),
           Expanded(
             child: Center(
               child: Text(
-                'Locate Property',
+                context.l10n.homeLocateProperty,
                 style: GoogleFonts.inter(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1F2937),
+                  color: context.colors.textPrimary,
                 ),
               ),
             ),

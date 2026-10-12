@@ -41,7 +41,9 @@ Organised by feature first, then by layer.
 
 ```
 lib/
-  core/        config, errors, logging, network (Dio client + interceptors), theme
+  app/         the MaterialApp, routes, and what spans several features (sign-out)
+  core/        config, errors, logging, network (Dio client + interceptors), theme, device info
+  l10n/        translations: app_en.arb, app_km.arb (generated/ is built from them)
   features/
     auth/      login, register, Google sign-in, password reset, guest session
     home/      map screen, drawing tools, UTM/OCR locate
@@ -51,7 +53,10 @@ lib/
     chat/      conversations, messages
       data/    socket + backup API
       e2ee/    keys, PIN backup, setup and key-management logic (no UI)
-    profile/   account screen
+    profile/   the "User" tab and the personal information screen
+    security/  chat keys (PIN, forgotten PIN, reset), password, logged-in devices and the
+               new sign-in alert, deactivate / delete account
+    settings/  the saved theme and language, and the rows that change them
   shared/      widgets reused by several features
 ```
 
@@ -64,9 +69,56 @@ Rules the code follows:
   headers or bodies, because those carry tokens and passwords.
 - Anything that needs a dialog takes a callback (see `PinPrompt`) so the logic stays testable.
 
+## Light and dark theme
+
+Every colour has a name in `lib/core/theme/app_colors.dart`, with a light and a dark value.
+Widgets read them with `context.colors.textPrimary`, `context.colors.surface` and so on, never as
+hex values, so a new screen works in both themes without extra work. `AppTheme` builds the two
+`ThemeData` from the same palette. The user's choice (System / Light / Dark) is kept on the device
+by `features/settings`.
+
+Two places keep their own colours on purpose: what is drawn onto the map (`home/utils/map`) and
+the toast messages (`shared/utils/app_popup.dart`).
+
+## Languages
+
+English and Khmer. To add or change a text:
+
+1. Add the key to `lib/l10n/app_en.arb` and its translation to `lib/l10n/app_km.arb`.
+2. Run `flutter gen-l10n` (also run by `flutter pub get`, `run` and `build`).
+3. Use it in a widget: `context.l10n.theKey`.
+
+To add a language, add `app_<code>.arb` and list it in `AppLanguages` (`lib/l10n/l10n.dart`).
+Only widgets read translations: state and data classes return a result (an enum) and the screen
+picks the words, see `ProfileSaveResult` or `AccountActionResult`.
+
+Not translated yet (shown in English in both languages): the Terms of Service, the choices inside
+the add-property drop-downs (their text is also the value sent to the server), texts built with a
+name or number in them, and messages composed in state classes (login form validation, chat send
+errors, last-seen labels).
+
 ## Security notes
 
 - Tokens are kept in the platform keystore (`flutter_secure_storage`).
 - Chat messages are encrypted on the device; the server only stores ciphertext.
 - The identity key is backed up encrypted with the user's PIN. Forgetting the PIN means the
-  backup cannot be recovered.
+  backup cannot be recovered, and the keys cannot be reset: changing the PIN and resetting keys
+  both ask for the current PIN, which the server checks, so an unlocked phone is not enough to
+  take over someone's chats.
+- Changing the password, deactivating and deleting the account ask for the password again (or a
+  fresh Google sign-in).
+- A forgotten PIN is recovered with the account password. An account that signs in with Google
+  has none until its owner creates one (Security > Create password). A device that still holds
+  the chat keys keeps them and the history; any other device gets new keys.
+- When the server ends this device's session (signed out from another device, password changed,
+  account deactivated or deleted) the app returns to the welcome screen at once: the API client
+  reports it (`sessionEndedProvider`) and `lib/app/app.dart` acts on it. Being offline never
+  signs anyone out.
+- A device signed in for less than a day cannot sign other devices out; the server decides, the
+  devices screen only shows what it says (`DeviceList.canSignOutOthers`).
+- The app tells the user when another device signs in (`NewSignInAlert`), by comparing the device
+  list with the devices it has already shown.
+- The profile picture is uploaded (camera or gallery) or synced from the Google account; the
+  options are in `profile/presentation/widgets/avatar_options_sheet.dart`.
+- Sign-in requests carry the device's name and platform (`X-Device-Name`, `X-Device-Platform`)
+  so the owner can recognise it under "Logged-in devices".

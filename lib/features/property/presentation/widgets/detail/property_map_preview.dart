@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:genie/features/home/utils/map/map_camera_focus.dart';
 import 'package:genie/features/home/utils/map/map_measurements.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Satellite thumbnail of the property's boundary, with the measured area
 /// overlaid. Non-interactive: tapping it returns the user to the full map.
@@ -39,11 +41,11 @@ class PropertyMapPreview extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Map Preview',
+          context.l10n.propertyMapPreview,
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -70,7 +72,7 @@ class PropertyMapPreview extends StatelessWidget {
                           Polygon(
                             polygonId: PolygonId('preview_${property.id}'),
                             points: points,
-                            strokeColor: const Color(0xFF4F5BD5),
+                            strokeColor: context.colors.primary,
                             strokeWidth: 2,
                             fillColor: const Color(
                               0xFF4F5BD5,
@@ -103,11 +105,11 @@ class PropertyMapPreview extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Location & Boundary',
+          context.l10n.propertyLocationBoundary,
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: const Color(0xFF6B7280),
+            color: context.colors.textMuted,
           ),
         ),
       ],
@@ -141,7 +143,7 @@ class _AreaChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -156,7 +158,7 @@ class _AreaChip extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 13,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF4B5563),
+          color: context.colors.textSecondary,
         ),
       ),
     );

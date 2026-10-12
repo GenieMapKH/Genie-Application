@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/features/property/utils/property_format.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// The card that rises above the bottom nav when a property is selected on the
 /// map. Tapping it — or swiping it up — opens the full detail sheet.
@@ -33,7 +34,7 @@ class PropertyItemCard extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
                 BoxShadow(
@@ -98,7 +99,7 @@ class _Details extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 6),
@@ -109,7 +110,7 @@ class _Details extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
@@ -120,7 +121,7 @@ class _Details extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: const Color(0xFF4B5563),
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
@@ -131,7 +132,7 @@ class _Details extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: const Color(0xFF9CA3AF),
+            color: context.colors.textHint,
           ),
         ),
       ],
@@ -149,7 +150,7 @@ class _TypePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -166,8 +167,8 @@ class _TypePill extends StatelessWidget {
             PropertyFormat.typeIconPath(propertyType),
             width: 14,
             height: 14,
-            colorFilter: const ColorFilter.mode(
-              Color(0xFF4B5563),
+            colorFilter: ColorFilter.mode(
+              context.colors.textSecondary,
               BlendMode.srcIn,
             ),
           ),
@@ -177,7 +178,7 @@ class _TypePill extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF111827),
+              color: context.colors.textPrimary,
             ),
           ),
         ],
@@ -251,7 +252,7 @@ class _FavoriteButtonState extends State<_FavoriteButton>
           child: Container(
             padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -270,8 +271,8 @@ class _FavoriteButtonState extends State<_FavoriteButton>
                 key: ValueKey<bool>(widget.isFavorite),
                 size: 19,
                 color: widget.isFavorite
-                    ? const Color(0xFF5B5FEF)
-                    : const Color(0xFF111827),
+                    ? context.colors.accent
+                    : context.colors.textPrimary,
               ),
             ),
           ),

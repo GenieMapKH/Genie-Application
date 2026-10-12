@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// Round picture of a chat participant, or their initial when they have none.
 class ChatAvatar extends StatelessWidget {
@@ -21,7 +22,7 @@ class ChatAvatar extends StatelessWidget {
 
     return CircleAvatar(
       radius: radius,
-      backgroundColor: const Color(0xFFE5E7EB),
+      backgroundColor: context.colors.border,
       backgroundImage: hasPicture ? NetworkImage(url) : null,
       child: hasPicture
           ? null
@@ -30,7 +31,7 @@ class ChatAvatar extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: radius * 0.8,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF6B7280),
+                color: context.colors.textMuted,
               ),
             ),
     );

@@ -7,21 +7,26 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:genie/features/property/presentation/widgets/forms/types/property_type_forms.dart';
 import 'add_property_page.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 extension AddPropertyPageFormsDynamic on AddPropertyPageState {
   Widget buildMapPreview() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const PropertySectionTitle(title: 'Map Preview', required: false),
+        PropertySectionTitle(
+          title: context.l10n.propertyMapPreview,
+          required: false,
+        ),
         const SizedBox(height: 8),
         Container(
           height: 160,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: const Color(0xFFF3F4F6),
+            color: context.colors.divider,
             borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: context.colors.border),
           ),
           child: widget.boundaryPoints.isNotEmpty
               ? ClipRRect(
@@ -46,7 +51,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                         fillColor: const Color(
                           0xFF5B5FEF,
                         ).withValues(alpha: 0.2),
-                        strokeColor: const Color(0xFF5B5FEF),
+                        strokeColor: context.colors.accent,
                         strokeWidth: 2,
                       ),
                     },
@@ -67,12 +72,12 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.map, size: 48, color: Color(0xFF9CA3AF)),
+                    Icon(Icons.map, size: 48, color: context.colors.textHint),
                     const SizedBox(height: 8),
                     Text(
-                      'Set Property Location',
+                      context.l10n.propertySetPropertyLocation,
                       style: GoogleFonts.inter(
-                        color: const Color(0xFF9CA3AF),
+                        color: context.colors.textHint,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -82,9 +87,9 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
         ),
         const SizedBox(height: 8),
         Text(
-          'Location & Boundary',
+          context.l10n.propertyLocationBoundary,
           style: GoogleFonts.inter(
-            color: const Color(0xFF6B7280),
+            color: context.colors.textMuted,
             fontSize: 12,
           ),
         ),
@@ -94,22 +99,22 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () {},
-                icon: const Icon(
+                icon: Icon(
                   Icons.location_on_outlined,
                   size: 18,
-                  color: Color(0xFF374151),
+                  color: context.colors.textSecondary,
                 ),
                 label: Text(
-                  'Locate Property',
+                  context.l10n.homeLocateProperty,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF374151),
+                    color: context.colors.textSecondary,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  side: const BorderSide(color: Color(0xFFE5E7EB)),
+                  side: BorderSide(color: context.colors.border),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -130,7 +135,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   ),
                 ),
                 label: Text(
-                  'Drawing Property',
+                  context.l10n.propertyDrawingProperty,
                   style: GoogleFonts.inter(
                     color: Colors.white,
                     fontSize: 13,
@@ -138,7 +143,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5B5FEF),
+                  backgroundColor: context.colors.accent,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -175,12 +180,12 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                  ? const Color(0xFF5B5FEF).withValues(alpha: 0.05)
-                  : Colors.white,
+                  ? context.colors.accent.withValues(alpha: 0.05)
+                  : context.colors.surface,
               border: Border.all(
                 color: isSelected
-                    ? const Color(0xFF5B5FEF)
-                    : const Color(0xFFE5E7EB),
+                    ? context.colors.accent
+                    : context.colors.border,
               ),
               borderRadius: BorderRadius.circular(20.0),
             ),
@@ -193,8 +198,8 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   height: 16,
                   colorFilter: ColorFilter.mode(
                     isSelected
-                        ? const Color(0xFF5B5FEF)
-                        : const Color(0xFF6B7280),
+                        ? context.colors.accent
+                        : context.colors.textMuted,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -203,8 +208,8 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   kw['name'],
                   style: GoogleFonts.inter(
                     color: isSelected
-                        ? const Color(0xFF5B5FEF)
-                        : const Color(0xFF4B5563),
+                        ? context.colors.accent
+                        : context.colors.textSecondary,
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
@@ -238,9 +243,11 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
 
   Widget buildBottomBar() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 1.0)),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        border: Border(
+          top: BorderSide(color: context.colors.border, width: 1.0),
+        ),
       ),
       padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
       child: Row(
@@ -248,16 +255,25 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
         children: [
           _buildNavItem(
             iconPath: 'assets/icons/explore.svg',
-            label: 'Explore',
+            label: context.l10n.navExplore,
             isSelected: true,
           ),
-          _buildNavItem(iconPath: 'assets/icons/saved.svg', label: 'Saved'),
-          _buildNavItem(iconPath: 'assets/icons/chat.svg', label: 'Chat'),
+          _buildNavItem(
+            iconPath: 'assets/icons/saved.svg',
+            label: context.l10n.navSaved,
+          ),
+          _buildNavItem(
+            iconPath: 'assets/icons/chat.svg',
+            label: context.l10n.navChat,
+          ),
           _buildNavItem(
             iconPath: 'assets/icons/property.svg',
-            label: 'My Properties',
+            label: context.l10n.navMyProperties,
           ),
-          _buildNavItem(iconPath: 'assets/icons/user.svg', label: 'User'),
+          _buildNavItem(
+            iconPath: 'assets/icons/user.svg',
+            label: context.l10n.accountDefaultName,
+          ),
         ],
       ),
     );
@@ -268,9 +284,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
     required String label,
     bool isSelected = false,
   }) {
-    final color = isSelected
-        ? const Color(0xFF5B5FEF)
-        : const Color(0xFF6B7280);
+    final color = isSelected ? context.colors.accent : context.colors.textMuted;
     return SizedBox(
       width: 70,
       child: Column(
