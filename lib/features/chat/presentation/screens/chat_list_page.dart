@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/app_header_bar.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_avatar.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
@@ -12,11 +13,7 @@ class ChatListPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
   final VoidCallback? onBackPressed;
 
-  const ChatListPage({
-    super.key,
-    this.isEmbedded = false,
-    this.onBackPressed,
-  });
+  const ChatListPage({super.key, this.isEmbedded = false, this.onBackPressed});
 
   @override
   ConsumerState<ChatListPage> createState() => _ChatListPageState();
@@ -36,32 +33,32 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
       body: SafeArea(
         child: Column(
           children: [
-            AppHeaderBar(
-              title: 'Chat',
-              onBackPressed: widget.onBackPressed,
-            ),
+            AppHeaderBar(title: 'Chat', onBackPressed: widget.onBackPressed),
             Expanded(
-              child: ref.watch(conversationsProvider).when(
-                data: (conversations) {
-                  if (conversations.isEmpty) return _buildEmptyState();
-                  return ListView.separated(
-                    itemCount: conversations.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color(0xFFF3F4F6),
-                      indent: 16,
-                      endIndent: 16,
-                    ),
-                    itemBuilder: (context, index) {
-                      final chat = conversations[index];
-                      return _buildChatItem(context, chat);
+              child: ref
+                  .watch(conversationsProvider)
+                  .when(
+                    data: (conversations) {
+                      if (conversations.isEmpty) return _buildEmptyState();
+                      return ListView.separated(
+                        itemCount: conversations.length,
+                        separatorBuilder: (context, index) => const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Color(0xFFF3F4F6),
+                          indent: 16,
+                          endIndent: 16,
+                        ),
+                        itemBuilder: (context, index) {
+                          final chat = conversations[index];
+                          return _buildChatItem(context, chat);
+                        },
+                      );
                     },
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => _buildEmptyState(),
-              ),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => _buildErrorState(),
+                  ),
             ),
           ],
         ),
@@ -113,6 +110,28 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
     );
   }
 
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Could not load your chats.',
+            style: GoogleFonts.inter(
+              fontSize: 15,
+              color: const Color(0xFF6B7280),
+            ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton(
+            onPressed: () => ref.read(conversationsProvider.notifier).refresh(),
+            child: const Text('Try again'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildChatItem(BuildContext context, ChatConversation chat) {
     return InkWell(
       onTap: () {
@@ -130,6 +149,11 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ChatAvatar(
+              name: chat.participantName,
+              avatarUrl: chat.participantAvatar,
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

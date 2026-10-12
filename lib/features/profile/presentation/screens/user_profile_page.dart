@@ -1,3 +1,4 @@
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,7 +42,10 @@ class UserProfilePage extends ConsumerWidget {
                   ref.invalidate(userProfileProvider);
                   try {
                     await ref.read(userProfileProvider.future);
-                  } catch (_) {}
+                  } catch (e) {
+                    // The error state is rendered from the provider itself.
+                    AppLogger.error('Profile refresh failed', e);
+                  }
                 },
                 child: profileAsync.when(
                   skipLoadingOnReload: true,

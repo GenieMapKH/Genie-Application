@@ -21,10 +21,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
     with SingleTickerProviderStateMixin {
   static const int _otpLength = 6;
 
-  final List<TextEditingController> _controllers =
-      List.generate(_otpLength, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes =
-      List.generate(_otpLength, (_) => FocusNode());
+  final List<TextEditingController> _controllers = List.generate(
+    _otpLength,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> _focusNodes = List.generate(
+    _otpLength,
+    (_) => FocusNode(),
+  );
 
   bool _isLoading = false;
   int _resendCountdown = 30;
@@ -41,13 +45,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
     _entryController.forward();
     _startResendTimer();
   }
@@ -83,8 +88,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
     });
   }
 
-  String get _otpValue =>
-      _controllers.map((c) => c.text).join();
+  String get _otpValue => _controllers.map((c) => c.text).join();
 
   void _onOtpChanged(int index, String value) {
     if (value.length > 1) {
@@ -94,8 +98,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
         _controllers[i].text = digits[i];
       }
       // Focus the last filled box or the next empty one
-      final focusIndex =
-          digits.length >= _otpLength ? _otpLength - 1 : digits.length;
+      final focusIndex = digits.length >= _otpLength
+          ? _otpLength - 1
+          : digits.length;
       if (focusIndex < _otpLength) {
         _focusNodes[focusIndex].requestFocus();
       }
@@ -133,8 +138,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
     setState(() => _isLoading = true);
 
     try {
-      final verified =
-          await ref.read(authServiceProvider).verifyOtp(widget.email, otp);
+      final verified = await ref
+          .read(authServiceProvider)
+          .verifyOtp(widget.email, otp);
       if (!mounted) return;
       if (verified) {
         context.push(
@@ -175,8 +181,10 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 408.0),
               child: FadeTransition(
@@ -228,8 +236,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(_otpLength, (index) {
-                          final isFilled =
-                              _controllers[index].text.isNotEmpty;
+                          final isFilled = _controllers[index].text.isNotEmpty;
                           final isFocused = _focusNodes[index].hasFocus;
 
                           return Container(
@@ -342,8 +349,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                             ),
                             const SizedBox(height: 4),
                             GestureDetector(
-                              onTap:
-                                  _resendCountdown == 0 ? _handleResend : null,
+                              onTap: _resendCountdown == 0
+                                  ? _handleResend
+                                  : null,
                               child: Text(
                                 'Resend OTP',
                                 style: GoogleFonts.inter(

@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:math' as math;
-import 'package:genie/core/network/api_client.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:go_router/go_router.dart';
@@ -253,31 +251,9 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
                             onPressed:
                                 widget.onExplorePressed ??
                                 () async {
-                                  try {
-                                    // Guest session initialization
-                                    String? guestId =
-                                        await AuthStorage.getGuestSessionId();
-                                    if (guestId == null) {
-                                      final timestamp =
-                                          DateTime.now().millisecondsSinceEpoch;
-                                      final random = math.Random().nextInt(
-                                        1000000,
-                                      );
-                                      guestId = 'guest_${timestamp}_$random';
-                                      await AuthStorage.saveGuestSessionId(
-                                        guestId,
-                                      );
-                                    }
-
-                                    // Register with backend
-                                    final dio = createApiClient();
-                                    await dio.post(
-                                      '/public/properties/guest-session',
-                                      data: {'deviceId': guestId},
-                                    );
-                                  } catch (e) {
-                                    debugPrint('Guest session init failed: $e');
-                                  }
+                                  await ref
+                                      .read(authServiceProvider)
+                                      .ensureGuestSession();
 
                                   ref
                                       .read(mainNavProvider.notifier)

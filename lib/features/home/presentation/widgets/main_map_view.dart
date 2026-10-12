@@ -9,7 +9,8 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/home/utils/map/map_camera_focus.dart';
-import 'package:genie/features/home/utils/map/map_markers.dart';
+import 'package:genie/features/home/utils/map/markers/property_markers.dart';
+import 'package:genie/features/home/utils/map/markers/vertex_markers.dart';
 import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
 import 'package:genie/features/home/utils/map/svg_marker.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -58,12 +59,10 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   Future<void> _loadMapIcons() async {
     final icons = MapIcons(
       pin: await getSvgMarker('assets/icons/pin.svg'),
-      greenDot: await DynamicMapMarkers.createGreenDotMarker(),
-      selectedDot: await DynamicMapMarkers.createGreenDotMarker(
-        isSelected: true,
-      ),
-      newBadge: await DynamicMapMarkers.createNewBadgeMarker(),
-      smallWhiteDot: await DynamicMapMarkers.createSmallWhiteDotMarker(),
+      greenDot: await PropertyMarkers.greenDot(),
+      selectedDot: await PropertyMarkers.greenDot(isSelected: true),
+      newBadge: await PropertyMarkers.newBadge(),
+      smallWhiteDot: await VertexMarkers.smallWhiteDot(),
     );
     if (!mounted) return;
     _icons = icons;

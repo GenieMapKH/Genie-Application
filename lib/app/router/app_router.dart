@@ -63,8 +63,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/verify-otp',
         pageBuilder: (context, state) {
-          final email =
-              Uri.decodeComponent(state.uri.queryParameters['email'] ?? '');
+          final email = Uri.decodeComponent(
+            state.uri.queryParameters['email'] ?? '',
+          );
           return AppTransitionPage(
             child: OtpVerificationPage(email: email),
             key: state.pageKey,
@@ -74,10 +75,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/reset-password',
         pageBuilder: (context, state) {
-          final email =
-              Uri.decodeComponent(state.uri.queryParameters['email'] ?? '');
-          final otp =
-              Uri.decodeComponent(state.uri.queryParameters['otp'] ?? '');
+          final email = Uri.decodeComponent(
+            state.uri.queryParameters['email'] ?? '',
+          );
+          final otp = Uri.decodeComponent(
+            state.uri.queryParameters['otp'] ?? '',
+          );
           return AppTransitionPage(
             child: ResetPasswordPage(email: email, otp: otp),
             key: state.pageKey,

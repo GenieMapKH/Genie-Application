@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'package:genie/features/chat/presentation/widgets/chat_avatar.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_presence_label.dart';
+import 'package:genie/features/chat/providers/active_chat_state.dart';
+import 'package:genie/features/chat/providers/chat_participant_providers.dart';
+
+/// Shows who the user is chatting with, and the code that proves the
+/// conversation is encrypted to that person and nobody else.
+Future<void> showChatParticipantSheet(
+  BuildContext context, {
+  required ChatParticipants chat,
+  required String participantName,
+}) {
+  return showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.white,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) =>
+        _ChatParticipantSheet(chat: chat, participantName: participantName),
+  );
+}
+
+class _ChatParticipantSheet extends ConsumerWidget {
+  static const _months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  final ChatParticipants chat;
+  final String participantName;
+
+  const _ChatParticipantSheet({
+    required this.chat,
+    required this.participantName,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref
+        .watch(chatParticipantProfileProvider(chat.participantId))
+        .valueOrNull;
+    final safetyCode = ref.watch(chatSafetyCodeProvider(chat));
+    final name = profile?.username ?? participantName;
+    final joined = profile?.memberSince.toLocal();
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ChatAvatar(name: name, avatarUrl: profile?.avatarUrl, radius: 40),
+            const SizedBox(height: 12),
+            Text(
+              name,
+              style: GoogleFonts.inter(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF111827),
+              ),
+            ),
+            const SizedBox(height: 4),
+            ChatPresenceLabel(userId: chat.participantId),
+            if (joined != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Member since ${_months[joined.month - 1]} ${joined.year}',
+                style: _caption,
+              ),
+            ],
+            const Divider(height: 32, color: Color(0xFFF3F4F6)),
+            Row(
+              children: [
+                const Icon(
+                  Icons.lock_outline,
+                  size: 18,
+                  color: Color(0xFF6B7280),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Security code',
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF111827),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            safetyCode.when(
+              data: (code) => code == null
+                  ? Text(
+                      'Available once you have both set up secure chat.',
+                      style: _caption,
+                    )
+                  : _buildCode(code, name),
+              loading: () => const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              error: (_, _) =>
+                  Text('The security code is unavailable.', style: _caption),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCode(String code, String name) {
+    return Column(
+      children: [
+        SelectableText(
+          code,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.robotoMono(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1,
+            color: const Color(0xFF111827),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Messages are end-to-end encrypted. To be sure nobody is in '
+          'between, compare this code with $name in person or on a call: '
+          'it must be the same on both phones.',
+          textAlign: TextAlign.center,
+          style: _caption,
+        ),
+      ],
+    );
+  }
+
+  TextStyle get _caption => GoogleFonts.inter(
+    fontSize: 13,
+    color: const Color(0xFF6B7280),
+    height: 1.4,
+  );
+}

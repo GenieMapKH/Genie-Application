@@ -81,7 +81,11 @@ class UserRepository {
     throw Exception('Failed to load profile after multiple retries.');
   }
 
-  Future<UserProfile> updateProfile({String? username, String? phone, String? avatarUrl}) async {
+  Future<UserProfile> updateProfile({
+    String? username,
+    String? phone,
+    String? avatarUrl,
+  }) async {
     final data = <String, dynamic>{};
     if (username != null) data['username'] = username;
     if (phone != null) data['phone'] = phone;

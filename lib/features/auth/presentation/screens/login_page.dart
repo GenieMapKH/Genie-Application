@@ -151,7 +151,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
             children: [
               GestureDetector(
                 onTap: () {
-                  ref.read(loginFormProvider.notifier).setMethod(AuthMethod.email);
+                  ref
+                      .read(loginFormProvider.notifier)
+                      .setMethod(AuthMethod.email);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 6.0),
@@ -172,7 +174,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
               const SizedBox(width: 24),
               GestureDetector(
                 onTap: () {
-                  ref.read(loginFormProvider.notifier).setMethod(AuthMethod.phone);
+                  ref
+                      .read(loginFormProvider.notifier)
+                      .setMethod(AuthMethod.phone);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 6.0),

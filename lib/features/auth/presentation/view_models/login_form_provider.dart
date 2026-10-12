@@ -48,7 +48,9 @@ class LoginFormState {
       password: password ?? this.password,
       emailError: clearEmailError ? null : (emailError ?? this.emailError),
       phoneError: clearPhoneError ? null : (phoneError ?? this.phoneError),
-      passwordError: clearPasswordError ? null : (passwordError ?? this.passwordError),
+      passwordError: clearPasswordError
+          ? null
+          : (passwordError ?? this.passwordError),
       obscurePassword: obscurePassword ?? this.obscurePassword,
       keepMeSignedIn: keepMeSignedIn ?? this.keepMeSignedIn,
     );
@@ -97,7 +99,9 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
       if (password.isEmpty) {
         state = state.copyWith(passwordError: 'Enter a valid password');
       } else if (password.length < 6) {
-        state = state.copyWith(passwordError: 'Password must be at least 6 characters');
+        state = state.copyWith(
+          passwordError: 'Password must be at least 6 characters',
+        );
       } else {
         state = state.copyWith(clearPasswordError: true);
       }
@@ -165,7 +169,7 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
     if (!validateForm()) return false;
 
     final controller = ref.read(loginControllerProvider.notifier);
-    
+
     if (state.selectedMethod == AuthMethod.email) {
       return controller.login(state.email.trim(), state.password);
     } else {
@@ -175,6 +179,7 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
   }
 }
 
-final loginFormProvider = AutoDisposeNotifierProvider<LoginFormNotifier, LoginFormState>(() {
-  return LoginFormNotifier();
-});
+final loginFormProvider =
+    AutoDisposeNotifierProvider<LoginFormNotifier, LoginFormState>(() {
+      return LoginFormNotifier();
+    });

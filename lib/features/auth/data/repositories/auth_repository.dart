@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
@@ -38,6 +41,27 @@ class AuthService {
 
   bool _isEmail(String value) {
     return RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$').hasMatch(value.trim());
+  }
+
+  /// Gives this device an anonymous session so guests can browse.
+  /// Never throws: browsing must keep working if registration fails.
+  Future<void> ensureGuestSession() async {
+    try {
+      var guestId = await AuthStorage.getGuestSessionId();
+      if (guestId == null) {
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final random = Random.secure().nextInt(1000000);
+        guestId = 'guest_${timestamp}_$random';
+        await AuthStorage.saveGuestSessionId(guestId);
+      }
+
+      await dio.post(
+        '/public/properties/guest-session',
+        data: {'deviceId': guestId},
+      );
+    } catch (e) {
+      AppLogger.error('Guest session init failed', e);
+    }
   }
 
   // 1. Standard Registration
@@ -127,7 +151,11 @@ class AuthService {
   }
 
   // 7. Reset Password
-  Future<void> resetPassword(String email, String otp, String newPassword) async {
+  Future<void> resetPassword(
+    String email,
+    String otp,
+    String newPassword,
+  ) async {
     try {
       await dio.post(
         '/auth/reset-password',

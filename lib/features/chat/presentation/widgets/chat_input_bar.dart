@@ -61,10 +61,17 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFE5E7EB), width: 2),
+                    border: Border.all(
+                      color: const Color(0xFFE5E7EB),
+                      width: 2,
+                    ),
                   ),
                   child: const Center(
-                    child: Icon(Icons.attach_file, color: Color(0xFF6B7280), size: 22),
+                    child: Icon(
+                      Icons.attach_file,
+                      color: Color(0xFF6B7280),
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
@@ -99,16 +106,20 @@ class _ChatInputBarState extends State<ChatInputBar> {
                         onTap: () {},
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.sentiment_satisfied_alt,
-                              color: const Color(0xFF6B7280)),
+                          child: Icon(
+                            Icons.sentiment_satisfied_alt,
+                            color: const Color(0xFF6B7280),
+                          ),
                         ),
                       ),
                       GestureDetector(
                         onTap: _handleSend,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.send_outlined,
-                              color: const Color(0xFF6B7280)),
+                          child: Icon(
+                            Icons.send_outlined,
+                            color: const Color(0xFF6B7280),
+                          ),
                         ),
                       ),
                     ],
@@ -126,7 +137,11 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: SvgPicture.asset('assets/icons/chat_voice.svg', width: 44, height: 44),
+                    child: SvgPicture.asset(
+                      'assets/icons/chat_voice.svg',
+                      width: 44,
+                      height: 44,
+                    ),
                   ),
                 ),
               ),
@@ -139,7 +154,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
 
   Widget _buildExtraStateOverlay() {
     return Container(
-      color: const Color(0xFFD1D5DB).withOpacity(0.5),
+      color: const Color(0xFFD1D5DB).withValues(alpha: 0.5),
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -196,14 +211,17 @@ class _ChatInputBarState extends State<ChatInputBar> {
             ),
           ),
           const SizedBox(width: 12),
-          if (iconPath.endsWith('.svg')) 
-             SvgPicture.asset(iconPath, width: 40, height: 40)
-          else 
-             Icon(Icons.image, color: isLight ? const Color(0xFF6B7280) : Colors.white),
+          if (iconPath.endsWith('.svg'))
+            SvgPicture.asset(iconPath, width: 40, height: 40)
+          else
+            Icon(
+              Icons.image,
+              color: isLight ? const Color(0xFF6B7280) : Colors.white,
+            ),
           if (iconPath2 != null) ...[
             const SizedBox(width: 8),
             SvgPicture.asset(iconPath2, width: 40, height: 40),
-          ]
+          ],
         ],
       ),
     );

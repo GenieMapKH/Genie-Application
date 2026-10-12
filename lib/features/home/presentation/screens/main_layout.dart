@@ -39,7 +39,10 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final token = await AuthStorage.getAccessToken();
     if ((token == null || token.isEmpty) && mounted) {
       final currentIdx = ref.read(mainNavProvider).currentIndex;
-      if (currentIdx == 1 || currentIdx == 2 || currentIdx == 3 || currentIdx == 4) {
+      if (currentIdx == 1 ||
+          currentIdx == 2 ||
+          currentIdx == 3 ||
+          currentIdx == 4) {
         ref.read(mainNavProvider.notifier).resetToHome();
       }
     }

@@ -17,6 +17,46 @@ class CryptoService {
     return sodium.crypto.box.keyPair();
   }
 
+  /// Whether [secretKey] belongs to [publicKey]: only the matching secret
+  /// key can open a box sealed for the public key.
+  bool isKeyPair(Uint8List publicKey, SecureKey secretKey) {
+    final probe = sodium.randombytes.buf(16);
+    try {
+      final sealed = sodium.crypto.box.seal(
+        message: probe,
+        publicKey: publicKey,
+      );
+      final opened = sodium.crypto.box.sealOpen(
+        cipherText: sealed,
+        publicKey: publicKey,
+        secretKey: secretKey,
+      );
+      return listEquals(opened, probe);
+    } on SodiumException {
+      return false;
+    }
+  }
+
+  /// A hash both people in a conversation can compute from their two public
+  /// keys. It only matches on both devices if neither key was swapped.
+  Uint8List fingerprint(Uint8List publicKeyA, Uint8List publicKeyB) {
+    // Same order on both sides, whoever computes it.
+    final ordered = _compare(publicKeyA, publicKeyB) <= 0
+        ? [...publicKeyA, ...publicKeyB]
+        : [...publicKeyB, ...publicKeyA];
+    return sodium.crypto.genericHash(
+      message: Uint8List.fromList(ordered),
+      outLen: 32,
+    );
+  }
+
+  int _compare(Uint8List a, Uint8List b) {
+    for (var i = 0; i < a.length && i < b.length; i++) {
+      if (a[i] != b[i]) return a[i] - b[i];
+    }
+    return a.length - b.length;
+  }
+
   /// Encrypts a message using the recipient's public key and the sender's private key
   Map<String, String> encryptMessage(
     String plaintext,

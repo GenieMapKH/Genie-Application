@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/widgets/app_text_field.dart';
-import '../screens/login_page.dart';
+
 import '../view_models/login_form_provider.dart';
 
 class LoginForm extends StatelessWidget {
@@ -104,7 +104,7 @@ class LoginForm extends StatelessWidget {
               AppTextField(
                 key: const Key('password_field'),
                 label: 'Password',
-                hintText: 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢',
+                hintText: '********',
                 errorText: passwordError,
                 controller: passwordController,
                 obscureText: obscurePassword,

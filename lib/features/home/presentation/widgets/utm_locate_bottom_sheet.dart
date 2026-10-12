@@ -1,3 +1,4 @@
+import 'package:genie/core/logging/app_logger.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -163,7 +164,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
 
     try {
       // --- NATIVE ML KIT OCR (MOBILE/DESKTOP) ---
-      debugPrint('Running native ML Kit OCR...');
+      AppLogger.debug('Running native ML Kit OCR...');
       final textRecognizer = TextRecognizer();
       final inputImage = InputImage.fromFilePath(croppedFile.path);
 
@@ -196,7 +197,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
         });
       }
     } catch (e, stack) {
-      debugPrint('OCR Error: $e\n$stack');
+      AppLogger.debug('OCR Error: $e\n$stack');
       if (mounted) {
         AppPopup.showError(context, 'Error scanning document: $e');
       }

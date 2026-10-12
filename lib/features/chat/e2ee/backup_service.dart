@@ -11,7 +11,10 @@ class BackupService {
 
   final secretBox = AesGcm.with256bits();
 
-  Future<Map<String, String>> createBackup(String pin, List<int> privateKeyBytes) async {
+  Future<Map<String, String>> createBackup(
+    String pin,
+    List<int> privateKeyBytes,
+  ) async {
     // Generate a random salt for Argon2
     final salt = SecretKeyData.random(length: 16).bytes;
 
@@ -32,7 +35,9 @@ class BackupService {
     );
 
     return {
-      'blob': base64Encode(secretBoxState.cipherText + secretBoxState.mac.bytes),
+      'blob': base64Encode(
+        secretBoxState.cipherText + secretBoxState.mac.bytes,
+      ),
       'salt': base64Encode(salt),
       'nonce': base64Encode(nonce),
     };
@@ -59,11 +64,7 @@ class BackupService {
     );
 
     // Decrypt the private key
-    final secretBoxState = SecretBox(
-      cipherText,
-      nonce: nonce,
-      mac: mac,
-    );
+    final secretBoxState = SecretBox(cipherText, nonce: nonce, mac: mac);
 
     final privateKeyBytes = await secretBox.decrypt(
       secretBoxState,

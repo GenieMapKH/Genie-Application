@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/services/crypto_service.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
+import 'package:genie/features/chat/e2ee/crypto_service.dart';
+import 'package:genie/features/chat/providers/chat_service_providers.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -14,7 +14,7 @@ import 'package:genie/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  const envFile = kReleaseMode ? ".env.production" : ".env";
+  const envFile = kReleaseMode ? '.env.production' : '.env';
   await dotenv.load(fileName: envFile);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -31,10 +31,10 @@ void main() async {
 
   final cryptoService = await CryptoService.init();
 
-  runApp(ProviderScope(
-    overrides: [
-      cryptoServiceProvider.overrideWithValue(cryptoService),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(
+    ProviderScope(
+      overrides: [cryptoServiceProvider.overrideWithValue(cryptoService)],
+      child: const MyApp(),
+    ),
+  );
 }

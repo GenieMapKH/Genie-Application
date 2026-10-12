@@ -27,18 +27,22 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                 onPressed: () {
                   () async {
                     try {
-                      final property = await ref.read(addPropertyControllerProvider.notifier).submitProperty(
-                        title: titleController.text,
-                        price: priceController.text,
-                        propertyType: selectedPropertyType,
-                        landSize: landSizeController.text,
-                        buildingSize: buildingSizeController.text,
-                        unitSize: unitSizeController.text,
-                        boundaryPoints: widget.boundaryPoints,
-                        selectedPhotos: selectedPhotos,
-                        status: 'Draft',
-                      );
-                      if (context.mounted && property != null) Navigator.of(context).pop(property);
+                      final property = await ref
+                          .read(addPropertyControllerProvider.notifier)
+                          .submitProperty(
+                            title: titleController.text,
+                            price: priceController.text,
+                            propertyType: selectedPropertyType,
+                            landSize: landSizeController.text,
+                            buildingSize: buildingSizeController.text,
+                            unitSize: unitSizeController.text,
+                            boundaryPoints: widget.boundaryPoints,
+                            selectedPhotos: selectedPhotos,
+                            status: 'Draft',
+                          );
+                      if (context.mounted && property != null) {
+                        Navigator.of(context).pop(property);
+                      }
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(

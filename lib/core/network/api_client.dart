@@ -1,14 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
+import 'package:genie/core/config/app_config.dart';
 import 'api_cache_manager.dart';
 import 'auth_interceptor.dart';
+import 'safe_log_interceptor.dart';
 
 Dio createApiClient() {
   final dio = Dio(
     BaseOptions(
-      baseUrl:
-          dotenv.env['API_BASE_URL'] ??
-          'https://gateway-production-c0c5.up.railway.app',
+      baseUrl: AppConfig.apiBaseUrl,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
     ),
@@ -16,14 +16,9 @@ Dio createApiClient() {
 
   dio.interceptors.add(CacheInterceptor());
   dio.interceptors.add(AuthInterceptor(dio));
-  dio.interceptors.add(
-    LogInterceptor(
-      responseBody: true,
-      error: true,
-      requestHeader: true,
-      requestBody: true,
-    ),
-  );
+  if (kDebugMode) {
+    dio.interceptors.add(SafeLogInterceptor());
+  }
 
   return dio;
 }

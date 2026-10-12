@@ -30,13 +30,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
     _entryController.forward();
   }
 
@@ -55,8 +56,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
     final email = _emailController.text.trim();
 
     setState(() {
-      _emailError =
-          _validateEmail(email) ? null : 'Please enter a valid email address';
+      _emailError = _validateEmail(email)
+          ? null
+          : 'Please enter a valid email address';
     });
 
     if (_emailError != null) return;
@@ -83,8 +85,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 408.0),
               child: FadeTransition(

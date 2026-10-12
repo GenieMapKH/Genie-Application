@@ -7,19 +7,20 @@ import 'package:genie/features/property/presentation/view_models/add_property_co
 import 'add_property_page.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {
-  
   void validateAndSubmit() async {
     setState(() => hasAttemptedSubmit = true);
 
-    final validation = ref.read(addPropertyControllerProvider.notifier).validatePropertyForm(
-      title: titleController.text,
-      price: priceController.text,
-      propertyType: selectedPropertyType,
-      listingSetting: selectedListingSetting,
-      landSize: landSizeController.text,
-      buildingSize: buildingSizeController.text,
-      unitSize: unitSizeController.text,
-    );
+    final validation = ref
+        .read(addPropertyControllerProvider.notifier)
+        .validatePropertyForm(
+          title: titleController.text,
+          price: priceController.text,
+          propertyType: selectedPropertyType,
+          listingSetting: selectedListingSetting,
+          landSize: landSizeController.text,
+          buildingSize: buildingSizeController.text,
+          unitSize: unitSizeController.text,
+        );
 
     if (!validation.isValid) {
       GlobalKey? firstErrorKey;
@@ -45,7 +46,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
         default:
           break;
       }
-      
+
       if (firstErrorKey != null) {
         showErrorDialog(firstErrorKey);
       }
@@ -53,17 +54,19 @@ extension AddPropertyPageLogic on AddPropertyPageState {
     }
 
     try {
-      final property = await ref.read(addPropertyControllerProvider.notifier).submitProperty(
-        title: titleController.text,
-        price: priceController.text,
-        propertyType: selectedPropertyType,
-        landSize: landSizeController.text,
-        buildingSize: buildingSizeController.text,
-        unitSize: unitSizeController.text,
-        boundaryPoints: widget.boundaryPoints,
-        selectedPhotos: selectedPhotos,
-        status: 'Active',
-      );
+      final property = await ref
+          .read(addPropertyControllerProvider.notifier)
+          .submitProperty(
+            title: titleController.text,
+            price: priceController.text,
+            propertyType: selectedPropertyType,
+            landSize: landSizeController.text,
+            buildingSize: buildingSizeController.text,
+            unitSize: unitSizeController.text,
+            boundaryPoints: widget.boundaryPoints,
+            selectedPhotos: selectedPhotos,
+            status: 'Active',
+          );
       if (!mounted) return;
       if (property != null) {
         showSuccessDialog(property);

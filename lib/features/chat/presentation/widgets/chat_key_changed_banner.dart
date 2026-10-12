@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+/// Shown instead of the message box when the other person's encryption key
+/// is not the one this device trusts. Nothing is sent until the user decides.
+class ChatKeyChangedBanner extends StatelessWidget {
+  final String participantName;
+  final VoidCallback onAccept;
+  final VoidCallback onViewSecurityCode;
+
+  const ChatKeyChangedBanner({
+    super.key,
+    required this.participantName,
+    required this.onAccept,
+    required this.onViewSecurityCode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFFFFFBEB),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        12 + MediaQuery.of(context).padding.bottom,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Color(0xFFB45309),
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "$participantName's security key has changed",
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF92400E),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'This is normal if they reinstalled the app or reset their keys. '
+            'If you did not expect it, someone may be trying to read your '
+            'messages: accept the new key, then compare the security code '
+            'with them before sharing anything private.',
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              color: const Color(0xFF92400E),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: onViewSecurityCode,
+                child: const Text('Security code'),
+              ),
+              const SizedBox(width: 8),
+              FilledButton(
+                onPressed: onAccept,
+                child: const Text('Accept new key'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

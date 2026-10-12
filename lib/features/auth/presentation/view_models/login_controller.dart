@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 
@@ -67,7 +67,7 @@ class LoginController extends StateNotifier<AsyncValue<bool>> {
       state = const AsyncData(true);
       return true;
     } catch (e, st) {
-      debugPrint('Google login error: $e\n$st');
+      AppLogger.debug('Google login error: $e\n$st');
       state = AsyncError(e, st);
       return false;
     }

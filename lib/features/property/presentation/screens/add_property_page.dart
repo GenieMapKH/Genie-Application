@@ -1,3 +1,4 @@
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -112,7 +113,7 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
         }
       }
     } catch (e) {
-      debugPrint('Error picking image: $e');
+      AppLogger.debug('Error picking image: $e');
     }
   }
 

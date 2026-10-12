@@ -206,17 +206,28 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                               onChat: () {
                                 if (widget.property.ownerId != null) {
                                   // Use root navigator so chat opens as a full-screen page
-                                  Navigator.of(context, rootNavigator: true).push(
+                                  Navigator.of(
+                                    context,
+                                    rootNavigator: true,
+                                  ).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ChatConversationPage(
-                                        participantId: widget.property.ownerId!,
-                                        participantName: widget.property.ownerName ?? 'Property Owner',
-                                      ),
+                                      builder: (context) =>
+                                          ChatConversationPage(
+                                            participantId:
+                                                widget.property.ownerId!,
+                                            participantName:
+                                                widget.property.ownerName ??
+                                                'Property Owner',
+                                          ),
                                     ),
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Cannot chat: owner information missing.')),
+                                    const SnackBar(
+                                      content: Text(
+                                        'Cannot chat: owner information missing.',
+                                      ),
+                                    ),
                                   );
                                 }
                               },
@@ -346,4 +357,3 @@ class _DragHandle extends StatelessWidget {
     );
   }
 }
-

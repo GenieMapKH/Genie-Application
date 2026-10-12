@@ -1,0 +1,40 @@
+name: Set up Flutter
+description: Java, Flutter, env files and dependencies shared by every CI job.
+
+inputs:
+  api-base-url:
+    description: API gateway URL baked into the app. Defaults to .env.example.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: zulu
+        java-version: '17'
+        cache: gradle
+
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        cache: true
+
+    # The env files are not committed but are declared as assets, so they must
+    # exist before analyze / test / build.
+    - name: Create env files
+      shell: bash
+      env:
+        API_BASE_URL: ${{ inputs.api-base-url }}
+      run: |
+        cp .env.example .env
+        cp .env.example .env.production
+        if [ -n "$API_BASE_URL" ]; then
+          echo "API_BASE_URL=$API_BASE_URL" > .env
+          echo "API_BASE_URL=$API_BASE_URL" > .env.production
+        fi
+
+    - name: Get dependencies
+      shell: bash
+      run: flutter pub get

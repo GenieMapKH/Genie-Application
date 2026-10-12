@@ -10,11 +10,7 @@ class ResetPasswordPage extends ConsumerStatefulWidget {
   final String email;
   final String otp;
 
-  const ResetPasswordPage({
-    super.key,
-    required this.email,
-    required this.otp,
-  });
+  const ResetPasswordPage({super.key, required this.email, required this.otp});
 
   @override
   ConsumerState<ResetPasswordPage> createState() => _ResetPasswordPageState();
@@ -42,13 +38,14 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
     _entryController.forward();
   }
 
@@ -94,11 +91,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
     setState(() => _isLoading = true);
 
     try {
-      await ref.read(authServiceProvider).resetPassword(
-            widget.email,
-            widget.otp,
-            _passwordController.text,
-          );
+      await ref
+          .read(authServiceProvider)
+          .resetPassword(widget.email, widget.otp, _passwordController.text);
       if (!mounted) return;
       AppPopup.showSuccess(
         context,
@@ -120,8 +115,10 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 408.0),
               child: FadeTransition(

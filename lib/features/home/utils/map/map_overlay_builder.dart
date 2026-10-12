@@ -3,7 +3,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/utils/map/map_layer_builder.dart';
+import 'package:genie/features/home/utils/map/layers/clustered_layer.dart';
+import 'package:genie/features/home/utils/map/layers/detailed_property_layer.dart';
+import 'package:genie/features/home/utils/map/layers/drawing_layer.dart';
+import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:genie/features/home/utils/map/layers/property_dots_layer.dart';
 import 'package:genie/features/home/utils/map/map_measurements.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 
@@ -127,7 +131,7 @@ class MapOverlayBuilder {
       if (!isDetailed) {
         final measurements = calculateMeasurements(points);
         if (measurements != null) {
-          isDetailed = MapLayerBuilder.shouldShowDetailedView(
+          isDetailed = shouldShowDetailedView(
             measurements.area,
             mapState.currentZoom,
           );
@@ -151,10 +155,10 @@ class MapOverlayBuilder {
     }
 
     if (isClusteredView) {
-      MapLayerBuilder.buildClusteredView(allCentroids, markers, icons.greenDot);
+      ClusteredLayer.build(allCentroids, markers, icons.greenDot);
     } else {
       if (detailedProps.isNotEmpty) {
-        await MapLayerBuilder.buildDetailedView(
+        await DetailedPropertyLayer.build(
           detailedProps,
           detailedPropsIsOwned,
           detailedPropModels,
@@ -175,13 +179,12 @@ class MapOverlayBuilder {
       }
 
       if (allCentroids.isNotEmpty) {
-        await MapLayerBuilder.buildIndividualDotsView(
+        await PropertyDotsLayer.build(
           allCentroids,
           allCentroidModels,
           markers,
           icons.greenDot,
           icons.selectedDot,
-          icons.newBadge,
           isHighlighted,
           (index, property) {
             if (mapState.isDrawing) return;
@@ -196,7 +199,7 @@ class MapOverlayBuilder {
     }
 
     if (mapState.isDrawing) {
-      await MapLayerBuilder.buildDrawingLayer(
+      await DrawingLayer.build(
         mapState.drawnPoints,
         mapState.isEditingPolygon,
         mapState.selectedVertexIndex,
