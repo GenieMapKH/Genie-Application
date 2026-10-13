@@ -1152,4 +1152,27 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get avatarNoGooglePhoto => 'គណនី Google របស់អ្នកមិនមានរូបថតទេ។';
+
+  @override
+  String get accountDeviceTooNew =>
+      'ឧបករណ៍នេះទើបចូលគណនីមិនដល់មួយថ្ងៃ ដូច្នេះដើម្បីការពារគណនីរបស់អ្នក វាមិនទាន់អាចធ្វើសកម្មភាពនេះបានទេ។ សូមប្រើឧបករណ៍ដែលអ្នកបានចូលគណនីយូរជាងនេះ ឬព្យាយាមម្តងទៀតនៅថ្ងៃស្អែក។';
+
+  @override
+  String get personalInfoUsernameChecking => 'កំពុងពិនិត្យ…';
+
+  @override
+  String get personalInfoUsernameAvailable => 'ឈ្មោះអ្នកប្រើនេះអាចប្រើបាន។';
+
+  @override
+  String mediaSourceTooLarge(int limitMb) {
+    return 'ឯកសារនេះធំជាង $limitMb MB ហើយមិនអាចបញ្ចូលបានទេ។';
+  }
+
+  @override
+  String get mediaStillTooLarge =>
+      'រូបភាពនេះនៅតែធំពេកបន្ទាប់ពីបង្ហាប់ហើយ។ សូមជ្រើសរើសរូបភាពតូចជាងនេះ។';
+
+  @override
+  String get mediaUnreadable =>
+      'មិនអាចអានរូបភាពនេះបានទេ។ សូមជ្រើសរើសរូបភាពផ្សេង។';
 }

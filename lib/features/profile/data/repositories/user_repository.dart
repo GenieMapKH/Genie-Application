@@ -20,6 +20,9 @@ enum ProfileField {
   const ProfileField(this.apiName);
 }
 
+/// What the server says about a username that is being typed.
+enum UsernameAvailability { available, taken, invalid }
+
 /// The server refused a value because another account already has it
 /// (a username or a phone number).
 class ProfileValueTakenException extends AppException {
@@ -60,6 +63,21 @@ class UserRepository {
   bool _isWorthRetrying(DioException e) =>
       e.type == DioExceptionType.connectionError ||
       const [404, 502, 504].contains(e.response?.statusCode);
+
+  /// Asks whether [username] could be chosen: well formed, and not another
+  /// account's. The user's own current username counts as available. Only an
+  /// answer to show while typing: saving is what decides.
+  Future<UsernameAvailability> checkUsername(String username) async {
+    final response = await dio.get(
+      '/users/username-available',
+      queryParameters: {'username': username},
+    );
+    final answer = response.data as Map<String, dynamic>;
+    if (answer['available'] == true) return UsernameAvailability.available;
+    return answer['reason'] == 'invalid'
+        ? UsernameAvailability.invalid
+        : UsernameAvailability.taken;
+  }
 
   /// Changes one field; null clears it. Throws [ProfileValueTakenException]
   /// or [ProfileValueInvalidException] when the server refuses the value.

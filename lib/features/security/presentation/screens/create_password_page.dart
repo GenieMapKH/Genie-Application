@@ -84,6 +84,7 @@ class _CreatePasswordPageState extends ConsumerState<CreatePasswordPage> {
         AccountActionResult.identityRejected =>
           l10n.identityConfirmGoogleFailed,
         AccountActionResult.tooManyAttempts => l10n.commonTooManyAttempts,
+        AccountActionResult.deviceTooNew => l10n.accountDeviceTooNew,
         _ => l10n.commonSomethingWentWrong,
       };
     });

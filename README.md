@@ -8,15 +8,21 @@ The backend lives in the `genie-backend` repository.
 ## Run it
 
 ```bash
-cp .env.example .env              # debug runs read .env
-cp .env.example .env.production   # release builds read .env.production
+cp .env.example .env              # for debug runs
+cp .env.example .env.production   # for release builds
 flutter pub get
-flutter run
+flutter run --dart-define-from-file=.env
+flutter build apk --release --dart-define-from-file=.env.production
 ```
 
 Set `API_BASE_URL` in the env files to point at a local backend
-(Android emulator: `http://10.0.2.2:4000`) or the hosted one. The env files are
-git-ignored and bundled into the app, so they must never contain secrets.
+(Android emulator: `http://10.0.2.2:4000`) or the hosted one. In VS Code, F5 passes the file
+for you (`.vscode/launch.json`). A debug run without it stops at once and says so, instead of
+quietly talking to the production server; a release build without it uses production.
+
+The env files are git-ignored and **not shipped in the app**: their values are compiled in
+(`lib/core/config/app_config.dart`). That keeps them out of the APK's files, but a compiled-in
+value can still be extracted, so they must never contain secrets.
 
 ## Quality gates
 
@@ -114,11 +120,20 @@ errors, last-seen labels).
   account deactivated or deleted) the app returns to the welcome screen at once: the API client
   reports it (`sessionEndedProvider`) and `lib/app/app.dart` acts on it. Being offline never
   signs anyone out.
-- A device signed in for less than a day cannot sign other devices out; the server decides, the
-  devices screen only shows what it says (`DeviceList.canSignOutOthers`).
+- A device signed in for less than a day cannot sign other devices out, change the password, or
+  deactivate or delete the account. The server decides; the app only shows what it says
+  (`DeviceList.canSignOutOthers`, `AccountActionResult.deviceTooNew`).
 - The app tells the user when another device signs in (`NewSignInAlert`), by comparing the device
   list with the devices it has already shown.
 - The profile picture is uploaded (camera or gallery) or synced from the Google account; the
   options are in `profile/presentation/widgets/avatar_options_sheet.dart`.
+- Every picture is compressed on the device before it is uploaded (`lib/core/media`): re-encoded
+  as a JPEG, its shorter side reduced (profile 480 px, chat 1080 px, listing 1280 px), and the
+  quality lowered until it fits the target (about 120 KB, 400 KB and 600 KB). A phone photo of
+  5 to 10 MB therefore uploads as a few hundred KB, and its location metadata is dropped. The
+  original may be at most 500 MB, and a picture still above the limit after compression (1 MB,
+  3 MB and 4 MB) is refused with a message. The sizes are in `ImageUploadPolicy`.
+- Chat pictures are encrypted after compression, so the server cannot do it for them: the limit
+  there is enforced by the storage bucket, not by compressing on the server.
 - Sign-in requests carry the device's name and platform (`X-Device-Name`, `X-Device-Platform`)
   so the owner can recognise it under "Logged-in devices".

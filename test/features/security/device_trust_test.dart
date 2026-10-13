@@ -9,6 +9,7 @@ import 'package:genie/features/security/data/known_devices_storage.dart';
 import 'package:genie/features/security/data/models/device_session.dart';
 import 'package:genie/features/security/data/repositories/account_repository.dart';
 import 'package:genie/features/security/data/repositories/session_repository.dart';
+import 'package:genie/features/security/presentation/screens/change_password_page.dart';
 import 'package:genie/features/security/presentation/screens/create_password_page.dart';
 import 'package:genie/features/security/presentation/screens/devices_page.dart';
 import 'package:genie/features/security/presentation/screens/security_page.dart';
@@ -123,6 +124,60 @@ void main() {
         find.textContaining('only after it has been signed in for a day'),
         findsOneWidget,
       );
+    });
+  });
+
+  group('one-day rule on account changes', () {
+    const tooNew =
+        '{"statusCode":403,"code":"DEVICE_TOO_NEW","message":"too new"}';
+
+    test('is told apart from a wrong password', () async {
+      final refused = AccountSecurityController(
+        AccountRepository(StubServer.always(403, tooNew).dio),
+      );
+      final wrongPassword = AccountSecurityController(
+        AccountRepository(StubServer.always(403, '{"statusCode":403}').dio),
+      );
+
+      expect(
+        await refused.changePassword(current: 'right', next: 'new-password'),
+        AccountActionResult.deviceTooNew,
+      );
+      expect(
+        await refused.delete(const IdentityProof.password('right')),
+        AccountActionResult.deviceTooNew,
+      );
+      expect(
+        await wrongPassword.changePassword(current: 'x', next: 'new-password'),
+        AccountActionResult.identityRejected,
+      );
+    });
+
+    testWidgets('changing the password says why it was refused', (
+      tester,
+    ) async {
+      await pumpTestApp(
+        tester,
+        const ChangePasswordPage(),
+        overrides: [
+          accountRepositoryProvider.overrideWithValue(
+            AccountRepository(StubServer.always(403, tooNew).dio),
+          ),
+        ],
+      );
+      final fields = find.byType(TextFormField);
+      await tester.enterText(fields.at(0), 'my-password');
+      await tester.enterText(fields.at(1), 'new-password');
+      await tester.enterText(fields.at(2), 'new-password');
+      await tester.tap(find.text('Change password').last);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.textContaining('signed in less than a day ago'),
+        findsOneWidget,
+      );
+      // Not blamed on the password, which was right.
+      expect(find.text('The current password is incorrect.'), findsNothing);
     });
   });
 

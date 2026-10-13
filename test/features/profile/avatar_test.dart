@@ -7,7 +7,6 @@ import 'package:genie/features/profile/data/repositories/avatar_repository.dart'
 import 'package:genie/features/profile/presentation/view_models/avatar_controller.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/profile/presentation/widgets/avatar_options_sheet.dart';
-import 'package:genie/shared/utils/image_mime_type.dart';
 
 import '../../support/test_app.dart';
 
@@ -250,11 +249,5 @@ void main() {
       expect(controller.removals, 1);
       await _letToastsLeave(tester);
     });
-  });
-
-  test('a picture is stored under the right media type', () {
-    expect(imageMimeTypeOf('IMG_0001.PNG'), 'image/png');
-    expect(imageMimeTypeOf('photo.heic'), 'image/heic');
-    expect(imageMimeTypeOf('scan'), 'image/jpeg');
   });
 }

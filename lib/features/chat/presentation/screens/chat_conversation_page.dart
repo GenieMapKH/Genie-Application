@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/core/media/image_upload_policy.dart';
+import 'package:genie/shared/utils/image_rejection_message.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_conversation_header.dart';
@@ -111,6 +113,12 @@ class _ConversationState extends ConsumerState<_Conversation> {
     final PickedChatImage? picture;
     try {
       picture = await pickChatImage(context);
+    } on ImageRejectedException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(imageRejectionMessage(context.l10n, e.reason))),
+      );
+      return;
     } catch (e) {
       // The camera or gallery refused, e.g. permission was denied.
       AppLogger.error('Could not pick a picture', e);

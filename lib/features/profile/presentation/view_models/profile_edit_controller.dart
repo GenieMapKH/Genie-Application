@@ -15,6 +15,20 @@ enum ProfileSaveResult {
   failed,
 }
 
+/// What is known about a username while the user types it.
+enum UsernameCheck {
+  available,
+
+  /// Another account has it.
+  taken,
+
+  /// Not a username at all (length or characters).
+  invalid,
+
+  /// The server could not be asked. The user may still try: saving decides.
+  unknown,
+}
+
 /// The rules for each editable profile field, and saving one. No UI.
 class ProfileEditController {
   /// Same rule as the server: 3 to 30 lowercase letters, digits, "_" or ".".
@@ -52,6 +66,26 @@ class ProfileEditController {
     if (field == ProfileField.phone && value == null) return false;
     final maxLength = _maxLengths[field];
     return value == null || maxLength == null || value.length <= maxLength;
+  }
+
+  /// Whether [input] could be this user's username. A badly formed one is
+  /// answered here without asking the server.
+  Future<UsernameCheck> checkUsername(String input) async {
+    final value = normalize(ProfileField.username, input);
+    if (value == null || !isValid(ProfileField.username, value)) {
+      return UsernameCheck.invalid;
+    }
+
+    try {
+      return switch (await _repository.checkUsername(value)) {
+        UsernameAvailability.available => UsernameCheck.available,
+        UsernameAvailability.taken => UsernameCheck.taken,
+        UsernameAvailability.invalid => UsernameCheck.invalid,
+      };
+    } catch (e) {
+      AppLogger.error('Could not check the username', e);
+      return UsernameCheck.unknown;
+    }
   }
 
   Future<ProfileSaveResult> save(ProfileField field, String? input) async {

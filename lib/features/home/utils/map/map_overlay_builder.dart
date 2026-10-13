@@ -69,6 +69,7 @@ class MapOverlayBuilder {
 
   static Future<MapOverlays> build({
     required MapState mapState,
+    required double zoom,
     required MapProperties mapProperties,
     required PropertyModel? selectedProperty,
     required MapIcons icons,
@@ -78,7 +79,7 @@ class MapOverlayBuilder {
     final Set<Polyline> polylines = {};
     final Set<Polygon> polygons = {};
 
-    final bool isClusteredView = mapState.currentZoom <= clusterZoomThreshold;
+    final bool isClusteredView = zoom <= clusterZoomThreshold;
 
     // Locally drawn polygons come first so their indices stay stable; they have
     // no backend model, hence the null entries.
@@ -125,16 +126,13 @@ class MapOverlayBuilder {
       final model = allPropModels[i];
 
       bool isDetailed =
-          mapState.currentZoom > detailZoomThreshold ||
+          zoom > detailZoomThreshold ||
           (selectedProperty != null && selectedProperty.id == model?.id);
 
       if (!isDetailed) {
         final measurements = calculateMeasurements(points);
         if (measurements != null) {
-          isDetailed = shouldShowDetailedView(
-            measurements.area,
-            mapState.currentZoom,
-          );
+          isDetailed = shouldShowDetailedView(measurements.area, zoom);
         }
       }
 
@@ -165,7 +163,7 @@ class MapOverlayBuilder {
           polygons,
           markers,
           isHighlighted,
-          mapState.currentZoom,
+          zoom,
           (index, property) {
             if (mapState.isDrawing) return;
             if (property != null) {
@@ -203,7 +201,7 @@ class MapOverlayBuilder {
         mapState.drawnPoints,
         mapState.isEditingPolygon,
         mapState.selectedVertexIndex,
-        mapState.currentZoom,
+        zoom,
         polygons,
         markers,
         polylines,

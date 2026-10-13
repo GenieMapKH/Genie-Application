@@ -1159,4 +1159,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get avatarNoGooglePhoto => 'Your Google account has no photo.';
+
+  @override
+  String get accountDeviceTooNew =>
+      'This device signed in less than a day ago, so to protect your account it cannot do this yet. Use a device you have been signed in on for longer, or try again tomorrow.';
+
+  @override
+  String get personalInfoUsernameChecking => 'Checking…';
+
+  @override
+  String get personalInfoUsernameAvailable => 'This username is available.';
+
+  @override
+  String mediaSourceTooLarge(int limitMb) {
+    return 'This file is larger than $limitMb MB and cannot be uploaded.';
+  }
+
+  @override
+  String get mediaStillTooLarge =>
+      'This picture is still too large after compression. Please choose a smaller one.';
+
+  @override
+  String get mediaUnreadable =>
+      'This picture could not be read. Please choose another one.';
 }

@@ -10,7 +10,9 @@ import 'package:genie/features/chat/models/chat_attachment.dart';
 /// Sends and opens files in a chat. A file is encrypted on this device with
 /// a one-time key before it is uploaded, and decrypted only in memory.
 class ChatAttachmentService {
-  static const maxBytes = 20 * 1024 * 1024;
+  /// The server's storage refuses anything above 12 MB; the encrypted file
+  /// is only a few bytes larger than the original.
+  static const maxBytes = 10 * 1024 * 1024;
 
   /// How many opened files are kept in memory so scrolling does not
   /// download them again. Nothing decrypted is written to disk.
@@ -35,7 +37,9 @@ class ChatAttachmentService {
     required String mimeType,
   }) async {
     if (bytes.length > maxBytes) {
-      throw const ChatSendException('This file is too large (limit 20 MB).');
+      throw ChatSendException(
+        'This file is too large (limit ${maxBytes ~/ (1024 * 1024)} MB).',
+      );
     }
 
     final sealed = cryptoService.encryptFile(bytes);

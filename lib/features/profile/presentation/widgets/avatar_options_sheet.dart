@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/core/media/image_compressor.dart';
+import 'package:genie/core/media/image_upload_policy.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/view_models/avatar_controller.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/utils/image_mime_type.dart';
+import 'package:genie/shared/utils/image_rejection_message.dart';
 
 /// Opens the sheet with the ways to change the profile picture.
 Future<void> showAvatarOptions(BuildContext context, UserProfile profile) {
@@ -38,20 +40,12 @@ class AvatarOptionsSheet extends ConsumerStatefulWidget {
 }
 
 class _AvatarOptionsSheetState extends ConsumerState<AvatarOptionsSheet> {
-  /// A picture this size is plenty for a round avatar and uploads quickly.
-  static const _maxSide = 800.0;
-
   bool _isBusy = false;
 
   Future<void> _pick(ImageSource source) async {
     final XFile? file;
     try {
-      file = await ImagePicker().pickImage(
-        source: source,
-        maxWidth: _maxSide,
-        maxHeight: _maxSide,
-        imageQuality: 85,
-      );
+      file = await ImagePicker().pickImage(source: source);
     } catch (e) {
       // No camera, or the permission was refused.
       AppLogger.error('Could not open the image picker', e);
@@ -61,16 +55,27 @@ class _AvatarOptionsSheetState extends ConsumerState<AvatarOptionsSheet> {
     if (file == null || !mounted) return;
 
     final picked = file;
-    final bytes = await picked.readAsBytes();
-    await _run(
-      () => ref
+    await _run(() async {
+      final PreparedImage image;
+      try {
+        image = await ImageCompressor.native.compress(
+          picked,
+          ImageUploadPolicy.avatar,
+        );
+      } on ImageRejectedException catch (e) {
+        if (mounted) {
+          AppPopup.showError(
+            context,
+            imageRejectionMessage(context.l10n, e.reason),
+          );
+        }
+        // Already explained: no second message.
+        return AvatarResult.cancelled;
+      }
+      return ref
           .read(avatarControllerProvider)
-          .upload(
-            bytes,
-            mimeType: picked.mimeType ?? imageMimeTypeOf(picked.name),
-          ),
-      closeWhenChanged: true,
-    );
+          .upload(image.bytes, mimeType: image.mimeType);
+    }, closeWhenChanged: true);
   }
 
   /// Runs one change, shows how it ended, and with [closeWhenChanged]

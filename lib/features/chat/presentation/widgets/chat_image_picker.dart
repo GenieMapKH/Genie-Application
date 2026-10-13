@@ -2,15 +2,17 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:genie/core/media/image_compressor.dart';
+import 'package:genie/core/media/image_upload_policy.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/image_mime_type.dart';
 
 /// A picture the user chose to send.
 typedef PickedChatImage = ({Uint8List bytes, String name, String mimeType});
 
-/// Asks where the picture should come from, then returns it, scaled down so
-/// it sends quickly. Null if the user backs out.
+/// Asks where the picture should come from, then returns it compressed to
+/// a small JPEG so it sends quickly. Null if the user backs out. Throws
+/// [ImageRejectedException] for a picture that is too large or unreadable.
 Future<PickedChatImage?> pickChatImage(BuildContext context) async {
   final source = await showModalBottomSheet<ImageSource>(
     context: context,
@@ -38,17 +40,12 @@ Future<PickedChatImage?> pickChatImage(BuildContext context) async {
   );
   if (source == null) return null;
 
-  final file = await ImagePicker().pickImage(
-    source: source,
-    maxWidth: 1600,
-    maxHeight: 1600,
-    imageQuality: 80,
-  );
+  final file = await ImagePicker().pickImage(source: source);
   if (file == null) return null;
 
-  return (
-    bytes: await file.readAsBytes(),
-    name: file.name,
-    mimeType: file.mimeType ?? imageMimeTypeOf(file.name),
+  final image = await ImageCompressor.native.compress(
+    file,
+    ImageUploadPolicy.chatPhoto,
   );
+  return (bytes: image.bytes, name: image.name, mimeType: image.mimeType);
 }

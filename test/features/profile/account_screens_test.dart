@@ -133,24 +133,139 @@ void main() {
       expect(find.text('Not set'), findsNWidgets(2));
     });
 
-    testWidgets('a username someone else has is refused with a reason', (
-      tester,
-    ) async {
-      final server = StubServer.always(409);
+    /// Answers `GET /users/username-available` with [checkAnswer] and
+    /// `PATCH /users/me` with [saveStatus].
+    StubServer usernameServer({
+      required String checkAnswer,
+      int saveStatus = 200,
+    }) {
+      return StubServer(
+        (request) => request.method == 'GET'
+            ? (200, checkAnswer)
+            : (
+                saveStatus,
+                '{"id":"u1","role":"user","createdAt":"2026-01-01T00:00:00.000Z"}',
+              ),
+      );
+    }
+
+    Future<void> typeUsername(WidgetTester tester, String text) async {
+      await tester.tap(find.text('Username'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), text);
+      // A pause in typing is what triggers the check.
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets(
+      'a username someone else has is refused before Save is pressed',
+      (tester) async {
+        final server = usernameServer(
+          checkAnswer: '{"username":"dara","available":false,"reason":"taken"}',
+        );
+        await pumpTestApp(
+          tester,
+          const PersonalInfoPage(),
+          overrides: _signedIn(server: server),
+        );
+
+        await typeUsername(tester, 'dara');
+
+        expect(find.text('This username is already taken.'), findsOneWidget);
+        // Asked the server, with the name as it would be saved.
+        expect(server.requests.single.method, 'GET');
+        expect(server.requests.single.path, '/users/username-available');
+        // Save is not offered, so nothing is sent.
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+        expect(server.requests, hasLength(1));
+      },
+    );
+
+    testWidgets('a free username says so, and saves', (tester) async {
+      final server = usernameServer(
+        checkAnswer: '{"username":"dara","available":true,"reason":null}',
+      );
       await pumpTestApp(
         tester,
         const PersonalInfoPage(),
         overrides: _signedIn(server: server),
       );
 
-      await tester.tap(find.text('Username'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'dara');
+      await typeUsername(tester, 'Dara');
+      expect(find.text('This username is available.'), findsOneWidget);
+
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
-      expect(find.text('This username is already taken.'), findsOneWidget);
-      expect(server.requests.single.body, {'username': 'dara'});
+      expect(server.requests.last.method, 'PATCH');
+      expect(server.requests.last.body, {'username': 'dara'});
+      expect(find.byType(AlertDialog), findsNothing);
+      await _letToastsLeave(tester);
+    });
+
+    testWidgets(
+      'a username taken between the check and Save is still refused',
+      (tester) async {
+        // Free when asked, taken by someone else a moment later.
+        final server = usernameServer(
+          checkAnswer: '{"username":"dara","available":true,"reason":null}',
+          saveStatus: 409,
+        );
+        await pumpTestApp(
+          tester,
+          const PersonalInfoPage(),
+          overrides: _signedIn(server: server),
+        );
+
+        await typeUsername(tester, 'dara');
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('This username is already taken.'), findsOneWidget);
+        expect(find.byType(AlertDialog), findsOneWidget);
+      },
+    );
+
+    testWidgets('your own current username is not asked about', (tester) async {
+      final server = StubServer.always(200);
+      await pumpTestApp(
+        tester,
+        const PersonalInfoPage(),
+        overrides: _signedIn(server: server),
+      );
+
+      await typeUsername(tester, 'sokha');
+
+      expect(server.requests, isEmpty);
+      expect(find.text('This username is already taken.'), findsNothing);
+    });
+
+    testWidgets('can still be saved when the check could not be made', (
+      tester,
+    ) async {
+      final server = StubServer(
+        (request) => request.method == 'GET'
+            ? (500, '{}')
+            : (
+                200,
+                '{"id":"u1","role":"user","createdAt":"2026-01-01T00:00:00.000Z"}',
+              ),
+      );
+      await pumpTestApp(
+        tester,
+        const PersonalInfoPage(),
+        overrides: _signedIn(server: server),
+      );
+
+      await typeUsername(tester, 'dara');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      // The server decides at save, which is the check that counts.
+      expect(server.requests.last.method, 'PATCH');
+      await _letToastsLeave(tester);
     });
 
     testWidgets('a badly formed username never reaches the server', (
@@ -166,10 +281,12 @@ void main() {
       await tester.tap(find.text('Username'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'Dara Sok');
-      await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
+      // Said as it is typed, and never sent anywhere.
       expect(find.textContaining('Use 3 to 30 lowercase'), findsWidgets);
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
       expect(server.requests, isEmpty);
     });
 

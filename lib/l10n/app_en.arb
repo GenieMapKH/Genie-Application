@@ -365,5 +365,12 @@
   "avatarUpdated": "Profile picture updated.",
   "avatarFailed": "Could not change the profile picture. Please try again.",
   "avatarSyncHelp": "Use your Google account's photo and keep it up to date.",
-  "avatarNoGooglePhoto": "Your Google account has no photo."
+  "avatarNoGooglePhoto": "Your Google account has no photo.",
+  "accountDeviceTooNew": "This device signed in less than a day ago, so to protect your account it cannot do this yet. Use a device you have been signed in on for longer, or try again tomorrow.",
+  "personalInfoUsernameChecking": "Checking…",
+  "personalInfoUsernameAvailable": "This username is available.",
+  "mediaSourceTooLarge": "This file is larger than {limitMb} MB and cannot be uploaded.",
+  "@mediaSourceTooLarge": {"placeholders": {"limitMb": {"type": "int"}}},
+  "mediaStillTooLarge": "This picture is still too large after compression. Please choose a smaller one.",
+  "mediaUnreadable": "This picture could not be read. Please choose another one."
 }

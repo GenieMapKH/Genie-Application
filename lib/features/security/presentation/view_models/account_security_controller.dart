@@ -10,6 +10,9 @@ enum AccountActionResult {
   identityRejected,
   tooManyAttempts,
 
+  /// This device signed in less than a day ago and may not do this yet.
+  deviceTooNew,
+
   /// The server could not be reached or failed.
   failed,
 }
@@ -108,6 +111,8 @@ class AccountSecurityController {
       return AccountActionResult.identityRejected;
     } on TooManyAttemptsException {
       return AccountActionResult.tooManyAttempts;
+    } on DeviceTooNewException {
+      return AccountActionResult.deviceTooNew;
     } catch (e) {
       AppLogger.error('Could not $what', e);
       return AccountActionResult.failed;

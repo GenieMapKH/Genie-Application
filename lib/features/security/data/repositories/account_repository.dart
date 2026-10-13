@@ -28,6 +28,13 @@ class IdentityRejectedException extends AppException {
     : super('Identity not confirmed', code: '403');
 }
 
+/// This device signed in less than a day ago. Until then the server will
+/// not let it change the password or deactivate or delete the account, so
+/// that someone who just got in cannot take the account from its owner.
+class DeviceTooNewException extends AppException {
+  const DeviceTooNewException() : super('Device too new', code: '403');
+}
+
 /// Too many wrong passwords in a row; the server refuses more for a while.
 class TooManyAttemptsException extends AppException {
   const TooManyAttemptsException() : super('Too many attempts', code: '429');
@@ -35,8 +42,11 @@ class TooManyAttemptsException extends AppException {
 
 /// API access for the account's password, and for deactivating or deleting
 /// the account. Every call throws [IdentityRejectedException] for a wrong
-/// proof and [TooManyAttemptsException] once the server stops accepting tries.
+/// proof, [TooManyAttemptsException] once the server stops accepting tries,
+/// and [DeviceTooNewException] where the one-day rule applies.
 class AccountRepository {
+  static const _deviceTooNew = 'DEVICE_TOO_NEW';
+
   final Dio dio;
 
   AccountRepository(this.dio);
@@ -89,6 +99,11 @@ class AccountRepository {
     try {
       return await dio.post(path, data: body);
     } on DioException catch (e) {
+      final answer = e.response?.data;
+      // The same status as a wrong password, told apart by its code.
+      if (answer is Map && answer['code'] == _deviceTooNew) {
+        throw const DeviceTooNewException();
+      }
       throw switch (e.response?.statusCode) {
         403 => const IdentityRejectedException(),
         429 => const TooManyAttemptsException(),

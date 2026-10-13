@@ -2161,6 +2161,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your Google account has no photo.'**
   String get avatarNoGooglePhoto;
+
+  /// No description provided for @accountDeviceTooNew.
+  ///
+  /// In en, this message translates to:
+  /// **'This device signed in less than a day ago, so to protect your account it cannot do this yet. Use a device you have been signed in on for longer, or try again tomorrow.'**
+  String get accountDeviceTooNew;
+
+  /// No description provided for @personalInfoUsernameChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get personalInfoUsernameChecking;
+
+  /// No description provided for @personalInfoUsernameAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This username is available.'**
+  String get personalInfoUsernameAvailable;
+
+  /// No description provided for @mediaSourceTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is larger than {limitMb} MB and cannot be uploaded.'**
+  String mediaSourceTooLarge(int limitMb);
+
+  /// No description provided for @mediaStillTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This picture is still too large after compression. Please choose a smaller one.'**
+  String get mediaStillTooLarge;
+
+  /// No description provided for @mediaUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'This picture could not be read. Please choose another one.'**
+  String get mediaUnreadable;
 }
 
 class _AppLocalizationsDelegate

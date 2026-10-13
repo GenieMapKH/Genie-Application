@@ -40,8 +40,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-flutter
-        with:
-          api-base-url: ${{ secrets.API_BASE_URL }}
 
       # Optional: with these secrets the APK is signed with the release key,
       # otherwise it falls back to the debug key (see android/app/build.gradle.kts).
@@ -64,8 +62,12 @@ jobs:
             echo "keyPassword=$KEY_PASSWORD"
           } > android/key.properties
 
+      # The API server is compiled in; no env file is shipped inside the APK.
+      # Without the secret the app uses its built-in default (production).
       - name: Build Release APK
-        run: flutter build apk --release --split-per-abi
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: flutter build apk --release --split-per-abi --dart-define=API_BASE_URL="$API_BASE_URL"
 
       - name: Prepare Telegram Message
         env:

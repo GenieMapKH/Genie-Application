@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/home/presentation/widgets/main_map_view.dart';
@@ -75,7 +76,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
 
   Future<void> _addPinToCenter() async {
     final mapState = ref.read(mapStateProvider);
-    if (mapState.currentMapCenter == null) return;
+    final center = ref.read(mapCameraProvider).center;
 
     final controller = await _mapControllerCompleter.future;
     final notifier = ref.read(mapStateProvider.notifier);
@@ -85,9 +86,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       final firstPointScreen = await controller.getScreenCoordinate(
         mapState.drawnPoints.first,
       );
-      final crosshairScreen = await controller.getScreenCoordinate(
-        mapState.currentMapCenter!,
-      );
+      final crosshairScreen = await controller.getScreenCoordinate(center);
 
       final dx = firstPointScreen.x - crosshairScreen.x;
       final dy = firstPointScreen.y - crosshairScreen.y;
@@ -98,7 +97,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       }
     }
 
-    notifier.addPoint(mapState.currentMapCenter!);
+    notifier.addPoint(center);
   }
 
   /// Opens the detail sheet, keeping the map's selection in sync so the sheet
