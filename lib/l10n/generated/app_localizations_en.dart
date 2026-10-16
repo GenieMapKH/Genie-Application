@@ -1182,4 +1182,163 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mediaUnreadable =>
       'This picture could not be read. Please choose another one.';
+
+  @override
+  String get searchFieldHint => 'Search area, road, listing or person';
+
+  @override
+  String get searchClear => 'Clear search';
+
+  @override
+  String get searchSectionPlaces => 'Places';
+
+  @override
+  String get searchSectionListings => 'Listings';
+
+  @override
+  String get searchSectionPeople => 'People & agencies';
+
+  @override
+  String get searchIdleTitle => 'Find a place, a listing or a person';
+
+  @override
+  String get searchIdleBody =>
+      'Type a road, village or district to see what is for sale there, or the name of an owner or agency.';
+
+  @override
+  String searchNoResultsTitle(String query) {
+    return 'No results for “$query”';
+  }
+
+  @override
+  String get searchNoResultsBody =>
+      'Check the spelling, or try a nearby road or district.';
+
+  @override
+  String get searchFailureOffline =>
+      'You are offline. Check your connection and try again.';
+
+  @override
+  String get searchFailureTooManyRequests =>
+      'Too many searches. Please wait a moment and try again.';
+
+  @override
+  String get searchFailureUnavailable =>
+      'Place search is not available right now. Please try again later.';
+
+  @override
+  String get searchFailureNotFound =>
+      'This place could not be found. Try another result.';
+
+  @override
+  String get searchFailureUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String searchListingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count listings',
+      one: '1 listing',
+      zero: 'No listings',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchPropertiesInArea(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count properties in this area',
+      one: '1 property in this area',
+      zero: 'No properties here yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchPropertiesByPerson(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count published listings',
+      one: '1 published listing',
+      zero: 'No published listings',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchAreaEmpty =>
+      'Nothing is listed here yet. Move the map or search a wider area.';
+
+  @override
+  String get searchPersonEmpty =>
+      'This person has no published listings right now.';
+
+  @override
+  String get searchCloseResults => 'Close search results';
+
+  @override
+  String get searchRecentTitle => 'Recent searches';
+
+  @override
+  String get searchHistoryEdit => 'Edit this search';
+
+  @override
+  String get searchHistoryRemove => 'Remove from history';
+
+  @override
+  String get searchHistoryRemoveFailed =>
+      'This search could not be removed. Please try again.';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'Member since $date';
+  }
+
+  @override
+  String get profileListingsTitle => 'Listings';
+
+  @override
+  String get profileViewOnMap => 'View on map';
+
+  @override
+  String get profileListingsStat => 'Listings';
+
+  @override
+  String get profileFollow => 'Follow';
+
+  @override
+  String get profileContactTitle => 'Contact';
+
+  @override
+  String get profilePhone => 'Phone';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String profileCopied(String label) {
+    return '$label copied';
+  }
+
+  @override
+  String get profileCopy => 'Copy';
+
+  @override
+  String get profileChat => 'Chat';
+
+  @override
+  String get chatTabProfile => 'Profile';
+
+  @override
+  String get chatViewFullProfile => 'View full profile';
+
+  @override
+  String get profileTabAbout => 'About';
+
+  @override
+  String get profileNoContact => 'No contact details shared.';
 }

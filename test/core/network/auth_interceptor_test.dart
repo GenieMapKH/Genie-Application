@@ -27,6 +27,8 @@ class _Api implements HttpClientAdapter {
   ) async {
     calls.add(options.path);
     if (options.path == '/auth/refresh') {
+      // Slow enough for other requests to be refused meanwhile.
+      await Future<void>.delayed(const Duration(milliseconds: 20));
       if (refresh == null) {
         throw DioException.connectionError(
           requestOptions: options,
@@ -128,6 +130,42 @@ void main() {
       expect(await AuthStorage.getAccessToken(), 'new-access');
     },
   );
+
+  test('requests refused together share one renewal', () async {
+    // The app wakes up with an expired token and asks for several things.
+    final responses = await Future.wait([
+      dio.get('/users/me'),
+      dio.get('/users/me'),
+      dio.get('/users/me'),
+    ]);
+
+    expect(responses.map((r) => r.statusCode), [200, 200, 200]);
+    expect(api.calls.where((path) => path == '/auth/refresh'), hasLength(1));
+    expect(sessionsEnded, 0);
+  });
+
+  test('a request refused after another renewed is repeated at once', () async {
+    await dio.get('/users/me');
+    api.calls.clear();
+
+    // Sent with the old token, answered after the renewal.
+    final late = dio.get(
+      '/users/me',
+      options: Options(headers: {'Authorization': 'Bearer expired-access'}),
+    );
+
+    expect((await late).statusCode, 200);
+    expect(api.calls, isNot(contains('/auth/refresh')));
+  });
+
+  test('a repeated request refused again is not renewed again', () async {
+    api.acceptedToken = 'never';
+
+    await expectLater(dio.get('/users/me'), throwsA(isA<DioException>()));
+
+    expect(api.calls, ['/users/me', '/auth/refresh', '/users/me']);
+    expect(sessionsEnded, 0);
+  });
 
   test('a guest has no session to renew or to lose', () async {
     FlutterSecureStorage.setMockInitialValues({});

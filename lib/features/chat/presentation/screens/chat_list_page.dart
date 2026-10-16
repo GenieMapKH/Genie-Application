@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/app_header_bar.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_avatar.dart';
+import 'package:genie/shared/widgets/user_avatar.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
@@ -154,7 +154,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ChatAvatar(
+            UserAvatar(
               name: chat.participantName,
               avatarUrl: chat.participantAvatar,
             ),

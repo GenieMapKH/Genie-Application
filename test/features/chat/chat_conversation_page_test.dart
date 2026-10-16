@@ -195,6 +195,9 @@ void main() {
 
     expect(find.text('Dara Sok'), findsOneWidget);
     expect(find.text('Member since March 2025'), findsOneWidget);
+
+    await tester.tap(find.text('Security code'));
+    await tester.pumpAndSettle();
     expect(find.text('11111 22222 33333 44444 55555 66666'), findsOneWidget);
   });
 

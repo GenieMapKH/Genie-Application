@@ -10,6 +10,7 @@ import 'package:genie/features/home/presentation/widgets/drawing_controls_panel.
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/home/presentation/widgets/property_carousel.dart';
+import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/screens/add_property_page.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
@@ -23,6 +24,11 @@ class MainMapControls extends ConsumerWidget {
   final void Function(List<LatLng>) onAnimateToCoordinates;
   final VoidCallback onAddPinToCenter;
   final VoidCallback onSavePropertySuccess;
+  final ValueChanged<PropertyModel> onOpenProperty;
+
+  /// Lifts the floating buttons above a results sheet: how much of the
+  /// screen's bottom the sheet covers, or 0 when there is none.
+  final double searchSheetHeight;
 
   const MainMapControls({
     super.key,
@@ -30,10 +36,15 @@ class MainMapControls extends ConsumerWidget {
     required this.onAnimateToCoordinates,
     required this.onAddPinToCenter,
     required this.onSavePropertySuccess,
+    required this.onOpenProperty,
+    this.searchSheetHeight = 0,
   });
 
   /// Resting offset above the bottom nav bar.
-  static const double _baseBottom = 110.0;
+  static const double baseBottom = 110.0;
+
+  /// Size of the round floating buttons (add menu, current position).
+  static const double buttonSize = 76.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,8 +53,10 @@ class MainMapControls extends ConsumerWidget {
 
     // Lift the floating buttons above the property card when it slides in.
     final double sideButtonBottom = isCardVisible
-        ? _baseBottom + PropertyCarousel.height - 24
-        : _baseBottom;
+        ? baseBottom + PropertyCarousel.height - 24
+        : searchSheetHeight > 0
+        ? searchSheetHeight - 4
+        : baseBottom;
 
     return Stack(
       children: [
@@ -59,6 +72,7 @@ class MainMapControls extends ConsumerWidget {
                   .startDrawing(initialPoints: result);
               onAnimateToCoordinates(result);
             },
+            onOpenProperty: onOpenProperty,
           ),
 
         // Plus Icon and Animated Menu (Bottom Left)
@@ -86,8 +100,8 @@ class MainMapControls extends ConsumerWidget {
               onPressed: onGoToCurrentPosition,
               child: SvgPicture.asset(
                 'assets/icons/current_position.svg',
-                width: 76,
-                height: 76,
+                width: buttonSize,
+                height: buttonSize,
               ),
             ),
           ),

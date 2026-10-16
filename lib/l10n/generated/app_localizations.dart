@@ -2197,6 +2197,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This picture could not be read. Please choose another one.'**
   String get mediaUnreadable;
+
+  /// No description provided for @searchFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search area, road, listing or person'**
+  String get searchFieldHint;
+
+  /// No description provided for @searchClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get searchClear;
+
+  /// No description provided for @searchSectionPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get searchSectionPlaces;
+
+  /// No description provided for @searchSectionListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get searchSectionListings;
+
+  /// No description provided for @searchSectionPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People & agencies'**
+  String get searchSectionPeople;
+
+  /// No description provided for @searchIdleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a place, a listing or a person'**
+  String get searchIdleTitle;
+
+  /// No description provided for @searchIdleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a road, village or district to see what is for sale there, or the name of an owner or agency.'**
+  String get searchIdleBody;
+
+  /// No description provided for @searchNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No results for “{query}”'**
+  String searchNoResultsTitle(String query);
+
+  /// No description provided for @searchNoResultsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the spelling, or try a nearby road or district.'**
+  String get searchNoResultsBody;
+
+  /// No description provided for @searchFailureOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Check your connection and try again.'**
+  String get searchFailureOffline;
+
+  /// No description provided for @searchFailureTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many searches. Please wait a moment and try again.'**
+  String get searchFailureTooManyRequests;
+
+  /// No description provided for @searchFailureUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Place search is not available right now. Please try again later.'**
+  String get searchFailureUnavailable;
+
+  /// No description provided for @searchFailureNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This place could not be found. Try another result.'**
+  String get searchFailureNotFound;
+
+  /// No description provided for @searchFailureUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get searchFailureUnknown;
+
+  /// No description provided for @searchListingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No listings} =1{1 listing} other{{count} listings}}'**
+  String searchListingCount(int count);
+
+  /// No description provided for @searchPropertiesInArea.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No properties here yet} =1{1 property in this area} other{{count} properties in this area}}'**
+  String searchPropertiesInArea(int count);
+
+  /// No description provided for @searchPropertiesByPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No published listings} =1{1 published listing} other{{count} published listings}}'**
+  String searchPropertiesByPerson(int count);
+
+  /// No description provided for @searchAreaEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is listed here yet. Move the map or search a wider area.'**
+  String get searchAreaEmpty;
+
+  /// No description provided for @searchPersonEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This person has no published listings right now.'**
+  String get searchPersonEmpty;
+
+  /// No description provided for @searchCloseResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search results'**
+  String get searchCloseResults;
+
+  /// No description provided for @searchRecentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent searches'**
+  String get searchRecentTitle;
+
+  /// No description provided for @searchHistoryEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit this search'**
+  String get searchHistoryEdit;
+
+  /// No description provided for @searchHistoryRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from history'**
+  String get searchHistoryRemove;
+
+  /// No description provided for @searchHistoryRemoveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This search could not be removed. Please try again.'**
+  String get searchHistoryRemoveFailed;
+
+  /// No description provided for @profileMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since {date}'**
+  String profileMemberSince(String date);
+
+  /// No description provided for @profileListingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get profileListingsTitle;
+
+  /// No description provided for @profileViewOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'View on map'**
+  String get profileViewOnMap;
+
+  /// No description provided for @profileListingsStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get profileListingsStat;
+
+  /// No description provided for @profileFollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get profileFollow;
+
+  /// No description provided for @profileContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get profileContactTitle;
+
+  /// No description provided for @profilePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get profilePhone;
+
+  /// No description provided for @profileEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get profileEmail;
+
+  /// No description provided for @profileCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} copied'**
+  String profileCopied(String label);
+
+  /// No description provided for @profileCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get profileCopy;
+
+  /// No description provided for @profileChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get profileChat;
+
+  /// No description provided for @chatTabProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get chatTabProfile;
+
+  /// No description provided for @chatViewFullProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View full profile'**
+  String get chatViewFullProfile;
+
+  /// No description provided for @profileTabAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get profileTabAbout;
+
+  /// No description provided for @profileNoContact.
+  ///
+  /// In en, this message translates to:
+  /// **'No contact details shared.'**
+  String get profileNoContact;
 }
 
 class _AppLocalizationsDelegate

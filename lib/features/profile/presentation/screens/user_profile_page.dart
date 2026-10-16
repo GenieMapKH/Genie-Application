@@ -16,7 +16,7 @@ import 'package:genie/shared/widgets/app_page_scaffold.dart';
 import 'package:genie/shared/widgets/settings_list.dart';
 
 /// The "User" tab: who is signed in, and the way into every account setting.
-class UserProfilePage extends ConsumerWidget {
+class UserProfilePage extends ConsumerStatefulWidget {
   final bool isEmbedded;
   final VoidCallback? onBackPressed;
 
@@ -27,8 +27,33 @@ class UserProfilePage extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UserProfilePage> createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends ConsumerState<UserProfilePage> {
+  /// True from opening until the retry of an earlier failure has started.
+  late bool _retryingOnOpen;
+
+  @override
+  void initState() {
+    super.initState();
+    // The provider keeps a failure (the app woke up offline, say) until it
+    // is asked again. Opening the screen asks again, so it never greets the
+    // user with an error from earlier.
+    _retryingOnOpen = ref.read(userProfileProvider).hasError;
+    if (_retryingOnOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _retryingOnOpen = false;
+        ref.invalidate(userProfileProvider);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final profileAsync = ref.watch(userProfileProvider);
+    final profile = profileAsync.valueOrNull;
     // A refresh failed but the profile from before is still shown.
     final showsStaleProfile =
         profileAsync.hasError &&
@@ -37,7 +62,7 @@ class UserProfilePage extends ConsumerWidget {
 
     return AppPageScaffold(
       title: context.l10n.accountTitle,
-      onBackPressed: onBackPressed,
+      onBackPressed: widget.onBackPressed,
       child: Column(
         children: [
           if (showsStaleProfile) const _OfflineWarning(),
@@ -53,15 +78,15 @@ class UserProfilePage extends ConsumerWidget {
                   AppLogger.error('Profile refresh failed', e);
                 }
               },
-              child: profileAsync.when(
-                skipLoadingOnReload: true,
-                skipError: true,
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => _LoadError(
-                  onRetry: () => ref.invalidate(userProfileProvider),
-                ),
-                data: (profile) => _AccountMenu(profile: profile),
-              ),
+              // A profile from before stays up while it is refreshed; with
+              // none, a retry shows the spinner rather than the old error.
+              child: profile != null
+                  ? _AccountMenu(profile: profile)
+                  : profileAsync.isLoading || _retryingOnOpen
+                  ? const Center(child: CircularProgressIndicator())
+                  : _LoadError(
+                      onRetry: () => ref.invalidate(userProfileProvider),
+                    ),
             ),
           ),
         ],

@@ -17,6 +17,8 @@ import 'package:genie/app/app.dart';
 import 'package:genie/app/missing_config_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:genie/firebase_options.dart';
+import 'package:genie/app/navigation/chat_profile_navigation.dart';
+import 'package:genie/features/chat/providers/chat_profile_opener.dart';
 
 /// Android only: asks for the newest Google Maps renderer and for the
 /// display's highest refresh rate. Without the latter many devices keep a
@@ -70,6 +72,7 @@ void main() async {
       overrides: [
         cryptoServiceProvider.overrideWithValue(cryptoService),
         appSettingsStorageProvider.overrideWithValue(settingsStorage),
+        chatProfileOpenerProvider.overrideWith(profileFromChatOpener),
       ],
       child: const MyApp(),
     ),

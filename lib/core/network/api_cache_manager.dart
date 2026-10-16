@@ -82,10 +82,17 @@ class ApiCacheManager {
 
 /// Dio Interceptor for automatic HTTP GET response caching & ETag support
 class CacheInterceptor extends Interceptor {
+  /// Put `{skipCache: true}` in a request's `extra` to keep it out of this
+  /// cache: requests that are rarely repeated (search texts) would only push
+  /// useful entries out of the 100 kept.
+  static const skipCache = 'skip_api_cache';
+
   final ApiCacheManager _cacheManager = ApiCacheManager();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (options.extra[skipCache] == true) return handler.next(options);
+
     // Only cache GET requests
     if (options.method.toUpperCase() != 'GET') {
       // Invalidate write operations (POST, PUT, DELETE, PATCH)
@@ -112,7 +119,8 @@ class CacheInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (response.requestOptions.method.toUpperCase() == 'GET' &&
-        response.statusCode == 200) {
+        response.statusCode == 200 &&
+        response.requestOptions.extra[skipCache] != true) {
       final key = _cacheManager.buildKey(
         response.requestOptions.path,
         response.requestOptions.queryParameters,

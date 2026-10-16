@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/widgets.dart' show EdgeInsets, Size;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapCameraFocus {
@@ -51,6 +52,51 @@ class MapCameraFocus {
     final zoomY = math.log(usableHeight / (_tileSize * spanY)) / math.ln2;
 
     return math.min(zoomX, zoomY).clamp(_minZoom, _maxZoom);
+  }
+
+  /// The camera that shows all of [bounds] inside the part of a [mapSize] map
+  /// not covered by [covered] (panels, bars). Never closer than [maxZoom], so
+  /// a single listing still shows its surroundings, and never further than
+  /// [minZoom] when the area is too big to fit at that zoom.
+  static CameraPosition frame(
+    LatLngBounds bounds,
+    Size mapSize,
+    EdgeInsets covered, {
+    double maxZoom = 17,
+    double minZoom = 0,
+  }) {
+    // [minZoom] wins over fitting everything: a big area is better shown
+    // close enough to read than as a view too far out to show anything.
+    final zoom = math
+        .min(
+          zoomToFit(
+            [bounds.southwest, bounds.northeast],
+            mapSize.width - covered.horizontal,
+            mapSize.height - covered.vertical,
+            padding: 32,
+          ),
+          maxZoom,
+        )
+        .clamp(minZoom, maxZoom);
+    final center = LatLng(
+      (bounds.southwest.latitude + bounds.northeast.latitude) / 2,
+      (bounds.southwest.longitude + bounds.northeast.longitude) / 2,
+    );
+
+    // Move the camera so [center] lands in the middle of the visible part.
+    final worldPixels = _tileSize * math.pow(2, zoom);
+    final x =
+        _mercatorX(center.longitude) +
+        ((covered.right - covered.left) / 2) / worldPixels;
+    final y =
+        (_mercatorY(center.latitude) +
+                ((covered.bottom - covered.top) / 2) / worldPixels)
+            .clamp(0.0, 1.0);
+
+    return CameraPosition(
+      target: LatLng(_latFromMercatorY(y), (x - 0.5) * 360.0),
+      zoom: zoom,
+    );
   }
 
   /// Shifts [center] south by half of [bottomInset] pixels so the property sits

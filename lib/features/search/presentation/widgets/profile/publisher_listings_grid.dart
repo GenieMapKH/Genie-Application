@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
+
+/// A publisher's listing cards, as many per row as fit: two on a phone,
+/// more on a tablet.
+class PublisherListingsGrid extends ConsumerWidget {
+  final List<PropertyModel> properties;
+  final double gutter;
+  final ValueChanged<PropertyModel> onOpen;
+
+  const PublisherListingsGrid({
+    super.key,
+    required this.properties,
+    required this.gutter,
+    required this.onOpen,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Rebuilt when a heart is toggled, here or anywhere else.
+    ref.watch(savedPropertiesProvider);
+    final saved = ref.read(savedPropertiesProvider.notifier);
+
+    return SliverPadding(
+      padding: EdgeInsets.fromLTRB(gutter, 16, gutter, 0),
+      sliver: SliverGrid.builder(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 240,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 12,
+          childAspectRatio: 0.68,
+        ),
+        itemCount: properties.length,
+        itemBuilder: (context, index) {
+          final property = properties[index];
+          return SavedPropertyCard(
+            property: property,
+            isFavorite: saved.isSaved(property.id),
+            onTap: () => onOpen(property),
+            onFavoriteToggled: () => saved.toggleFavorite(property),
+          );
+        },
+      ),
+    );
+  }
+}

@@ -151,63 +151,68 @@ class SavedPropertiesPage extends ConsumerWidget {
 
   /// Empty state matching Screenshot 2.
   Widget _buildEmptyState(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-        decoration: BoxDecoration(
-          color: context.colors.surfaceMuted,
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.favorite_border_rounded,
-                size: 36,
-                color: context.colors.textHint,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              context.l10n.propertyYouHavenTSavedAnyProperties,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: context.colors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 14,
+    // Aligned to the top so the card hugs its content instead of filling the
+    // page, like the empty My Properties and chat lists.
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+          decoration: BoxDecoration(
+            color: context.colors.surfaceMuted,
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.favorite_border_rounded,
+                  size: 36,
                   color: context.colors.textHint,
                 ),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    context.l10n.propertyTapTheHeartIconOnListings,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: context.colors.textHint,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                context.l10n.propertyYouHavenTSavedAnyProperties,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: context.colors.textHint,
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      context.l10n.propertyTapTheHeartIconOnListings,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: context.colors.textHint,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

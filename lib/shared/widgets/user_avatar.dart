@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/theme/app_colors.dart';
 
-/// Round picture of a chat participant, or their initial when they have none.
-class ChatAvatar extends StatelessWidget {
+/// Round picture of a person, or their initial when they have none.
+class UserAvatar extends StatelessWidget {
   final String name;
   final String? avatarUrl;
   final double radius;
 
-  const ChatAvatar({
+  const UserAvatar({
     super.key,
     required this.name,
     this.avatarUrl,

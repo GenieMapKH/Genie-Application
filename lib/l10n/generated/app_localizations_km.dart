@@ -1175,4 +1175,160 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get mediaUnreadable =>
       'មិនអាចអានរូបភាពនេះបានទេ។ សូមជ្រើសរើសរូបភាពផ្សេង។';
+
+  @override
+  String get searchFieldHint => 'ស្វែងរកតំបន់ ផ្លូវ អចលនទ្រព្យ ឬមនុស្ស';
+
+  @override
+  String get searchClear => 'សម្អាតការស្វែងរក';
+
+  @override
+  String get searchSectionPlaces => 'ទីតាំង';
+
+  @override
+  String get searchSectionListings => 'អចលនទ្រព្យ';
+
+  @override
+  String get searchSectionPeople => 'មនុស្ស និងភ្នាក់ងារ';
+
+  @override
+  String get searchIdleTitle => 'ស្វែងរកទីតាំង អចលនទ្រព្យ ឬមនុស្ស';
+
+  @override
+  String get searchIdleBody =>
+      'វាយឈ្មោះផ្លូវ ភូមិ ឬខណ្ឌ ដើម្បីមើលអ្វីដែលកំពុងលក់នៅទីនោះ ឬឈ្មោះម្ចាស់ ឬភ្នាក់ងារ។';
+
+  @override
+  String searchNoResultsTitle(String query) {
+    return 'រកមិនឃើញលទ្ធផលសម្រាប់ “$query”';
+  }
+
+  @override
+  String get searchNoResultsBody =>
+      'សូមពិនិត្យអក្ខរាវិរុទ្ធ ឬសាកល្បងផ្លូវ ឬខណ្ឌក្បែរនោះ។';
+
+  @override
+  String get searchFailureOffline =>
+      'អ្នកមិនមានអ៊ីនធឺណិត។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get searchFailureTooManyRequests =>
+      'ការស្វែងរកច្រើនពេក។ សូមរង់ចាំបន្តិច ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get searchFailureUnavailable =>
+      'ការស្វែងរកទីតាំងមិនអាចប្រើបានឥឡូវនេះទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get searchFailureNotFound =>
+      'រកមិនឃើញទីតាំងនេះទេ។ សូមសាកល្បងលទ្ធផលផ្សេង។';
+
+  @override
+  String get searchFailureUnknown => 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String searchListingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អចលនទ្រព្យ $count',
+      zero: 'គ្មានអចលនទ្រព្យ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchPropertiesInArea(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អចលនទ្រព្យ $count នៅក្នុងតំបន់នេះ',
+      zero: 'មិនទាន់មានអចលនទ្រព្យនៅទីនេះទេ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchPropertiesByPerson(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អចលនទ្រព្យដែលបានផ្សាយ $count',
+      zero: 'គ្មានអចលនទ្រព្យដែលបានផ្សាយ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchAreaEmpty =>
+      'មិនទាន់មានអ្វីដាក់លក់នៅទីនេះទេ។ សូមរំកិលផែនទី ឬស្វែងរកតំបន់ធំជាងនេះ។';
+
+  @override
+  String get searchPersonEmpty =>
+      'បុគ្គលនេះមិនមានអចលនទ្រព្យដែលបានផ្សាយនៅពេលនេះទេ។';
+
+  @override
+  String get searchCloseResults => 'បិទលទ្ធផលស្វែងរក';
+
+  @override
+  String get searchRecentTitle => 'ការស្វែងរកថ្មីៗ';
+
+  @override
+  String get searchHistoryEdit => 'កែការស្វែងរកនេះ';
+
+  @override
+  String get searchHistoryRemove => 'លុបចេញពីប្រវត្តិ';
+
+  @override
+  String get searchHistoryRemoveFailed =>
+      'មិនអាចលុបការស្វែងរកនេះបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'សមាជិកតាំងពី $date';
+  }
+
+  @override
+  String get profileListingsTitle => 'អចលនទ្រព្យ';
+
+  @override
+  String get profileViewOnMap => 'មើលលើផែនទី';
+
+  @override
+  String get profileListingsStat => 'អចលនទ្រព្យ';
+
+  @override
+  String get profileFollow => 'តាមដាន';
+
+  @override
+  String get profileContactTitle => 'ទំនាក់ទំនង';
+
+  @override
+  String get profilePhone => 'ទូរស័ព្ទ';
+
+  @override
+  String get profileEmail => 'អ៊ីមែល';
+
+  @override
+  String profileCopied(String label) {
+    return 'បានចម្លង$label';
+  }
+
+  @override
+  String get profileCopy => 'ចម្លង';
+
+  @override
+  String get profileChat => 'ជជែក';
+
+  @override
+  String get chatTabProfile => 'ប្រវត្តិរូប';
+
+  @override
+  String get chatViewFullProfile => 'មើលប្រវត្តិរូបពេញ';
+
+  @override
+  String get profileTabAbout => 'អំពី';
+
+  @override
+  String get profileNoContact => 'មិនមានព័ត៌មានទំនាក់ទំនងទេ។';
 }

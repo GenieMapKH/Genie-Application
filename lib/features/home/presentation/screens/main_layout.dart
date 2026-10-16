@@ -13,9 +13,14 @@ import 'package:genie/features/home/presentation/widgets/main_map_controls.dart'
 import 'package:genie/features/home/presentation/widgets/main_bottom_nav.dart';
 import 'package:genie/features/home/presentation/widgets/property_carousel.dart';
 import 'package:genie/features/home/presentation/widgets/main_layout_pages.dart';
+import 'package:genie/features/home/presentation/widgets/home_search_panel.dart';
+import 'package:genie/features/home/utils/map/map_camera_focus.dart';
+import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
 import 'package:genie/features/home/utils/map/map_location_service.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:genie/features/search/presentation/search_layout.dart';
+import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:genie/features/security/presentation/widgets/new_sign_in_alert.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 
@@ -115,11 +120,61 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     );
   }
 
+  /// The map extends this far below the screen (see `MainMapView`).
+  static const double _mapFrameOverflow = 40.0;
+
+  /// A new place or person was picked: make room for its panel, and frame its
+  /// area on the map once it is known.
+  void _onSearchAreaChanged(SearchAreaState? previous, SearchAreaState? next) {
+    if (next == null) return;
+    final isNewTarget = previous?.target != next.target;
+    if (isNewTarget) ref.read(propertyCarouselProvider.notifier).clear();
+
+    final bounds = next.area.valueOrNull?.framing;
+    final justLoaded = previous?.area is! AsyncData || isNewTarget;
+    if (bounds != null && justLoaded) _frameOnMap(bounds);
+  }
+
+  Future<void> _frameOnMap(LatLngBounds bounds) async {
+    final size = MediaQuery.sizeOf(context);
+    final covered =
+        HomeSearchPanel.coveredInsets(context) +
+        const EdgeInsets.only(bottom: _mapFrameOverflow);
+    final controller = await _mapControllerCompleter.future;
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        MapCameraFocus.frame(
+          bounds,
+          Size(size.width, size.height + _mapFrameOverflow),
+          covered,
+          // Below this the map shows clusters instead of listings.
+          minZoom: MapOverlayBuilder.clusterZoomThreshold + 1,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final navState = ref.watch(mainNavProvider);
     final isHome = navState.currentIndex == 0;
     final isCardVisible = ref.watch(propertyCarouselProvider).isVisible;
+    final hasSearch = ref.watch(
+      searchAreaControllerProvider.select((state) => state != null),
+    );
+    final isDrawing = ref.watch(
+      mapStateProvider.select((state) => state.isDrawing),
+    );
+    final showSearchPanel = hasSearch && isHome && !isCardVisible && !isDrawing;
+    final searchSheetHeight =
+        showSearchPanel &&
+            !SearchLayout.isWide(MediaQuery.sizeOf(context).width)
+        ? HomeSearchPanel.coveredInsets(context).bottom
+        : 0.0;
+    ref.listen<SearchAreaState?>(
+      searchAreaControllerProvider,
+      _onSearchAreaChanged,
+    );
     final bool overlayPage =
         navState.currentIndex == 1 ||
         navState.currentIndex == 2 ||
@@ -127,12 +182,14 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
         navState.currentIndex == 4;
 
     return PopScope(
-      canPop: isHome && !isCardVisible,
+      canPop: isHome && !isCardVisible && !hasSearch,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        // Dismiss the card first, then fall back to returning to the map.
+        // Dismiss the card first, then the search, then return to the map.
         if (isCardVisible) {
           ref.read(propertyCarouselProvider.notifier).clear();
+        } else if (isHome && hasSearch) {
+          ref.read(searchAreaControllerProvider.notifier).clear();
         } else if (!isHome) {
           ref.read(mainNavProvider.notifier).resetToHome();
         }
@@ -145,6 +202,11 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
               mapControllerCompleter: _mapControllerCompleter,
               bottomInset: isCardVisible ? PropertyCarousel.mapInset : 0,
             ),
+            HomeSearchPanel(
+              aboveControls: false,
+              visible: showSearchPanel,
+              onOpenProperty: _openPropertyDetail,
+            ),
             IgnorePointer(
               ignoring: overlayPage,
               child: MainMapControls(
@@ -154,6 +216,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 onSavePropertySuccess: () {
                   ref.read(mainNavProvider.notifier).setIndex(3);
                 },
+                onOpenProperty: _openPropertyDetail,
+                searchSheetHeight: searchSheetHeight,
               ),
             ),
 
@@ -166,6 +230,12 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 ignoring: !isHome,
                 child: PropertyCarousel(onOpenDetail: _openPropertyDetail),
               ),
+            ),
+
+            HomeSearchPanel(
+              aboveControls: true,
+              visible: showSearchPanel,
+              onOpenProperty: _openPropertyDetail,
             ),
 
             MainLayoutPages(navState: navState),

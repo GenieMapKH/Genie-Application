@@ -27,6 +27,29 @@ List<Override> _signedIn({StubServer? server}) => [
     userRepositoryProvider.overrideWithValue(UserRepository(server.dio)),
 ];
 
+/// Watches the profile the way the rest of the app does from launch, and
+/// shows the account screen only once "Open" is tapped.
+class _OpenedLater extends ConsumerStatefulWidget {
+  const _OpenedLater();
+
+  @override
+  ConsumerState<_OpenedLater> createState() => _OpenedLaterState();
+}
+
+class _OpenedLaterState extends ConsumerState<_OpenedLater> {
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    ref.watch(userProfileProvider);
+    if (_open) return const UserProfilePage();
+    return TextButton(
+      onPressed: () => setState(() => _open = true),
+      child: const Text('Open'),
+    );
+  }
+}
+
 /// Toasts stay for a few seconds; a test must not end while one is showing.
 Future<void> _letToastsLeave(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 5));
@@ -57,6 +80,58 @@ void main() {
       // The personal details and the security tools have screens of their own.
       expect(find.text('sokha@example.com'), findsNothing);
       expect(find.textContaining('PIN'), findsNothing);
+    });
+
+    testWidgets('a failure from before it was opened is retried at once', (
+      tester,
+    ) async {
+      var attempts = 0;
+      await pumpTestApp(
+        tester,
+        const _OpenedLater(),
+        overrides: [
+          userProfileProvider.overrideWith((ref) async {
+            attempts++;
+            if (attempts == 1) throw Exception('offline at launch');
+            return _profile;
+          }),
+        ],
+      );
+      await tester.pumpAndSettle();
+      expect(attempts, 1);
+
+      await tester.tap(find.text('Open'));
+      await tester.pump();
+      // Never greets with the old error: it is already trying again.
+      expect(find.text('Could not load profile'), findsNothing);
+      await tester.pumpAndSettle();
+
+      expect(attempts, 2);
+      expect(find.text('Sokha Chan'), findsOneWidget);
+    });
+
+    testWidgets('a failure on opening offers Retry, which tries again', (
+      tester,
+    ) async {
+      var attempts = 0;
+      await pumpTestApp(
+        tester,
+        const UserProfilePage(),
+        overrides: [
+          userProfileProvider.overrideWith((ref) async {
+            attempts++;
+            if (attempts == 1) throw Exception('offline');
+            return _profile;
+          }),
+        ],
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Could not load profile'), findsOneWidget);
+
+      await tester.tap(find.text('Retry'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sokha Chan'), findsOneWidget);
     });
 
     testWidgets('choosing Dark repaints the app and is remembered', (
