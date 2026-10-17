@@ -32,22 +32,31 @@ class UserProfilePage extends ConsumerStatefulWidget {
 
 class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   /// True from opening until the retry of an earlier failure has started.
-  late bool _retryingOnOpen;
+  bool _retryingOnOpen = false;
+
+  /// Whether the page was on screen at the last check. The page is kept
+  /// while another tab is shown, and [TickerMode] says when it is back.
+  bool _wasShown = false;
 
   @override
-  void initState() {
-    super.initState();
-    // The provider keeps a failure (the app woke up offline, say) until it
-    // is asked again. Opening the screen asks again, so it never greets the
-    // user with an error from earlier.
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final shown = TickerMode.valuesOf(context).enabled;
+    if (shown && !_wasShown) _retryEarlierFailure();
+    _wasShown = shown;
+  }
+
+  /// The provider keeps a failure (the app woke up offline, say) until it is
+  /// asked again. Opening the screen asks again, so it never greets the user
+  /// with an error from earlier.
+  void _retryEarlierFailure() {
     _retryingOnOpen = ref.read(userProfileProvider).hasError;
-    if (_retryingOnOpen) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _retryingOnOpen = false;
-        ref.invalidate(userProfileProvider);
-      });
-    }
+    if (!_retryingOnOpen) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => _retryingOnOpen = false);
+      ref.invalidate(userProfileProvider);
+    });
   }
 
   @override
