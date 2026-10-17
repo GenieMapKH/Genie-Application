@@ -106,6 +106,16 @@ final e2eeSetupServiceProvider = Provider(
   ),
 );
 
+/// Gets chat keys ready as soon as someone signs in, without asking
+/// anything, so others can message them before they ever open a chat. Kept
+/// alive by the app shell. An account with a backup PIN on a device without
+/// its keys waits for a chat screen, which asks for the PIN.
+final chatKeysQuietSetupProvider = FutureProvider<E2eeSetupResult?>((ref) {
+  final userId = ref.watch(currentUserIdProvider);
+  if (userId == null) return null;
+  return ref.watch(e2eeSetupServiceProvider).initialize(userId);
+});
+
 final e2eeKeyManagerProvider = Provider(
   (ref) => E2eeKeyManager(
     keyService: ref.watch(keyServiceProvider),

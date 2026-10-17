@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart' show SecretKey;
@@ -30,6 +31,13 @@ class _FakeKeyService extends Fake implements KeyService {
   int savedKeyPairs = 0;
   int publicKeyUploads = 0;
   int deletedKeyPairs = 0;
+
+  /// New pairs made and published in place of the account's key.
+  int publishedNewPairs = 0;
+  Object? publishError;
+
+  /// Holds a new pair back until completed, to see setups overlap.
+  Completer<void>? publishGate;
 
   /// False once the account's keys were replaced on another device.
   bool serverAcceptsLocalKey = true;
@@ -70,9 +78,19 @@ class _FakeKeyService extends Fake implements KeyService {
   }
 
   @override
-  Future<bool> uploadPublicKeyIfNeeded(String userId) async {
+  Future<bool> publishPublicKeyIfMissing(String userId) async {
     publicKeyUploads++;
     return serverAcceptsLocalKey;
+  }
+
+  @override
+  Future<KeyPair> createAndPublishKeyPair(String userId) async {
+    await publishGate?.future;
+    if (publishError != null) throw publishError!;
+    publishedNewPairs++;
+    hasLocal = true;
+    serverAcceptsLocalKey = true;
+    return _fakeKeyPair();
   }
 
   @override
@@ -126,7 +144,11 @@ class _FakeBackupRepository extends Fake implements ChatBackupRepository {
   Object? unlockError;
   Object? saveError;
   Object? resetError;
+  Object? removeError;
   final List<String> unlockTries = [];
+
+  /// The proof sent with each removal of the backup (turning the PIN off).
+  final List<Map<String, String>?> removedWith = [];
   final List<EncryptedBackup> saved = [];
 
   /// What was sent with each save or reset to show the backup may be
@@ -170,6 +192,13 @@ class _FakeBackupRepository extends Fake implements ChatBackupRepository {
     resetPublicKeys.add(publicKey);
     saved.add(backup);
     proofs.add(ownerProof?.toJson());
+  }
+
+  @override
+  Future<void> removeBackup({required BackupOwnerProof? ownerProof}) async {
+    if (removeError != null) throw removeError!;
+    removedWith.add(ownerProof?.toJson());
+    stored = null;
   }
 
   @override
@@ -341,17 +370,18 @@ void main() {
       expect(keys.savedKeyPairs, 0);
     });
 
-    test('an account without a PIN yet has nothing to prove', () async {
+    test('an account without a PIN gets new keys, still without one', () async {
       repository.stored = null;
 
       final result = await manager.resetKeys(
         'user-1',
         askCurrentPin: () async => fail('there is no current PIN'),
-        askNewPin: () async => '222222',
+        askNewPin: () async => fail('the PIN is optional'),
       );
 
       expect(result, ResetKeysResult.reset);
-      expect(repository.proofs, [null]);
+      expect(keys.publishedNewPairs, 1);
+      expect(repository.saved, isEmpty);
     });
 
     test(
@@ -460,6 +490,140 @@ void main() {
     });
   });
 
+  group('E2eeKeyManager: the optional backup PIN', () {
+    late _FakeKeyService keys;
+    late _FakeBackupRepository repository;
+    late E2eeKeyManager manager;
+
+    setUp(() {
+      keys = _FakeKeyService()..hasLocal = true;
+      repository = _FakeBackupRepository();
+      manager = E2eeKeyManager(
+        keyService: keys,
+        backupService: _FakeBackupService(),
+        backupRepository: repository,
+      );
+    });
+
+    test('a PIN set up later backs up the keys this device has', () async {
+      final result = await manager.setUpBackupPin(
+        'user-1',
+        askNewPin: () async => '482915',
+      );
+
+      expect(result, SetUpPinResult.created);
+      // The first backup has nothing to replace, so nothing to prove.
+      expect(repository.proofs, [null]);
+      expect(repository.saved.single.verifier, 'new-verifier');
+    });
+
+    test('a second PIN is not set up over the first', () async {
+      repository.stored = existingBackup;
+
+      final result = await manager.setUpBackupPin(
+        'user-1',
+        askNewPin: () async => fail('there is a PIN already'),
+      );
+
+      expect(result, SetUpPinResult.alreadySet);
+      expect(repository.saved, isEmpty);
+    });
+
+    test('keys the account no longer uses are not backed up', () async {
+      repository.serverPublicKey = 'bmV3ZXI=';
+
+      final result = await manager.setUpBackupPin(
+        'user-1',
+        askNewPin: () async => fail('nothing to protect'),
+      );
+
+      expect(result, SetUpPinResult.keysNotReady);
+    });
+
+    test('turning the PIN off needs the current PIN, proven', () async {
+      repository.stored = existingBackup;
+
+      final result = await manager.turnOffBackupPin(
+        askCurrentPin: () async => '111111',
+      );
+
+      expect(result, TurnOffPinResult.turnedOff);
+      expect(repository.removedWith, [
+        {'currentBackupVerifier': 'proof-of-111111'},
+      ]);
+    });
+
+    test('a wrong or missing PIN turns nothing off', () async {
+      repository.stored = existingBackup;
+      repository.unlockError = const WrongPinException();
+
+      expect(
+        await manager.turnOffBackupPin(askCurrentPin: () async => '000000'),
+        TurnOffPinResult.wrongPin,
+      );
+      expect(
+        await manager.turnOffBackupPin(askCurrentPin: () async => null),
+        TurnOffPinResult.cancelled,
+      );
+      expect(repository.removedWith, isEmpty);
+    });
+
+    test('there is nothing to turn off without a PIN', () async {
+      final result = await manager.turnOffBackupPin(
+        askCurrentPin: () async => fail('there is no PIN'),
+      );
+
+      expect(result, TurnOffPinResult.noBackup);
+    });
+
+    test(
+      'a forgotten PIN can be turned off with the password, keeping the keys',
+      () async {
+        repository.stored = existingBackup;
+
+        final result = await manager.turnOffWithPassword(
+          'user-1',
+          passwordProof: 'proof-of-password',
+        );
+
+        expect(result, RecoverKeysResult.keptKeys);
+        expect(repository.removedWith, [
+          {'passwordProofToken': 'proof-of-password'},
+        ]);
+        expect(keys.publishedNewPairs, 0);
+      },
+    );
+
+    test(
+      'a device without the keys gets new ones once the PIN is off',
+      () async {
+        keys.hasLocal = false;
+        repository.stored = existingBackup;
+
+        final result = await manager.turnOffWithPassword(
+          'user-1',
+          passwordProof: 'proof-of-password',
+        );
+
+        expect(result, RecoverKeysResult.newKeys);
+        expect(keys.publishedNewPairs, 1);
+      },
+    );
+
+    test('an expired password proof turns nothing off', () async {
+      repository.stored = existingBackup;
+      repository.removeError = const WrongPinException();
+
+      final result = await manager.turnOffWithPassword(
+        'user-1',
+        passwordProof: 'proof-of-password',
+      );
+
+      expect(result, RecoverKeysResult.proofRejected);
+      expect(keys.publishedNewPairs, 0);
+    });
+  });
+
   group('E2eeSetupService.initialize', () {
     late _FakeKeyService keys;
     late _FakeBackupService backups;
@@ -482,7 +646,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => fail('must not ask'),
+        askPin: () async => fail('must not ask'),
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -495,7 +659,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => fail('must not ask'),
+        askPin: () async => fail('must not ask'),
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -509,33 +673,75 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async {
-          expect(isNewPin, isFalse);
-          return '123456';
-        },
+        askPin: () async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
-      expect(keys.deletedKeyPairs, 1);
       expect(keys.savedKeyPairs, 1);
+      expect(keys.publishedNewPairs, 0);
     });
 
-    test('first use creates keys and a PIN-protected backup', () async {
-      bool? askedForNewPin;
-
+    test('first use makes keys without asking for a PIN', () async {
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async {
-          askedForNewPin = isNewPin;
-          return '123456';
-        },
+        askPin: () async => fail('the PIN is optional'),
       );
 
       expect(result, E2eeSetupResult.ready);
-      expect(askedForNewPin, isTrue);
-      expect(keys.savedKeyPairs, 1);
-      expect(repository.saved, hasLength(1));
-      expect(keys.publicKeyUploads, 1);
+      expect(keys.publishedNewPairs, 1);
+      expect(repository.saved, isEmpty);
+    });
+
+    test(
+      'keys another device replaced are taken back only when asked',
+      () async {
+        keys.hasLocal = true;
+        keys.serverAcceptsLocalKey = false;
+
+        expect(
+          await service.initialize('u1'),
+          E2eeSetupResult.usedOnAnotherDevice,
+        );
+        expect(keys.publishedNewPairs, 0);
+
+        expect(
+          await service.initialize('u1', takeOver: true),
+          E2eeSetupResult.ready,
+        );
+        expect(keys.publishedNewPairs, 1);
+      },
+    );
+
+    test('without a prompt, keys behind a PIN wait for the chat screen', () async {
+      repository.stored = existingBackup;
+
+      expect(await service.initialize('u1'), E2eeSetupResult.cancelled);
+      expect(repository.unlockTries, isEmpty);
+      expect(keys.savedKeyPairs, 0);
+      expect(keys.publishedNewPairs, 0);
+    });
+
+    test('setups running at once make keys only once', () async {
+      keys.publishGate = Completer<void>();
+
+      final quiet = service.initialize('u1');
+      final fromChat = service.initialize(
+        'u1',
+        askPin: () async => fail('the PIN is optional'),
+      );
+      await Future<void>.delayed(Duration.zero);
+      keys.publishGate!.complete();
+
+      expect(await quiet, E2eeSetupResult.ready);
+      expect(await fromChat, E2eeSetupResult.ready);
+      expect(keys.publishedNewPairs, 1);
+    });
+
+    test('nothing is kept when the new key cannot be published', () async {
+      keys.publishError = Exception('offline');
+
+      expect(await service.initialize('u1'), E2eeSetupResult.failed);
+      expect(keys.hasLocal, isFalse);
     });
 
     test('a new device restores the backup with the PIN', () async {
@@ -543,10 +749,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async {
-          expect(isNewPin, isFalse);
-          return '123456';
-        },
+        askPin: () async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -558,7 +761,7 @@ void main() {
 
       await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => '123456',
+        askPin: () async => '123456',
       );
 
       expect(repository.unlockTries, ['proof-of-123456']);
@@ -570,7 +773,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => '000000',
+        askPin: () async => '000000',
       );
 
       expect(result, E2eeSetupResult.rateLimited);
@@ -582,7 +785,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => '123456',
+        askPin: () async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -597,7 +800,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => '123456',
+        askPin: () async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -610,7 +813,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => '000000',
+        askPin: () async => '000000',
       );
 
       expect(result, E2eeSetupResult.wrongPin);
@@ -623,7 +826,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => '000000',
+        askPin: () async => '000000',
       );
 
       expect(result, E2eeSetupResult.wrongPin);
@@ -637,7 +840,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => '123456',
+        askPin: () async => '123456',
       );
 
       expect(result, E2eeSetupResult.failed);
@@ -650,7 +853,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: ({required bool isNewPin}) async => null,
+        askPin: () async => null,
       );
 
       expect(result, E2eeSetupResult.cancelled);
@@ -662,7 +865,7 @@ void main() {
       expect(
         await service.initialize(
           'u1',
-          askPin: ({required bool isNewPin}) async => '1',
+          askPin: () async => '1',
         ),
         E2eeSetupResult.rateLimited,
       );
@@ -671,7 +874,7 @@ void main() {
       expect(
         await service.initialize(
           'u1',
-          askPin: ({required bool isNewPin}) async => '1',
+          askPin: () async => '1',
         ),
         E2eeSetupResult.failed,
       );

@@ -104,9 +104,11 @@ class _ConversationState extends ConsumerState<_Conversation> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _open());
   }
 
-  void _open() {
+  void _open({bool takeOver = false}) {
     if (!mounted) return;
-    ref.read(activeChatProvider(widget.chat).notifier).open(askPin: _askPin);
+    ref
+        .read(activeChatProvider(widget.chat).notifier)
+        .open(askPin: _askPin, takeOver: takeOver);
   }
 
   Future<void> _sendPicture() async {
@@ -139,16 +141,14 @@ class _ConversationState extends ConsumerState<_Conversation> {
         );
   }
 
-  Future<String?> _askPin({required bool isNewPin}) async {
+  /// Only for an account that chose a backup PIN, on a device without its
+  /// keys. Anyone else is never asked.
+  Future<String?> _askPin() async {
     if (!mounted) return null;
     return showPinPrompt(
       context,
-      allowCancel: !isNewPin,
-      isNewPin: isNewPin,
-      title: isNewPin ? 'Create Backup PIN' : 'Enter Backup PIN',
-      helper: isNewPin
-          ? 'This PIN encrypts your chat keys. Do not forget it!'
-          : 'Enter your PIN to restore your chats.',
+      title: context.l10n.chatPinRestoreTitle,
+      helper: context.l10n.chatPinRestoreHelp,
     );
   }
 
@@ -168,6 +168,13 @@ class _ConversationState extends ConsumerState<_Conversation> {
       ActiveChatStatus.loading => const Center(
         child: CircularProgressIndicator(),
       ),
+      ActiveChatStatus.unavailable
+          when chatState.setupResult == E2eeSetupResult.usedOnAnotherDevice =>
+        _ChatNotice(
+          message: context.l10n.chatUsedOnAnotherDevice,
+          actionLabel: context.l10n.chatUseOnThisDevice,
+          onRetry: () => _open(takeOver: true),
+        ),
       ActiveChatStatus.unavailable => _ChatNotice(
         message: switch (chatState.setupResult) {
           E2eeSetupResult.wrongPin =>
@@ -239,7 +246,10 @@ class _ChatNotice extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
 
-  const _ChatNotice({required this.message, this.onRetry});
+  /// The button's label; "Try again" when null.
+  final String? actionLabel;
+
+  const _ChatNotice({required this.message, this.onRetry, this.actionLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +272,7 @@ class _ChatNotice extends StatelessWidget {
               const SizedBox(height: 16),
               OutlinedButton(
                 onPressed: onRetry,
-                child: Text(context.l10n.chatTryAgain),
+                child: Text(actionLabel ?? context.l10n.chatTryAgain),
               ),
             ],
           ],

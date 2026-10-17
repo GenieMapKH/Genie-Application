@@ -6,6 +6,7 @@ import 'package:genie/app/session/sign_out.dart';
 import 'package:genie/core/theme/app_theme.dart';
 import 'package:genie/core/theme/scroll_physics.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
+import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/settings/providers/app_settings_providers.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
@@ -35,6 +36,9 @@ class MyApp extends ConsumerWidget {
         AppPopup.showInfo(context, context.l10n.sessionEnded);
       }
     });
+
+    // Chat keys are made at sign-in, not first when a chat is opened.
+    ref.listen(chatKeysQuietSetupProvider, (_, _) {});
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,

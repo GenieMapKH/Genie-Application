@@ -156,6 +156,31 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
   });
 
+  testWidgets(
+    'chat moved to another device is taken back only when the user asks',
+    (tester) async {
+      setup.result = E2eeSetupResult.usedOnAnotherDevice;
+
+      await openChat(tester);
+
+      expect(
+        find.textContaining('now set up on another device'),
+        findsOneWidget,
+      );
+      expect(find.byType(TextField), findsNothing);
+      expect(setup.takeOvers, [false]);
+
+      setup.result = E2eeSetupResult.ready;
+      await tester.tap(find.text('Use chat on this phone'));
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      expect(setup.takeOvers, [false, true]);
+      expect(find.byType(TextField), findsOneWidget);
+    },
+  );
+
   testWidgets('the header shows whether the other person is online', (
     tester,
   ) async {

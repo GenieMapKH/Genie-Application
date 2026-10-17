@@ -6,6 +6,29 @@ import 'package:genie/features/chat/e2ee/backup_service.dart';
 import 'package:genie/features/chat/e2ee/key_backup_vault.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 
+enum SetUpPinResult {
+  created,
+  alreadySet,
+
+  /// This device does not hold the keys the account uses now: chat has to
+  /// be opened here first.
+  keysNotReady,
+  cancelled,
+  rateLimited,
+  fetchFailed,
+  saveFailed,
+}
+
+enum TurnOffPinResult {
+  turnedOff,
+  noBackup,
+  cancelled,
+  wrongPin,
+  rateLimited,
+  fetchFailed,
+  removeFailed,
+}
+
 enum ChangePinResult {
   changed,
   noBackup,
@@ -54,7 +77,8 @@ class _KeyAccessRefused implements Exception {
 /// Account-level key maintenance from the security screen. No UI: PINs come
 /// from the [PinRequest] callbacks and the outcome is returned as an enum.
 ///
-/// Every operation replaces what the PIN protects, so each starts with
+/// The backup PIN is optional ([setUpBackupPin], [turnOffBackupPin]). Once
+/// there is one, every operation that replaces what it protects starts with
 /// proof that the owner is asking: the current PIN, or for someone who
 /// forgot it, the account password ([recoverWithPassword]). Without that,
 /// anyone holding the unlocked phone could put keys of their own on the
@@ -74,6 +98,69 @@ class E2eeKeyManager {
     required this.backupService,
     required this.backupRepository,
   });
+
+  /// Protects the keys this device holds with a new backup PIN, so a new
+  /// device can restore them. Only for an account without a PIN yet.
+  Future<SetUpPinResult> setUpBackupPin(
+    String userId, {
+    required PinRequest askNewPin,
+  }) async {
+    try {
+      if (await backupRepository.fetchBackup() != null) {
+        return SetUpPinResult.alreadySet;
+      }
+    } on BackupRateLimitedException {
+      return SetUpPinResult.rateLimited;
+    } catch (e) {
+      AppLogger.error('Could not fetch backup', e);
+      return SetUpPinResult.fetchFailed;
+    }
+    // Backing up a pair the account no longer uses would restore nothing.
+    if (!await holdsCurrentKeys(userId)) return SetUpPinResult.keysNotReady;
+
+    final pin = await askNewPin();
+    if (pin == null) return SetUpPinResult.cancelled;
+
+    try {
+      final keyPair = (await keyService.getIdentityKeyPair(userId))!;
+      await _vault.save(pin, keyPair.secretKey.extractBytes());
+      return SetUpPinResult.created;
+    } catch (e) {
+      AppLogger.error('Could not save the first backup', e);
+      return SetUpPinResult.saveFailed;
+    }
+  }
+
+  /// Removes the backup, after the current PIN proves the owner is asking.
+  /// Chat stays end-to-end encrypted; a new device then makes new keys.
+  Future<TurnOffPinResult> turnOffBackupPin({
+    required PinRequest askCurrentPin,
+  }) async {
+    final OpenedBackup? current;
+    try {
+      current = await _openCurrentBackup(askCurrentPin);
+    } on _KeyAccessRefused catch (refused) {
+      return switch (refused.reason) {
+        _Refusal.cancelled => TurnOffPinResult.cancelled,
+        _Refusal.wrongPin => TurnOffPinResult.wrongPin,
+        _Refusal.rateLimited => TurnOffPinResult.rateLimited,
+        _Refusal.fetchFailed => TurnOffPinResult.fetchFailed,
+      };
+    }
+    if (current == null) return TurnOffPinResult.noBackup;
+
+    try {
+      await backupRepository.removeBackup(ownerProof: current.proof);
+      return TurnOffPinResult.turnedOff;
+    } on WrongPinException {
+      return TurnOffPinResult.wrongPin;
+    } on BackupRateLimitedException {
+      return TurnOffPinResult.rateLimited;
+    } catch (e) {
+      AppLogger.error('Could not remove the backup', e);
+      return TurnOffPinResult.removeFailed;
+    }
+  }
 
   /// Re-encrypts the existing private key under a new PIN.
   Future<ChangePinResult> changeBackupPin({
@@ -126,6 +213,8 @@ class E2eeKeyManager {
       };
     }
 
+    if (current == null) return _resetKeysWithoutPin(userId);
+
     final newPin = await askNewPin();
     if (newPin == null) return ResetKeysResult.cancelled;
 
@@ -134,7 +223,7 @@ class E2eeKeyManager {
       await backupRepository.resetKeys(
         publicKey: base64Encode(keyPair.publicKey),
         backup: await _vault.seal(newPin, keyPair.secretKey.extractBytes()),
-        ownerProof: current?.proof,
+        ownerProof: current.proof,
       );
       await keyService.saveIdentityKeyPair(userId, keyPair);
       return ResetKeysResult.reset;
@@ -142,6 +231,17 @@ class E2eeKeyManager {
       return ResetKeysResult.wrongPin;
     } on BackupRateLimitedException {
       return ResetKeysResult.rateLimited;
+    } catch (e) {
+      AppLogger.error('Could not reset keys', e);
+      return ResetKeysResult.saveFailed;
+    }
+  }
+
+  /// No PIN protects the account: new keys, still without one.
+  Future<ResetKeysResult> _resetKeysWithoutPin(String userId) async {
+    try {
+      await keyService.createAndPublishKeyPair(userId);
+      return ResetKeysResult.reset;
     } catch (e) {
       AppLogger.error('Could not reset keys', e);
       return ResetKeysResult.saveFailed;
@@ -203,6 +303,29 @@ class E2eeKeyManager {
       return RecoverKeysResult.proofRejected;
     } catch (e) {
       AppLogger.error('Could not recover the chat keys', e);
+      return RecoverKeysResult.failed;
+    }
+  }
+
+  /// For someone who forgot the PIN and would rather have none: the
+  /// password proof removes the backup. A device without the account's keys
+  /// gets new ones, so chat works here at once.
+  Future<RecoverKeysResult> turnOffWithPassword(
+    String userId, {
+    required String passwordProof,
+  }) async {
+    final keepsKeys = await holdsCurrentKeys(userId);
+    try {
+      await backupRepository.removeBackup(
+        ownerProof: BackupOwnerProof.password(passwordProof),
+      );
+      if (keepsKeys) return RecoverKeysResult.keptKeys;
+      await keyService.createAndPublishKeyPair(userId);
+      return RecoverKeysResult.newKeys;
+    } on WrongPinException {
+      return RecoverKeysResult.proofRejected;
+    } catch (e) {
+      AppLogger.error('Could not turn the PIN off', e);
       return RecoverKeysResult.failed;
     }
   }

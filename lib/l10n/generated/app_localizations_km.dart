@@ -264,8 +264,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get pinChanged => 'បានប្ដូរលេខកូដ PIN បម្រុងទុក។';
 
   @override
-  String get pinNoBackup =>
-      'រកមិនឃើញការបម្រុងទុកទេ។ សូមបើកផ្នែកជជែកជាមុនសិន ដើម្បីបង្កើតសោ។';
+  String get pinNoBackup => 'អ្នកមិនមានលេខកូដ PIN បម្រុងទុកទេ។';
 
   @override
   String get pinLocked =>
@@ -288,7 +287,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get resetKeysConfirmMessage =>
-      'សោថ្មីនឹងត្រូវបង្កើត ហើយអ្នកនឹងមិនអាចអានសារចាស់ៗទាំងអស់បានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។\n\nជាដំបូង អ្នកនឹងត្រូវបញ្ចូលលេខកូដ PIN បច្ចុប្បន្ន។';
+      'សោថ្មីនឹងត្រូវបង្កើត ហើយអ្នកនឹងមិនអាចអានសារចាស់ៗទាំងអស់បានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។\n\nបើអ្នកមានលេខកូដ PIN បម្រុងទុក អ្នកនឹងត្រូវបញ្ចូលវាជាមុនសិន។';
 
   @override
   String get resetKeysConfirmAction => 'កំណត់សោឡើងវិញ';
@@ -1073,7 +1072,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get forgotPinKeepsHistory =>
-      'ឧបករណ៍នេះនៅមានសោជជែករបស់អ្នក ដូច្នេះគ្មានអ្វីបាត់បង់ទេ។ សូមបញ្ជាក់ពាក្យសម្ងាត់គណនីរបស់អ្នក រួចជ្រើសរើសលេខកូដ PIN ថ្មី។';
+      'ឧបករណ៍នេះនៅមានសោជជែករបស់អ្នក ដូច្នេះគ្មានអ្វីបាត់បង់ទេ។ សូមបញ្ជាក់ពាក្យសម្ងាត់គណនីរបស់អ្នក រួចជ្រើសរើសលេខកូដ PIN ថ្មី ឬបិទលេខកូដ PIN។';
 
   @override
   String get forgotPinLosesHistory =>
@@ -1100,15 +1099,86 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get pinForgotHint =>
-      'ភ្លេចលេខកូដ PIN? សូមចូលទៅ អ្នកប្រើ > សុវត្ថិភាព > ភ្លេចលេខកូដ PIN បម្រុងទុក។';
+      'ភ្លេចលេខកូដ PIN? សូមចូលទៅ អ្នកប្រើ > សុវត្ថិភាព > ភ្លេចលេខកូដ PIN បម្រុងទុក ដើម្បីជ្រើសរើសលេខកូដថ្មី ឬបិទវា។';
 
   @override
   String get chatPinNeeded =>
-      'ត្រូវការលេខកូដ PIN បម្រុងទុករបស់អ្នក ដើម្បីអាន និងផ្ញើសារ។';
+      'ការជជែករបស់អ្នកត្រូវបានការពារដោយលេខកូដ PIN បម្រុងទុក។ សូមបញ្ចូលវា ដើម្បីអាន និងផ្ញើសារនៅលើទូរស័ព្ទនេះ។';
 
   @override
   String get chatOpenFailed =>
       'មិនអាចបើកការជជែកនេះបានទេ។ សូមពិនិត្យអ៊ីនធឺណិតរបស់អ្នក។';
+
+  @override
+  String get securitySetUpPin => 'កំណត់លេខកូដ PIN បម្រុងទុក';
+
+  @override
+  String get securityTurnOffPin => 'បិទលេខកូដ PIN បម្រុងទុក';
+
+  @override
+  String get securityPinOptionalNote =>
+      'ការជជែករបស់អ្នកតែងតែត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ លេខកូដ PIN បម្រុងទុកគឺជាជម្រើស៖ បើមានវា អ្នកអាចអានការជជែកពីមុនរបស់អ្នកនៅលើទូរស័ព្ទថ្មី ហើយគ្មាននរណាអាចប្ដូរសោជជែករបស់អ្នកដោយគ្មានវាបានទេ។';
+
+  @override
+  String get pinSetUpTitle => 'បង្កើតលេខកូដ PIN បម្រុងទុក';
+
+  @override
+  String get pinSetUpHelp =>
+      'អ្នកនឹងត្រូវការលេខកូដ PIN នេះ ដើម្បីអានការជជែករបស់អ្នកនៅលើទូរស័ព្ទថ្មី។ សូមជ្រើសរើសលេខដែលអ្នកចាំបាន។';
+
+  @override
+  String get pinSetUpDone => 'បានកំណត់លេខកូដ PIN បម្រុងទុក។';
+
+  @override
+  String get pinAlreadySet => 'អ្នកមានលេខកូដ PIN បម្រុងទុករួចហើយ។';
+
+  @override
+  String get pinKeysNotReady =>
+      'សូមបើកការជជែកនៅលើទូរស័ព្ទនេះជាមុនសិន រួចកំណត់លេខកូដ PIN។';
+
+  @override
+  String get pinTurnOffConfirmTitle => 'បិទលេខកូដ PIN បម្រុងទុក?';
+
+  @override
+  String get pinTurnOffConfirmMessage =>
+      'ការជជែករបស់អ្នកនៅតែត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ បើគ្មានលេខកូដ PIN ទូរស័ព្ទថ្មីនឹងមិនអាចអានសារពីមុនរបស់អ្នកបានទេ។\n\nជាដំបូង អ្នកនឹងត្រូវបញ្ចូលលេខកូដ PIN បច្ចុប្បន្ន។';
+
+  @override
+  String get pinTurnOffAction => 'បិទ';
+
+  @override
+  String get pinTurnedOff => 'បានបិទលេខកូដ PIN បម្រុងទុក។';
+
+  @override
+  String get pinTurnOffFailed =>
+      'មិនអាចបិទលេខកូដ PIN បានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្ដូរឡើយ។';
+
+  @override
+  String get forgotPinChoiceTitle => 'រក្សាលេខកូដ PIN បម្រុងទុក?';
+
+  @override
+  String get forgotPinChoiceMessage =>
+      'បើមានលេខកូដ PIN ថ្មី អ្នកអាចអានការជជែករបស់អ្នកនៅលើទូរស័ព្ទថ្មីបាន។ បើគ្មាន ការជជែករបស់អ្នកនៅតែត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង ប៉ុន្តែមានតែទូរស័ព្ទនេះទេដែលអាចអានវាបាន។';
+
+  @override
+  String get forgotPinChoiceNoPin => 'គ្មាន PIN';
+
+  @override
+  String get forgotPinChoiceNewPin => 'PIN ថ្មី';
+
+  @override
+  String get chatPinRestoreTitle => 'បញ្ចូលលេខកូដ PIN បម្រុងទុករបស់អ្នក';
+
+  @override
+  String get chatPinRestoreHelp =>
+      'អ្នកបានការពារការជជែករបស់អ្នកដោយលេខកូដ PIN បម្រុងទុក។ សូមបញ្ចូលវា ដើម្បីអានការជជែកនៅលើទូរស័ព្ទនេះ។';
+
+  @override
+  String get chatUsedOnAnotherDevice =>
+      'ការជជែករបស់អ្នកឥឡូវត្រូវបានរៀបចំនៅលើឧបករណ៍ផ្សេង។ ប្រើវានៅលើទូរស័ព្ទនេះវិញឬ? សារពីមុននឹងមិនអាចអាននៅទីនេះបានទេ ហើយឧបករណ៍ផ្សេងនោះនឹងត្រូវប្ដូរមកវិញតាមរបៀបដដែល។\n\nដើម្បីប្រើការជជែកនៅលើឧបករណ៍ច្រើន សូមកំណត់លេខកូដ PIN បម្រុងទុកនៅក្នុង អ្នកប្រើ > សុវត្ថិភាព។';
+
+  @override
+  String get chatUseOnThisDevice => 'ប្រើការជជែកនៅលើទូរស័ព្ទនេះ';
 
   @override
   String get devicesImmediateNote =>

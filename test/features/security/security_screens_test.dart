@@ -70,13 +70,19 @@ void main() {
     ) async {
       await pumpTestApp(tester, const SecurityPage(), overrides: [_signedIn()]);
 
+      // The backup PIN is optional: it can be added and removed here.
+      expect(find.textContaining('A backup PIN is optional'), findsOneWidget);
       for (final row in [
+        'Set up backup PIN',
         'Change backup PIN',
+        'Forgot backup PIN',
+        'Turn off backup PIN',
         'Reset encryption keys',
         'Change password',
         'Logged-in devices',
         'Deactivate or delete account',
       ]) {
+        await tester.scrollUntilVisible(find.text(row), 100);
         expect(find.text(row), findsOneWidget);
       }
     });

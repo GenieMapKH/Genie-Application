@@ -7,6 +7,8 @@ import 'package:genie/features/security/presentation/screens/change_password_pag
 import 'package:genie/features/security/presentation/screens/create_password_page.dart';
 import 'package:genie/features/security/presentation/screens/devices_page.dart';
 import 'package:genie/features/security/presentation/widgets/e2ee_settings_actions.dart';
+import 'package:genie/features/security/presentation/widgets/forgot_pin_actions.dart';
+import 'package:genie/features/security/presentation/widgets/info_note.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/widgets/app_page_scaffold.dart';
 import 'package:genie/shared/widgets/settings_list.dart';
@@ -28,8 +30,21 @@ class SecurityPage extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
           SettingsSectionTitle(l10n.securitySectionEncryption),
+          InfoNote(l10n.securityPinOptionalNote),
+          const SizedBox(height: 12),
           SettingsSection(
             children: [
+              SettingsRow(
+                icon: Icons.lock_open_outlined,
+                title: l10n.securitySetUpPin,
+                onTap: profile == null
+                    ? null
+                    : () => E2eeSettingsActions.setUpBackupPin(
+                        context,
+                        ref,
+                        userId: profile.id,
+                      ),
+              ),
               SettingsRow(
                 icon: Icons.lock_outline,
                 title: l10n.securityChangePin,
@@ -40,11 +55,16 @@ class SecurityPage extends ConsumerWidget {
                 title: l10n.securityForgotPin,
                 onTap: profile == null
                     ? null
-                    : () => E2eeSettingsActions.forgotPin(
+                    : () => ForgotPinActions.forgotPin(
                         context,
                         ref,
                         profile: profile,
                       ),
+              ),
+              SettingsRow(
+                icon: Icons.no_encryption_outlined,
+                title: l10n.securityTurnOffPin,
+                onTap: () => E2eeSettingsActions.turnOffBackupPin(context, ref),
               ),
               SettingsRow(
                 icon: Icons.key_off_outlined,

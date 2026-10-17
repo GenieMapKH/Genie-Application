@@ -7,14 +7,31 @@ import 'package:genie/features/chat/e2ee/key_backup_vault.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 
 /// How [E2eeSetupService.initialize] ended. The UI turns this into a message.
-enum E2eeSetupResult { ready, cancelled, wrongPin, rateLimited, failed }
+enum E2eeSetupResult {
+  ready,
+
+  /// The account has a backup PIN and none was given.
+  cancelled,
+  wrongPin,
+  rateLimited,
+  failed,
+
+  /// The account set up chat on another device since, without a backup PIN,
+  /// so this device cannot have its keys. Chat works here again once the
+  /// user asks for it ([E2eeSetupService.initialize] with `takeOver`).
+  usedOnAnotherDevice,
+}
 
 /// Asks the user for their backup PIN. Returns null if they cancel.
-typedef PinPrompt = Future<String?> Function({required bool isNewPin});
+typedef PinPrompt = Future<String?> Function();
 
-/// Makes end-to-end encryption ready on this device: finds or creates the
-/// user's identity key and restores or creates its PIN-protected backup.
-/// Contains no UI: the PIN comes from the [PinPrompt].
+/// Makes end-to-end encryption ready on this device. Contains no UI.
+///
+/// Messages are always end-to-end encrypted. The backup PIN is optional:
+/// without one, the keys live on this device only, and a new device makes
+/// new keys (earlier messages cannot be read there). With one, a new device
+/// restores the keys from the PIN-protected backup, which is the only time
+/// a PIN is asked for here.
 class E2eeSetupService {
   final KeyService keyService;
   final BackupService backupService;
@@ -25,31 +42,51 @@ class E2eeSetupService {
     backupRepository: backupRepository,
   );
 
+  /// The setup in progress. The quiet one at sign-in and one started by a
+  /// chat screen run one after the other, or both could make keys.
+  Future<void> _running = Future.value();
+
   E2eeSetupService({
     required this.keyService,
     required this.backupService,
     required this.backupRepository,
   });
 
+  /// Without [askPin] nothing is asked: an account whose keys are behind a
+  /// backup PIN is reported as [E2eeSetupResult.cancelled]. [takeOver] makes
+  /// new keys when the account moved to another device.
   Future<E2eeSetupResult> initialize(
     String userId, {
-    required PinPrompt askPin,
+    PinPrompt? askPin,
+    bool takeOver = false,
+  }) {
+    final result = _running.then(
+      (_) => _initialize(userId, askPin: askPin, takeOver: takeOver),
+    );
+    _running = result;
+    return result;
+  }
+
+  Future<E2eeSetupResult> _initialize(
+    String userId, {
+    required PinPrompt? askPin,
+    required bool takeOver,
   }) async {
     try {
-      if (await keyService.hasLocalKeyPair(userId) ||
-          await keyService.adoptLegacyKeyPair(userId)) {
-        if (await keyService.uploadPublicKeyIfNeeded(userId)) {
-          return E2eeSetupResult.ready;
-        }
-        // The keys were reset on another device. The pair kept here no longer
-        // belongs to the account: drop it and restore the new one below.
-        await keyService.deleteIdentityKeyPair(userId);
+      final hasKeys =
+          await keyService.hasLocalKeyPair(userId) ||
+          await keyService.adoptLegacyKeyPair(userId);
+      if (hasKeys && await keyService.publishPublicKeyIfMissing(userId)) {
+        return E2eeSetupResult.ready;
       }
 
+      // No keys here, or the server lists other keys for the account.
       final backup = await backupRepository.fetchBackup();
-      return backup == null
-          ? await _createIdentity(userId, askPin)
-          : await _restoreIdentity(userId, backup, askPin);
+      if (backup != null) return await _restoreIdentity(userId, backup, askPin);
+      if (hasKeys && !takeOver) return E2eeSetupResult.usedOnAnotherDevice;
+
+      await keyService.createAndPublishKeyPair(userId);
+      return E2eeSetupResult.ready;
     } on BackupRateLimitedException {
       return E2eeSetupResult.rateLimited;
     } on WrongPinException {
@@ -60,28 +97,14 @@ class E2eeSetupService {
     }
   }
 
-  /// First time on any device: create keys and protect them with a new PIN.
-  Future<E2eeSetupResult> _createIdentity(
-    String userId,
-    PinPrompt askPin,
-  ) async {
-    final keyPair = await keyService.generateAndSaveIdentityKeyPair(userId);
-
-    final pin = await askPin(isNewPin: true);
-    if (pin != null) {
-      await _vault.save(pin, keyPair.secretKey.extractBytes());
-    }
-    return _finish(userId);
-  }
-
-  /// New device for an existing account: unlock the server backup with the PIN.
-  /// A wrong PIN or a locked backup is reported by [initialize].
+  /// The account has a backup PIN: unlock the server backup with it. A wrong
+  /// PIN or a locked backup is reported by [_initialize].
   Future<E2eeSetupResult> _restoreIdentity(
     String userId,
     StoredBackup backup,
-    PinPrompt askPin,
+    PinPrompt? askPin,
   ) async {
-    final pin = await askPin(isNewPin: false);
+    final pin = await askPin?.call();
     if (pin == null) return E2eeSetupResult.cancelled;
 
     final opened = await _vault.open(pin, backup);
@@ -90,11 +113,6 @@ class E2eeSetupService {
       publicKey: base64Decode(await backupRepository.fetchPublicKey(userId)),
       secretKeyBytes: opened.privateKey,
     );
-    return _finish(userId);
-  }
-
-  Future<E2eeSetupResult> _finish(String userId) async {
-    await keyService.uploadPublicKeyIfNeeded(userId);
     return E2eeSetupResult.ready;
   }
 }
