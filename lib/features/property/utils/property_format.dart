@@ -15,6 +15,9 @@ class PropertyFormat {
     return _price.format(double.tryParse(raw) ?? 0.0);
   }
 
+  /// `$ 105,400` from a number, e.g. a listing's discounted price.
+  static String money(double value) => _price.format(value);
+
   /// Trims the trailing `.0` so 1670.0 renders as `1670` but 83.5 stays `83.5`.
   static String size(double value) {
     return value == value.roundToDouble()

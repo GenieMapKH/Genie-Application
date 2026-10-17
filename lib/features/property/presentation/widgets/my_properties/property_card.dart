@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/l10n/l10n.dart';
 
 class PropertyCard extends StatelessWidget {
@@ -74,10 +76,12 @@ class PropertyCard extends StatelessWidget {
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: property.imageUrls.isNotEmpty
-                      ? Image.network(
-                          property.imageUrls.first,
-                          cacheWidth: 800,
+                      ? CachedNetworkImage(
+                          imageUrl: property.imageUrls.first,
+                          memCacheWidth: 800,
                           fit: BoxFit.cover,
+                          errorWidget: (_, _, _) =>
+                              const PropertyImagePlaceholder(),
                         )
                       : Center(
                           child: Icon(
@@ -227,7 +231,7 @@ class PropertyCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF2563EB), // Blue color
+                      color: context.colors.accent,
                     ),
                   ),
                   const SizedBox(height: 12),

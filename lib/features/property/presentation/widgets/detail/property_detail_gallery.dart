@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
@@ -36,11 +37,11 @@ class PropertyDetailGallery extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
               )
-            : Image.network(
-                url,
+            : CachedNetworkImage(
+                imageUrl: url,
                 fit: BoxFit.cover,
-                cacheWidth: 1200,
-                errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
+                memCacheWidth: 1200,
+                errorWidget: (_, _, _) => const PropertyImagePlaceholder(),
               );
 
         return SizedBox(

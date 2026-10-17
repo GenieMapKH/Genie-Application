@@ -156,7 +156,7 @@ class DrawingControlsPanel extends StatelessWidget {
                       child: Text(
                         context.l10n.commonSave,
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: context.colors.onPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),

@@ -169,7 +169,7 @@ class PropertyImagePicker extends StatelessWidget {
                       child: Text(
                         context.l10n.propertyUploadPropertyPhotos,
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: context.colors.onPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),

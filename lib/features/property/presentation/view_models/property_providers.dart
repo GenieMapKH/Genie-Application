@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/data/repositories/property_repository.dart';
+import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:genie/features/property/presentation/view_models/property_visibility.dart';
 
 final propertyRepositoryProvider = Provider<PropertyRepository>((ref) {
   return PropertyRepository(ref.watch(apiClientProvider));
@@ -47,6 +49,30 @@ class PropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
     await ref.read(propertyRepositoryProvider).unpublish(id);
     _silentRefresh();
   }
+
+  /// Moves listing [id], now of [status], to [target]. Throws when the
+  /// server refuses (see [visibilityChange]).
+  Future<void> changeVisibility(
+    String id,
+    String status,
+    PropertyVisibility target,
+  ) async {
+    final change = visibilityChange(status, target);
+    if (change == null) {
+      throw StateError('Cannot move a $status listing to ${target.name}');
+    }
+    final repo = ref.read(propertyRepositoryProvider);
+    await switch (change) {
+      VisibilityChange.publish => repo.publish(id),
+      VisibilityChange.relist => repo.relist(id),
+      VisibilityChange.unpublish => repo.unpublish(id),
+      VisibilityChange.markSold => repo.markSold(id),
+    };
+    await _silentRefresh();
+  }
+
+  /// Fetches the user's listings again without showing a loading state.
+  Future<void> refreshQuietly() => _silentRefresh();
 
   Future<void> removeProperty(String id) async {
     // Optimistic UI update
@@ -132,53 +158,57 @@ final visitedPropertyIdsProvider =
       return VisitedPropertyIdsNotifier();
     });
 
+/// Published listings in the area the map shows, and only those: moving the
+/// map replaces them. Nothing is asked before the map reports its area,
+/// since asking without one would mean every listing in the world.
 class PublicPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
+  /// Numbers each search, so an answer that arrives after a newer search
+  /// started (the map moved again meanwhile) is dropped.
+  int _search = 0;
+
   @override
   Future<List<PropertyModel>> build() async {
-    ref.listen(mapBoundsProvider, (previous, next) async {
-      if (next == null) return;
-
-      final repo = ref.read(propertyRepositoryProvider);
-      try {
-        final newProperties = await repo.fetchPublicMapProperties(
-          minLat: next.minLat,
-          maxLat: next.maxLat,
-          minLng: next.minLng,
-          maxLng: next.maxLng,
-        );
-
-        if (state.hasValue) {
-          // Accumulate properties to prevent existing map markers from glitching/disappearing
-          final merged = <String, PropertyModel>{};
-          for (final p in state.value!) {
-            merged[p.id] = p;
-          }
-          for (final p in newProperties) {
-            merged[p.id] = p;
-          }
-          state = AsyncData(merged.values.toList());
-        } else {
-          state = AsyncData(newProperties);
-        }
-      } catch (e) {
-        // A failed background refresh keeps the markers already on the map.
-        AppLogger.error('Map properties refresh failed', e);
-      }
+    ref.listen(mapBoundsProvider, (_, next) {
+      if (next != null) _refresh(next);
+    });
+    // A new filter asks again for the same area.
+    ref.listen(mapPropertyFilterProvider, (_, _) {
+      final bounds = ref.read(mapBoundsProvider);
+      if (bounds != null) _refresh(bounds);
     });
 
-    final repo = ref.read(propertyRepositoryProvider);
+    final search = ++_search;
     final bounds = ref.read(mapBoundsProvider);
+    if (bounds == null) return const [];
 
-    if (bounds != null) {
-      return repo.fetchPublicMapProperties(
-        minLat: bounds.minLat,
-        maxLat: bounds.maxLat,
-        minLng: bounds.minLng,
-        maxLng: bounds.maxLng,
-      );
-    } else {
-      return repo.fetchPublicMapProperties();
+    final found = await _fetch(bounds);
+    // A newer search already answered: keep what it found.
+    return search == _search ? found : state.valueOrNull ?? found;
+  }
+
+  Future<void> _refresh(MapBounds bounds) async {
+    final search = ++_search;
+    try {
+      final found = await _fetch(bounds);
+      if (search == _search) state = AsyncData(found);
+    } catch (e) {
+      // A failed refresh keeps the markers already on the map.
+      AppLogger.error('Map properties refresh failed', e);
     }
+  }
+
+  Future<List<PropertyModel>> _fetch(MapBounds bounds) {
+    final filter = ref.read(mapPropertyFilterProvider);
+    return ref
+        .read(propertyRepositoryProvider)
+        .fetchPublicMapProperties(
+          minLat: bounds.minLat,
+          maxLat: bounds.maxLat,
+          minLng: bounds.minLng,
+          maxLng: bounds.maxLng,
+          propertyType: filter.propertyType,
+          listingType: filter.listingType,
+        );
   }
 }
 

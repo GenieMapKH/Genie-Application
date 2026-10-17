@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Price, spec row and location — the block that sits directly under the photo
 /// gallery in the detail sheet and stays visible as the sheet expands.
@@ -17,11 +18,24 @@ class PropertyDetailSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // TODO(backend): no previousPrice column yet, so the reduction is fixed.
-        const _PriceCutBadge(percentage: 20),
-        const SizedBox(height: 10),
+        if (property.hasDiscount) ...[
+          _PriceCutBadge(property: property),
+          const SizedBox(height: 10),
+          // The asking price, crossed out above what the buyer pays.
+          Text(
+            PropertyFormat.money(property.askingPrice),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: context.colors.textMuted,
+              decoration: TextDecoration.lineThrough,
+              decorationColor: context.colors.textMuted,
+            ),
+          ),
+          const SizedBox(height: 2),
+        ],
         Text(
-          PropertyFormat.price(property.price),
+          PropertyFormat.money(property.finalPrice),
           style: GoogleFonts.inter(
             fontSize: 24,
             fontWeight: FontWeight.w800,
@@ -44,25 +58,30 @@ class PropertyDetailSummary extends StatelessWidget {
   }
 }
 
+/// "Price cut: 20%" or "Price cut: $ 5,000", as the seller entered it.
 class _PriceCutBadge extends StatelessWidget {
-  final int percentage;
+  final PropertyModel property;
 
-  const _PriceCutBadge({required this.percentage});
+  const _PriceCutBadge({required this.property});
 
   @override
   Widget build(BuildContext context) {
+    final value = property.discountValue!;
+    final amount = property.discountType == 'percent'
+        ? '${PropertyFormat.size(value)}%'
+        : PropertyFormat.money(value);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEE2E2),
+        color: context.colors.dangerSoft,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        'Price Cut: $percentage%',
+        context.l10n.propertyPriceCut(amount),
         style: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFFDC2626),
+          color: context.colors.onDangerSoft,
         ),
       ),
     );

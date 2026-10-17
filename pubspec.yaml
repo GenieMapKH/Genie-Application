@@ -78,16 +78,19 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: true
-  image_path: "assets/images/login/logo.png"
+  image_path: "assets/images/brand/app_icon.png"
   min_sdk_android: 21
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/login/logo.png"
+  adaptive_icon_background: "#142B4A"
+  adaptive_icon_foreground: "assets/images/brand/app_icon_foreground.png"
+  remove_alpha_ios: true
   web:
     generate: true
-    image_path: "assets/images/login/logo.png"
+    image_path: "assets/images/brand/app_icon.png"
+    background_color: "#142B4A"
+    theme_color: "#142B4A"
   windows:
     generate: true
-    image_path: "assets/images/login/logo.png"
+    image_path: "assets/images/brand/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -109,7 +112,7 @@ flutter:
     - assets/images/homescreen/
     - assets/images/homescreen/mapDefault.png
     - assets/images/homescreen/mapSatellite.png
-    - assets/images/login/
+    - assets/images/brand/
     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -243,7 +243,7 @@ class MainBottomNav extends ConsumerWidget {
               child: Text(
                 l10n.loginRequiredAction,
                 style: GoogleFonts.inter(
-                  color: Colors.white,
+                  color: context.colors.onPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

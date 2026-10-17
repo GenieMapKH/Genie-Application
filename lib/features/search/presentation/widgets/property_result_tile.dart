@@ -46,7 +46,7 @@ class PropertyResultTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    PropertyFormat.price(property.price),
+                    PropertyFormat.money(property.finalPrice),
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,

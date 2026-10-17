@@ -74,9 +74,9 @@ class PropertyMapPreview extends StatelessWidget {
                             points: points,
                             strokeColor: context.colors.primary,
                             strokeWidth: 2,
-                            fillColor: const Color(
-                              0xFF4F5BD5,
-                            ).withValues(alpha: 0.2),
+                            fillColor: context.colors.accent.withValues(
+                              alpha: 0.2,
+                            ),
                           ),
                         }
                       : const {},

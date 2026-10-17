@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:genie/features/property/data/models/property_keyword.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:genie/features/property/presentation/widgets/forms/types/property_type_forms.dart';
 import 'add_property_page.dart';
@@ -48,9 +49,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                       Polygon(
                         polygonId: const PolygonId('preview'),
                         points: widget.boundaryPoints,
-                        fillColor: const Color(
-                          0xFF5B5FEF,
-                        ).withValues(alpha: 0.2),
+                        fillColor: context.colors.accent.withValues(alpha: 0.2),
                         strokeColor: context.colors.accent,
                         strokeWidth: 2,
                       ),
@@ -129,15 +128,15 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   'assets/icons/draw_property.svg',
                   width: 18,
                   height: 18,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
+                  colorFilter: ColorFilter.mode(
+                    context.colors.onPrimary,
                     BlendMode.srcIn,
                   ),
                 ),
                 label: Text(
                   context.l10n.propertyDrawingProperty,
                   style: GoogleFonts.inter(
-                    color: Colors.white,
+                    color: context.colors.onPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -162,15 +161,15 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
     return Wrap(
       spacing: 8,
       runSpacing: 12,
-      children: keywords.map((kw) {
-        final isSelected = selectedKeywords.contains(kw['name']);
+      children: PropertyKeyword.all.map((kw) {
+        final isSelected = selectedKeywords.contains(kw.code);
         return GestureDetector(
           onTap: () {
             setState(() {
               if (isSelected) {
-                selectedKeywords.remove(kw['name']);
+                selectedKeywords.remove(kw.code);
               } else {
-                selectedKeywords.add(kw['name']);
+                selectedKeywords.add(kw.code);
               }
             });
           },
@@ -193,7 +192,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SvgPicture.asset(
-                  kw['iconPath'],
+                  kw.iconPath,
                   width: 16,
                   height: 16,
                   colorFilter: ColorFilter.mode(
@@ -205,7 +204,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  kw['name'],
+                  kw.label,
                   style: GoogleFonts.inter(
                     color: isSelected
                         ? context.colors.accent

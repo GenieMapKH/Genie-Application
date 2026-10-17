@@ -101,7 +101,7 @@ class MyPropertiesPage extends ConsumerWidget {
             child: Text(
               context.l10n.propertyAddProperty,
               style: GoogleFonts.inter(
-                color: Colors.white,
+                color: context.colors.onPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -132,6 +132,14 @@ class MyPropertiesPage extends ConsumerWidget {
         final property = properties[index];
         return PropertyCard(
           property: property,
+          onTap: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AddPropertyPage.edit(property),
+              ),
+            );
+            ref.read(propertiesProvider.notifier).refresh();
+          },
           onOptionsTapped: () =>
               PropertyOptionsSheet.show(context, ref, property),
         );

@@ -170,19 +170,20 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                           onPressed: _isLoading ? null : _handleSubmit,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.colors.primary,
-                            disabledBackgroundColor: const Color(0x994F5BD5),
+                            disabledBackgroundColor: context.colors.primary
+                                .withValues(alpha: 0.6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
                           ),
                           child: _isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 22,
                                   height: 22,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
-                                    color: Colors.white,
+                                    color: context.colors.onPrimary,
                                   ),
                                 )
                               : Text(
@@ -190,7 +191,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                                    color: context.colors.onPrimary,
                                   ),
                                 ),
                         ),

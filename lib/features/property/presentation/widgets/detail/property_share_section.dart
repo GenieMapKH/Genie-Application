@@ -141,7 +141,7 @@ class _ShareButton extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: context.colors.onPrimary,
                 ),
               ),
             )

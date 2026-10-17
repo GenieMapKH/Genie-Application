@@ -92,13 +92,22 @@ void main() {
     expect(result.isValid, isTrue);
   });
 
-  test('business for sale asks for land size before listing setting', () {
-    final result = validate(
+  test('business for sale asks for price, listing setting, then land size', () {
+    ValidationResult business({
+      String price = '100',
+      String listing = 'Sale',
+    }) => validate(
       propertyType: 'Business for Sale',
+      price: price,
+      listingSetting: listing,
       landSize: '',
-      listingSetting: '',
     );
 
-    expect(result.firstErrorField, PropertyField.landSize);
+    expect(business(price: '').firstErrorField, PropertyField.price);
+    expect(
+      business(listing: '').firstErrorField,
+      PropertyField.listingSettings,
+    );
+    expect(business().firstErrorField, PropertyField.landSize);
   });
 }

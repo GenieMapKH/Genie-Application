@@ -5,14 +5,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
     
     <application
-        android:label="Genie"
+        android:label="Tilomnov"
         android:allowBackup="false"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCrKYYhnFiC1F8xNDfhTq1-HikvyocpLvY"/>
+            android:value="${MAPS_API_KEY}"/>
             
         <activity
             android:name=".MainActivity"

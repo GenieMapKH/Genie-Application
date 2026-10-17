@@ -833,7 +833,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyPropertyHighlights => 'Property Highlights';
 
   @override
-  String get propertyGenie => 'Genie';
+  String get propertyGenie => 'Tilomnov';
 
   @override
   String get propertyViews => 'Views';
@@ -1341,4 +1341,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileNoContact => 'No contact details shared.';
+
+  @override
+  String propertyPhotoLimit(int count) {
+    return 'A listing can have up to $count photos.';
+  }
+
+  @override
+  String get propertyEditProperty => 'Edit Property';
+
+  @override
+  String get propertySaveChanges => 'Save Changes';
+
+  @override
+  String get propertySavingChanges => 'Saving changes...';
+
+  @override
+  String get propertyChangesSaved => 'Changes saved.';
+
+  @override
+  String get propertyCouldNotSaveChanges =>
+      'Could not save your changes. Please try again.';
+
+  @override
+  String propertyCurrentPhotos(int count) {
+    return 'Current photos ($count)';
+  }
+
+  @override
+  String get propertyNearby => 'What\'s nearby';
+
+  @override
+  String get propertyNearbyCaption => 'Closest by road from this property';
+
+  @override
+  String get propertyNearbyMarkets => 'Markets';
+
+  @override
+  String get propertyNearbyHospitals => 'Hospitals';
+
+  @override
+  String get propertyNearbySchools => 'Schools';
+
+  @override
+  String propertyNearbyNoneWithin(int km) {
+    return 'None found within $km km';
+  }
+
+  @override
+  String propertyDistanceKm(String distance) {
+    return '$distance km';
+  }
+
+  @override
+  String propertyDistanceM(int distance) {
+    return '$distance m';
+  }
+
+  @override
+  String propertyDriveMinutes(int minutes) {
+    return '$minutes min drive';
+  }
+
+  @override
+  String propertyStraightLine(String distance) {
+    return '$distance straight line';
+  }
+
+  @override
+  String get propertyNearbyCouldNotLoad => 'Couldn\'t load nearby places.';
+
+  @override
+  String get propertyDiscount => 'Discount (optional)';
+
+  @override
+  String get propertyDiscountHint => 'e.g. 10';
+
+  @override
+  String get propertyDiscountInvalid =>
+      'Use more than 0 and less than 100%, or less than the price.';
+
+  @override
+  String propertyPriceCut(String amount) {
+    return 'Price cut: $amount';
+  }
+
+  @override
+  String get propertyVisibility => 'Visibility';
+
+  @override
+  String get propertyVisibilityPublic => 'Public';
+
+  @override
+  String get propertyVisibilityPublicHint => 'Anyone can find it on the map.';
+
+  @override
+  String get propertyVisibilityDraft => 'Draft';
+
+  @override
+  String get propertyVisibilityDraftHint => 'Hidden; only you can see it.';
+
+  @override
+  String get propertyVisibilitySold => 'Sold';
+
+  @override
+  String get propertyVisibilitySoldHint => 'Marked sold and taken off the map.';
+
+  @override
+  String get propertyVisibilitySoldNeedsPublic =>
+      'Publish it first to mark it sold.';
+
+  @override
+  String get propertyVisibilityChanged => 'Visibility updated.';
+
+  @override
+  String get propertyCouldNotChangeVisibility =>
+      'Could not change the visibility. Please try again.';
+
+  @override
+  String get propertyCouldNotOpenEditor =>
+      'Could not open the listing for editing. Please try again.';
+
+  @override
+  String get propertyDrawBoundaryFirst =>
+      'Draw the property on the map first to measure it.';
 }

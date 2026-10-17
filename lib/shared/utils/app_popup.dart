@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:genie/core/theme/app_colors.dart';
+
 import 'dart:async';
 
 class AppPopup {
@@ -30,9 +32,9 @@ class AppPopup {
       context: context,
       message: message,
       icon: Icons.info_rounded,
-      iconColor: const Color(0xFF3B82F6), // Blue
-      backgroundColor: const Color(0xFF1E3A8A), // Very dark blue
-      borderColor: const Color(0xFF2563EB).withValues(alpha: 0.3),
+      iconColor: AppColors.light.highlight, // Brand gold
+      backgroundColor: AppColors.light.primary, // Brand navy
+      borderColor: AppColors.light.highlight.withValues(alpha: 0.3),
     );
   }
 

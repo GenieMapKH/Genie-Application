@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 
 /// Everything the map needs to render property layers: one deduplicated list
@@ -15,10 +16,14 @@ class MapProperties {
 
 /// Merges the user's own properties over the public map feed. The user's copy
 /// wins on conflict because it carries fields the public endpoint may omit.
+/// Both obey the filter pills: the feed is fetched filtered, the user's own
+/// listings are filtered here (which also hides stale results at once while
+/// a newly filtered feed is on its way).
 final mapPropertiesProvider = Provider<MapProperties>((ref) {
   final mine = ref.watch(propertiesProvider);
   final public = ref.watch(publicPropertiesProvider);
   final visitedIds = ref.watch(visitedPropertyIdsProvider);
+  final filter = ref.watch(mapPropertyFilterProvider);
 
   final Map<String, PropertyModel> merged = {};
   final Set<String> ownedIds = {};
@@ -36,12 +41,15 @@ final mapPropertiesProvider = Provider<MapProperties>((ref) {
     }
   }
 
-  final List<PropertyModel> finalProperties = merged.values.map((p) {
-    if (visitedIds.contains(p.id) && !p.isVisited) {
-      return p.copyWith(isVisited: true);
-    }
-    return p;
-  }).toList();
+  final List<PropertyModel> finalProperties = merged.values
+      .where(filter.matches)
+      .map((p) {
+        if (visitedIds.contains(p.id) && !p.isVisited) {
+          return p.copyWith(isVisited: true);
+        }
+        return p;
+      })
+      .toList();
 
   return MapProperties(properties: finalProperties, ownedIds: ownedIds);
 });

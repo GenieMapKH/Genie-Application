@@ -67,13 +67,17 @@ class PropertyContactBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                icon: const Icon(Icons.phone, size: 18, color: Colors.white),
+                icon: Icon(
+                  Icons.phone,
+                  size: 18,
+                  color: context.colors.onPrimary,
+                ),
                 label: Text(
                   context.l10n.propertyCallNow,
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: context.colors.onPrimary,
                   ),
                 ),
               ),

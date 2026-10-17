@@ -95,7 +95,7 @@ class _Details extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          PropertyFormat.price(property.price),
+          PropertyFormat.money(property.finalPrice),
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w800,

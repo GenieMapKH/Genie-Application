@@ -121,7 +121,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 BoxShadow(
                   color: hasError
                       ? const Color(0x1ADC2626)
-                      : const Color(0x1F4F5BD5),
+                      : primaryColor.withValues(alpha: 0.12),
                   blurRadius: 10.0,
                   spreadRadius: 1.0,
                   offset: const Offset(0, 2),

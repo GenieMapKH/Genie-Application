@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/app_header_bar.dart';
-import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:genie/features/property/presentation/widgets/property_type_selector.dart';
+import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:genie/features/property/presentation/widgets/existing_property_photos.dart';
+import 'package:genie/features/property/presentation/widgets/forms/fields/property_discount_field.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_picker.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'add_property_page.dart';
+import 'add_property_page_form_binding.dart';
 import 'add_property_page_forms_dynamic.dart';
 import 'add_property_page_logic.dart';
 import 'package:genie/core/theme/app_colors.dart';
@@ -24,49 +27,12 @@ extension AddPropertyPageLayout on AddPropertyPageState {
         child: Column(
           children: [
             AppHeaderBar(
-              title: context.l10n.propertyAddProperty,
-              trailing: TextButton(
-                onPressed: () {
-                  () async {
-                    try {
-                      final property = await ref
-                          .read(addPropertyControllerProvider.notifier)
-                          .submitProperty(
-                            title: titleController.text,
-                            price: priceController.text,
-                            propertyType: selectedPropertyType,
-                            landSize: landSizeController.text,
-                            buildingSize: buildingSizeController.text,
-                            unitSize: unitSizeController.text,
-                            boundaryPoints: widget.boundaryPoints,
-                            selectedPhotos: selectedPhotos,
-                            status: 'Draft',
-                          );
-                      if (context.mounted && property != null) {
-                        Navigator.of(context).pop(property);
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Error saving draft: ${e.toString()}',
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  }();
-                },
-                child: Text(
-                  context.l10n.commonSave,
-                  style: GoogleFonts.inter(
-                    color: context.colors.accent,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              title: isEditing
+                  ? context.l10n.propertyEditProperty
+                  : context.l10n.propertyAddProperty,
+              // Editing saves with the button below; a new listing can also
+              // be kept as a draft from here.
+              trailing: isEditing ? null : _saveDraftButton(context),
             ),
             Expanded(
               child: GestureDetector(
@@ -106,6 +72,21 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                       ),
                       const SizedBox(height: 16),
                       buildDynamicFields(),
+                      const SizedBox(height: 16),
+                      PropertyDiscountField(
+                        controller: discountController,
+                        discountType: selectedDiscountType,
+                        onTypeChanged: (type) =>
+                            setState(() => selectedDiscountType = type),
+                        hasError:
+                            hasAttemptedSubmit &&
+                            !isValidDiscount(
+                              discount: discountController.text,
+                              discountType: selectedDiscountType,
+                              price: effectivePrice,
+                            ),
+                        focusKey: discountKey,
+                      ),
                       const SizedBox(height: 24),
                       PropertySectionTitle(
                         title: context.l10n.propertyDescription,
@@ -156,6 +137,8 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                         required: false,
                       ),
                       const SizedBox(height: 12),
+                      if (existingPhotoUrls.isNotEmpty)
+                        ExistingPropertyPhotos(urls: existingPhotoUrls),
                       PropertyImagePicker(
                         selectedPhotos: selectedPhotos,
                         onPhotoPicked: pickImage,
@@ -185,9 +168,50 @@ extension AddPropertyPageLayout on AddPropertyPageState {
       ),
       bottomNavigationBar: buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: PublishButtonWidget(
-        isLoading: formState.isLoading,
-        onPressed: validateAndSubmit,
+      floatingActionButton: isEditing
+          ? PublishButtonWidget(
+              isLoading: formState.isLoading,
+              onPressed: validateAndSubmit,
+              label: context.l10n.propertySaveChanges,
+              loadingLabel: context.l10n.propertySavingChanges,
+            )
+          : PublishButtonWidget(
+              isLoading: formState.isLoading,
+              onPressed: validateAndSubmit,
+            ),
+    );
+  }
+
+  Widget _saveDraftButton(BuildContext context) {
+    return TextButton(
+      onPressed: () async {
+        try {
+          final property = await ref
+              .read(addPropertyControllerProvider.notifier)
+              .submitProperty(
+                input: collectFormInput(),
+                boundaryPoints: widget.boundaryPoints,
+                selectedPhotos: selectedPhotos,
+                status: 'Draft',
+              );
+          if (context.mounted && property != null) {
+            Navigator.of(context).pop(property);
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error saving draft: ${e.toString()}')),
+            );
+          }
+        }
+      },
+      child: Text(
+        context.l10n.commonSave,
+        style: GoogleFonts.inter(
+          color: context.colors.accent,
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

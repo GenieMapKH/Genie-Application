@@ -229,7 +229,7 @@ class MainMapControls extends ConsumerWidget {
               child: Text(
                 context.l10n.loginRequiredAction,
                 style: GoogleFonts.inter(
-                  color: Colors.white,
+                  color: context.colors.onPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

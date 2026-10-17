@@ -38,7 +38,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Genie',
+      title: 'Tilomnov',
       scrollBehavior: AppScrollBehavior(),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

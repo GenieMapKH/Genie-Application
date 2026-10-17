@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:genie/features/property/presentation/screens/add_property_page.dart';
@@ -33,7 +34,7 @@ class LandSizeFieldWidget extends StatelessWidget {
             ),
             isLandType
                 ? InkWell(
-                    onTap: () {},
+                    onTap: state.fillLandSizeFromMap,
                     child: Text(
                       context.l10n.propertyAutoFromMap,
                       style: GoogleFonts.inter(
@@ -65,9 +66,11 @@ class LandSizeFieldWidget extends StatelessWidget {
         const SizedBox(height: 8),
         TextField(
           controller: state.landSizeController,
+          keyboardType: _sizeKeyboard,
+          inputFormatters: _sizeFormatters,
           decoration: defaultPropertyInputDecoration(
             context,
-            isLandType ? 'Size Area' : 'Enter land size',
+            isLandType ? 'Size area (m²)' : 'Enter land size (m²)',
             hasError:
                 state.hasAttemptedSubmit &&
                 state.landSizeController.text.trim().isEmpty,
@@ -121,6 +124,8 @@ class BuildingSizeFieldWidget extends StatelessWidget {
         const SizedBox(height: 8),
         TextField(
           controller: state.buildingSizeController,
+          keyboardType: _sizeKeyboard,
+          inputFormatters: _sizeFormatters,
           decoration: defaultPropertyInputDecoration(
             context,
             'Enter building size',
@@ -177,6 +182,8 @@ class UnitSizeFieldWidget extends StatelessWidget {
         const SizedBox(height: 8),
         TextField(
           controller: state.unitSizeController,
+          keyboardType: _sizeKeyboard,
+          inputFormatters: _sizeFormatters,
           decoration: defaultPropertyInputDecoration(
             context,
             'Enter unit size',
@@ -189,3 +196,7 @@ class UnitSizeFieldWidget extends StatelessWidget {
     );
   }
 }
+
+/// Sizes are plain square meters: digits and a decimal point only.
+const _sizeKeyboard = TextInputType.numberWithOptions(decimal: true);
+final _sizeFormatters = [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))];

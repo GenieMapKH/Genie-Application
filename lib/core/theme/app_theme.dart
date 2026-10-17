@@ -51,7 +51,7 @@ abstract final class AppTheme {
       snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(color: colors.accent),
+      progressIndicatorTheme: ProgressIndicatorThemeData(color: colors.highlight),
       textSelectionTheme: TextSelectionThemeData(cursorColor: colors.primary),
       extensions: [colors],
     );

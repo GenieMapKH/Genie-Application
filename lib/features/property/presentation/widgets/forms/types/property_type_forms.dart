@@ -342,6 +342,15 @@ class BusinessPropertyForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        DefaultPriceListingSettingsWidget(
+          state: state,
+          onListingSettingChanged: (val) {
+            if (val != null) {
+              updateState(() => state.selectedListingSetting = val);
+            }
+          },
+        ),
+        _buildSpacing(),
         LandSizeFieldWidget(state: state, isLandType: true),
         _buildSpacing(),
         PropertyTextField(
@@ -350,21 +359,6 @@ class BusinessPropertyForm extends StatelessWidget {
           controller: state.monthlyRentController,
           hintText: context.l10n.propertyEnterMonthlyShopRentUsd,
           infoText: 'Lower rent = higher profit potential',
-        ),
-        _buildSpacing(),
-        PropertyDropdown(
-          label: context.l10n.propertyListingSettings,
-          required: true,
-          value: state.selectedListingSetting,
-          items: const ['Sale', 'Rent', 'To Let'],
-          hasError:
-              state.hasAttemptedSubmit && state.selectedListingSetting.isEmpty,
-          focusKey: state.listingSettingsKey,
-          onChanged: (val) {
-            if (val != null) {
-              updateState(() => state.selectedListingSetting = val);
-            }
-          },
         ),
         _buildSpacing(),
         LeaseRemainingFieldWidget(

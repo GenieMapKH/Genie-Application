@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/shared/widgets/app_button.dart';
+import 'package:genie/shared/widgets/app_logo.dart';
 import 'package:go_router/go_router.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -32,8 +33,6 @@ class WelcomePage extends ConsumerStatefulWidget {
     this.animationDuration = const Duration(milliseconds: 800),
     this.autoStart = true,
   });
-
-  static const String logoAssetPath = 'assets/images/login/image.png';
 
   @override
   ConsumerState<WelcomePage> createState() => _WelcomePageState();
@@ -190,13 +189,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
                       position: _logoSlideAnimation,
                       child: ScaleTransition(
                         scale: _logoScaleAnimation,
-                        child: Image.asset(
-                          WelcomePage.logoAssetPath,
-                          width: 114.0,
-                          height: 159.0,
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.medium,
-                        ),
+                        child: const AppLogo(width: 220.0, height: 150.0),
                       ),
                     ),
                     const SizedBox(height: 28),
