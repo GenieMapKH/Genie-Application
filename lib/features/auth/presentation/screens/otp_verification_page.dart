@@ -33,7 +33,10 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   );
 
   bool _isLoading = false;
-  int _resendCountdown = 30;
+  /// The server sends at most one code per address a minute.
+  static const _resendWaitSeconds = 60;
+
+  int _resendCountdown = _resendWaitSeconds;
   Timer? _resendTimer;
 
   late AnimationController _entryController;
@@ -73,7 +76,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   }
 
   void _startResendTimer() {
-    _resendCountdown = 30;
+    _resendCountdown = _resendWaitSeconds;
     _resendTimer?.cancel();
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
