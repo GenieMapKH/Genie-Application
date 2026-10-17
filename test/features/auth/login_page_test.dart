@@ -6,11 +6,61 @@ import 'package:genie/shared/widgets/app_button.dart';
 import 'package:genie/shared/widgets/google_icon.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:dio/dio.dart';
+import 'package:genie/features/auth/data/google_sign_in_service.dart';
+import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
+import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
+import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../support/test_app.dart';
 
 class MockAuthService extends AuthService {
   MockAuthService() : super(Dio());
   @override
   Future<void> login(String email, String password) async {}
+}
+
+/// Google sign-in that succeeds after a moment, as the real one does.
+class _GoogleSignsIn extends LoginController {
+  int signIns = 0;
+
+  _GoogleSignsIn() : super(MockAuthService(), GoogleSignInService());
+
+  @override
+  Future<bool> googleLogin({bool forceAccountSelection = false}) async {
+    signIns++;
+    state = const AsyncLoading();
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    state = const AsyncData(true);
+    return true;
+  }
+}
+
+/// The app's routes, with the map replaced by a button that needs an account.
+GoRouter _router(String initialLocation) => GoRouter(
+  initialLocation: initialLocation,
+  routes: [
+    GoRoute(path: '/', builder: (_, _) => const WelcomePage()),
+    GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
+    GoRoute(
+      path: '/home',
+      builder: (_, _) => Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => showSignInRequiredDialog(context),
+            child: const Text('map'),
+          ),
+        ),
+      ),
+    ),
+  ],
+);
+
+Future<void> _tapGoogle(WidgetTester tester) async {
+  final google = find.widgetWithText(AppButton, 'Continue with Google');
+  await tester.ensureVisible(google);
+  await tester.tap(google);
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -249,4 +299,66 @@ void main() {
       expect(googleCalled, isTrue);
     },
   );
+
+  group('signing in with Google', () {
+    late _GoogleSignsIn login;
+
+    Future<GoRouter> pump(WidgetTester tester, String location) async {
+      tester.view.physicalSize = const Size(800, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      login = _GoogleSignsIn();
+      final router = _router(location);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authServiceProvider.overrideWithValue(mockAuthService),
+            loginControllerProvider.overrideWith((ref) => login),
+            signedInOverride(signedIn: false),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return router;
+    }
+
+    testWidgets('says so once and goes to the map', (tester) async {
+      await pump(tester, '/login');
+
+      await _tapGoogle(tester);
+
+      expect(login.signIns, 1);
+      expect(find.text('Successfully logged in!'), findsOneWidget);
+      expect(find.text('map'), findsOneWidget);
+      expect(find.byType(LoginPage), findsNothing);
+      // Toasts leave after a few seconds.
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets(
+      'from "Account required" it goes to the map, not back to welcome',
+      (tester) async {
+        await pump(tester, '/home');
+
+        await tester.tap(find.text('map'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Login / Sign Up'));
+        await tester.pumpAndSettle();
+        expect(find.byType(WelcomePage), findsOneWidget);
+
+        await tester.tap(find.widgetWithText(AppButton, 'Login'));
+        await tester.pumpAndSettle();
+        await _tapGoogle(tester);
+
+        expect(find.byType(WelcomePage), findsNothing);
+        expect(find.byType(LoginPage), findsNothing);
+        expect(find.text('map'), findsOneWidget);
+        expect(find.text('Successfully logged in!'), findsOneWidget);
+        await tester.pump(const Duration(seconds: 5));
+        await tester.pumpAndSettle();
+      },
+    );
+  });
 }

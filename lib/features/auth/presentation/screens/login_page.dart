@@ -7,8 +7,6 @@ import 'package:genie/features/auth/presentation/view_models/login_form_provider
 import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 import '../widgets/login_header.dart';
 import '../widgets/login_form.dart';
@@ -121,13 +119,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
     super.dispose();
   }
 
+  /// Called once per sign-in, by the listener in [build]. The user's own
+  /// profile, listings and favourites follow the session by themselves.
   void _onAuthSuccess() {
     if (!mounted) return;
     AppPopup.showSuccess(context, context.l10n.authSuccessfullyLoggedIn);
-    ref.invalidate(userProfileProvider);
-    ref.invalidate(propertiesProvider);
+    // The public feed may say what this user liked or saved.
     ref.invalidate(publicPropertiesProvider);
-    ref.invalidate(savedPropertiesProvider);
     if (GoRouter.maybeOf(context) != null) {
       context.go('/home');
     }
@@ -135,10 +133,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   Future<void> _handleLogin() async {
     final success = await ref.read(loginFormProvider.notifier).submit();
-    if (success && mounted) {
-      widget.onLoginPressed?.call();
-      _onAuthSuccess();
-    }
+    if (success && mounted) widget.onLoginPressed?.call();
   }
 
   Widget _buildAnimatedTabBar(AuthMethod selectedMethod) {
@@ -227,6 +222,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
     ref.listen<AsyncValue<bool>>(loginControllerProvider, (previous, next) {
       if (next.isLoading) return;
+      // Login and sign-up can both be open (one pushed over the other) and
+      // share this controller: only the page in front answers, once.
+      if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) return;
 
       if (next.hasError) {
         if (!mounted) return;
@@ -304,16 +302,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       fadeAnimation: _actionsFade,
                       isLoading: loginState.isLoading,
                       onLogin: _handleLogin,
-                      onGoogleLogin: () async {
+                      onGoogleLogin: () {
                         if (widget.onGoogleLoginPressed != null) {
                           widget.onGoogleLoginPressed!();
-                        } else {
-                          final success = await ref
+                        } else if (!loginState.isLoading) {
+                          // The listener in build reacts to the outcome.
+                          ref
                               .read(loginControllerProvider.notifier)
                               .googleLogin();
-                          if (success && mounted) {
-                            _onAuthSuccess();
-                          }
                         }
                       },
                       onCreateAccount: () {

@@ -9,7 +9,6 @@ import 'package:genie/features/auth/presentation/screens/terms_of_service_page.d
 import 'package:genie/shared/transitions/app_page_route.dart';
 import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import '../widgets/create_account_form.dart';
 import '../widgets/create_account_actions.dart';
 import 'package:genie/core/theme/app_colors.dart';
@@ -180,11 +179,12 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
     }
   }
 
+  /// Called once per sign-in, by the listener in [build]. The user's own
+  /// profile, listings and favourites follow the session by themselves.
   void _onAuthSuccess() {
     if (!mounted) return;
     AppPopup.showSuccess(context, context.l10n.authSuccessfullyAuthenticated);
-    ref.invalidate(userProfileProvider);
-    ref.invalidate(propertiesProvider);
+    // The public feed may say what this user liked or saved.
     ref.invalidate(publicPropertiesProvider);
     context.go('/home');
   }
@@ -193,6 +193,9 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<bool>>(loginControllerProvider, (previous, next) {
       if (next.isLoading) return;
+      // Login and sign-up can both be open (one pushed over the other) and
+      // share this controller: only the page in front answers, once.
+      if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) return;
 
       if (next.hasError) {
         if (!mounted) return;
@@ -291,16 +294,14 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
                     CreateAccountActions(
                       isLoading: _isLoading,
                       onSignUp: _handleSignUp,
-                      onGoogleSignUp: () async {
+                      onGoogleSignUp: () {
                         if (widget.onGoogleSignUpPressed != null) {
                           widget.onGoogleSignUpPressed!();
-                        } else {
-                          final success = await ref
+                        } else if (!ref.read(loginControllerProvider).isLoading) {
+                          // The listener in build reacts to the outcome.
+                          ref
                               .read(loginControllerProvider.notifier)
                               .googleLogin(forceAccountSelection: true);
-                          if (success && mounted) {
-                            _onAuthSuccess();
-                          }
                         }
                       },
                       onSignInHere: _navigateToLogin,
