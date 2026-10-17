@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:genie/core/network/api_cache_manager.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 
@@ -37,7 +38,13 @@ class ChatRepository {
 
   /// Name, picture and join date of the person being chatted with.
   Future<ChatParticipantProfile> fetchParticipantProfile(String userId) async {
-    final response = await dio.get('/users/$userId');
+    // Shown at the top of every chat; a name or picture a minute old is fine.
+    final response = await dio.get(
+      '/users/$userId',
+      options: Options(
+        extra: CacheInterceptor.freshFor(const Duration(minutes: 1)),
+      ),
+    );
     return ChatParticipantProfile.fromJson(_asJson(response.data));
   }
 

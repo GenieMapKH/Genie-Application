@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:genie/core/network/api_cache_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/property_model.dart';
 
@@ -16,6 +17,12 @@ class PropertyRepository {
 
   PropertyRepository(this.dio, {Dio? storageDio})
     : storageDio = storageDio ?? Dio();
+
+  /// Public listings may be reused for a short while without asking the
+  /// server; any change the user makes to a property drops them at once.
+  static final _publicListings = Options(
+    extra: CacheInterceptor.freshFor(const Duration(seconds: 30)),
+  );
 
   // Cache for client-side filtering
   List<PropertyModel> _cachedProperties = [];
@@ -61,6 +68,9 @@ class PropertyRepository {
         'propertyType': ?propertyType,
         'listingType': ?listingType,
       },
+      // The server keeps this list for 30 s too: going back to an area just
+      // seen shows it at once.
+      options: _publicListings,
     );
     final List<dynamic> data = response.data;
     return compute(_parseProperties, data);
@@ -72,7 +82,10 @@ class PropertyRepository {
       return PropertyModel.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401 || e.response?.statusCode == 404) {
-        final publicRes = await dio.get('/public/properties/$id');
+        final publicRes = await dio.get(
+          '/public/properties/$id',
+          options: _publicListings,
+        );
         return PropertyModel.fromJson(publicRes.data);
       }
       rethrow;
