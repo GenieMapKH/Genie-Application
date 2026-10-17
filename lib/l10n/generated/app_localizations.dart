@@ -587,7 +587,7 @@ abstract class AppLocalizations {
   /// No description provided for @pinNoBackup.
   ///
   /// In en, this message translates to:
-  /// **'No backup found. Open Chat first to set up your keys.'**
+  /// **'You have no backup PIN.'**
   String get pinNoBackup;
 
   /// No description provided for @pinLocked.
@@ -623,7 +623,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetKeysConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current PIN first.'**
+  /// **'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nIf you have a backup PIN, you will be asked for it first.'**
   String get resetKeysConfirmMessage;
 
   /// No description provided for @resetKeysConfirmAction.
@@ -2033,7 +2033,7 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPinKeepsHistory.
   ///
   /// In en, this message translates to:
-  /// **'This device still has your chat keys, so nothing is lost. Confirm your account password, then choose a new PIN.'**
+  /// **'This device still has your chat keys, so nothing is lost. Confirm your account password, then choose a new PIN or turn the PIN off.'**
   String get forgotPinKeepsHistory;
 
   /// No description provided for @forgotPinLosesHistory.
@@ -2075,13 +2075,13 @@ abstract class AppLocalizations {
   /// No description provided for @pinForgotHint.
   ///
   /// In en, this message translates to:
-  /// **'Forgot your PIN? Go to User > Security > Forgot backup PIN.'**
+  /// **'Forgot your PIN? Go to User > Security > Forgot backup PIN to choose a new one or turn it off.'**
   String get pinForgotHint;
 
   /// No description provided for @chatPinNeeded.
   ///
   /// In en, this message translates to:
-  /// **'Your backup PIN is needed to read and send messages.'**
+  /// **'Your chats are protected with a backup PIN. Enter it to read and send messages on this phone.'**
   String get chatPinNeeded;
 
   /// No description provided for @chatOpenFailed.
@@ -2089,6 +2089,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open this chat. Check your connection.'**
   String get chatOpenFailed;
+
+  /// No description provided for @securitySetUpPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up backup PIN'**
+  String get securitySetUpPin;
+
+  /// No description provided for @securityTurnOffPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off backup PIN'**
+  String get securityTurnOffPin;
+
+  /// No description provided for @securityPinOptionalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats are always end-to-end encrypted. A backup PIN is optional: with one, you can read your earlier chats on a new phone, and nobody can replace your chat keys without it.'**
+  String get securityPinOptionalNote;
+
+  /// No description provided for @pinSetUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a backup PIN'**
+  String get pinSetUpTitle;
+
+  /// No description provided for @pinSetUpHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need this PIN to read your chats on a new phone. Choose one you will remember.'**
+  String get pinSetUpHelp;
+
+  /// No description provided for @pinSetUpDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup PIN set.'**
+  String get pinSetUpDone;
+
+  /// No description provided for @pinAlreadySet.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a backup PIN.'**
+  String get pinAlreadySet;
+
+  /// No description provided for @pinKeysNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a chat on this phone first, then set up the PIN.'**
+  String get pinKeysNotReady;
+
+  /// No description provided for @pinTurnOffConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off backup PIN?'**
+  String get pinTurnOffConfirmTitle;
+
+  /// No description provided for @pinTurnOffConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats stay end-to-end encrypted. Without a PIN, a new phone cannot read your earlier messages.\n\nYou will be asked for your current PIN first.'**
+  String get pinTurnOffConfirmMessage;
+
+  /// No description provided for @pinTurnOffAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get pinTurnOffAction;
+
+  /// No description provided for @pinTurnedOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup PIN turned off.'**
+  String get pinTurnedOff;
+
+  /// No description provided for @pinTurnOffFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not turn off the PIN. Nothing was changed.'**
+  String get pinTurnOffFailed;
+
+  /// No description provided for @forgotPinChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a backup PIN?'**
+  String get forgotPinChoiceTitle;
+
+  /// No description provided for @forgotPinChoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'With a new PIN you can read your chats on a new phone. Without one, your chats stay end-to-end encrypted, but only this phone can read them.'**
+  String get forgotPinChoiceMessage;
+
+  /// No description provided for @forgotPinChoiceNoPin.
+  ///
+  /// In en, this message translates to:
+  /// **'No PIN'**
+  String get forgotPinChoiceNoPin;
+
+  /// No description provided for @forgotPinChoiceNewPin.
+  ///
+  /// In en, this message translates to:
+  /// **'New PIN'**
+  String get forgotPinChoiceNewPin;
+
+  /// No description provided for @chatPinRestoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your backup PIN'**
+  String get chatPinRestoreTitle;
+
+  /// No description provided for @chatPinRestoreHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You protected your chats with a backup PIN. Enter it to read them on this phone.'**
+  String get chatPinRestoreHelp;
+
+  /// No description provided for @chatUsedOnAnotherDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chat is now set up on another device. Use it on this phone instead? Earlier messages cannot be read here, and the other device will need to switch back the same way.\n\nTo use chat on several devices, set up a backup PIN in User > Security.'**
+  String get chatUsedOnAnotherDevice;
+
+  /// No description provided for @chatUseOnThisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Use chat on this phone'**
+  String get chatUseOnThisDevice;
 
   /// No description provided for @devicesImmediateNote.
   ///

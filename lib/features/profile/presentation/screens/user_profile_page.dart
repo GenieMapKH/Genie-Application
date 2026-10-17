@@ -89,13 +89,16 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
               },
               // A profile from before stays up while it is refreshed; with
               // none, a retry shows the spinner rather than the old error.
+              // No profile and no error: signing out, about to leave.
               child: profile != null
                   ? _AccountMenu(profile: profile)
-                  : profileAsync.isLoading || _retryingOnOpen
-                  ? const Center(child: CircularProgressIndicator())
-                  : _LoadError(
+                  : profileAsync.hasError &&
+                        !profileAsync.isLoading &&
+                        !_retryingOnOpen
+                  ? _LoadError(
                       onRetry: () => ref.invalidate(userProfileProvider),
-                    ),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
             ),
           ),
         ],

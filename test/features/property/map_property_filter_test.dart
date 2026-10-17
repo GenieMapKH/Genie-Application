@@ -8,6 +8,8 @@ import 'package:genie/features/property/presentation/view_models/map_property_fi
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../support/test_app.dart';
+
 PropertyModel _listing(String id, String type, String? listing) =>
     PropertyModel.fromJson({
       'id': id,
@@ -65,6 +67,7 @@ void main() {
   test('the user\'s own listings on the map obey the filter too', () async {
     final container = ProviderContainer(
       overrides: [
+        signedInOverride(),
         propertyRepositoryProvider.overrideWithValue(
           _OwnListings([
             _listing('land-sale', 'Land', 'Sale'),

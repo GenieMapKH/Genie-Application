@@ -307,15 +307,19 @@ class FakeSetupService extends Fake implements E2eeSetupService {
   E2eeSetupResult result = E2eeSetupResult.ready;
   int runs = 0;
 
+  /// Whether each run was asked to take the account's chat over.
+  final List<bool> takeOvers = [];
+
   @override
   Future<E2eeSetupResult> initialize(
     String userId, {
-    required PinPrompt askPin,
+    PinPrompt? askPin,
+    bool takeOver = false,
   }) async {
     runs++;
+    takeOvers.add(takeOver);
     return result;
   }
 }
 
-Future<String?> neverAskPin({required bool isNewPin}) async =>
-    fail('must not ask for a PIN');
+Future<String?> neverAskPin() async => fail('must not ask for a PIN');

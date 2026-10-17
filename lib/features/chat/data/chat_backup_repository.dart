@@ -145,6 +145,20 @@ class ChatBackupRepository {
     );
   }
 
+  /// Removes the backup: the user turned the backup PIN off. The server
+  /// wants [ownerProof] as in [saveBackup] (null only for a backup from
+  /// before PIN tries were counted, which it cannot check). Chat stays
+  /// end-to-end encrypted; only reading earlier messages on a new device is
+  /// given up.
+  Future<void> removeBackup({required BackupOwnerProof? ownerProof}) {
+    return _replaceProtected(
+      () => dio.post(
+        '/chat/backup/remove',
+        data: ownerProof?.toJson() ?? const <String, String>{},
+      ),
+    );
+  }
+
   Map<String, String> _body(EncryptedBackup backup, BackupOwnerProof? proof) {
     return {
       'backupBlob': backup.blob,

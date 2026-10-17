@@ -266,8 +266,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pinChanged => 'Backup PIN changed.';
 
   @override
-  String get pinNoBackup =>
-      'No backup found. Open Chat first to set up your keys.';
+  String get pinNoBackup => 'You have no backup PIN.';
 
   @override
   String get pinLocked =>
@@ -290,7 +289,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetKeysConfirmMessage =>
-      'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current PIN first.';
+      'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nIf you have a backup PIN, you will be asked for it first.';
 
   @override
   String get resetKeysConfirmAction => 'Reset keys';
@@ -1080,7 +1079,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPinKeepsHistory =>
-      'This device still has your chat keys, so nothing is lost. Confirm your account password, then choose a new PIN.';
+      'This device still has your chat keys, so nothing is lost. Confirm your account password, then choose a new PIN or turn the PIN off.';
 
   @override
   String get forgotPinLosesHistory =>
@@ -1107,15 +1106,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinForgotHint =>
-      'Forgot your PIN? Go to User > Security > Forgot backup PIN.';
+      'Forgot your PIN? Go to User > Security > Forgot backup PIN to choose a new one or turn it off.';
 
   @override
   String get chatPinNeeded =>
-      'Your backup PIN is needed to read and send messages.';
+      'Your chats are protected with a backup PIN. Enter it to read and send messages on this phone.';
 
   @override
   String get chatOpenFailed =>
       'Could not open this chat. Check your connection.';
+
+  @override
+  String get securitySetUpPin => 'Set up backup PIN';
+
+  @override
+  String get securityTurnOffPin => 'Turn off backup PIN';
+
+  @override
+  String get securityPinOptionalNote =>
+      'Your chats are always end-to-end encrypted. A backup PIN is optional: with one, you can read your earlier chats on a new phone, and nobody can replace your chat keys without it.';
+
+  @override
+  String get pinSetUpTitle => 'Create a backup PIN';
+
+  @override
+  String get pinSetUpHelp =>
+      'You will need this PIN to read your chats on a new phone. Choose one you will remember.';
+
+  @override
+  String get pinSetUpDone => 'Backup PIN set.';
+
+  @override
+  String get pinAlreadySet => 'You already have a backup PIN.';
+
+  @override
+  String get pinKeysNotReady =>
+      'Open a chat on this phone first, then set up the PIN.';
+
+  @override
+  String get pinTurnOffConfirmTitle => 'Turn off backup PIN?';
+
+  @override
+  String get pinTurnOffConfirmMessage =>
+      'Your chats stay end-to-end encrypted. Without a PIN, a new phone cannot read your earlier messages.\n\nYou will be asked for your current PIN first.';
+
+  @override
+  String get pinTurnOffAction => 'Turn off';
+
+  @override
+  String get pinTurnedOff => 'Backup PIN turned off.';
+
+  @override
+  String get pinTurnOffFailed =>
+      'Could not turn off the PIN. Nothing was changed.';
+
+  @override
+  String get forgotPinChoiceTitle => 'Keep a backup PIN?';
+
+  @override
+  String get forgotPinChoiceMessage =>
+      'With a new PIN you can read your chats on a new phone. Without one, your chats stay end-to-end encrypted, but only this phone can read them.';
+
+  @override
+  String get forgotPinChoiceNoPin => 'No PIN';
+
+  @override
+  String get forgotPinChoiceNewPin => 'New PIN';
+
+  @override
+  String get chatPinRestoreTitle => 'Enter your backup PIN';
+
+  @override
+  String get chatPinRestoreHelp =>
+      'You protected your chats with a backup PIN. Enter it to read them on this phone.';
+
+  @override
+  String get chatUsedOnAnotherDevice =>
+      'Your chat is now set up on another device. Use it on this phone instead? Earlier messages cannot be read here, and the other device will need to switch back the same way.\n\nTo use chat on several devices, set up a backup PIN in User > Security.';
+
+  @override
+  String get chatUseOnThisDevice => 'Use chat on this phone';
 
   @override
   String get devicesImmediateNote =>

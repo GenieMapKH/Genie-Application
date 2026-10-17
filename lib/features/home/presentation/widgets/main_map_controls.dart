@@ -12,12 +12,8 @@ import 'package:genie/features/home/presentation/providers/property_carousel_pro
 import 'package:genie/features/home/presentation/widgets/property_carousel.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/screens/add_property_page.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/home/utils/map/map_measurements.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
 
 class MainMapControls extends ConsumerWidget {
   final VoidCallback onGoToCurrentPosition;
@@ -79,8 +75,12 @@ class MainMapControls extends ConsumerWidget {
         if (!mapState.isDrawing)
           MapFloatingMenu(
             bottom: sideButtonBottom,
-            onDrawPressed: () =>
-                ref.read(mapStateProvider.notifier).startDrawing(),
+            // Drawing is how a listing is posted: a guest is asked to sign
+            // in before drawing, not after.
+            onDrawPressed: () {
+              if (!requireSignIn(context, ref)) return;
+              ref.read(mapStateProvider.notifier).startDrawing();
+            },
             onCoordinatesScanned: (result) {
               ref
                   .read(mapStateProvider.notifier)
@@ -144,19 +144,11 @@ class MainMapControls extends ConsumerWidget {
     WidgetRef ref,
     List<LatLng> drawnPoints,
   ) async {
-    final token = await AuthStorage.getAccessToken();
-    if (token == null) {
-      if (context.mounted) {
-        _showLoginRequiredDialog(context);
-      }
-      return;
-    }
+    if (!requireSignIn(context, ref)) return;
 
     final measurements = calculateMeasurements(drawnPoints);
     final double area = measurements?.area ?? 0.0;
     final pointsCopy = List<LatLng>.from(drawnPoints);
-
-    if (!context.mounted) return;
 
     final result = await Navigator.push(
       context,
@@ -170,74 +162,5 @@ class MainMapControls extends ConsumerWidget {
       ref.read(mapStateProvider.notifier).finalizeDrawing();
       onSavePropertySuccess();
     }
-  }
-
-  void _showLoginRequiredDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          contentPadding: const EdgeInsets.all(24),
-          title: Text(
-            context.l10n.loginRequiredTitle,
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: context.colors.textPrimary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: Text(
-            context.l10n.loginRequiredMessage,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: context.colors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                context.l10n.commonCancel,
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: context.colors.textMuted,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.accent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const WelcomePage()),
-                );
-              },
-              child: Text(
-                context.l10n.loginRequiredAction,
-                style: GoogleFonts.inter(
-                  color: context.colors.onPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

@@ -61,13 +61,18 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       ..add(socketService.onConnected.listen((_) => _reloadAfterReconnect()));
   }
 
-  /// Makes encryption ready (asking for the PIN if this device needs it),
-  /// then loads the conversation.
-  Future<void> open({required PinPrompt askPin}) async {
+  /// Makes encryption ready, then loads the conversation. [askPin] is used
+  /// only for an account with a backup PIN on a device without its keys.
+  /// [takeOver] is the user's answer to [E2eeSetupResult.usedOnAnotherDevice].
+  Future<void> open({required PinPrompt askPin, bool takeOver = false}) async {
     _keysReady = false;
     state = const ActiveChatState();
     try {
-      final result = await setupService.initialize(userId, askPin: askPin);
+      final result = await setupService.initialize(
+        userId,
+        askPin: askPin,
+        takeOver: takeOver,
+      );
       if (!mounted) return;
       if (result != E2eeSetupResult.ready) {
         state = ActiveChatState(

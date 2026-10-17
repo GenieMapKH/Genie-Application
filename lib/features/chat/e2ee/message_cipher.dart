@@ -124,8 +124,8 @@ class MessageCipher {
         throw const PeerKeyChangedException();
       case PeerKeyStatus.missing:
         throw const ChatEncryptionException(
-          'This person has not set up secure chat yet, so they cannot '
-          'receive messages.',
+          'This person has not set up secure chat yet. They can receive '
+          'messages once they open the app again.',
         );
       case PeerKeyStatus.trusted:
     }
@@ -213,7 +213,11 @@ class MessageCipher {
 
   Future<PeerKeyStatus> _recentStatus(String peerId) async {
     final last = _lastCheck[peerId];
-    if (last != null && _now().difference(last.at) < _checkMaxAge) {
+    // Someone without keys is asked about again every time: they get them
+    // the next time they open the app, and must be reachable from then on.
+    if (last != null &&
+        last.status != PeerKeyStatus.missing &&
+        _now().difference(last.at) < _checkMaxAge) {
       return last.status;
     }
     try {

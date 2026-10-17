@@ -132,22 +132,43 @@ class KeyService {
     if (_loaded?.userId == userId) _loaded = null;
   }
 
-  /// Publishes the local public key when the server has none or another one.
+  /// Whether the pair kept here is the account's: the server lists its
+  /// public key, or listed none and now does.
   ///
-  /// Returns false when the server refuses it: the account's keys were
-  /// replaced on another device, so the pair kept here is no longer the
-  /// account's and must be restored from the backup.
-  Future<bool> uploadPublicKeyIfNeeded(String userId) async {
+  /// False when the server lists another key: the account set up chat on
+  /// another device since, and the pair kept here is no longer the one
+  /// others encrypt to. It is never replaced from here without being asked
+  /// ([createAndPublishKeyPair]), or two devices would keep replacing each
+  /// other's key. True when the server cannot be asked: chat goes on with
+  /// the keys it has.
+  Future<bool> publishPublicKeyIfMissing(String userId) async {
     final pubKeyBase64 = await secureStorage.read(key: _publicKeyKey(userId));
     if (pubKeyBase64 == null) return true;
 
+    final String? serverKey;
     try {
-      final response = await dio.get('/chat/keys/$userId');
-      if (response.data['identityPublicKey'] == pubKeyBase64) return true;
+      serverKey = await _fetchServerPublicKey(userId);
     } catch (e) {
-      // No key on the server yet (404), or it cannot say: try to publish.
+      AppLogger.error('Could not compare the chat key with the server', e);
+      return true;
     }
+    if (serverKey == pubKeyBase64) return true;
+    if (serverKey != null) return false;
     return _uploadKey(pubKeyBase64);
+  }
+
+  /// Makes a new key pair for [userId] and publishes it in place of any key
+  /// the server lists, then keeps it here. Nothing is kept unless the server
+  /// took it. The server refuses (409) while a backup PIN protects the
+  /// account: its keys are then replaced only with that PIN.
+  Future<KeyPair> createAndPublishKeyPair(String userId) async {
+    final keyPair = cryptoService.generateKeyPair();
+    await dio.post(
+      '/chat/keys',
+      data: {'identityPublicKey': base64Encode(keyPair.publicKey)},
+    );
+    await saveIdentityKeyPair(userId, keyPair);
+    return keyPair;
   }
 
   /// False only when the server answers that the account has other keys.

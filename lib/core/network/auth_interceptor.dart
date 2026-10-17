@@ -96,6 +96,9 @@ class AuthInterceptor extends Interceptor {
         options: Options(extra: {_noRenewal: true}),
       );
       final newAccess = response.data['accessToken'] as String;
+      // Signed out while the renewal ran: saving would sign the device back
+      // in behind the user's back.
+      if (await AuthStorage.getRefreshToken() != refreshToken) return null;
       await AuthStorage.saveTokens(
         access: newAccess,
         refresh: response.data['refreshToken'] as String,
@@ -103,8 +106,10 @@ class AuthInterceptor extends Interceptor {
       return newAccess;
     } on DioException catch (e) {
       // Only a refusal ends the session. Being offline for a moment must
-      // not sign anyone out.
-      if (e.response?.statusCode == 401) {
+      // not sign anyone out, and a session the user already left (signing
+      // out revokes the refresh token) is not ended a second time.
+      if (e.response?.statusCode == 401 &&
+          await AuthStorage.getRefreshToken() == refreshToken) {
         await AuthStorage.clearTokens();
         onSessionEnded?.call();
       }

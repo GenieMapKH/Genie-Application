@@ -4,8 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/tactile_button.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
+import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -146,16 +145,9 @@ class MainBottomNav extends ConsumerWidget {
     }
 
     return TactileButton(
-      onPressed: () async {
-        if (index == 1 || index == 2 || index == 3 || index == 4) {
-          final token = await AuthStorage.getAccessToken();
-          if (token == null) {
-            if (context.mounted) {
-              _showLoginRequiredDialog(context);
-            }
-            return;
-          }
-        }
+      onPressed: () {
+        // Every tab but Explore shows the user's own data.
+        if (index != 0 && !requireSignIn(context, ref)) return;
         ref.read(mainNavProvider.notifier).setIndex(index);
       },
       child: SizedBox(
@@ -179,79 +171,6 @@ class MainBottomNav extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-
-  void _showLoginRequiredDialog(BuildContext context) {
-    final l10n = context.l10n;
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          contentPadding: const EdgeInsets.all(24),
-          title: Text(
-            l10n.loginRequiredTitle,
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: context.colors.textPrimary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: Text(
-            l10n.loginRequiredMessage,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: context.colors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-              },
-              child: Text(
-                l10n.commonCancel,
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: context.colors.textMuted,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.accent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                elevation: 4,
-              ),
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const WelcomePage()),
-                );
-              },
-              child: Text(
-                l10n.loginRequiredAction,
-                style: GoogleFonts.inter(
-                  color: context.colors.onPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

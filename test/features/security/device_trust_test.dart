@@ -85,6 +85,18 @@ class _FakeKeyManager extends Fake implements E2eeKeyManager {
     if (newPin == null) return RecoverKeysResult.cancelled;
     return holdsKeys ? RecoverKeysResult.keptKeys : RecoverKeysResult.newKeys;
   }
+
+  bool turnedOff = false;
+
+  @override
+  Future<RecoverKeysResult> turnOffWithPassword(
+    String userId, {
+    required String passwordProof,
+  }) async {
+    this.passwordProof = passwordProof;
+    turnedOff = true;
+    return holdsKeys ? RecoverKeysResult.keptKeys : RecoverKeysResult.newKeys;
+  }
 }
 
 /// Toasts stay for a few seconds; a test must not end while one is showing.
@@ -410,6 +422,11 @@ void main() {
         await tester.tap(find.text('Continue'));
         await tester.pumpAndSettle();
 
+        // A new PIN, or none at all.
+        expect(find.text('Keep a backup PIN?'), findsOneWidget);
+        await tester.tap(find.text('New PIN'));
+        await tester.pumpAndSettle();
+
         expect(find.text('Enter new PIN'), findsOneWidget);
         await tester.enterText(find.byType(TextField), '739206');
         await tester.tap(find.text('Submit'));
@@ -424,6 +441,26 @@ void main() {
         await _letToastsLeave(tester);
       },
     );
+
+    testWidgets('the PIN can be turned off instead of replaced', (
+      tester,
+    ) async {
+      final manager = await open(tester, holdsKeys: true);
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'my-password');
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('No PIN'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Enter new PIN'), findsNothing);
+      expect(manager.turnedOff, isTrue);
+      expect(manager.passwordProof, 'signed-proof');
+      expect(find.text('Backup PIN turned off.'), findsOneWidget);
+      await _letToastsLeave(tester);
+    });
 
     testWidgets('warns first when this device cannot keep the history', (
       tester,

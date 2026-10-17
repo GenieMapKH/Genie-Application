@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -54,6 +55,7 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
   PublisherSummary get person => widget.person;
 
   void _openChat(BuildContext context, PublisherSummary shown) {
+    if (!requireSignIn(context, ref)) return;
     // The root navigator, as the listing page does: a full-screen chat.
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(

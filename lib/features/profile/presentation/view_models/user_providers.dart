@@ -11,7 +11,11 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepository(ref.watch(apiClientProvider));
 });
 
-final userProfileProvider = FutureProvider<UserProfile>((ref) async {
+/// The signed-in user's profile; null for a guest. Signing out turns it to
+/// null at once, so no screen keeps showing the previous user, or the
+/// owner's actions on their listings.
+final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
+  if (!ref.watch(isSignedInProvider)) return null;
   final repo = ref.watch(userRepositoryProvider);
   return repo.getProfile();
 });

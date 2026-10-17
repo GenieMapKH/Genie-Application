@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/config/app_config.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/core/media/app_image_cache.dart';
+import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/chat/e2ee/crypto_service.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/settings/data/app_settings_storage.dart';
@@ -64,6 +65,9 @@ void main() async {
   }
 
   final cryptoService = await CryptoService.init();
+  // Read before the first frame, so no screen starts out treating a
+  // signed-in user as a guest, or a guest as signed in.
+  await AuthStorage.load();
   // Read before the first frame, so the app opens in the saved theme and language.
   final settingsStorage = AppSettingsStorage(
     await SharedPreferences.getInstance(),
