@@ -3,6 +3,7 @@ import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/chat/data/chat_access_token.dart';
 import 'package:genie/features/chat/data/chat_attachment_service.dart';
+import 'package:genie/features/chat/data/chat_attachment_store.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
@@ -44,6 +45,21 @@ final chatRepositoryProvider = Provider(
   (ref) => ChatRepository(dio: ref.watch(apiClientProvider)),
 );
 
+/// One store for the app's lifetime (two would share one database). When a
+/// different user signs in, the previous user's files are removed: they could
+/// not be opened without that user's messages, but they are theirs.
+final chatAttachmentStoreProvider = Provider<ChatAttachmentStore>((ref) {
+  final store = ChatAttachmentStore();
+  // Signing out passes through "nobody", so the last real user is compared.
+  String? lastUserId;
+  ref.listen<String?>(currentUserIdProvider, (_, userId) {
+    if (userId == null) return;
+    if (lastUserId != null && lastUserId != userId) store.clear();
+    lastUserId = userId;
+  }, fireImmediately: true);
+  return store;
+});
+
 /// Opened files are kept in memory for the signed-in user only, so the
 /// service is rebuilt (and that memory dropped) when the user changes.
 final chatAttachmentServiceProvider = Provider<ChatAttachmentService>((ref) {
@@ -51,6 +67,7 @@ final chatAttachmentServiceProvider = Provider<ChatAttachmentService>((ref) {
   return ChatAttachmentService(
     repository: ref.watch(chatRepositoryProvider),
     cryptoService: ref.watch(cryptoServiceProvider),
+    store: ref.watch(chatAttachmentStoreProvider),
   );
 });
 
