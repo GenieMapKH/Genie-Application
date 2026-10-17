@@ -12,9 +12,15 @@ final propertyRepositoryProvider = Provider<PropertyRepository>((ref) {
 });
 
 class PropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
+  /// The signed-in user's listings; none for a guest, so the map shows no
+  /// edit markers on the previous user's listings after signing out.
   @override
   Future<List<PropertyModel>> build() async {
     final repo = ref.watch(propertyRepositoryProvider);
+    if (!ref.watch(isSignedInProvider)) {
+      repo.invalidateCache();
+      return [];
+    }
     return repo.fetchAll(forceRefresh: true);
   }
 

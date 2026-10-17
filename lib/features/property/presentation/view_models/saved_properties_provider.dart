@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
@@ -20,12 +21,11 @@ final savedSortOptionProvider = StateProvider<SortOption>((ref) {
 });
 
 class SavedPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
+  /// The signed-in user's favourites; none for a guest, whose hearts must
+  /// not show the previous user's choices.
   @override
   Future<List<PropertyModel>> build() async {
-    final token = await AuthStorage.getAccessToken();
-    if (token == null) {
-      return state.valueOrNull ?? [];
-    }
+    if (!ref.watch(isSignedInProvider)) return [];
     final repo = ref.watch(propertyRepositoryProvider);
     return repo.fetchFavorites();
   }
@@ -35,33 +35,31 @@ class SavedPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
     return state.value!.any((p) => p.id == propertyId);
   }
 
+  /// Only for a signed-in user: a guest is asked to sign in first, since a
+  /// favourite kept nowhere but on screen would be lost.
   Future<void> toggleFavorite(PropertyModel property) async {
+    if (!ref.read(isSignedInProvider)) return;
     final repo = ref.read(propertyRepositoryProvider);
     final currentList = state.value ?? [];
     final exists = currentList.any((p) => p.id == property.id);
-    final token = await AuthStorage.getAccessToken();
 
     if (exists) {
       // Optimistically remove
       state = AsyncData(currentList.where((p) => p.id != property.id).toList());
-      if (token != null) {
-        try {
-          await repo.unfavorite(property.id);
-        } catch (e) {
-          // Rollback on failure
-          state = AsyncData(currentList);
-        }
+      try {
+        await repo.unfavorite(property.id);
+      } catch (e) {
+        AppLogger.error('Removing a favourite failed', e);
+        state = AsyncData(currentList);
       }
     } else {
       // Optimistically add
       state = AsyncData([property, ...currentList]);
-      if (token != null) {
-        try {
-          await repo.favorite(property.id);
-        } catch (e) {
-          // Rollback on failure
-          state = AsyncData(currentList);
-        }
+      try {
+        await repo.favorite(property.id);
+      } catch (e) {
+        AppLogger.error('Adding a favourite failed', e);
+        state = AsyncData(currentList);
       }
     }
   }

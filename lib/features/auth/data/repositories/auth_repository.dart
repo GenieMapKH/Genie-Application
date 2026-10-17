@@ -15,6 +15,26 @@ import 'package:genie/core/network/api_cache_manager.dart';
 /// screen (`lib/app/app.dart`).
 final sessionEndedProvider = StateProvider<int>((ref) => 0);
 
+/// Whether someone is signed in on this device, from sign-in until sign-out
+/// or the server ending the session. What is kept for the signed-in user
+/// (profile, listings, favourites) watches it, so a guest never sees the
+/// previous user's data or the actions only they may take.
+final isSignedInProvider = NotifierProvider<SignedInNotifier, bool>(
+  SignedInNotifier.new,
+);
+
+/// Follows the stored tokens ([AuthStorage.signedIn]).
+class SignedInNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    final signedIn = AuthStorage.signedIn;
+    void follow() => state = signedIn.value;
+    signedIn.addListener(follow);
+    ref.onDispose(() => signedIn.removeListener(follow));
+    return signedIn.value;
+  }
+}
+
 final apiClientProvider = Provider<Dio>((ref) {
   return createApiClient(
     onSessionEnded: () => ref.read(sessionEndedProvider.notifier).state++,

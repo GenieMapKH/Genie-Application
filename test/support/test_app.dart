@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/core/theme/app_theme.dart';
+import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/settings/data/app_settings_storage.dart';
 import 'package:genie/features/settings/providers/app_settings_providers.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -42,6 +43,19 @@ Future<void> pumpTestApp(
     ),
   );
   await tester.pump();
+}
+
+/// Treats the test as signed in, or as a guest, without stored tokens.
+Override signedInOverride({bool signedIn = true}) =>
+    isSignedInProvider.overrideWith(() => _FixedSignedIn(signedIn));
+
+class _FixedSignedIn extends SignedInNotifier {
+  final bool signedIn;
+
+  _FixedSignedIn(this.signedIn);
+
+  @override
+  bool build() => signedIn;
 }
 
 /// A request the [StubServer] received.
