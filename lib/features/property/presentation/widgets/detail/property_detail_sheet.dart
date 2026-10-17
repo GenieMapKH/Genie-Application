@@ -15,6 +15,7 @@ import 'package:genie/features/property/presentation/widgets/detail/property_gri
 import 'package:genie/features/property/presentation/widgets/detail/property_highlights.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_map_preview.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_share_section.dart';
+import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -201,6 +202,7 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                         false,
                                     onClose: _dismiss,
                                     onFavoriteToggled: () {
+                                      if (!requireSignIn(context, ref)) return;
                                       ref
                                           .read(
                                             savedPropertiesProvider.notifier,
@@ -219,6 +221,7 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                             else
                               PropertyContactBar(
                                 onChat: () {
+                                  if (!requireSignIn(context, ref)) return;
                                   if (widget.property.ownerId != null) {
                                     // Use root navigator so chat opens as a full-screen page
                                     Navigator.of(

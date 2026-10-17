@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
@@ -136,6 +137,7 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
                               property: property,
                               isFavorite: isSaved,
                               onFavoriteToggled: () {
+                                if (!requireSignIn(context, ref)) return;
                                 ref
                                     .read(savedPropertiesProvider.notifier)
                                     .toggleFavorite(property);

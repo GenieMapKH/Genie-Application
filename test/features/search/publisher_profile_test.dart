@@ -69,6 +69,7 @@ Future<SearchSelection? Function()> _openProfile(
   StubServer server, {
   Size size = const Size(390, 844),
   String? signedInAs = 'me',
+  bool? hasSession,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -93,6 +94,7 @@ Future<SearchSelection? Function()> _openProfile(
       ),
       searchHasSessionProvider.overrideWithValue(() async => false),
       _signedInAs(signedInAs),
+      signedInOverride(signedIn: hasSession ?? signedInAs != null),
     ],
   );
   await tester.tap(find.text('open'));
@@ -235,9 +237,9 @@ void main() {
   });
 
   testWidgets('"Chat" opens a conversation with them', (tester) async {
-    // As a guest: the page then asks to sign in instead of starting the
-    // encrypted session, which tests cannot run.
-    await _openProfile(tester, _api(), signedInAs: null);
+    // Signed in, but the profile is not loaded: the page then says so
+    // instead of starting the encrypted session, which tests cannot run.
+    await _openProfile(tester, _api(), signedInAs: null, hasSession: true);
 
     await tester.tap(find.text('Chat'));
     await tester.pumpAndSettle();
@@ -247,6 +249,18 @@ void main() {
     );
     expect(chat.participantId, 'u-1');
     expect(chat.participantName, 'Sokha Realty');
+  });
+
+  testWidgets('a guest who taps "Chat" is asked to sign in first', (
+    tester,
+  ) async {
+    await _openProfile(tester, _api(), signedInAs: null);
+
+    await tester.tap(find.text('Chat'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Account Required'), findsOneWidget);
+    expect(find.byType(ChatConversationPage), findsNothing);
   });
 
   testWidgets('your own profile has no "Chat"', (tester) async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
@@ -41,7 +42,9 @@ class PublisherListingsGrid extends ConsumerWidget {
             property: property,
             isFavorite: saved.isSaved(property.id),
             onTap: () => onOpen(property),
-            onFavoriteToggled: () => saved.toggleFavorite(property),
+            onFavoriteToggled: () {
+              if (requireSignIn(context, ref)) saved.toggleFavorite(property);
+            },
           );
         },
       ),
