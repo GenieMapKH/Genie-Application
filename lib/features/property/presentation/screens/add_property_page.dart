@@ -1,3 +1,9 @@
+import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/core/media/image_compressor.dart';
+import 'package:genie/core/media/image_upload_policy.dart';
+import 'package:genie/shared/utils/image_rejection_message.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -87,33 +93,44 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
 
   Future<void> pickImage(ImageSource source) async {
     try {
+      final List<XFile> picked;
       if (source == ImageSource.gallery) {
-        final List<XFile> images = await picker.pickMultiImage(
-          imageQuality: 70,
-          maxWidth: 1280,
-          maxHeight: 1280,
-        );
-        if (images.isNotEmpty) {
-          setState(() {
-            selectedPhotos.addAll(images);
-          });
-        }
+        picked = await picker.pickMultiImage();
       } else {
-        final XFile? image = await picker.pickImage(
-          source: source,
-          imageQuality: 70,
-          maxWidth: 1280,
-          maxHeight: 1280,
-        );
-        if (image != null) {
-          setState(() {
-            selectedPhotos.add(image);
-          });
-        }
+        final image = await picker.pickImage(source: source);
+        picked = [?image];
+      }
+      if (picked.isEmpty) return;
+
+      final prepared = await _prepare(picked);
+      if (prepared.isNotEmpty && mounted) {
+        setState(() => selectedPhotos.addAll(prepared));
       }
     } catch (e) {
-      debugPrint('Error picking image: $e');
+      AppLogger.debug('Error picking image: $e');
     }
+  }
+
+  /// Compresses each picture to a small JPEG. One that is too large or
+  /// unreadable is left out, and the user is told why.
+  Future<List<XFile>> _prepare(List<XFile> pictures) async {
+    final prepared = <XFile>[];
+    for (final picture in pictures) {
+      try {
+        final image = await ImageCompressor.native.compress(
+          picture,
+          ImageUploadPolicy.propertyPhoto,
+        );
+        prepared.add(image.toXFile());
+      } on ImageRejectedException catch (e) {
+        if (!mounted) break;
+        AppPopup.showError(
+          context,
+          imageRejectionMessage(context.l10n, e.reason),
+        );
+      }
+    }
+    return prepared;
   }
 
   final List<Map<String, dynamic>> keywords = [

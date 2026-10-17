@@ -1,5 +1,5 @@
+import 'package:genie/core/logging/app_logger.dart';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PropertyModel {
@@ -105,7 +105,7 @@ class PropertyModel {
         }
       }
     } catch (e) {
-      debugPrint('Error parsing boundaryPoints: $e');
+      AppLogger.debug('Error parsing boundaryPoints: $e');
     }
 
     List<String> images = [];
@@ -173,8 +173,11 @@ class PropertyModel {
       lat: json['lat'] != null ? (json['lat'] as num).toDouble() : null,
       lng: json['lng'] != null ? (json['lng'] as num).toDouble() : null,
       ownerId: owner is Map ? owner['id'] as String? : null,
-      ownerName: owner is Map 
-          ? (owner['username'] as String? ?? owner['email'] as String? ?? owner['phone'] as String?) 
+      ownerName: owner is Map
+          ? (owner['name'] as String? ??
+                owner['username'] as String? ??
+                owner['email'] as String? ??
+                owner['phone'] as String?)
           : null,
       ownerAvatarUrl: owner is Map ? owner['avatarUrl'] as String? : null,
       ownerEmail: owner is Map ? owner['email'] as String? : null,
@@ -252,4 +255,3 @@ class PropertyModel {
     );
   }
 }
-

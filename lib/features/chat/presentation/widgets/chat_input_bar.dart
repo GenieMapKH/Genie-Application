@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/features/chat/presentation/widgets/chat_emoji_panel.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
+
 class ChatInputBar extends StatefulWidget {
   final ValueChanged<String>? onSend;
 
-  const ChatInputBar({super.key, this.onSend});
+  /// Called when the user wants to attach a picture.
+  final VoidCallback? onAttach;
+
+  const ChatInputBar({super.key, this.onSend, this.onAttach});
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -13,12 +20,41 @@ class ChatInputBar extends StatefulWidget {
 
 class _ChatInputBarState extends State<ChatInputBar> {
   final TextEditingController _controller = TextEditingController();
-  bool _showExtraState = false;
+  final FocusNode _focusNode = FocusNode();
+  bool _showEmojis = false;
 
-  void _toggleExtraState() {
-    setState(() {
-      _showExtraState = !_showExtraState;
+  @override
+  void initState() {
+    super.initState();
+    // The emoji panel and the keyboard take the same place.
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus && _showEmojis) {
+        setState(() => _showEmojis = false);
+      }
     });
+  }
+
+  void _toggleEmojis() {
+    setState(() => _showEmojis = !_showEmojis);
+    if (_showEmojis) {
+      _focusNode.unfocus();
+    } else {
+      _focusNode.requestFocus();
+    }
+  }
+
+  /// Puts [emoji] where the cursor is, replacing any selected text.
+  void _insertEmoji(String emoji) {
+    final value = _controller.value;
+    final selection = value.selection.isValid
+        ? value.selection
+        : TextSelection.collapsed(offset: value.text.length);
+    _controller.value = TextEditingValue(
+      text: value.text.replaceRange(selection.start, selection.end, emoji),
+      selection: TextSelection.collapsed(
+        offset: selection.start + emoji.length,
+      ),
+    );
   }
 
   void _handleSend() {
@@ -32,6 +68,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -41,30 +78,34 @@ class _ChatInputBarState extends State<ChatInputBar> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (_showExtraState) _buildExtraStateOverlay(),
         Container(
-          color: Colors.white,
+          color: context.colors.surface,
           padding: EdgeInsets.only(
             left: 16,
             right: 16,
             top: 12,
-            bottom: 12 + MediaQuery.of(context).padding.bottom,
+            bottom:
+                12 + (_showEmojis ? 0 : MediaQuery.of(context).padding.bottom),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               GestureDetector(
-                onTap: _toggleExtraState,
+                onTap: widget.onAttach,
                 child: Container(
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.surface,
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFE5E7EB), width: 2),
+                    border: Border.all(color: context.colors.border, width: 2),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.attach_file, color: Color(0xFF6B7280), size: 22),
+                  child: Center(
+                    child: Icon(
+                      Icons.attach_file,
+                      color: context.colors.textMuted,
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
@@ -72,9 +113,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: const Color(0xFFD1D5DB)),
+                    border: Border.all(color: context.colors.iconSubtle),
                   ),
                   child: Row(
                     children: [
@@ -82,12 +123,13 @@ class _ChatInputBarState extends State<ChatInputBar> {
                       Expanded(
                         child: TextField(
                           controller: _controller,
+                          focusNode: _focusNode,
                           onSubmitted: (_) => _handleSend(),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Message',
+                            hintText: context.l10n.chatMessage,
                             hintStyle: GoogleFonts.inter(
-                              color: const Color(0xFF9CA3AF),
+                              color: context.colors.textHint,
                               fontSize: 15,
                             ),
                           ),
@@ -96,19 +138,25 @@ class _ChatInputBarState extends State<ChatInputBar> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: _toggleEmojis,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.sentiment_satisfied_alt,
-                              color: const Color(0xFF6B7280)),
+                          child: Icon(
+                            _showEmojis
+                                ? Icons.keyboard_outlined
+                                : Icons.sentiment_satisfied_alt,
+                            color: context.colors.textMuted,
+                          ),
                         ),
                       ),
                       GestureDetector(
                         onTap: _handleSend,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.send_outlined,
-                              color: const Color(0xFF6B7280)),
+                          child: Icon(
+                            Icons.send_outlined,
+                            color: context.colors.textMuted,
+                          ),
                         ),
                       ),
                     ],
@@ -126,86 +174,19 @@ class _ChatInputBarState extends State<ChatInputBar> {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: SvgPicture.asset('assets/icons/chat_voice.svg', width: 44, height: 44),
+                    child: SvgPicture.asset(
+                      'assets/icons/chat_voice.svg',
+                      width: 44,
+                      height: 44,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
+        if (_showEmojis) ChatEmojiPanel(onSelected: _insertEmoji),
       ],
-    );
-  }
-
-  Widget _buildExtraStateOverlay() {
-    return Container(
-      color: const Color(0xFFD1D5DB).withOpacity(0.5),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildActionPill(
-            label: 'Auto scroll down',
-            iconPath: 'assets/icons/chat_scroll_down.svg',
-          ),
-          const SizedBox(height: 12),
-          _buildActionPill(
-            label: 'Voice or Camera',
-            iconPath: 'assets/icons/chat_voice.svg',
-            iconPath2: 'assets/icons/chat_camera.svg',
-          ),
-          const SizedBox(height: 12),
-          _buildActionPill(
-            label: 'Send photo / document',
-            iconPath: 'assets/icons/chat_document.svg',
-          ),
-          const SizedBox(height: 12),
-          _buildActionPill(
-            label: 'Send sticker',
-            iconPath: 'assets/icons/chat_sticker.svg',
-            isLight: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionPill({
-    required String label,
-    required String iconPath,
-    String? iconPath2,
-    bool isLight = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isLight ? Colors.white : const Color(0xFF3730A3),
-        borderRadius: BorderRadius.circular(24),
-        border: isLight ? Border.all(color: const Color(0xFFE5E7EB)) : null,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              color: isLight ? const Color(0xFF6B7280) : Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(width: 12),
-          if (iconPath.endsWith('.svg')) 
-             SvgPicture.asset(iconPath, width: 40, height: 40)
-          else 
-             Icon(Icons.image, color: isLight ? const Color(0xFF6B7280) : Colors.white),
-          if (iconPath2 != null) ...[
-            const SizedBox(width: 8),
-            SvgPicture.asset(iconPath2, width: 40, height: 40),
-          ]
-        ],
-      ),
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// "Share This Property" — a scannable QR of the listing's deep link plus
 /// Share and Download actions.
@@ -27,11 +29,11 @@ class PropertyShareSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Share This Property',
+          context.l10n.propertyShareThisProperty,
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -39,28 +41,28 @@ class PropertyShareSection extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: context.colors.border),
           ),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.qr_code_scanner,
                     size: 16,
-                    color: Color(0xFF6B7280),
+                    color: context.colors.textMuted,
                   ),
                   const SizedBox(width: 6),
                   Flexible(
                     child: Text(
-                      'Scan this QR code to view this property on your phone',
+                      context.l10n.propertyScanThisQrCodeToView,
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF6B7280),
+                        color: context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -72,26 +74,29 @@ class PropertyShareSection extends StatelessWidget {
                 version: QrVersions.auto,
                 size: 160,
                 padding: EdgeInsets.zero,
-                backgroundColor: Colors.white,
-                eyeStyle: const QrEyeStyle(
+                backgroundColor: context.colors.surface,
+                eyeStyle: QrEyeStyle(
                   eyeShape: QrEyeShape.square,
-                  color: Color(0xFF111827),
+                  color: context.colors.textPrimary,
                 ),
-                dataModuleStyle: const QrDataModuleStyle(
+                dataModuleStyle: QrDataModuleStyle(
                   dataModuleShape: QrDataModuleShape.square,
-                  color: Color(0xFF111827),
+                  color: context.colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
-                    child: _ShareButton(label: 'Share', onPressed: onShare),
+                    child: _ShareButton(
+                      label: context.l10n.propertyShare,
+                      onPressed: onShare,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _ShareButton(
-                      label: 'Download',
+                      label: context.l10n.propertyDownload,
                       isPrimary: true,
                       onPressed: onDownload,
                     ),
@@ -125,7 +130,7 @@ class _ShareButton extends StatelessWidget {
           ? ElevatedButton(
               onPressed: onPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF5B5FEF),
+                backgroundColor: context.colors.accent,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -143,7 +148,7 @@ class _ShareButton extends StatelessWidget {
           : OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Color(0xFFE5E7EB)),
+                side: BorderSide(color: context.colors.border),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -153,7 +158,7 @@ class _ShareButton extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF111827),
+                  color: context.colors.textPrimary,
                 ),
               ),
             ),

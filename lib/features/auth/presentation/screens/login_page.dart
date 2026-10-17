@@ -13,6 +13,8 @@ import 'package:genie/features/profile/presentation/view_models/user_providers.d
 import '../widgets/login_header.dart';
 import '../widgets/login_form.dart';
 import '../widgets/social_login_buttons.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Login screen supporting Email and Phone Number authentication methods,
 /// Google OAuth login, "Keep me signed in" preference, and custom error states.
@@ -121,7 +123,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   void _onAuthSuccess() {
     if (!mounted) return;
-    AppPopup.showSuccess(context, 'Successfully logged in!');
+    AppPopup.showSuccess(context, context.l10n.authSuccessfullyLoggedIn);
     ref.invalidate(userProfileProvider);
     ref.invalidate(propertiesProvider);
     ref.invalidate(publicPropertiesProvider);
@@ -151,7 +153,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
             children: [
               GestureDetector(
                 onTap: () {
-                  ref.read(loginFormProvider.notifier).setMethod(AuthMethod.email);
+                  ref
+                      .read(loginFormProvider.notifier)
+                      .setMethod(AuthMethod.email);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 6.0),
@@ -162,17 +166,19 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       fontSize: 15,
                       fontWeight: isEmail ? FontWeight.w600 : FontWeight.w500,
                       color: isEmail
-                          ? const Color(0xFF4F5BD5)
-                          : const Color(0xFF64748B),
+                          ? context.colors.primary
+                          : context.colors.textMuted,
                     ),
-                    child: const Text('Email'),
+                    child: Text(context.l10n.personalInfoEmail),
                   ),
                 ),
               ),
               const SizedBox(width: 24),
               GestureDetector(
                 onTap: () {
-                  ref.read(loginFormProvider.notifier).setMethod(AuthMethod.phone);
+                  ref
+                      .read(loginFormProvider.notifier)
+                      .setMethod(AuthMethod.phone);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 6.0),
@@ -183,10 +189,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       fontSize: 15,
                       fontWeight: !isEmail ? FontWeight.w600 : FontWeight.w500,
                       color: !isEmail
-                          ? const Color(0xFF4F5BD5)
-                          : const Color(0xFF64748B),
+                          ? context.colors.primary
+                          : context.colors.textMuted,
                     ),
-                    child: const Text('Phone Number'),
+                    child: Text(context.l10n.authPhoneNumber),
                   ),
                 ),
               ),
@@ -203,7 +209,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
             height: 2.0,
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF4F5BD5),
+                color: context.colors.primary,
                 borderRadius: BorderRadius.circular(1.0),
               ),
             ),
@@ -226,7 +232,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
         if (!mounted) return;
         final errorMessage = next.error is AppException
             ? (next.error as AppException).message
-            : 'Login failed. Please check your credentials and try again.';
+            : context.l10n.authLoginFailedPleaseCheckYourCredentials;
         AppPopup.showError(context, errorMessage);
       } else if (next.hasValue && next.value == true) {
         if (!mounted) return;
@@ -235,7 +241,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
     });
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

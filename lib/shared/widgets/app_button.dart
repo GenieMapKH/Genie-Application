@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
+
+/// The look a button takes from the theme when no colours are given.
+enum _AppButtonKind { primary, secondary }
 
 /// A reusable, customizable button component designed for Genie with tactile micro-interactions.
+///
+/// Colours left out come from the theme, so the button follows light and
+/// dark mode: brand background with white text, or for [AppButton.secondary]
+/// a surface background with a border.
 class AppButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
-  final Color backgroundColor;
-  final Color textColor;
+  final Color? backgroundColor;
+  final Color? textColor;
   final Color? borderColor;
   final double borderWidth;
   final double borderRadius;
@@ -16,13 +24,14 @@ class AppButton extends StatefulWidget {
   final bool isLoading;
   final Widget? icon;
   final TextStyle? textStyle;
+  final _AppButtonKind _kind;
 
   const AppButton({
     super.key,
     required this.text,
     required this.onPressed,
-    this.backgroundColor = const Color(0xFF4F5BD5),
-    this.textColor = Colors.white,
+    this.backgroundColor,
+    this.textColor,
     this.borderColor,
     this.borderWidth = 2.0,
     this.borderRadius = 10.0,
@@ -32,53 +41,43 @@ class AppButton extends StatefulWidget {
     this.isLoading = false,
     this.icon,
     this.textStyle,
-  });
+  }) : _kind = _AppButtonKind.primary;
 
-  /// Factory for the Primary login button (#4F5BD5 background, white text).
-  factory AppButton.primary({
-    Key? key,
-    required String text,
-    required VoidCallback? onPressed,
-    bool isLoading = false,
-    Widget? icon,
-    double height = 54.0,
-  }) {
-    return AppButton(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      backgroundColor: const Color(0xFF4F5BD5),
-      textColor: Colors.white,
-      borderColor: Colors.transparent,
-      borderWidth: 2.0,
-      height: height,
-      isLoading: isLoading,
-      icon: icon,
-    );
-  }
+  /// The main action of a screen: brand background, white text.
+  const AppButton.primary({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.isLoading = false,
+    this.icon,
+    this.height = 54.0,
+  }) : backgroundColor = null,
+       textColor = null,
+       borderColor = null,
+       borderWidth = 2.0,
+       borderRadius = 10.0,
+       maxWidth = 408.0,
+       padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 13.0),
+       textStyle = null,
+       _kind = _AppButtonKind.primary;
 
-  /// Factory for the Secondary explore button (#FFFFFF background, #E5E7EB border).
-  factory AppButton.secondary({
-    Key? key,
-    required String text,
-    required VoidCallback? onPressed,
-    bool isLoading = false,
-    Widget? icon,
-    double height = 54.0,
-  }) {
-    return AppButton(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      backgroundColor: Colors.white,
-      textColor: const Color(0xFF374151),
-      borderColor: const Color(0xFFE5E7EB),
-      borderWidth: 2.0,
-      height: height,
-      isLoading: isLoading,
-      icon: icon,
-    );
-  }
+  /// A quieter action next to a primary one: surface background, outlined.
+  const AppButton.secondary({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.isLoading = false,
+    this.icon,
+    this.height = 54.0,
+  }) : backgroundColor = null,
+       textColor = null,
+       borderColor = null,
+       borderWidth = 2.0,
+       borderRadius = 10.0,
+       maxWidth = 408.0,
+       padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 13.0),
+       textStyle = null,
+       _kind = _AppButtonKind.secondary;
 
   @override
   State<AppButton> createState() => _AppButtonState();
@@ -107,9 +106,20 @@ class _AppButtonState extends State<AppButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final isSecondary = widget._kind == _AppButtonKind.secondary;
+    final backgroundColor =
+        widget.backgroundColor ??
+        (isSecondary ? colors.surface : colors.primary);
+    final textColor =
+        widget.textColor ??
+        (isSecondary ? colors.textSecondary : colors.onPrimary);
+    final borderColor =
+        widget.borderColor ?? (isSecondary ? colors.border : null);
+
     final effectiveBorder =
-        widget.borderColor != null && widget.borderColor != Colors.transparent
-        ? Border.all(color: widget.borderColor!, width: widget.borderWidth)
+        borderColor != null && borderColor != Colors.transparent
+        ? Border.all(color: borderColor, width: widget.borderWidth)
         : null;
 
     final resolvedTextStyle =
@@ -117,7 +127,7 @@ class _AppButtonState extends State<AppButton> {
         GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w600,
-          color: widget.textColor,
+          color: textColor,
           letterSpacing: -0.2,
         );
 
@@ -128,7 +138,7 @@ class _AppButtonState extends State<AppButton> {
         height: 20,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(widget.textColor),
+          valueColor: AlwaysStoppedAnimation<Color>(textColor),
         ),
       );
     } else if (widget.icon != null) {
@@ -163,7 +173,7 @@ class _AppButtonState extends State<AppButton> {
       width: double.infinity,
       height: widget.height,
       decoration: BoxDecoration(
-        color: widget.backgroundColor,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(widget.borderRadius),
         border: effectiveBorder,
       ),

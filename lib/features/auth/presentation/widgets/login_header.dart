@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class LoginHeader extends StatelessWidget {
   final Animation<Offset> slideAnimation;
@@ -22,21 +24,21 @@ class LoginHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Login',
+                context.l10n.authLogin,
                 style: GoogleFonts.inter(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1E293B),
+                  color: context.colors.textPrimary,
                   letterSpacing: -0.5,
                 ),
               ),
               const SizedBox(height: 6),
               Text(
-                'Welcome back to the app',
+                context.l10n.authWelcomeBackToTheApp,
                 style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF64748B),
+                  color: context.colors.textMuted,
                 ),
               ),
             ],

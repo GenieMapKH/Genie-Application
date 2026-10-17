@@ -8,6 +8,8 @@ import 'package:genie/features/property/presentation/screens/sort_order_page.dar
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
 import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// The Saved Properties tab page matching Screenshots 1 & 2.
 class SavedPropertiesPage extends ConsumerWidget {
@@ -40,13 +42,13 @@ class SavedPropertiesPage extends ConsumerWidget {
     final count = savedAsync.valueOrNull?.length ?? 0;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
             // Top App Bar Header
             AppHeaderBar(
-              title: 'Saved Properties',
+              title: context.l10n.propertySavedProperties,
               onBackPressed: onBackPressed,
               trailing: Padding(
                 padding: const EdgeInsets.only(right: 4.0),
@@ -55,7 +57,7 @@ class SavedPropertiesPage extends ConsumerWidget {
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF5B5FEF),
+                    color: context.colors.accent,
                   ),
                 ),
               ),
@@ -76,24 +78,24 @@ class SavedPropertiesPage extends ConsumerWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF3F4F6),
+                      color: context.colors.divider,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.tune,
                           size: 16,
-                          color: Color(0xFF4B5563),
+                          color: context.colors.textSecondary,
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Sort by',
+                          context.l10n.propertySortBy,
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF374151),
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ],
@@ -107,18 +109,20 @@ class SavedPropertiesPage extends ConsumerWidget {
             // Main Content Area
             Expanded(
               child: savedAsync.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF5B5FEF)),
+                loading: () => Center(
+                  child: CircularProgressIndicator(
+                    color: context.colors.accent,
+                  ),
                 ),
                 error: (err, stack) => Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Failed to load saved properties',
+                        context.l10n.propertyFailedToLoadSavedProperties,
                         style: GoogleFonts.inter(
                           fontSize: 14,
-                          color: const Color(0xFF6B7280),
+                          color: context.colors.textMuted,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -126,14 +130,14 @@ class SavedPropertiesPage extends ConsumerWidget {
                         onPressed: () {
                           ref.read(savedPropertiesProvider.notifier).refresh();
                         },
-                        child: const Text('Retry'),
+                        child: Text(context.l10n.commonRetry),
                       ),
                     ],
                   ),
                 ),
                 data: (_) {
                   if (sortedProperties.isEmpty) {
-                    return _buildEmptyState();
+                    return _buildEmptyState(context);
                   }
                   return _buildPropertyList(context, ref, sortedProperties);
                 },
@@ -146,64 +150,69 @@ class SavedPropertiesPage extends ConsumerWidget {
   }
 
   /// Empty state matching Screenshot 2.
-  Widget _buildEmptyState() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF9FAFB),
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.favorite_border_rounded,
-                size: 36,
-                color: Color(0xFF9CA3AF),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "You haven't saved any properties yet.",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF374151),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.info_outline,
-                  size: 14,
-                  color: Color(0xFF9CA3AF),
+  Widget _buildEmptyState(BuildContext context) {
+    // Aligned to the top so the card hugs its content instead of filling the
+    // page, like the empty My Properties and chat lists.
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+          decoration: BoxDecoration(
+            color: context.colors.surfaceMuted,
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    'Tap the heart icon on listings to save them for later.',
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: const Color(0xFF9CA3AF),
+                child: Icon(
+                  Icons.favorite_border_rounded,
+                  size: 36,
+                  color: context.colors.textHint,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                context.l10n.propertyYouHavenTSavedAnyProperties,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: context.colors.textHint,
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      context.l10n.propertyTapTheHeartIconOnListings,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: context.colors.textHint,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

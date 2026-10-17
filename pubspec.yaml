@@ -52,7 +52,6 @@ dependencies:
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
   go_router: ^17.5.0
-  flutter_dotenv: ^6.0.1
   google_sign_in: ^6.2.1
   firebase_core: ^4.14.0
   firebase_auth: ^6.6.1
@@ -64,6 +63,10 @@ dependencies:
   sodium_libs: ^3.4.6+4
   cryptography: ^2.9.0
   socket_io_client: ^3.1.6
+  device_info_plus: ^13.3.0
+  flutter_localizations:
+    sdk: flutter
+  flutter_image_compress: ^2.5.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -97,10 +100,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Builds lib/l10n/generated from the .arb files (see l10n.yaml).
+  generate: true
+
   # To add assets to your application, add an assets section, like this:
   assets:
-    - .env
-    - .env.production
     - assets/images/
     - assets/images/homescreen/
     - assets/images/homescreen/mapDefault.png

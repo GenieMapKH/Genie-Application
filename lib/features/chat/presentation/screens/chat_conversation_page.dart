@@ -2,11 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/core/media/image_upload_policy.dart';
+import 'package:genie/shared/utils/image_rejection_message.dart';
+import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_conversation_header.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_image_picker.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_input_bar.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_key_changed_banner.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_message_bubble.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_participant_sheet.dart';
+import 'package:genie/features/chat/presentation/widgets/pin_prompt_dialog.dart';
+import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
-class ChatConversationPage extends ConsumerStatefulWidget {
+class ChatConversationPage extends ConsumerWidget {
   final String participantId;
   final String participantName;
 
@@ -17,66 +29,28 @@ class ChatConversationPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChatConversationPage> createState() => _ChatConversationPageState();
-}
-
-class _ChatConversationPageState extends ConsumerState<ChatConversationPage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        final profile = await ref.read(userProfileProvider.future);
-        if (mounted) {
-          final initService = ref.read(e2eeInitServiceProvider);
-          await initService.initializeE2EE(context, profile.id);
-        }
-      } catch (e) {
-        debugPrint('Failed to initialize E2EE in ChatConversation: $e');
-      }
-
-      if (mounted) {
-        ref.read(activeChatProvider.notifier).setActiveChat(
-              widget.participantId,
-              widget.participantName,
-            );
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    // We don't clear the active chat immediately here, otherwise it might flicker on pop.
-    // However, it's good practice to manage it appropriately.
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final chatState = ref.watch(activeChatProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(userProfileProvider);
+    // A conversation belongs to the signed-in user, so wait for them.
+    final userId = profile.hasError ? null : profile.valueOrNull?.id;
+    final chat = userId == null
+        ? null
+        : (userId: userId, participantId: participantId);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60.0),
         child: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colors.surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF6B7280)),
+            icon: Icon(Icons.arrow_back, color: context.colors.textMuted),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: Column(
-            children: [
-              Text(
-                widget.participantName,
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF111827),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          title: ChatConversationHeader(
+            participantName: participantName,
+            chat: chat,
           ),
           centerTitle: true,
           actions: [
@@ -85,9 +59,13 @@ class _ChatConversationPageState extends ConsumerState<ChatConversationPage> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                  border: Border.all(color: context.colors.border),
                 ),
-                child: const Icon(Icons.phone_outlined, color: Color(0xFF6B7280), size: 18),
+                child: Icon(
+                  Icons.phone_outlined,
+                  color: context.colors.textMuted,
+                  size: 18,
+                ),
               ),
               onPressed: () {},
             ),
@@ -95,90 +73,201 @@ class _ChatConversationPageState extends ConsumerState<ChatConversationPage> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-              itemCount: chatState?.messages.length ?? 0,
-              itemBuilder: (context, index) {
-                final message = chatState!.messages[index];
-                final isMe = message.senderId == 'me';
-                
-                if (isMe) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: _buildMyMessage(message.text),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: _buildTheirMessage(message.text),
-                  );
-                }
-              },
+      body: userId == participantId
+          ? _ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)
+          : chat != null
+          ? _Conversation(chat: chat, participantName: participantName)
+          : profile.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _ChatNotice(
+              message: context.l10n.chatSignInToChatOrCheck,
+              onRetry: () => ref.invalidate(userProfileProvider),
             ),
-          ),
-          ChatInputBar(
-            onSend: (text) {
-              ref.read(activeChatProvider.notifier).sendMessage(text);
-            },
-          ),
+    );
+  }
+}
+
+class _Conversation extends ConsumerStatefulWidget {
+  final ChatParticipants chat;
+  final String participantName;
+
+  const _Conversation({required this.chat, required this.participantName});
+
+  @override
+  ConsumerState<_Conversation> createState() => _ConversationState();
+}
+
+class _ConversationState extends ConsumerState<_Conversation> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _open());
+  }
+
+  void _open() {
+    if (!mounted) return;
+    ref.read(activeChatProvider(widget.chat).notifier).open(askPin: _askPin);
+  }
+
+  Future<void> _sendPicture() async {
+    final PickedChatImage? picture;
+    try {
+      picture = await pickChatImage(context);
+    } on ImageRejectedException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(imageRejectionMessage(context.l10n, e.reason))),
+      );
+      return;
+    } catch (e) {
+      // The camera or gallery refused, e.g. permission was denied.
+      AppLogger.error('Could not pick a picture', e);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.chatCouldNotOpenYourPhotos)),
+      );
+      return;
+    }
+    if (picture == null || !mounted) return;
+
+    ref
+        .read(activeChatProvider(widget.chat).notifier)
+        .sendImage(
+          picture.bytes,
+          name: picture.name,
+          mimeType: picture.mimeType,
+        );
+  }
+
+  Future<String?> _askPin({required bool isNewPin}) async {
+    if (!mounted) return null;
+    return showPinPrompt(
+      context,
+      allowCancel: !isNewPin,
+      isNewPin: isNewPin,
+      title: isNewPin ? 'Create Backup PIN' : 'Enter Backup PIN',
+      helper: isNewPin
+          ? 'This PIN encrypts your chat keys. Do not forget it!'
+          : 'Enter your PIN to restore your chats.',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = activeChatProvider(widget.chat);
+    final chatState = ref.watch(provider);
+
+    ref.listen(provider.select((state) => state.sendError), (_, error) {
+      if (error == null) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(error)));
+    });
+
+    return switch (chatState.status) {
+      ActiveChatStatus.loading => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      ActiveChatStatus.unavailable => _ChatNotice(
+        message: switch (chatState.setupResult) {
+          E2eeSetupResult.wrongPin =>
+            '${context.l10n.pinWrong}\n\n${context.l10n.pinForgotHint}',
+          E2eeSetupResult.rateLimited =>
+            '${context.l10n.pinLocked}\n\n${context.l10n.pinForgotHint}',
+          E2eeSetupResult.cancelled =>
+            '${context.l10n.chatPinNeeded}\n\n${context.l10n.pinForgotHint}',
+          _ => context.l10n.chatOpenFailed,
+        },
+        onRetry: _open,
+      ),
+      ActiveChatStatus.ready => Column(
+        children: [
+          Expanded(child: _buildMessages(chatState)),
+          if (chatState.peerKeyChanged)
+            ChatKeyChangedBanner(
+              participantName: widget.participantName,
+              onAccept: () => ref.read(provider.notifier).acceptNewPeerKey(),
+              onViewSecurityCode: () => showChatParticipantSheet(
+                context,
+                chat: widget.chat,
+                participantName: widget.participantName,
+              ),
+            )
+          else
+            ChatInputBar(
+              onSend: (text) => ref.read(provider.notifier).sendMessage(text),
+              onAttach: _sendPicture,
+            ),
         ],
       ),
-    );
+    };
   }
 
-  Widget _buildMyMessage(String text) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: Radius.circular(16),
-            bottomRight: Radius.circular(4),
+  Widget _buildMessages(ActiveChatState chatState) {
+    final messages = chatState.messages;
+    if (messages.isEmpty) {
+      return _ChatNotice(
+        message: context.l10n.chatMessagesAreEndToEndEncrypted,
+      );
+    }
+
+    // Reversed, so the list stays anchored to the newest message.
+    return ListView.builder(
+      reverse: true,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+      itemCount: messages.length,
+      itemBuilder: (context, index) {
+        final message = messages[messages.length - 1 - index];
+        return Padding(
+          key: ValueKey(message.id),
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: ChatMessageBubble(
+            message: message,
+            isMine: message.senderId == widget.chat.userId,
+            onRetry: () => ref
+                .read(activeChatProvider(widget.chat).notifier)
+                .retry(message.id),
           ),
-        ),
-        child: Text(
-          text,
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: const Color(0xFF111827),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
+}
 
-  Widget _buildTheirMessage(String text) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: Radius.circular(4),
-            bottomRight: Radius.circular(16),
-          ),
-        ),
-        child: Text(
-          text,
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: const Color(0xFF111827),
-          ),
+/// A centred message, with a retry button when there is something to retry.
+class _ChatNotice extends StatelessWidget {
+  final String message;
+  final VoidCallback? onRetry;
+
+  const _ChatNotice({required this.message, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                color: context.colors.textMuted,
+                height: 1.5,
+              ),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: onRetry,
+                child: Text(context.l10n.chatTryAgain),
+              ),
+            ],
+          ],
         ),
       ),
     );
   }
 }
-

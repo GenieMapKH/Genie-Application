@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import 'package:genie/core/theme/app_colors.dart';
 
 /// Standardized, consistent top app header bar used across screens (Account, Saved Properties, My Properties, etc.).
 class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
@@ -7,7 +8,9 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
   final Widget? trailing;
   final bool showBackButton;
-  final Color backgroundColor;
+
+  /// Defaults to the page background of the theme in use.
+  final Color? backgroundColor;
 
   const AppHeaderBar({
     super.key,
@@ -15,7 +18,7 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.trailing,
     this.showBackButton = true,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor,
   });
 
   @override
@@ -23,8 +26,10 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
-      color: backgroundColor,
+      color: backgroundColor ?? colors.background,
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       child: Stack(
         alignment: Alignment.center,
@@ -42,31 +47,32 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
                     Navigator.of(context).pop();
                   }
                 },
-                child: Container(
+                child: SizedBox(
                   width: 40,
                   height: 40,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF111827),
+                    color: colors.textPrimary,
                     size: 24,
                   ),
                 ),
               ),
             ),
 
-          // Centered Title
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF111827),
+          // Centered Title. The padding keeps a long (translated) title clear
+          // of the back button and the trailing widget.
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 48),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: colors.textPrimary,
+              ),
             ),
           ),
 

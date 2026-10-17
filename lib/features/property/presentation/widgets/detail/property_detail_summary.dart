@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/utils/property_format.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// Price, spec row and location — the block that sits directly under the photo
 /// gallery in the detail sheet and stays visible as the sheet expands.
@@ -24,7 +25,7 @@ class PropertyDetailSummary extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -35,7 +36,7 @@ class PropertyDetailSummary extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: const Color(0xFF6B7280),
+            color: context.colors.textMuted,
           ),
         ),
       ],
@@ -102,7 +103,7 @@ class _SpecRow extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF111827),
+          color: context.colors.textPrimary,
         ),
       );
     }
@@ -115,14 +116,14 @@ class _SpecRow extends StatelessWidget {
             (spec) => Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(spec.$1, size: 16, color: const Color(0xFF4B5563)),
+                Icon(spec.$1, size: 16, color: context.colors.textSecondary),
                 const SizedBox(width: 6),
                 Text(
                   spec.$2,
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF111827),
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ],

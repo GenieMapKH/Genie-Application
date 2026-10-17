@@ -1,93 +1,99 @@
 import 'package:dio/dio.dart';
 
-class UserProfile {
-  final String id;
-  final String? email;
-  final String? phone;
-  final String? username;
-  final String role;
-  final DateTime createdAt;
-  final String? firebaseUid;
-  final String? avatarUrl;
+import 'package:genie/core/errors/app_exceptions.dart';
+import 'package:genie/features/profile/data/models/user_profile.dart';
 
-  UserProfile({
-    required this.id,
-    this.email,
-    this.phone,
-    this.username,
-    required this.role,
-    required this.createdAt,
-    this.firebaseUid,
-    this.avatarUrl,
-  });
+/// A field of the profile the user can change, one at a time.
+enum ProfileField {
+  username('username'),
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) {
-    return UserProfile(
-      id: json['id'],
-      email: json['email'],
-      phone: json['phone'],
-      username: json['username'],
-      role: json['role'] ?? 'user',
-      createdAt: DateTime.parse(json['createdAt']),
-      firebaseUid: json['firebaseUid'],
-      avatarUrl: json['avatarUrl'],
-    );
-  }
+  /// The name other people see (the server calls it `name`).
+  displayName('name'),
+  firstName('firstName'),
+  lastName('lastName'),
+  sex('sex'),
+  phone('phone');
 
-  /// Display name: username, phone, email prefix, fallback to 'User'
-  String get displayName {
-    if (username != null && username!.isNotEmpty) {
-      return username!;
-    }
-    if (phone != null && phone!.isNotEmpty) {
-      return phone!;
-    }
-    if (email != null && email!.isNotEmpty) {
-      return email!.split('@').first;
-    }
-    return 'User';
-  }
+  /// The key `PATCH /users/me` expects for this field.
+  final String apiName;
+
+  const ProfileField(this.apiName);
 }
 
+/// What the server says about a username that is being typed.
+enum UsernameAvailability { available, taken, invalid }
+
+/// The server refused a value because another account already has it
+/// (a username or a phone number).
+class ProfileValueTakenException extends AppException {
+  const ProfileValueTakenException() : super('Already taken', code: '409');
+}
+
+/// The server refused a value as badly formed.
+class ProfileValueInvalidException extends AppException {
+  const ProfileValueInvalidException() : super('Invalid value', code: '400');
+}
+
+/// API access for the signed-in user's own profile.
 class UserRepository {
+  static const _maxAttempts = 4;
+
   final Dio dio;
 
   UserRepository(this.dio);
 
+  /// Retries a few times: right after the first Google sign-in the new
+  /// account can take a moment to become readable (404), and the gateway
+  /// answers 502/504 while a service restarts.
   Future<UserProfile> getProfile() async {
-    int maxRetries = 3;
-    int delayMs = 1500;
+    var delay = const Duration(milliseconds: 1500);
 
-    for (int i = 0; i <= maxRetries; i++) {
+    for (var attempt = 1; ; attempt++) {
       try {
         final response = await dio.get('/users/me');
-        return UserProfile.fromJson(response.data);
+        return UserProfile.fromJson(response.data as Map<String, dynamic>);
       } on DioException catch (e) {
-        // On initial Google Sign-in, the backend might have a slight delay
-        // syncing the new user record between the Auth and User microservices (404).
-        // Or the microservice might temporarily return 502/504 while routing.
-        if (i < maxRetries &&
-            (e.response?.statusCode == 404 ||
-                e.response?.statusCode == 502 ||
-                e.response?.statusCode == 504 ||
-                e.type == DioExceptionType.connectionError)) {
-          await Future.delayed(Duration(milliseconds: delayMs));
-          delayMs = (delayMs * 1.5).toInt(); // Exponential backoff
-          continue;
-        }
-        rethrow;
+        if (attempt == _maxAttempts || !_isWorthRetrying(e)) rethrow;
+        await Future.delayed(delay);
+        delay *= 1.5;
       }
     }
-    throw Exception('Failed to load profile after multiple retries.');
   }
 
-  Future<UserProfile> updateProfile({String? username, String? phone, String? avatarUrl}) async {
-    final data = <String, dynamic>{};
-    if (username != null) data['username'] = username;
-    if (phone != null) data['phone'] = phone;
-    if (avatarUrl != null) data['avatarUrl'] = avatarUrl;
+  bool _isWorthRetrying(DioException e) =>
+      e.type == DioExceptionType.connectionError ||
+      const [404, 502, 504].contains(e.response?.statusCode);
 
-    final response = await dio.patch('/users/me', data: data);
-    return UserProfile.fromJson(response.data);
+  /// Asks whether [username] could be chosen: well formed, and not another
+  /// account's. The user's own current username counts as available. Only an
+  /// answer to show while typing: saving is what decides.
+  Future<UsernameAvailability> checkUsername(String username) async {
+    final response = await dio.get(
+      '/users/username-available',
+      queryParameters: {'username': username},
+    );
+    final answer = response.data as Map<String, dynamic>;
+    if (answer['available'] == true) return UsernameAvailability.available;
+    return answer['reason'] == 'invalid'
+        ? UsernameAvailability.invalid
+        : UsernameAvailability.taken;
+  }
+
+  /// Changes one field; null clears it. Throws [ProfileValueTakenException]
+  /// or [ProfileValueInvalidException] when the server refuses the value.
+  Future<UserProfile> updateField(ProfileField field, String? value) async {
+    try {
+      final response = await dio.patch(
+        '/users/me',
+        data: {field.apiName: value},
+      );
+      return UserProfile.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw switch (e.response?.statusCode) {
+        409 => const ProfileValueTakenException(),
+        400 => const ProfileValueInvalidException(),
+        _ => e,
+      };
+    }
   }
 }

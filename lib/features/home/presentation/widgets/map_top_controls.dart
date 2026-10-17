@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:genie/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:genie/features/home/presentation/widgets/utm_locate_bottom_sheet.dart';
+import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/shared/widgets/tactile_button.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/presentation/widgets/property_type_filters.dart';
 import 'package:genie/features/home/utils/scanner/document_scanner_service.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class MapTopControls extends StatelessWidget {
+  /// How far the search bar and the type filters reach below the status bar.
+  /// Panels on the map start under it.
+  static const double contentHeight = 140;
+
   final MapSkin currentSkin;
   final VoidCallback onToggleMapType;
   final void Function(List<LatLng>) onCoordinatesScanned;
+  final ValueChanged<PropertyModel> onOpenProperty;
 
   const MapTopControls({
     super.key,
     required this.currentSkin,
     required this.onToggleMapType,
     required this.onCoordinatesScanned,
+    required this.onOpenProperty,
   });
 
   @override
@@ -44,50 +53,8 @@ class MapTopControls extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        // Search bar
                         Expanded(
-                          child: TactileButton(
-                            onPressed: () {
-                              // TODO: Handle search action
-                            },
-                            child: Container(
-                              height: 48,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(24.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.01),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icons/search.svg',
-                                    width: 24,
-                                    height: 24,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      'Search by area, road, village...',
-                                      style: GoogleFonts.inter(
-                                        color: const Color(0xFF6B7280),
-                                        fontSize: 14,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          child: HomeSearchBar(onOpenProperty: onOpenProperty),
                         ),
                         // Filter button
                         TactileButton(
@@ -130,7 +97,7 @@ class MapTopControls extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: const Color(0xFFE5E7EB),
+                          color: context.colors.border,
                           width: 2,
                         ),
                         boxShadow: [
@@ -172,7 +139,10 @@ class MapTopControls extends StatelessWidget {
           'Extracted ${coordinates.length} coordinate(s)!',
         );
       } else {
-        AppPopup.showError(context, 'No coordinates found. Please try again.');
+        AppPopup.showError(
+          context,
+          context.l10n.homeNoCoordinatesFoundPleaseTryAgain,
+        );
       }
 
       final result = await showModalBottomSheet<List<LatLng>>(

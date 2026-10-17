@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/features/property/utils/property_format.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 /// Item card for Saved Properties screen matching Screenshot 1.
 /// Explicitly omits the "Edit" button since saved properties may belong to other owners.
@@ -32,9 +33,9 @@ class SavedPropertyCard extends StatelessWidget {
           type: MaterialType.transparency,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(16.0),
-              border: Border.all(color: const Color(0xFFF3F4F6)),
+              border: Border.all(color: context.colors.divider),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
@@ -82,7 +83,7 @@ class SavedPropertyCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
-                            color: const Color(0xFF111827),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 3),
@@ -93,7 +94,7 @@ class SavedPropertyCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF374151),
+                            color: context.colors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -104,7 +105,7 @@ class SavedPropertyCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            color: const Color(0xFF6B7280),
+                            color: context.colors.textMuted,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -115,7 +116,7 @@ class SavedPropertyCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0xFF9CA3AF),
+                            color: context.colors.textHint,
                           ),
                         ),
                       ],
@@ -141,7 +142,7 @@ class _TypePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -158,8 +159,8 @@ class _TypePill extends StatelessWidget {
             PropertyFormat.typeIconPath(propertyType),
             width: 12,
             height: 12,
-            colorFilter: const ColorFilter.mode(
-              Color(0xFF4B5563),
+            colorFilter: ColorFilter.mode(
+              context.colors.textSecondary,
               BlendMode.srcIn,
             ),
           ),
@@ -169,7 +170,7 @@ class _TypePill extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF111827),
+              color: context.colors.textPrimary,
             ),
           ),
         ],
@@ -244,7 +245,7 @@ class _AnimatedFavoriteButtonState extends State<_AnimatedFavoriteButton>
           child: Container(
             padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -263,8 +264,8 @@ class _AnimatedFavoriteButtonState extends State<_AnimatedFavoriteButton>
                 key: ValueKey<bool>(widget.isFavorite),
                 size: 18,
                 color: widget.isFavorite
-                    ? const Color(0xFF5B5FEF)
-                    : const Color(0xFF6B7280),
+                    ? context.colors.accent
+                    : context.colors.textMuted,
               ),
             ),
           ),

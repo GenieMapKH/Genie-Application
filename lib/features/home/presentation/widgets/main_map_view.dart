@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/home/utils/map/map_camera_focus.dart';
-import 'package:genie/features/home/utils/map/map_markers.dart';
+import 'package:genie/features/home/utils/map/markers/property_markers.dart';
+import 'package:genie/features/home/utils/map/markers/vertex_markers.dart';
 import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
 import 'package:genie/features/home/utils/map/svg_marker.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -36,6 +38,8 @@ class MainMapView extends ConsumerStatefulWidget {
 class MainMapViewState extends ConsumerState<MainMapView> {
   MapOverlays _overlays = const MapOverlays();
   MapIcons _icons = const MapIcons();
+  bool _overlayBuildRunning = false;
+  bool _overlayBuildQueued = false;
 
   /// The map frame extends this many logical pixels past the bottom of the
   /// screen (see the `GoogleMap`'s `bottom: -40` below), which shifts its
@@ -58,12 +62,10 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   Future<void> _loadMapIcons() async {
     final icons = MapIcons(
       pin: await getSvgMarker('assets/icons/pin.svg'),
-      greenDot: await DynamicMapMarkers.createGreenDotMarker(),
-      selectedDot: await DynamicMapMarkers.createGreenDotMarker(
-        isSelected: true,
-      ),
-      newBadge: await DynamicMapMarkers.createNewBadgeMarker(),
-      smallWhiteDot: await DynamicMapMarkers.createSmallWhiteDotMarker(),
+      greenDot: await PropertyMarkers.greenDot(),
+      selectedDot: await PropertyMarkers.greenDot(isSelected: true),
+      newBadge: await PropertyMarkers.newBadge(),
+      smallWhiteDot: await VertexMarkers.smallWhiteDot(),
     );
     if (!mounted) return;
     _icons = icons;
@@ -75,11 +77,35 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     if (pos != null && mounted) {
       final controller = await widget.mapControllerCompleter.future;
       controller.moveCamera(CameraUpdate.newCameraPosition(pos));
-      ref.read(mapStateProvider.notifier).updateCamera(pos.target, pos.zoom);
+      ref.read(mapCameraProvider.notifier).state = MapCamera(
+        center: pos.target,
+        zoom: pos.zoom,
+      );
     }
   }
 
+  /// Rebuilds the overlays. Calls that arrive while a build is running are
+  /// folded into a single follow-up build, so a burst of triggers (data
+  /// arriving while the user crosses a zoom threshold) never stacks builds.
   Future<void> _updateMapOverlays() async {
+    if (!mounted) return;
+    if (_overlayBuildRunning) {
+      _overlayBuildQueued = true;
+      return;
+    }
+
+    _overlayBuildRunning = true;
+    try {
+      do {
+        _overlayBuildQueued = false;
+        await _buildMapOverlays();
+      } while (_overlayBuildQueued && mounted);
+    } finally {
+      _overlayBuildRunning = false;
+    }
+  }
+
+  Future<void> _buildMapOverlays() async {
     if (!mounted) return;
 
     final notifier = ref.read(mapStateProvider.notifier);
@@ -91,6 +117,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
 
     final overlays = await MapOverlayBuilder.build(
       mapState: mapState,
+      zoom: ref.read(mapCameraProvider).zoom,
       mapProperties: ref.read(mapPropertiesProvider),
       selectedProperty: ref.read(propertyCarouselProvider).selected,
       icons: _icons,
@@ -175,14 +202,10 @@ class MainMapViewState extends ConsumerState<MainMapView> {
 
   Future<void> _handleCameraIdle() async {
     final state = ref.read(mapStateProvider);
-    if (state.currentMapCenter != null) {
-      MapStorage.saveLastPosition(
-        CameraPosition(
-          target: state.currentMapCenter!,
-          zoom: state.currentZoom,
-        ),
-      );
-    }
+    final camera = ref.read(mapCameraProvider);
+    MapStorage.saveLastPosition(
+      CameraPosition(target: camera.center, zoom: camera.zoom),
+    );
 
     if (widget.mapControllerCompleter.isCompleted) {
       final controller = await widget.mapControllerCompleter.future;
@@ -199,14 +222,13 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     // closing a polygon is easy to hit.
     if (state.isDrawing &&
         !state.isEditingPolygon &&
-        state.drawnPoints.length >= 3 &&
-        state.currentMapCenter != null) {
+        state.drawnPoints.length >= 3) {
       final controller = await widget.mapControllerCompleter.future;
       final firstPointScreen = await controller.getScreenCoordinate(
         state.drawnPoints.first,
       );
       final crosshairScreen = await controller.getScreenCoordinate(
-        state.currentMapCenter!,
+        camera.center,
       );
 
       final dx = firstPointScreen.x - crosshairScreen.x;
@@ -221,30 +243,38 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     }
   }
 
+  static int _zoomBand(double zoom) {
+    if (zoom <= MapOverlayBuilder.clusterZoomThreshold) return 1;
+    if (zoom <= MapOverlayBuilder.detailZoomThreshold) return 2;
+    if (zoom <= 18.0) return 3;
+    return 4;
+  }
+
+  /// Runs on every frame of a pan or zoom, so it must stay trivial: record the
+  /// camera and only touch the overlays when a zoom band is crossed.
   void _handleCameraMove(CameraPosition position) {
-    final mapState = ref.read(mapStateProvider);
+    final cameraNotifier = ref.read(mapCameraProvider.notifier);
+    final previousZoom = cameraNotifier.state.zoom;
+    cameraNotifier.state = MapCamera(
+      center: position.target,
+      zoom: position.zoom,
+    );
 
-    int zoomBand(double zoom) {
-      if (zoom <= MapOverlayBuilder.clusterZoomThreshold) return 1;
-      if (zoom <= MapOverlayBuilder.detailZoomThreshold) return 2;
-      if (zoom <= 18.0) return 3;
-      return 4;
+    if (_zoomBand(previousZoom) != _zoomBand(position.zoom) &&
+        !ref.read(mapStateProvider).isDrawing) {
+      _updateMapOverlays();
     }
-
-    final bool bandChanged =
-        zoomBand(mapState.currentZoom) != zoomBand(position.zoom);
-
-    ref
-        .read(mapStateProvider.notifier)
-        .updateCamera(position.target, position.zoom);
-
-    if (bandChanged && !mapState.isDrawing) _updateMapOverlays();
   }
 
   @override
   Widget build(BuildContext context) {
-    final mapState = ref.watch(mapStateProvider);
-    final navState = ref.watch(mainNavProvider);
+    // Watch only what this widget renders. Watching the whole map state would
+    // rebuild the GoogleMap (and re-diff every marker) on unrelated changes.
+    final skin = ref.watch(mapStateProvider.select((s) => s.currentSkin));
+    final showCrosshair = ref.watch(
+      mapStateProvider.select((s) => s.isDrawing && !s.isEditingPolygon),
+    );
+    final navIndex = ref.watch(mainNavProvider.select((s) => s.currentIndex));
 
     ref.listen(mapPropertiesProvider, (_, _) => _updateMapOverlays());
     ref.listen(mapStateProvider, _handleMapStateChange);
@@ -266,7 +296,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     });
 
     return IgnorePointer(
-      ignoring: navState.currentIndex == 3 || navState.currentIndex == 4,
+      ignoring: navIndex == 3 || navIndex == 4,
       child: Stack(
         children: [
           Positioned(
@@ -275,7 +305,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
             right: 0,
             bottom: -40,
             child: GoogleMap(
-              mapType: mapState.currentSkin == MapSkin.satellite
+              mapType: skin == MapSkin.satellite
                   ? MapType.hybrid
                   : MapType.normal,
               initialCameraPosition: _initialPosition,
@@ -288,6 +318,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
               onCameraMove: _handleCameraMove,
               onCameraIdle: _handleCameraIdle,
               onTap: (_) {
+                final mapState = ref.read(mapStateProvider);
                 if (mapState.isDrawing) return;
                 ref.read(propertyCarouselProvider.notifier).clear();
                 if (mapState.highlightedLocalPolygon != null) {
@@ -309,7 +340,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
           ),
 
           // Crosshair for drawing mode
-          if (mapState.isDrawing && !mapState.isEditingPolygon)
+          if (showCrosshair)
             IgnorePointer(
               child: Center(
                 child: Transform.translate(

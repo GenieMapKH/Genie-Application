@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 class PropertyTypeSelector extends StatelessWidget {
   final String selectedPropertyType;
@@ -42,12 +43,12 @@ class PropertyTypeSelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
               color: isSelected
-                  ? const Color(0xFF5B5FEF).withValues(alpha: 0.05)
-                  : Colors.white,
+                  ? context.colors.accent.withValues(alpha: 0.05)
+                  : context.colors.surface,
               border: Border.all(
                 color: isSelected
-                    ? const Color(0xFF5B5FEF)
-                    : const Color(0xFFE5E7EB),
+                    ? context.colors.accent
+                    : context.colors.border,
                 width: 1.5,
               ),
               borderRadius: BorderRadius.circular(8.0),
@@ -58,8 +59,8 @@ class PropertyTypeSelector extends StatelessWidget {
                   type['iconPath'],
                   colorFilter: ColorFilter.mode(
                     isSelected
-                        ? const Color(0xFF5B5FEF)
-                        : const Color(0xFF6B7280),
+                        ? context.colors.accent
+                        : context.colors.textMuted,
                     BlendMode.srcIn,
                   ),
                   width: 24,
@@ -71,8 +72,8 @@ class PropertyTypeSelector extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: isSelected
-                        ? const Color(0xFF5B5FEF)
-                        : const Color(0xFF6B7280),
+                        ? context.colors.accent
+                        : context.colors.textMuted,
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),

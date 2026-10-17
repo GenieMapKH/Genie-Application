@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 class PropertyTabs extends StatelessWidget {
   final List<PropertyModel> properties;
@@ -28,24 +29,24 @@ class PropertyTabs extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         children: [
-          Expanded(child: _buildTab(0, true)),
+          Expanded(child: _buildTab(context, 0, true)),
           const SizedBox(width: 8),
-          Expanded(child: _buildTab(1, false)),
+          Expanded(child: _buildTab(context, 1, false)),
           const SizedBox(width: 8),
-          Expanded(child: _buildTab(2, false)),
+          Expanded(child: _buildTab(context, 2, false)),
           const SizedBox(width: 8),
-          Expanded(child: _buildTab(3, false)),
+          Expanded(child: _buildTab(context, 3, false)),
         ],
       ),
     );
   }
 
-  Widget _buildTab(int index, bool isSelected) {
+  Widget _buildTab(BuildContext context, int index, bool isSelected) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF111827) : const Color(0xFFF3F4F6),
+        color: isSelected ? context.colors.textPrimary : context.colors.divider,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -55,7 +56,9 @@ class PropertyTabs extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-          color: isSelected ? Colors.white : const Color(0xFF6B7280),
+          color: isSelected
+              ? context.colors.background
+              : context.colors.textMuted,
         ),
       ),
     );

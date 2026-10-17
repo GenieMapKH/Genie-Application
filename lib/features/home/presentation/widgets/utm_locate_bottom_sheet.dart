@@ -1,3 +1,4 @@
+import 'package:genie/core/logging/app_logger.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -12,6 +13,8 @@ import 'utm/components/utm_sheet_header.dart';
 import 'utm/entry/utm_scan_section.dart';
 import 'utm/entry/utm_manual_entry.dart';
 import 'utm/components/utm_preview_button.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class UtmLocateBottomSheet extends StatefulWidget {
   final List<Map<String, dynamic>>? initialCoordinates;
@@ -128,6 +131,8 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
   }
 
   Future<void> _scanDocument([ImageSource source = ImageSource.gallery]) async {
+    // Read now: the context must not be used after the awaits below.
+    final cropTitle = context.l10n.homeCropDocument;
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: source,
@@ -143,14 +148,15 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
       compressQuality: 100,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Document',
-          toolbarColor: const Color(0xFF5B5FEF),
+          toolbarTitle: cropTitle,
+          // The cropper is a native screen and does not follow the app theme.
+          toolbarColor: AppColors.light.accent,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
           hideBottomControls: false,
         ),
-        IOSUiSettings(title: 'Crop Document'),
+        IOSUiSettings(title: cropTitle),
       ],
     );
 
@@ -163,7 +169,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
 
     try {
       // --- NATIVE ML KIT OCR (MOBILE/DESKTOP) ---
-      debugPrint('Running native ML Kit OCR...');
+      AppLogger.debug('Running native ML Kit OCR...');
       final textRecognizer = TextRecognizer();
       final inputImage = InputImage.fromFilePath(croppedFile.path);
 
@@ -191,12 +197,15 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
               'Successfully extracted ${coordinates.length} coordinate(s) natively!',
             );
           } else {
-            AppPopup.showInfo(context, 'No coordinates found in the image.');
+            AppPopup.showInfo(
+              context,
+              context.l10n.homeNoCoordinatesFoundInTheImage,
+            );
           }
         });
       }
     } catch (e, stack) {
-      debugPrint('OCR Error: $e\n$stack');
+      AppLogger.debug('OCR Error: $e\n$stack');
       if (mounted) {
         AppPopup.showError(context, 'Error scanning document: $e');
       }
@@ -222,10 +231,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
       }
 
       if (xText.isEmpty || yText.isEmpty) {
-        AppPopup.showError(
-          context,
-          'Please fill both X and Y coordinates for a row, or leave both empty.',
-        );
+        AppPopup.showError(context, context.l10n.homePleaseFillBothXAndY);
         return;
       }
 
@@ -233,7 +239,10 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
       final double? northing = double.tryParse(yText);
 
       if (easting == null || northing == null) {
-        AppPopup.showError(context, 'Coordinates must be valid numbers.');
+        AppPopup.showError(
+          context,
+          context.l10n.homeCoordinatesMustBeValidNumbers,
+        );
         return;
       }
 
@@ -255,7 +264,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
     if (points.length < 3) {
       AppPopup.showError(
         context,
-        'Please enter at least 3 coordinates to form a property.',
+        context.l10n.homePleaseEnterAtLeast3Coordinates,
       );
       return;
     }
@@ -270,8 +279,8 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
 
     return Container(
       height: screenHeight * 0.95,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),

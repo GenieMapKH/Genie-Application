@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:genie/core/theme/app_colors.dart';
+
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/profile/presentation/screens/user_profile_page.dart';
 import 'package:genie/features/chat/presentation/screens/chat_list_page.dart';
@@ -46,7 +48,7 @@ class MainLayoutPages extends ConsumerWidget {
       // Opaque only while sliding between full-screen pages, so the map
       // stays visible when returning home.
       color: (isPageVisible && isPrevVisible)
-          ? Colors.white
+          ? context.colors.background
           : Colors.transparent,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),

@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/shared/widgets/app_text_field.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -30,13 +32,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
     _entryController.forward();
   }
 
@@ -55,8 +58,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
     final email = _emailController.text.trim();
 
     setState(() {
-      _emailError =
-          _validateEmail(email) ? null : 'Please enter a valid email address';
+      _emailError = _validateEmail(email)
+          ? null
+          : 'Please enter a valid email address';
     });
 
     if (_emailError != null) return;
@@ -66,7 +70,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
     try {
       await ref.read(authServiceProvider).forgotPassword(email);
       if (!mounted) return;
-      AppPopup.showSuccess(context, 'Verification code sent to your email');
+      AppPopup.showSuccess(
+        context,
+        context.l10n.authVerificationCodeSentToYourEmail,
+      );
       context.push('/verify-otp?email=${Uri.encodeComponent(email)}');
     } catch (e) {
       if (!mounted) return;
@@ -79,12 +86,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 408.0),
               child: FadeTransition(
@@ -100,13 +109,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(color: context.colors.border),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_back,
                             size: 20,
-                            color: Color(0xFF1E293B),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                       ),
@@ -114,19 +123,19 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
 
                       // Title
                       Text(
-                        'Forgot Password',
+                        context.l10n.authForgotPassword,
                         style: GoogleFonts.inter(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF1E293B),
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your email address to get the password reset link.',
+                        context.l10n.authEnterYourEmailAddressToGet,
                         style: GoogleFonts.inter(
                           fontSize: 15,
-                          color: const Color(0xFF64748B),
+                          color: context.colors.textMuted,
                           height: 1.5,
                         ),
                       ),
@@ -134,8 +143,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
 
                       // Email field
                       AppTextField(
-                        label: 'Email Address',
-                        hintText: 'example@gmail.com',
+                        label: context.l10n.authEmailAddress,
+                        hintText: context.l10n.authExampleGmailCom,
                         controller: _emailController,
                         errorText: _emailError,
                         keyboardType: TextInputType.emailAddress,
@@ -160,7 +169,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleSubmit,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F5BD5),
+                            backgroundColor: context.colors.primary,
                             disabledBackgroundColor: const Color(0x994F5BD5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -177,7 +186,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                                   ),
                                 )
                               : Text(
-                                  'Password Reset',
+                                  context.l10n.authPasswordReset,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -194,11 +203,11 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                         child: GestureDetector(
                           onTap: () => context.go('/register'),
                           child: Text(
-                            'Create a Account',
+                            context.l10n.authCreateAAccount,
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF4F5BD5),
+                              color: context.colors.primary,
                             ),
                           ),
                         ),

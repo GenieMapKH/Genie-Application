@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/google_icon.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class CreateAccountActions extends StatelessWidget {
   final bool isLoading;
@@ -24,7 +26,7 @@ class CreateAccountActions extends StatelessWidget {
         // Primary Sign up Button (#4F5BD5)
         AppButton.primary(
           key: const Key('sign_up_button'),
-          text: 'Sign up',
+          text: context.l10n.authSignUp,
           isLoading: isLoading,
           onPressed: onSignUp,
         ),
@@ -33,22 +35,22 @@ class CreateAccountActions extends StatelessWidget {
         // Divider: "or sign in with"
         Row(
           children: [
-            const Expanded(
-              child: Divider(color: Color(0xFFE5E7EB), thickness: 1),
+            Expanded(
+              child: Divider(color: context.colors.border, thickness: 1),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'or sign in with',
+                context.l10n.authOrSignInWith,
                 style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF9CA3AF),
+                  color: context.colors.textHint,
                 ),
               ),
             ),
-            const Expanded(
-              child: Divider(color: Color(0xFFE5E7EB), thickness: 1),
+            Expanded(
+              child: Divider(color: context.colors.border, thickness: 1),
             ),
           ],
         ),
@@ -57,10 +59,10 @@ class CreateAccountActions extends StatelessWidget {
         // Google OAuth Button
         AppButton(
           key: const Key('google_button'),
-          text: 'Continue with Google',
-          backgroundColor: Colors.white,
-          textColor: const Color(0xFF1F2937),
-          borderColor: const Color(0xFFE5E7EB),
+          text: context.l10n.authContinueWithGoogle,
+          backgroundColor: context.colors.surface,
+          textColor: context.colors.textPrimary,
+          borderColor: context.colors.border,
           borderWidth: 1.5,
           icon: const GoogleIcon(size: 20),
           onPressed: onGoogleSignUp ?? () {},
@@ -74,10 +76,10 @@ class CreateAccountActions extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
-                'Already have an account? ',
+                context.l10n.authAlreadyHaveAnAccount,
                 style: GoogleFonts.inter(
                   fontSize: 14,
-                  color: const Color(0xFF64748B),
+                  color: context.colors.textMuted,
                 ),
               ),
               GestureDetector(
@@ -90,11 +92,11 @@ class CreateAccountActions extends StatelessWidget {
                     vertical: 6.0,
                   ),
                   child: Text(
-                    'Sign in here',
+                    context.l10n.authSignInHere,
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF4F5BD5),
+                      color: context.colors.primary,
                     ),
                   ),
                 ),

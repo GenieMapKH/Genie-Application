@@ -4,6 +4,7 @@ import 'package:genie/features/property/presentation/widgets/property_form_input
 import '../fields/property_size_fields.dart';
 import '../fields/property_dropdown_fields.dart';
 import '../fields/property_misc_fields.dart';
+import 'package:genie/l10n/l10n.dart';
 
 Widget _buildSpacing() => const SizedBox(height: 16);
 
@@ -266,17 +267,17 @@ class BoreyPropertyForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         PropertyTextField(
-          label: 'Developer Name',
+          label: context.l10n.propertyDeveloperName,
           required: false,
           controller: state.developerNameController,
-          hintText: 'Example: ABC Development Co., Ltd',
+          hintText: context.l10n.propertyExampleAbcDevelopmentCoLtd,
         ),
         _buildSpacing(),
         PropertyTextField(
-          label: 'Project Name',
+          label: context.l10n.propertyProjectName,
           required: false,
           controller: state.projectNameController,
-          hintText: 'Project name',
+          hintText: context.l10n.propertyProjectName2,
           infoText: 'Official name of the development project',
         ),
         _buildSpacing(),
@@ -287,18 +288,18 @@ class BoreyPropertyForm extends StatelessWidget {
         ),
         _buildSpacing(),
         PropertyTextField(
-          label: 'Total Project Area',
+          label: context.l10n.propertyTotalProjectArea,
           required: false,
           controller: state.totalProjectAreaController,
-          hintText: 'Enter total land size',
+          hintText: context.l10n.propertyEnterTotalLandSize,
           infoText: 'Total land area of entire project',
         ),
         _buildSpacing(),
         PropertyTextField(
-          label: 'Total Units',
+          label: context.l10n.propertyTotalUnits,
           required: false,
           controller: state.totalUnitsTextController,
-          hintText: 'Total number of units in project',
+          hintText: context.l10n.propertyTotalNumberOfUnitsInProject,
         ),
         _buildSpacing(),
         BoreyCompletionStatusFieldWidget(
@@ -308,10 +309,10 @@ class BoreyPropertyForm extends StatelessWidget {
         ),
         _buildSpacing(),
         PropertyTextField(
-          label: 'Starting Price',
+          label: context.l10n.propertyStartingPrice,
           required: false,
           controller: state.startingPriceController,
-          hintText: 'Starting price in USD',
+          hintText: context.l10n.propertyStartingPriceInUsd,
           infoText: 'Lowest available unit price',
         ),
         _buildSpacing(),
@@ -344,15 +345,15 @@ class BusinessPropertyForm extends StatelessWidget {
         LandSizeFieldWidget(state: state, isLandType: true),
         _buildSpacing(),
         PropertyTextField(
-          label: 'Monthly Rent',
+          label: context.l10n.propertyMonthlyRent,
           required: false,
           controller: state.monthlyRentController,
-          hintText: 'Enter monthly shop rent (USD)',
+          hintText: context.l10n.propertyEnterMonthlyShopRentUsd,
           infoText: 'Lower rent = higher profit potential',
         ),
         _buildSpacing(),
         PropertyDropdown(
-          label: 'Listing Settings',
+          label: context.l10n.propertyListingSettings,
           required: true,
           value: state.selectedListingSetting,
           items: const ['Sale', 'Rent', 'To Let'],
@@ -373,19 +374,19 @@ class BusinessPropertyForm extends StatelessWidget {
         ),
         _buildSpacing(),
         PropertyTextField(
-          label: 'Equipment Included',
+          label: context.l10n.propertyEquipmentIncluded,
           required: false,
           controller: state.equipmentIncludedController,
           hintText:
-              'List furniture, kitchen equipment, machines, POS system, etc.',
+              context.l10n.propertyListFurnitureKitchenEquipmentMachinesPos,
           infoText: 'Describe assets included in sale',
         ),
         _buildSpacing(),
         PropertyTextField(
-          label: 'Reason for Selling',
+          label: context.l10n.propertyReasonForSelling,
           required: false,
           controller: state.reasonForSellingController,
-          hintText: 'Example: Owner relocating abroad',
+          hintText: context.l10n.propertyExampleOwnerRelocatingAbroad,
         ),
       ],
     );

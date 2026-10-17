@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class PropertyOptionsSheet {
   static void show(
@@ -12,7 +14,7 @@ class PropertyOptionsSheet {
   ) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -27,15 +29,15 @@ class PropertyOptionsSheet {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE5E7EB),
+                  color: context.colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 16),
               if (isDraft)
                 ListTile(
-                  leading: const Icon(Icons.public, color: Color(0xFF5B5FEF)),
-                  title: const Text('Publish to Public'),
+                  leading: Icon(Icons.public, color: context.colors.accent),
+                  title: Text(context.l10n.propertyPublishToPublic),
                   onTap: () {
                     Navigator.pop(context);
                     _changePropertyStatus(context, ref, property.id, true);
@@ -43,11 +45,11 @@ class PropertyOptionsSheet {
                 )
               else
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.lock_outline,
-                    color: Color(0xFF5B5FEF),
+                    color: context.colors.accent,
                   ),
-                  title: const Text('Move to Draft'),
+                  title: Text(context.l10n.propertyMoveToDraft),
                   onTap: () {
                     Navigator.pop(context);
                     _changePropertyStatus(context, ref, property.id, false);
@@ -59,8 +61,8 @@ class PropertyOptionsSheet {
                   Icons.delete_outline,
                   color: Color(0xFFE5484D),
                 ),
-                title: const Text(
-                  'Delete Property',
+                title: Text(
+                  context.l10n.propertyDeleteProperty,
                   style: TextStyle(color: Color(0xFFE5484D)),
                 ),
                 onTap: () {
@@ -109,7 +111,7 @@ class PropertyOptionsSheet {
     try {
       await ref.read(propertiesProvider.notifier).removeProperty(id);
       if (context.mounted) {
-        AppPopup.showSuccess(context, 'Property deleted');
+        AppPopup.showSuccess(context, context.l10n.propertyPropertyDeleted);
       }
     } catch (e) {
       if (context.mounted) {

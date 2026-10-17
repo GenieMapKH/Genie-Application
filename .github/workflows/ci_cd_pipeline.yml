@@ -13,24 +13,8 @@ jobs:
     name: Code Quality (Linting & Formatting)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
-        run: flutter pub get
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-flutter
 
       - name: Check Formatting
         run: dart format --output=none --set-exit-if-changed .
@@ -42,24 +26,8 @@ jobs:
     name: Unit & Widget Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
-        run: flutter pub get
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-flutter
 
       - name: Run Tests
         run: flutter test
@@ -70,27 +38,36 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-flutter
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
+      # Optional: with these secrets the APK is signed with the release key,
+      # otherwise it falls back to the debug key (see android/app/build.gradle.kts).
+      - name: Prepare release signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "No release keystore configured; building with the debug key."
+            exit 0
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload-keystore.jks"
+          {
+            echo "storeFile=$RUNNER_TEMP/upload-keystore.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/key.properties
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Get dependencies
-        run: flutter pub get
-
+      # The API server is compiled in; no env file is shipped inside the APK.
+      # Without the secret the app uses its built-in default (production).
       - name: Build Release APK
-        run: flutter build apk --release --split-per-abi
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: flutter build apk --release --split-per-abi --dart-define=API_BASE_URL="$API_BASE_URL"
 
       - name: Prepare Telegram Message
         env:
@@ -113,7 +90,7 @@ jobs:
         run: |
           MAX_RETRIES=3
           DELAY=10
-          
+
           for ((i=1; i<=MAX_RETRIES; i++)); do
             echo "Attempt $i to upload APK to Telegram..."
             HTTP_RESPONSE=$(curl -s -w "%{http_code}" -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument" \
@@ -122,14 +99,12 @@ jobs:
               -F "caption=$FULL_MESSAGE" \
               -F "parse_mode=Markdown" \
               -o response.json)
-              
+
             if [ "$HTTP_RESPONSE" -eq 200 ]; then
               echo "✅ Successfully uploaded APK!"
-              cat response.json
               exit 0
             else
               echo "❌ Failed to upload (HTTP $HTTP_RESPONSE)."
-              cat response.json || true
               if [ $i -lt $MAX_RETRIES ]; then
                 echo "Retrying in $DELAY seconds..."
                 sleep $DELAY

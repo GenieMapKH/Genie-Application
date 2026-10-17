@@ -1,19 +1,22 @@
-import 'package:flutter/foundation.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genie/features/auth/data/google_sign_in_service.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 final loginControllerProvider =
     StateNotifierProvider<LoginController, AsyncValue<bool>>((ref) {
-      return LoginController(ref.watch(authServiceProvider));
+      return LoginController(
+        ref.watch(authServiceProvider),
+        ref.watch(googleSignInServiceProvider),
+      );
     });
 
 class LoginController extends StateNotifier<AsyncValue<bool>> {
   final AuthService _authService;
+  final GoogleSignInService _googleSignIn;
 
-  LoginController(this._authService) : super(const AsyncData(false));
+  LoginController(this._authService, this._googleSignIn)
+    : super(const AsyncData(false));
 
   void reset() {
     state = const AsyncData(false);
@@ -34,40 +37,20 @@ class LoginController extends StateNotifier<AsyncValue<bool>> {
   Future<bool> googleLogin({bool forceAccountSelection = false}) async {
     state = const AsyncLoading();
     try {
-      final googleSignIn = GoogleSignIn(
-        serverClientId:
-            '67344886415-o6541mjvj1skaoibkrp9rcj6nnu2aekk.apps.googleusercontent.com',
+      final user = await _googleSignIn.signIn(
+        forceAccountSelection: forceAccountSelection,
       );
-
-      if (forceAccountSelection) {
-        await googleSignIn.signOut();
-      }
-
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
+      if (user == null) {
         // User canceled account picker
         state = const AsyncData(false);
         return false;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithCredential(credential);
-
-      if (userCredential.user != null) {
-        await _authService.firebaseLogin(userCredential.user!);
-      }
-
+      await _authService.firebaseLogin(user);
       state = const AsyncData(true);
       return true;
     } catch (e, st) {
-      debugPrint('Google login error: $e\n$st');
+      AppLogger.debug('Google login error: $e\n$st');
       state = AsyncError(e, st);
       return false;
     }

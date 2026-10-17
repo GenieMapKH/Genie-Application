@@ -5,7 +5,7 @@ enum SlideDirection { fromRight, fromLeft, none }
 
 /// A unified, consistent page route transition across the entire Genie app.
 /// Implements a high-performance shared-axis slide and fade with matching reverse pop transitions
-/// and a solid white backdrop to eliminate any sub-pixel black seam/flash during route replacement.
+/// and a solid backdrop (the theme's page colour) to eliminate any sub-pixel seam/flash during route replacement.
 class AppPageRoute<T> extends PageRouteBuilder<T> {
   final Widget page;
   final SlideDirection direction;
@@ -52,10 +52,10 @@ class AppPageRoute<T> extends PageRouteBuilder<T> {
              ),
            );
 
-           // Wrap in a solid pure-white canvas to completely prevent any underlying
-           // black window surface from flashing through transparent seams during transitions
+           // Wrap in a solid canvas of the page colour to completely prevent any underlying
+           // window surface from flashing through transparent seams during transitions
            return Container(
-             color: Colors.white,
+             color: Theme.of(context).scaffoldBackgroundColor,
              child: SlideTransition(
                position: slideIn,
                child: FadeTransition(opacity: fadeIn, child: child),

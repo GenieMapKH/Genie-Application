@@ -4,10 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 enum MapSkin { defaultMap, satellite }
 
 class MapState {
-  // View State
+  // View State (the live camera lives in `mapCameraProvider`)
   final MapSkin currentSkin;
-  final double currentZoom;
-  final LatLng? currentMapCenter;
 
   /// Index into the locally drawn [finalizedProperties] that should show its
   /// measurement overlay. Backend-backed properties are highlighted via
@@ -26,8 +24,6 @@ class MapState {
 
   const MapState({
     this.currentSkin = MapSkin.defaultMap,
-    this.currentZoom = 14.4746,
-    this.currentMapCenter = const LatLng(11.5564, 104.9282),
     this.highlightedLocalPolygon,
     this.isDrawing = false,
     this.isEditingPolygon = false,
@@ -39,8 +35,6 @@ class MapState {
 
   MapState copyWith({
     MapSkin? currentSkin,
-    double? currentZoom,
-    LatLng? currentMapCenter,
     int? highlightedLocalPolygon,
     bool? isDrawing,
     bool? isEditingPolygon,
@@ -54,8 +48,6 @@ class MapState {
   }) {
     return MapState(
       currentSkin: currentSkin ?? this.currentSkin,
-      currentZoom: currentZoom ?? this.currentZoom,
-      currentMapCenter: currentMapCenter ?? this.currentMapCenter,
       highlightedLocalPolygon: clearHighlightedLocalPolygon
           ? null
           : (highlightedLocalPolygon ?? this.highlightedLocalPolygon),
@@ -86,10 +78,6 @@ class MapStateNotifier extends StateNotifier<MapState> {
           ? MapSkin.satellite
           : MapSkin.defaultMap,
     );
-  }
-
-  void updateCamera(LatLng target, double zoom) {
-    state = state.copyWith(currentMapCenter: target, currentZoom: zoom);
   }
 
   void highlightLocalPolygon(int? index) {

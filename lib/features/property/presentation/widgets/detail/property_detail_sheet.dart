@@ -13,6 +13,8 @@ import 'package:genie/features/property/presentation/widgets/detail/property_hig
 import 'package:genie/features/property/presentation/widgets/detail/property_map_preview.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_share_section.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Full-detail view for a property, opened by tapping or flicking up the map
 /// card.
@@ -129,7 +131,7 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                     ),
                     child: RepaintBoundary(
                       child: ColoredBox(
-                        color: Colors.white,
+                        color: context.colors.surface,
                         child: Column(
                           children: [
                             Expanded(
@@ -206,17 +208,30 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                               onChat: () {
                                 if (widget.property.ownerId != null) {
                                   // Use root navigator so chat opens as a full-screen page
-                                  Navigator.of(context, rootNavigator: true).push(
+                                  Navigator.of(
+                                    context,
+                                    rootNavigator: true,
+                                  ).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ChatConversationPage(
-                                        participantId: widget.property.ownerId!,
-                                        participantName: widget.property.ownerName ?? 'Property Owner',
-                                      ),
+                                      builder: (context) =>
+                                          ChatConversationPage(
+                                            participantId:
+                                                widget.property.ownerId!,
+                                            participantName:
+                                                widget.property.ownerName ??
+                                                'Property Owner',
+                                          ),
                                     ),
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Cannot chat: owner information missing.')),
+                                    SnackBar(
+                                      content: Text(
+                                        context
+                                            .l10n
+                                            .propertyCannotChatOwnerInformationMissing,
+                                      ),
+                                    ),
                                   );
                                 }
                               },
@@ -258,8 +273,8 @@ class _Body extends StatelessWidget {
     return Container(
       // Lifted over the last photo, matching the rounded card in the design.
       transform: Matrix4.translationValues(0, -20, 0),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -282,7 +297,7 @@ class _Body extends StatelessWidget {
             if (recommendations.similar.isNotEmpty) ...[
               const _SectionGap(),
               PropertyGridSection(
-                title: 'Similar Property',
+                title: context.l10n.propertySimilarProperty,
                 properties: recommendations.similar,
                 onPropertyTapped: (p) => onOpenProperty?.call(p),
               ),
@@ -290,7 +305,7 @@ class _Body extends StatelessWidget {
             if (recommendations.forYou.isNotEmpty) ...[
               const _SectionGap(),
               PropertyGridSection(
-                title: 'Property for you',
+                title: context.l10n.propertyPropertyForYou,
                 properties: recommendations.forYou,
                 onPropertyTapped: (p) => onOpenProperty?.call(p),
               ),
@@ -337,7 +352,7 @@ class _DragHandle extends StatelessWidget {
             width: 44,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFFD1D5DB),
+              color: context.colors.iconSubtle,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -346,4 +361,3 @@ class _DragHandle extends StatelessWidget {
     );
   }
 }
-

@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/tactile_button.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 class PropertyTypeFilters extends StatefulWidget {
   const PropertyTypeFilters({super.key});
@@ -78,10 +79,10 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           border: Border.all(
             color: isListingTypeSelected
-                ? const Color(0xFF3E49C7)
+                ? context.colors.primaryStrong
                 : Colors.transparent,
             width: 1.5,
           ),
@@ -100,8 +101,8 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
             Icon(
               _isListingTypeOpen ? Icons.cancel : Icons.maps_home_work_outlined,
               color: isListingTypeSelected
-                  ? const Color(0xFF3E49C7)
-                  : const Color(0xFF6B7280),
+                  ? context.colors.primaryStrong
+                  : context.colors.textMuted,
               size: 18,
             ),
             const SizedBox(width: 6),
@@ -109,8 +110,8 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
               _selectedListingType ?? 'Listing Type',
               style: GoogleFonts.inter(
                 color: isListingTypeSelected
-                    ? const Color(0xFF3E49C7)
-                    : const Color(0xFF4B5563),
+                    ? context.colors.primaryStrong
+                    : context.colors.textSecondary,
                 fontWeight: isListingTypeSelected
                     ? FontWeight.w600
                     : FontWeight.w500,
@@ -123,8 +124,8 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
                   ? Icons.keyboard_arrow_up
                   : Icons.keyboard_arrow_down,
               color: isListingTypeSelected
-                  ? const Color(0xFF3E49C7)
-                  : const Color(0xFF6B7280),
+                  ? context.colors.primaryStrong
+                  : context.colors.textMuted,
               size: 18,
             ),
           ],
@@ -149,10 +150,12 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(24.0),
           border: Border.all(
-            color: isSelected ? const Color(0xFF3E49C7) : Colors.transparent,
+            color: isSelected
+                ? context.colors.primaryStrong
+                : Colors.transparent,
             width: 1.5,
           ),
           boxShadow: [
@@ -167,8 +170,8 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
           text,
           style: GoogleFonts.inter(
             color: isSelected
-                ? const Color(0xFF3E49C7)
-                : const Color(0xFF4B5563),
+                ? context.colors.primaryStrong
+                : context.colors.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 14,
           ),
@@ -193,10 +196,12 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
         margin: const EdgeInsets.only(right: 8.0),
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(24.0),
           border: Border.all(
-            color: isSelected ? const Color(0xFF3E49C7) : Colors.transparent,
+            color: isSelected
+                ? context.colors.primaryStrong
+                : Colors.transparent,
             width: 1.5,
           ),
           boxShadow: [
@@ -215,7 +220,9 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
               width: 16,
               height: 16,
               colorFilter: ColorFilter.mode(
-                isSelected ? const Color(0xFF3E49C7) : const Color(0xFF6B7280),
+                isSelected
+                    ? context.colors.primaryStrong
+                    : context.colors.textMuted,
                 BlendMode.srcIn,
               ),
             ),
@@ -224,8 +231,8 @@ class _PropertyTypeFiltersState extends State<PropertyTypeFilters> {
               text,
               style: GoogleFonts.inter(
                 color: isSelected
-                    ? const Color(0xFF3E49C7)
-                    : const Color(0xFF4B5563),
+                    ? context.colors.primaryStrong
+                    : context.colors.textSecondary,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 fontSize: 14,
               ),

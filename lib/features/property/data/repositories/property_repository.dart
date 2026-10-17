@@ -106,24 +106,28 @@ class PropertyRepository {
       '/properties/$id/images/presigned-url',
       data: {'fileNames': fileNames},
     );
-    
+
     final List<dynamic> presignedData = presignedResponse.data;
 
     // 2. Upload directly to Supabase Storage
     for (int i = 0; i < images.length; i++) {
       final image = images[i];
-      final urlData = presignedData.firstWhere((d) => d['fileName'].toString().endsWith(image.name), orElse: () => null);
+      final urlData = presignedData.firstWhere(
+        (d) => d['fileName'].toString().endsWith(image.name),
+        orElse: () => null,
+      );
       if (urlData != null) {
         final signedUrl = urlData['signedUrl'];
         final bytes = await image.readAsBytes();
-        
+
         final dioUpload = Dio(); // Use new Dio instance to avoid interceptors
         await dioUpload.put(
           signedUrl,
           data: bytes,
           options: Options(
             headers: {
-              'Content-Type': 'application/octet-stream', // Supabase requires content-type
+              'Content-Type':
+                  'application/octet-stream', // Supabase requires content-type
             },
           ),
         );
@@ -131,7 +135,9 @@ class PropertyRepository {
     }
 
     // 3. Confirm upload
-    final uploadedFileNames = presignedData.map((d) => d['fileName'].toString()).toList();
+    final uploadedFileNames = presignedData
+        .map((d) => d['fileName'].toString())
+        .toList();
     final response = await dio.post(
       '/properties/$id/images/confirm',
       data: {'fileNames': uploadedFileNames},

@@ -5,21 +5,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
 import 'add_property_page.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {
-  
   void validateAndSubmit() async {
     setState(() => hasAttemptedSubmit = true);
 
-    final validation = ref.read(addPropertyControllerProvider.notifier).validatePropertyForm(
-      title: titleController.text,
-      price: priceController.text,
-      propertyType: selectedPropertyType,
-      listingSetting: selectedListingSetting,
-      landSize: landSizeController.text,
-      buildingSize: buildingSizeController.text,
-      unitSize: unitSizeController.text,
-    );
+    final validation = ref
+        .read(addPropertyControllerProvider.notifier)
+        .validatePropertyForm(
+          title: titleController.text,
+          price: priceController.text,
+          propertyType: selectedPropertyType,
+          listingSetting: selectedListingSetting,
+          landSize: landSizeController.text,
+          buildingSize: buildingSizeController.text,
+          unitSize: unitSizeController.text,
+        );
 
     if (!validation.isValid) {
       GlobalKey? firstErrorKey;
@@ -45,7 +48,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
         default:
           break;
       }
-      
+
       if (firstErrorKey != null) {
         showErrorDialog(firstErrorKey);
       }
@@ -53,17 +56,19 @@ extension AddPropertyPageLogic on AddPropertyPageState {
     }
 
     try {
-      final property = await ref.read(addPropertyControllerProvider.notifier).submitProperty(
-        title: titleController.text,
-        price: priceController.text,
-        propertyType: selectedPropertyType,
-        landSize: landSizeController.text,
-        buildingSize: buildingSizeController.text,
-        unitSize: unitSizeController.text,
-        boundaryPoints: widget.boundaryPoints,
-        selectedPhotos: selectedPhotos,
-        status: 'Active',
-      );
+      final property = await ref
+          .read(addPropertyControllerProvider.notifier)
+          .submitProperty(
+            title: titleController.text,
+            price: priceController.text,
+            propertyType: selectedPropertyType,
+            landSize: landSizeController.text,
+            buildingSize: buildingSizeController.text,
+            unitSize: unitSizeController.text,
+            boundaryPoints: widget.boundaryPoints,
+            selectedPhotos: selectedPhotos,
+            status: 'Active',
+          );
       if (!mounted) return;
       if (property != null) {
         showSuccessDialog(property);
@@ -86,19 +91,19 @@ extension AddPropertyPageLogic on AddPropertyPageState {
           ),
           contentPadding: const EdgeInsets.all(24),
           title: Text(
-            'Validate required fields',
+            context.l10n.propertyValidateRequiredFields,
             style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF111827),
+              color: context.colors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
           content: Text(
-            'Please complete required fields before publishing.',
+            context.l10n.propertyPleaseCompleteRequiredFieldsBeforePublis,
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: const Color(0xFF4B5563),
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -116,11 +121,11 @@ extension AddPropertyPageLogic on AddPropertyPageState {
                 }
               },
               child: Text(
-                'Close',
+                context.l10n.propertyClose,
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF5B5FEF),
+                  color: context.colors.accent,
                 ),
               ),
             ),
@@ -144,15 +149,15 @@ extension AddPropertyPageLogic on AddPropertyPageState {
             style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF111827),
+              color: context.colors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
           content: Text(
-            'Your listing is now visible to buyers.',
+            context.l10n.propertyYourListingIsNowVisibleTo,
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: const Color(0xFF4B5563),
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -167,11 +172,11 @@ extension AddPropertyPageLogic on AddPropertyPageState {
                 ); // Pop AddPropertyPage with property
               },
               child: Text(
-                'Close',
+                context.l10n.propertyClose,
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF5B5FEF),
+                  color: context.colors.accent,
                 ),
               ),
             ),
@@ -238,7 +243,7 @@ class PublishButtonWidget extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF5B5FEF),
+                backgroundColor: context.colors.accent,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),

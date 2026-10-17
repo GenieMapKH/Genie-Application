@@ -22,13 +22,11 @@ class ValidationResult {
 
 class AddPropertyFormState {
   final bool isLoading;
-  
+
   const AddPropertyFormState({this.isLoading = false});
-  
+
   AddPropertyFormState copyWith({bool? isLoading}) {
-    return AddPropertyFormState(
-      isLoading: isLoading ?? this.isLoading,
-    );
+    return AddPropertyFormState(isLoading: isLoading ?? this.isLoading);
   }
 }
 
@@ -37,6 +35,44 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
   AddPropertyFormState build() {
     return const AddPropertyFormState();
   }
+
+  /// Fields that must be filled, in the order errors are reported, per
+  /// property type. The title is always required and checked first.
+  static const _requiredFieldsByType = <String, List<PropertyField>>{
+    'Land': [
+      PropertyField.price,
+      PropertyField.listingSettings,
+      PropertyField.landSize,
+    ],
+    'House': [
+      PropertyField.price,
+      PropertyField.listingSettings,
+      PropertyField.landSize,
+      PropertyField.buildingSize,
+    ],
+    'Warehouse': [
+      PropertyField.price,
+      PropertyField.listingSettings,
+      PropertyField.landSize,
+      PropertyField.buildingSize,
+    ],
+    'Building': [
+      PropertyField.price,
+      PropertyField.listingSettings,
+      PropertyField.landSize,
+      PropertyField.buildingSize,
+    ],
+    'Condo': [
+      PropertyField.price,
+      PropertyField.listingSettings,
+      PropertyField.unitSize,
+    ],
+    'Business for Sale': [
+      PropertyField.landSize,
+      PropertyField.listingSettings,
+    ],
+    'Borey': [],
+  };
 
   ValidationResult validatePropertyForm({
     required String title,
@@ -47,34 +83,22 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
     required String buildingSize,
     required String unitSize,
   }) {
-    PropertyField? firstErrorField;
+    final values = {
+      PropertyField.title: title,
+      PropertyField.price: price,
+      PropertyField.listingSettings: listingSetting,
+      PropertyField.landSize: landSize,
+      PropertyField.buildingSize: buildingSize,
+      PropertyField.unitSize: unitSize,
+    };
 
-    if (title.trim().isEmpty) firstErrorField ??= PropertyField.title;
+    // No type chosen yet is treated as Land, the default type.
+    final type = propertyType.isEmpty ? 'Land' : propertyType;
+    final required = [PropertyField.title, ...?_requiredFieldsByType[type]];
 
-    if (propertyType == 'Land' || propertyType.isEmpty) {
-      if (price.trim().isEmpty) firstErrorField ??= PropertyField.price;
-      if (listingSetting.isEmpty) firstErrorField ??= PropertyField.listingSettings;
-      if (landSize.trim().isEmpty) firstErrorField ??= PropertyField.landSize;
-    } else if (propertyType == 'House' || propertyType == 'Warehouse') {
-      if (price.trim().isEmpty) firstErrorField ??= PropertyField.price;
-      if (listingSetting.isEmpty) firstErrorField ??= PropertyField.listingSettings;
-      if (landSize.trim().isEmpty) firstErrorField ??= PropertyField.landSize;
-      if (buildingSize.trim().isEmpty) firstErrorField ??= PropertyField.buildingSize;
-    } else if (propertyType == 'Building') {
-      if (price.trim().isEmpty) firstErrorField ??= PropertyField.price;
-      if (listingSetting.isEmpty) firstErrorField ??= PropertyField.listingSettings;
-      if (landSize.trim().isEmpty) firstErrorField ??= PropertyField.landSize;
-      if (buildingSize.trim().isEmpty) firstErrorField ??= PropertyField.buildingSize;
-    } else if (propertyType == 'Condo') {
-      if (price.trim().isEmpty) firstErrorField ??= PropertyField.price;
-      if (listingSetting.isEmpty) firstErrorField ??= PropertyField.listingSettings;
-      if (unitSize.trim().isEmpty) firstErrorField ??= PropertyField.unitSize;
-    } else if (propertyType == 'Borey') {
-      // Title is already checked
-    } else if (propertyType == 'Business for Sale') {
-      if (landSize.trim().isEmpty) firstErrorField ??= PropertyField.landSize;
-      if (listingSetting.isEmpty) firstErrorField ??= PropertyField.listingSettings;
-    }
+    final firstErrorField = required
+        .where((field) => values[field]!.trim().isEmpty)
+        .firstOrNull;
 
     return ValidationResult(
       isValid: firstErrorField == null,
@@ -100,9 +124,12 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
         'title': title.trim().isEmpty ? 'Untitled Property' : title.trim(),
         'price': double.tryParse(price.trim()) ?? 0,
         'propertyType': propertyType.isEmpty ? 'Land' : propertyType,
-        if (landSize.trim().isNotEmpty) 'landSize': double.tryParse(landSize.trim()),
-        if (buildingSize.trim().isNotEmpty) 'buildingSize': double.tryParse(buildingSize.trim()),
-        if (unitSize.trim().isNotEmpty) 'unitSize': double.tryParse(unitSize.trim()),
+        if (landSize.trim().isNotEmpty)
+          'landSize': double.tryParse(landSize.trim()),
+        if (buildingSize.trim().isNotEmpty)
+          'buildingSize': double.tryParse(buildingSize.trim()),
+        if (unitSize.trim().isNotEmpty)
+          'unitSize': double.tryParse(unitSize.trim()),
         'status': status,
       };
 
@@ -111,7 +138,9 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
 
       // 2. Attach boundary points if we have them
       if (boundaryPoints.isNotEmpty) {
-        final points = boundaryPoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList();
+        final points = boundaryPoints
+            .map((p) => {'lat': p.latitude, 'lng': p.longitude})
+            .toList();
         property = await repo.updateBoundary(property.id, points);
       }
 
@@ -129,6 +158,9 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
   }
 }
 
-final addPropertyControllerProvider = AutoDisposeNotifierProvider<AddPropertyController, AddPropertyFormState>(() {
-  return AddPropertyController();
-});
+final addPropertyControllerProvider =
+    AutoDisposeNotifierProvider<AddPropertyController, AddPropertyFormState>(
+      () {
+        return AddPropertyController();
+      },
+    );

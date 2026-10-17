@@ -8,6 +8,8 @@ import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/core/theme/app_colors.dart';
 
 class MainBottomNav extends ConsumerWidget {
   const MainBottomNav({super.key});
@@ -16,13 +18,16 @@ class MainBottomNav extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(mainNavProvider).currentIndex;
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final colors = context.colors;
+    final l10n = context.l10n;
 
     Widget navContent = Container(
       height: 98.0,
       decoration: BoxDecoration(
-        color: isIOS ? Colors.white.withValues(alpha: 0.85) : Colors.white,
-        border: const Border(
-          top: BorderSide(color: Color(0xFFE5E7EB), width: 1.0),
+        // Translucent on iOS, where the map shows through the blur behind it.
+        color: isIOS ? colors.surface.withValues(alpha: 0.85) : colors.surface,
+        border: Border(
+          top: BorderSide(color: context.colors.border, width: 1.0),
         ),
       ),
       child: Padding(
@@ -36,7 +41,7 @@ class MainBottomNav extends ConsumerWidget {
               ref,
               0,
               'assets/icons/explore.svg',
-              'Explore',
+              l10n.navExplore,
               currentIndex,
             ),
             _buildNavItem(
@@ -44,7 +49,7 @@ class MainBottomNav extends ConsumerWidget {
               ref,
               1,
               'assets/icons/saved.svg',
-              'Saved',
+              l10n.navSaved,
               currentIndex,
             ),
             _buildNavItem(
@@ -52,7 +57,7 @@ class MainBottomNav extends ConsumerWidget {
               ref,
               2,
               'assets/icons/chat.svg',
-              'Chat',
+              l10n.navChat,
               currentIndex,
             ),
             _buildNavItem(
@@ -60,7 +65,7 @@ class MainBottomNav extends ConsumerWidget {
               ref,
               3,
               'assets/icons/property.svg',
-              'My Properties',
+              l10n.navMyProperties,
               currentIndex,
             ),
             _buildNavItem(
@@ -68,7 +73,7 @@ class MainBottomNav extends ConsumerWidget {
               ref,
               4,
               'assets/icons/user.svg',
-              'User',
+              l10n.navUser,
               currentIndex,
             ),
           ],
@@ -98,8 +103,8 @@ class MainBottomNav extends ConsumerWidget {
   ) {
     final isSelected = currentIndex == index;
     final color = isSelected
-        ? const Color(0xFF3E49C7)
-        : const Color(0xFF6B7280);
+        ? context.colors.primaryStrong
+        : context.colors.textMuted;
 
     final unreadCount = index == 2 ? ref.watch(unreadCountProvider) : 0;
 
@@ -124,10 +129,7 @@ class MainBottomNav extends ConsumerWidget {
                 color: const Color(0xFFEF4444),
                 borderRadius: BorderRadius.circular(10),
               ),
-              constraints: const BoxConstraints(
-                minWidth: 16,
-                minHeight: 16,
-              ),
+              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
               child: Text(
                 unreadCount > 99 ? '99+' : '$unreadCount',
                 style: GoogleFonts.inter(
@@ -181,6 +183,7 @@ class MainBottomNav extends ConsumerWidget {
   }
 
   void _showLoginRequiredDialog(BuildContext context) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (context) {
@@ -190,19 +193,19 @@ class MainBottomNav extends ConsumerWidget {
           ),
           contentPadding: const EdgeInsets.all(24),
           title: Text(
-            'Account Required',
+            l10n.loginRequiredTitle,
             style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF111827),
+              color: context.colors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
           content: Text(
-            'Please log in or sign up to access this feature.',
+            l10n.loginRequiredMessage,
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: const Color(0xFF4B5563),
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -213,18 +216,18 @@ class MainBottomNav extends ConsumerWidget {
                 Navigator.pop(context); // Close dialog
               },
               child: Text(
-                'Cancel',
+                l10n.commonCancel,
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF6B7280),
+                  color: context.colors.textMuted,
                 ),
               ),
             ),
             const SizedBox(width: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF5B5FEF),
+                backgroundColor: context.colors.accent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
@@ -238,7 +241,7 @@ class MainBottomNav extends ConsumerWidget {
                 );
               },
               child: Text(
-                'Login / Sign Up',
+                l10n.loginRequiredAction,
                 style: GoogleFonts.inter(
                   color: Colors.white,
                   fontSize: 14,

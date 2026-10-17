@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -72,6 +73,80 @@ void main() {
       final highShift = center.latitude - atHighZoom;
 
       expect(highShift, lessThan(lowShift));
+    });
+  });
+
+  group('frame', () {
+    final road = LatLngBounds(
+      southwest: const LatLng(11.50, 104.85),
+      northeast: const LatLng(11.54, 104.89),
+    );
+    const screen = Size(400, 800);
+
+    test('centres the area when nothing covers the map', () {
+      final camera = MapCameraFocus.frame(road, screen, EdgeInsets.zero);
+
+      expect(camera.target.latitude, closeTo(11.52, 1e-6));
+      expect(camera.target.longitude, closeTo(104.87, 1e-6));
+    });
+
+    test('moves the area into the part a bottom sheet leaves visible', () {
+      final camera = MapCameraFocus.frame(
+        road,
+        screen,
+        const EdgeInsets.only(bottom: 400),
+      );
+      // The camera looks south of the area, so the area shows higher up.
+      expect(camera.target.latitude, lessThan(11.52));
+      expect(camera.target.longitude, closeTo(104.87, 1e-6));
+    });
+
+    test('moves the area beside a side panel', () {
+      final camera = MapCameraFocus.frame(
+        road,
+        const Size(1024, 768),
+        const EdgeInsets.only(left: 420),
+      );
+      // The camera looks west of the area, so the area shows to the right.
+      expect(camera.target.longitude, lessThan(104.87));
+    });
+
+    test('zooms in less when more of the map is covered', () {
+      final open = MapCameraFocus.frame(road, screen, EdgeInsets.zero);
+      final covered = MapCameraFocus.frame(
+        road,
+        screen,
+        const EdgeInsets.only(top: 180, bottom: 400),
+      );
+      expect(covered.zoom, lessThan(open.zoom));
+    });
+
+    test('stays zoomed in enough to show listings when the area is huge', () {
+      final district = LatLngBounds(
+        southwest: const LatLng(11.40, 104.70),
+        northeast: const LatLng(11.65, 105.00),
+      );
+      expect(
+        MapCameraFocus.frame(district, screen, EdgeInsets.zero).zoom,
+        lessThan(13),
+      );
+      expect(
+        MapCameraFocus.frame(
+          district,
+          screen,
+          EdgeInsets.zero,
+          minZoom: 14,
+        ).zoom,
+        14,
+      );
+    });
+
+    test('never comes closer than the street level for a single spot', () {
+      final spot = LatLngBounds(
+        southwest: const LatLng(11.52, 104.87),
+        northeast: const LatLng(11.52, 104.87),
+      );
+      expect(MapCameraFocus.frame(spot, screen, EdgeInsets.zero).zoom, 17);
     });
   });
 }

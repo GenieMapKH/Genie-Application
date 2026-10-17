@@ -1,5 +1,5 @@
+import 'package:genie/core/logging/app_logger.dart';
 import 'dart:ui' as ui;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -38,7 +38,7 @@ Future<BitmapDescriptor> getSvgMarker(String assetName) async {
       height: targetHeight,
     );
   } catch (e) {
-    debugPrint('Error loading SVG marker: $e');
+    AppLogger.debug('Error loading SVG marker: $e');
     return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
   }
 }

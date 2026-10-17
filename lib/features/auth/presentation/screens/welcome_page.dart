@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:math' as math;
-import 'package:genie/core/network/api_client.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/shared/widgets/app_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Optimized, high-performance Welcome / Auth landing screen.
 ///
@@ -56,33 +56,40 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
   late Animation<double> _createAccountFadeAnimation;
 
   // Cached text styles to avoid runtime lookups during animation frames
-  late final TextStyle _headlineStyle;
-  late final TextStyle _subtitleStyle;
-  late final TextStyle _createAccountStyle;
+  late TextStyle _headlineStyle;
+  late TextStyle _subtitleStyle;
+  late TextStyle _createAccountStyle;
 
+  /// The styles use theme colours, which cannot be read in [initState] and
+  /// change when the user switches between light and dark.
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
     _headlineStyle = GoogleFonts.inter(
       fontSize: 26,
       fontWeight: FontWeight.w700,
-      color: const Color(0xFF1E293B),
+      color: context.colors.textPrimary,
       letterSpacing: -0.5,
     );
 
     _subtitleStyle = GoogleFonts.inter(
       fontSize: 15,
       fontWeight: FontWeight.w400,
-      color: const Color(0xFF64748B),
+      color: context.colors.textMuted,
       height: 1.4,
     );
 
     _createAccountStyle = GoogleFonts.inter(
       fontSize: 14,
       fontWeight: FontWeight.w600,
-      color: const Color(0xFF4F5BD5),
+      color: context.colors.primary,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
 
     _controller = AnimationController(
       vsync: this,
@@ -166,7 +173,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -201,7 +208,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Welcome to the app',
+                              context.l10n.authWelcomeToTheApp,
                               style: _headlineStyle,
                               textAlign: TextAlign.center,
                             ),
@@ -211,7 +218,9 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
                                 horizontal: 20.0,
                               ),
                               child: Text(
-                                'Find and share properties with exact map location',
+                                context
+                                    .l10n
+                                    .authFindAndSharePropertiesWithExact,
                                 style: _subtitleStyle,
                                 textAlign: TextAlign.center,
                               ),
@@ -238,7 +247,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
                         children: [
                           // Login Primary Button (#4F5BD5)
                           AppButton.primary(
-                            text: 'Login',
+                            text: context.l10n.authLogin,
                             onPressed:
                                 widget.onLoginPressed ??
                                 () {
@@ -249,35 +258,13 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
 
                           // Explore without account Secondary Button (#E5E7EB)
                           AppButton.secondary(
-                            text: 'Explore without account',
+                            text: context.l10n.authExploreWithoutAccount,
                             onPressed:
                                 widget.onExplorePressed ??
                                 () async {
-                                  try {
-                                    // Guest session initialization
-                                    String? guestId =
-                                        await AuthStorage.getGuestSessionId();
-                                    if (guestId == null) {
-                                      final timestamp =
-                                          DateTime.now().millisecondsSinceEpoch;
-                                      final random = math.Random().nextInt(
-                                        1000000,
-                                      );
-                                      guestId = 'guest_${timestamp}_$random';
-                                      await AuthStorage.saveGuestSessionId(
-                                        guestId,
-                                      );
-                                    }
-
-                                    // Register with backend
-                                    final dio = createApiClient();
-                                    await dio.post(
-                                      '/public/properties/guest-session',
-                                      data: {'deviceId': guestId},
-                                    );
-                                  } catch (e) {
-                                    debugPrint('Guest session init failed: $e');
-                                  }
+                                  await ref
+                                      .read(authServiceProvider)
+                                      .ensureGuestSession();
 
                                   ref
                                       .read(mainNavProvider.notifier)
@@ -302,7 +289,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Create a Account',
+                                  context.l10n.authCreateAAccount,
                                   style: _createAccountStyle,
                                 ),
                               ),

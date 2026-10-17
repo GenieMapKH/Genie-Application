@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/tactile_button.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class DrawingControlsPanel extends StatelessWidget {
   final bool isEditingPolygon;
@@ -22,6 +24,7 @@ class DrawingControlsPanel extends StatelessWidget {
   });
 
   Widget _buildCircleButton(
+    BuildContext context,
     String iconPath, {
     required VoidCallback onPressed,
   }) {
@@ -31,7 +34,7 @@ class DrawingControlsPanel extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -46,8 +49,8 @@ class DrawingControlsPanel extends StatelessWidget {
             iconPath,
             width: 24,
             height: 24,
-            colorFilter: const ColorFilter.mode(
-              Color(0xFF374151),
+            colorFilter: ColorFilter.mode(
+              context.colors.textSecondary,
               BlendMode.srcIn,
             ),
           ),
@@ -72,11 +75,13 @@ class DrawingControlsPanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildCircleButton(
+                  context,
                   'assets/icons/revert.svg',
                   onPressed: onRevertPressed,
                 ),
                 const SizedBox(height: 12),
                 _buildCircleButton(
+                  context,
                   'assets/icons/bin.svg',
                   onPressed: onDeletePressed,
                 ),
@@ -105,10 +110,10 @@ class DrawingControlsPanel extends StatelessWidget {
                         vertical: 12.0,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.colors.surface,
                         borderRadius: BorderRadius.circular(12.0),
                         border: Border.all(
-                          color: const Color(0xFFE5E7EB),
+                          color: context.colors.border,
                           width: 1,
                         ),
                         boxShadow: [
@@ -120,9 +125,9 @@ class DrawingControlsPanel extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        'Cancel',
+                        context.l10n.commonCancel,
                         style: GoogleFonts.inter(
-                          color: Colors.black,
+                          color: context.colors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -138,7 +143,7 @@ class DrawingControlsPanel extends StatelessWidget {
                         vertical: 12.0,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF5B5FEF),
+                        color: context.colors.accent,
                         borderRadius: BorderRadius.circular(12.0),
                         boxShadow: [
                           BoxShadow(
@@ -149,7 +154,7 @@ class DrawingControlsPanel extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        'Save',
+                        context.l10n.commonSave,
                         style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 16,

@@ -1,0 +1,1334 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Khmer Central Khmer (`km`).
+class AppLocalizationsKm extends AppLocalizations {
+  AppLocalizationsKm([String locale = 'km']) : super(locale);
+
+  @override
+  String get commonCancel => 'បោះបង់';
+
+  @override
+  String get commonSave => 'រក្សាទុក';
+
+  @override
+  String get commonRetry => 'ព្យាយាមម្តងទៀត';
+
+  @override
+  String get commonNotSet => 'មិនទាន់កំណត់';
+
+  @override
+  String get commonSaved => 'បានរក្សាទុក';
+
+  @override
+  String get commonSomethingWentWrong => 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get commonTooManyAttempts =>
+      'ព្យាយាមច្រើនដងពេក។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get commonOffline =>
+      'អ្នកមិនមានអ៊ីនធឺណិតទេ។ សូមភ្ជាប់អ៊ីនធឺណិតដើម្បីទទួលព័ត៌មានថ្មី។';
+
+  @override
+  String get navExplore => 'ស្វែងរក';
+
+  @override
+  String get navSaved => 'បានរក្សាទុក';
+
+  @override
+  String get navChat => 'ជជែក';
+
+  @override
+  String get navMyProperties => 'អចលនទ្រព្យខ្ញុំ';
+
+  @override
+  String get navUser => 'អ្នកប្រើ';
+
+  @override
+  String get loginRequiredTitle => 'ត្រូវការគណនី';
+
+  @override
+  String get loginRequiredMessage =>
+      'សូមចូលគណនី ឬចុះឈ្មោះ ដើម្បីប្រើមុខងារនេះ។';
+
+  @override
+  String get loginRequiredAction => 'ចូល / ចុះឈ្មោះ';
+
+  @override
+  String get accountTitle => 'គណនី';
+
+  @override
+  String get accountLoadFailed => 'មិនអាចបើកព័ត៌មានគណនីបានទេ';
+
+  @override
+  String get accountSectionAccount => 'គណនី';
+
+  @override
+  String get accountSectionPreferences => 'ការកំណត់';
+
+  @override
+  String get accountSectionMore => 'ផ្សេងៗ';
+
+  @override
+  String get accountPersonalInfo => 'ព័ត៌មានផ្ទាល់ខ្លួន';
+
+  @override
+  String get accountSecurity => 'សុវត្ថិភាព';
+
+  @override
+  String get accountAppearance => 'រូបរាង';
+
+  @override
+  String get accountLanguage => 'ភាសា';
+
+  @override
+  String get accountPrivacy => 'ឯកជនភាព និងខូគី';
+
+  @override
+  String get accountSubscription => 'គម្រោងជាវ';
+
+  @override
+  String get accountSubscriptionFree => 'ឥតគិតថ្លៃ';
+
+  @override
+  String get accountSignOut => 'ចាកចេញ';
+
+  @override
+  String get accountDefaultName => 'អ្នកប្រើ';
+
+  @override
+  String get avatarTakePhoto => 'ថតរូប';
+
+  @override
+  String get avatarChooseFromStorage => 'ជ្រើសរើសពីឧបករណ៍';
+
+  @override
+  String get avatarSyncFromGoogle => 'យកពីគណនី Google';
+
+  @override
+  String get appearanceTitle => 'រូបរាង';
+
+  @override
+  String get appearanceSystem => 'តាមប្រព័ន្ធ';
+
+  @override
+  String get appearanceLight => 'ភ្លឺ';
+
+  @override
+  String get appearanceDark => 'ងងឹត';
+
+  @override
+  String get languageTitle => 'ភាសា';
+
+  @override
+  String get personalInfoTitle => 'ព័ត៌មានផ្ទាល់ខ្លួន';
+
+  @override
+  String get personalInfoSectionProfile => 'ប្រវត្តិរូប';
+
+  @override
+  String get personalInfoSectionDetails => 'ព័ត៌មានលម្អិត';
+
+  @override
+  String get personalInfoSectionContact => 'ទំនាក់ទំនង';
+
+  @override
+  String get personalInfoUsername => 'ឈ្មោះអ្នកប្រើ';
+
+  @override
+  String get personalInfoUsernameHelp =>
+      'ឈ្មោះអ្នកប្រើជារបស់អ្នកតែម្នាក់គត់ ហើយអ្នកដទៃអាចស្វែងរកអ្នកតាមឈ្មោះនេះ។ ប្រើអក្សរឡាតាំងតូច លេខ \"_\" ឬ \".\" ចំនួន ៣ ដល់ ៣០ តួ។';
+
+  @override
+  String get personalInfoUsernameInvalid =>
+      'ប្រើអក្សរឡាតាំងតូច លេខ \"_\" ឬ \".\" ចំនួន ៣ ដល់ ៣០ តួ។';
+
+  @override
+  String get personalInfoUsernameTaken => 'ឈ្មោះអ្នកប្រើនេះមានគេប្រើរួចហើយ។';
+
+  @override
+  String get personalInfoName => 'ឈ្មោះ';
+
+  @override
+  String get personalInfoNameHelp =>
+      'ឈ្មោះដែលអ្នកដទៃមើលឃើញ។ ឈ្មោះនេះអាចដូចអ្នកដទៃបាន ហើយអ្នកអាចប្ដូរបានគ្រប់ពេល។';
+
+  @override
+  String get personalInfoFirstName => 'នាមខ្លួន';
+
+  @override
+  String get personalInfoLastName => 'នាមត្រកូល';
+
+  @override
+  String get personalInfoSex => 'ភេទ';
+
+  @override
+  String get personalInfoSexMale => 'ប្រុស';
+
+  @override
+  String get personalInfoSexFemale => 'ស្រី';
+
+  @override
+  String get personalInfoSexOther => 'ផ្សេងទៀត';
+
+  @override
+  String get personalInfoPhone => 'លេខទូរសព្ទ';
+
+  @override
+  String get personalInfoPhoneHelp =>
+      'ប្រើសម្រាប់ចូលគណនី និងឱ្យអ្នកទិញទាក់ទងអ្នក។';
+
+  @override
+  String get personalInfoPhoneTaken => 'លេខទូរសព្ទនេះមានគណនីផ្សេងប្រើរួចហើយ។';
+
+  @override
+  String get personalInfoPhoneInvalid =>
+      'សូមបញ្ចូលលេខទូរសព្ទដែលមិនលើសពី ២០ តួ។';
+
+  @override
+  String get personalInfoEmail => 'អ៊ីមែល';
+
+  @override
+  String get personalInfoTooLong => 'វែងពេក។';
+
+  @override
+  String personalInfoEdit(String field) {
+    return 'កែ$field';
+  }
+
+  @override
+  String get securityTitle => 'សុវត្ថិភាព';
+
+  @override
+  String get securitySectionEncryption => 'ការអ៊ិនគ្រីបពីចុងដល់ចុង';
+
+  @override
+  String get securitySectionSignIn => 'ការចូលគណនី';
+
+  @override
+  String get securitySectionAccount => 'គណនី';
+
+  @override
+  String get securityChangePin => 'ប្ដូរលេខកូដ PIN បម្រុងទុក';
+
+  @override
+  String get securityResetKeys => 'កំណត់សោអ៊ិនគ្រីបឡើងវិញ';
+
+  @override
+  String get securityChangePassword => 'ប្ដូរពាក្យសម្ងាត់';
+
+  @override
+  String get securityDevices => 'ឧបករណ៍ដែលបានចូលគណនី';
+
+  @override
+  String get securityRemoveAccount => 'ផ្អាក ឬលុបគណនី';
+
+  @override
+  String get pinHint => 'លេខកូដ PIN ៦ ខ្ទង់';
+
+  @override
+  String get pinSubmit => 'បញ្ជូន';
+
+  @override
+  String get pinIncomplete => 'សូមបញ្ចូលលេខឱ្យគ្រប់ ៦ ខ្ទង់។';
+
+  @override
+  String get pinTooGuessable => 'ងាយទាយពេក។ សូមជ្រើសរើសលេខកូដ PIN ផ្សេង។';
+
+  @override
+  String get pinEnterCurrentTitle => 'បញ្ចូលលេខកូដ PIN បច្ចុប្បន្ន';
+
+  @override
+  String get pinEnterCurrentHelp =>
+      'បញ្ចូលលេខកូដ PIN ៦ ខ្ទង់បច្ចុប្បន្នរបស់អ្នក ដើម្បីបញ្ជាក់ថាជាអ្នក។';
+
+  @override
+  String get pinEnterNewTitle => 'បញ្ចូលលេខកូដ PIN ថ្មី';
+
+  @override
+  String get pinEnterNewHelp => 'លេខកូដ PIN ថ្មីនឹងការពារសោដែលអ្នកមានស្រាប់។';
+
+  @override
+  String get pinForNewKeysTitle => 'លេខកូដ PIN សម្រាប់សោថ្មី';
+
+  @override
+  String get pinForNewKeysHelp =>
+      'លេខកូដ PIN នេះនឹងការពារសោថ្មីរបស់អ្នក។ អ្នកត្រូវការវាដើម្បីអានសារនៅលើឧបករណ៍ផ្សេង។';
+
+  @override
+  String get pinChanged => 'បានប្ដូរលេខកូដ PIN បម្រុងទុក។';
+
+  @override
+  String get pinNoBackup =>
+      'រកមិនឃើញការបម្រុងទុកទេ។ សូមបើកផ្នែកជជែកជាមុនសិន ដើម្បីបង្កើតសោ។';
+
+  @override
+  String get pinLocked =>
+      'បញ្ចូលលេខកូដ PIN ខុសច្រើនដងពេក។ ការបម្រុងទុកត្រូវបានចាក់សោ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get pinFetchFailed =>
+      'មិនអាចភ្ជាប់ទៅការបម្រុងទុកសោបានទេ។ សូមពិនិត្យអ៊ីនធឺណិតរបស់អ្នក។';
+
+  @override
+  String get pinWrong =>
+      'លេខកូដ PIN មិនត្រឹមត្រូវ។ បើខុស ៥ ដង ការបម្រុងទុកនឹងត្រូវចាក់សោមួយរយៈ។';
+
+  @override
+  String get pinSaveFailed =>
+      'មិនអាចរក្សាទុកការបម្រុងទុកថ្មីបានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្ដូរឡើយ។';
+
+  @override
+  String get resetKeysConfirmTitle => 'កំណត់សោអ៊ិនគ្រីបឡើងវិញ?';
+
+  @override
+  String get resetKeysConfirmMessage =>
+      'សោថ្មីនឹងត្រូវបង្កើត ហើយអ្នកនឹងមិនអាចអានសារចាស់ៗទាំងអស់បានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។\n\nជាដំបូង អ្នកនឹងត្រូវបញ្ចូលលេខកូដ PIN បច្ចុប្បន្ន។';
+
+  @override
+  String get resetKeysConfirmAction => 'កំណត់សោឡើងវិញ';
+
+  @override
+  String get resetKeysDone => 'បានកំណត់សោអ៊ិនគ្រីបឡើងវិញ។';
+
+  @override
+  String get resetKeysFailed =>
+      'មិនអាចកំណត់សោឡើងវិញបានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្ដូរឡើយ។';
+
+  @override
+  String get passwordCurrent => 'ពាក្យសម្ងាត់បច្ចុប្បន្ន';
+
+  @override
+  String get passwordNew => 'ពាក្យសម្ងាត់ថ្មី';
+
+  @override
+  String get passwordConfirm => 'បញ្ជាក់ពាក្យសម្ងាត់ថ្មី';
+
+  @override
+  String get passwordCurrentRequired => 'សូមបញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្ន។';
+
+  @override
+  String get passwordTooShort => 'សូមប្រើយ៉ាងតិច ៨ តួ។';
+
+  @override
+  String get passwordMismatch => 'ពាក្យសម្ងាត់ទាំងពីរមិនដូចគ្នាទេ។';
+
+  @override
+  String get passwordSameAsCurrent =>
+      'សូមជ្រើសរើសពាក្យសម្ងាត់ដែលខុសពីពាក្យសម្ងាត់បច្ចុប្បន្ន។';
+
+  @override
+  String get passwordIncorrect => 'ពាក្យសម្ងាត់បច្ចុប្បន្នមិនត្រឹមត្រូវ។';
+
+  @override
+  String get passwordChanged =>
+      'បានប្ដូរពាក្យសម្ងាត់។ ឧបករណ៍ផ្សេងទៀតរបស់អ្នកត្រូវបានចាកចេញ។';
+
+  @override
+  String get passwordIntro =>
+      'បន្ទាប់ពីប្ដូររួច ឧបករណ៍ផ្សេងទៀតទាំងអស់ដែលបានចូលគណនីអ្នក នឹងត្រូវចាកចេញ។';
+
+  @override
+  String get devicesIntro =>
+      'ឧបករណ៍ទាំងនេះបានចូលគណនីរបស់អ្នក។ បើមានឧបករណ៍ណាដែលអ្នកមិនស្គាល់ សូមចាកចេញពីវា រួចប្ដូរពាក្យសម្ងាត់។';
+
+  @override
+  String get devicesLoadFailed => 'មិនអាចបង្ហាញឧបករណ៍របស់អ្នកបានទេ';
+
+  @override
+  String get devicesEmpty => 'គ្មានឧបករណ៍ផ្សេងទៀតបានចូលគណនីទេ។';
+
+  @override
+  String get devicesThisDevice => 'ឧបករណ៍នេះ';
+
+  @override
+  String get devicesUnknownDevice => 'ឧបករណ៍មិនស្គាល់';
+
+  @override
+  String get devicesUnknownLocation => 'មិនស្គាល់ទីតាំង';
+
+  @override
+  String get devicesActiveNow => 'កំពុងប្រើ';
+
+  @override
+  String devicesLastUsedMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ប្រើចុងក្រោយ $count នាទីមុន',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String devicesLastUsedHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ប្រើចុងក្រោយ $count ម៉ោងមុន',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String devicesLastUsedDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ប្រើចុងក្រោយ $count ថ្ងៃមុន',
+      one: 'ប្រើចុងក្រោយម្សិលមិញ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String devicesSignedInOn(String date) {
+    return 'ចូលគណនីនៅ $date';
+  }
+
+  @override
+  String get devicesSignOut => 'ចាកចេញ';
+
+  @override
+  String get devicesSignOutAll => 'ចាកចេញពីឧបករណ៍ទាំងអស់';
+
+  @override
+  String get devicesSignOutConfirmTitle => 'ចាកចេញពីឧបករណ៍នេះ?';
+
+  @override
+  String devicesSignOutConfirmMessage(String device) {
+    return '$device នឹងត្រូវចូលគណនីម្តងទៀត។';
+  }
+
+  @override
+  String get devicesSignOutAllConfirmTitle => 'ចាកចេញពីឧបករណ៍ទាំងអស់?';
+
+  @override
+  String get devicesSignOutAllConfirmMessage =>
+      'ឧបករណ៍ទាំងអស់ រួមទាំងឧបករណ៍នេះ នឹងត្រូវចូលគណនីម្តងទៀត។';
+
+  @override
+  String get devicesSignedOut => 'បានចាកចេញពីឧបករណ៍។';
+
+  @override
+  String get devicesSignOutFailed =>
+      'មិនអាចចាកចេញពីឧបករណ៍បានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get removeAccountDeactivateTitle => 'ផ្អាកគណនី';
+
+  @override
+  String get removeAccountDeactivateBody =>
+      'ប្រវត្តិរូប និងការប្រកាសរបស់អ្នកនឹងត្រូវលាក់ ហើយអ្នកនឹងត្រូវចាកចេញពីគ្រប់ឧបករណ៍។ គ្មានអ្វីត្រូវបានលុបទេ៖ ចូលគណនីម្តងទៀត ដើម្បីប្រើវាវិញ។';
+
+  @override
+  String get removeAccountDeactivateAction => 'ផ្អាកគណនី';
+
+  @override
+  String get removeAccountDeleteTitle => 'លុបគណនី';
+
+  @override
+  String get removeAccountDeleteBody =>
+      'គណនី ការប្រកាស អចលនទ្រព្យដែលបានរក្សាទុក និងសារជជែករបស់អ្នក នឹងត្រូវលុបជាអចិន្ត្រៃយ៍។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។';
+
+  @override
+  String get removeAccountDeleteAction => 'លុបគណនី';
+
+  @override
+  String get removeAccountDeleteConfirmAction => 'លុបជាអចិន្ត្រៃយ៍';
+
+  @override
+  String get removeAccountDeactivated => 'គណនីរបស់អ្នកត្រូវបានផ្អាក។';
+
+  @override
+  String get removeAccountDeleted => 'គណនីរបស់អ្នកត្រូវបានលុប។';
+
+  @override
+  String get identityConfirmPasswordHelp =>
+      'បញ្ចូលពាក្យសម្ងាត់របស់អ្នកដើម្បីបន្ត។';
+
+  @override
+  String get identityConfirmPassword => 'ពាក្យសម្ងាត់';
+
+  @override
+  String get identityConfirmPasswordRequired => 'សូមបញ្ចូលពាក្យសម្ងាត់។';
+
+  @override
+  String get identityConfirmPasswordWrong => 'ពាក្យសម្ងាត់មិនត្រឹមត្រូវ។';
+
+  @override
+  String get identityConfirmWithGoogle => 'បញ្ជាក់ដោយប្រើ Google';
+
+  @override
+  String get identityConfirmGoogleHelp =>
+      'អ្នកចូលគណនីដោយប្រើ Google។ សូមបញ្ជាក់ដោយគណនី Google របស់អ្នកដើម្បីបន្ត។';
+
+  @override
+  String get identityConfirmGoogleFailed =>
+      'មិនអាចបញ្ជាក់គណនី Google របស់អ្នកបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get identityConfirmOr => 'ឬ';
+
+  @override
+  String get authCreateAnAccount => 'បង្កើតគណនី';
+
+  @override
+  String get authAccountCreatedSuccessfullyPleaseLogin =>
+      'បង្កើតគណនីបានជោគជ័យ! សូមចូលគណនី។';
+
+  @override
+  String get authSuccessfullyAuthenticated => 'ផ្ទៀងផ្ទាត់បានជោគជ័យ!';
+
+  @override
+  String get authForgotPassword => 'ភ្លេចពាក្យសម្ងាត់';
+
+  @override
+  String get authEnterYourEmailAddressToGet =>
+      'បញ្ចូលអាសយដ្ឋានអ៊ីមែលរបស់អ្នក ដើម្បីទទួលតំណកំណត់ពាក្យសម្ងាត់ឡើងវិញ។';
+
+  @override
+  String get authPasswordReset => 'កំណត់ពាក្យសម្ងាត់ឡើងវិញ';
+
+  @override
+  String get authCreateAAccount => 'បង្កើតគណនី';
+
+  @override
+  String get authEmailAddress => 'អាសយដ្ឋានអ៊ីមែល';
+
+  @override
+  String get authExampleGmailCom => 'example@gmail.com';
+
+  @override
+  String get authVerificationCodeSentToYourEmail =>
+      'បានផ្ញើលេខកូដផ្ទៀងផ្ទាត់ទៅអ៊ីមែលរបស់អ្នក';
+
+  @override
+  String get authPhoneNumber => 'លេខទូរសព្ទ';
+
+  @override
+  String get authLoginFailedPleaseCheckYourCredentials =>
+      'ចូលគណនីមិនបានទេ។ សូមពិនិត្យព័ត៌មានរបស់អ្នក រួចព្យាយាមម្តងទៀត។';
+
+  @override
+  String get authSuccessfullyLoggedIn => 'ចូលគណនីបានជោគជ័យ!';
+
+  @override
+  String get authOtpVerification => 'ផ្ទៀងផ្ទាត់លេខកូដ OTP';
+
+  @override
+  String get authEnterTheVerificationCodeWeJust =>
+      'បញ្ចូលលេខកូដផ្ទៀងផ្ទាត់ដែលយើងទើបផ្ញើទៅអ៊ីមែលរបស់អ្នក។';
+
+  @override
+  String get authVerify => 'ផ្ទៀងផ្ទាត់';
+
+  @override
+  String get authResendOtp => 'ផ្ញើលេខកូដ OTP ម្តងទៀត';
+
+  @override
+  String get authPleaseEnterAll6Digits => 'សូមបញ្ចូលលេខឱ្យគ្រប់ ៦ ខ្ទង់';
+
+  @override
+  String get authNewVerificationCodeSent => 'បានផ្ញើលេខកូដផ្ទៀងផ្ទាត់ថ្មី';
+
+  @override
+  String get authResetPassword => 'កំណត់ពាក្យសម្ងាត់ឡើងវិញ';
+
+  @override
+  String get authEnterYourNewPasswordTwiceBelow =>
+      'បញ្ចូលពាក្យសម្ងាត់ថ្មីរបស់អ្នកពីរដងខាងក្រោម ដើម្បីកំណត់ពាក្យសម្ងាត់ថ្មី';
+
+  @override
+  String get authEnterNewPassword => 'បញ្ចូលពាក្យសម្ងាត់ថ្មី';
+
+  @override
+  String get authReEnterNewPassword => 'បញ្ចូលពាក្យសម្ងាត់ថ្មីម្តងទៀត';
+
+  @override
+  String get authPasswordResetSuccessfullyPleaseLogIn =>
+      'កំណត់ពាក្យសម្ងាត់ឡើងវិញបានជោគជ័យ! សូមចូលគណនីដោយប្រើពាក្យសម្ងាត់ថ្មី។';
+
+  @override
+  String get authWelcomeToTheApp => 'សូមស្វាគមន៍មកកាន់កម្មវិធី';
+
+  @override
+  String get authFindAndSharePropertiesWithExact =>
+      'ស្វែងរក និងចែករំលែកអចលនទ្រព្យ ជាមួយទីតាំងជាក់លាក់លើផែនទី';
+
+  @override
+  String get authLogin => 'ចូលគណនី';
+
+  @override
+  String get authExploreWithoutAccount => 'ស្វែងរកដោយមិនចាំបាច់មានគណនី';
+
+  @override
+  String get authOrSignInWith => 'ឬចូលគណនីដោយប្រើ';
+
+  @override
+  String get authAlreadyHaveAnAccount => 'មានគណនីរួចហើយ? ';
+
+  @override
+  String get authSignInHere => 'ចូលគណនីនៅទីនេះ';
+
+  @override
+  String get authSignUp => 'ចុះឈ្មោះ';
+
+  @override
+  String get authContinueWithGoogle => 'បន្តដោយប្រើ Google';
+
+  @override
+  String get authByContinuingYouAgreeToOut => 'ដោយបន្ត មានន័យថាអ្នកយល់ព្រមនឹង';
+
+  @override
+  String get authTermsOfServices => 'លក្ខខណ្ឌនៃការប្រើប្រាស់។';
+
+  @override
+  String get authEmailAddressOrPhoneNumber => 'អាសយដ្ឋានអ៊ីមែល ឬលេខទូរសព្ទ';
+
+  @override
+  String get authForgetPassword => 'ភ្លេចពាក្យសម្ងាត់?';
+
+  @override
+  String get authKeepMeSignedIn => 'ចងចាំការចូលគណនីរបស់ខ្ញុំ';
+
+  @override
+  String get authWelcomeBackToTheApp => 'សូមស្វាគមន៍ការត្រឡប់មកវិញ';
+
+  @override
+  String get chatCouldNotOpenYourPhotos => 'មិនអាចបើករូបថតរបស់អ្នកបានទេ។';
+
+  @override
+  String get chatTryAgain => 'ព្យាយាមម្តងទៀត';
+
+  @override
+  String get chatThisIsYourOwnAccount => 'នេះជាគណនីរបស់អ្នកផ្ទាល់។';
+
+  @override
+  String get chatSignInToChatOrCheck =>
+      'សូមចូលគណនីដើម្បីជជែក ឬពិនិត្យអ៊ីនធឺណិតរបស់អ្នក។';
+
+  @override
+  String get chatMessagesAreEndToEndEncrypted =>
+      'សារត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ សូមនិយាយសួស្ដី!';
+
+  @override
+  String get chatNoChatsYet => 'មិនទាន់មានការជជែកទេ!';
+
+  @override
+  String get chatMessageAPropertyOwnerToStart =>
+      'ផ្ញើសារទៅម្ចាស់អចលនទ្រព្យ ដើម្បីចាប់ផ្ដើមការសន្ទនា។';
+
+  @override
+  String get chatCouldNotLoadYourChats => 'មិនអាចបង្ហាញការជជែករបស់អ្នកបានទេ។';
+
+  @override
+  String get chatPhotoLibrary => 'បណ្ណាល័យរូបថត';
+
+  @override
+  String get chatCamera => 'កាមេរ៉ា';
+
+  @override
+  String get chatMessage => 'សារ';
+
+  @override
+  String get chatThisIsNormalIfTheyReinstalled =>
+      'នេះជារឿងធម្មតា បើគេដំឡើងកម្មវិធីឡើងវិញ ឬកំណត់សោឡើងវិញ។ បើអ្នកមិនបានរំពឹងទុកទេ អាចមាននរណាម្នាក់កំពុងព្យាយាមអានសាររបស់អ្នក៖ សូមទទួលយកសោថ្មី រួចផ្ទៀងផ្ទាត់លេខកូដសុវត្ថិភាពជាមួយគេ មុននឹងចែករំលែកអ្វីដែលជាឯកជន។';
+
+  @override
+  String get chatSecurityCode => 'លេខកូដសុវត្ថិភាព';
+
+  @override
+  String get chatAcceptNewKey => 'ទទួលយកសោថ្មី';
+
+  @override
+  String get chatAvailableOnceYouHaveBothSet =>
+      'អាចប្រើបាន នៅពេលអ្នកទាំងពីររៀបចំការជជែកសុវត្ថិភាពរួច។';
+
+  @override
+  String get chatTheSecurityCodeIsUnavailable => 'មិនមានលេខកូដសុវត្ថិភាពទេ។';
+
+  @override
+  String get homeCoordinates => 'កូអរដោនេ';
+
+  @override
+  String get homeDraw => 'គូរ';
+
+  @override
+  String get homeSearchByAreaRoadVillage => 'ស្វែងរកតាមតំបន់ ផ្លូវ ភូមិ...';
+
+  @override
+  String get homeNoCoordinatesFoundPleaseTryAgain =>
+      'រកមិនឃើញកូអរដោនេទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get homeCropDocument => 'កាត់ឯកសារ';
+
+  @override
+  String get homeNoCoordinatesFoundInTheImage =>
+      'រកមិនឃើញកូអរដោនេនៅក្នុងរូបភាពទេ។';
+
+  @override
+  String get homePleaseFillBothXAndY =>
+      'សូមបំពេញកូអរដោនេ X និង Y ទាំងពីរក្នុងមួយជួរ ឬទុកទទេទាំងពីរ។';
+
+  @override
+  String get homeCoordinatesMustBeValidNumbers =>
+      'កូអរដោនេត្រូវតែជាលេខត្រឹមត្រូវ។';
+
+  @override
+  String get homePleaseEnterAtLeast3Coordinates =>
+      'សូមបញ្ចូលកូអរដោនេយ៉ាងតិច ៣ ដើម្បីបង្កើតជារូបរាងអចលនទ្រព្យ។';
+
+  @override
+  String get homePreview => 'មើលជាមុន';
+
+  @override
+  String get homeLocateProperty => 'កំណត់ទីតាំងអចលនទ្រព្យ';
+
+  @override
+  String get homeEnterCoordinatesManually => 'បញ្ចូលកូអរដោនេដោយដៃ';
+
+  @override
+  String get homeTypeUtmZoneEastingXAnd =>
+      'វាយបញ្ចូលតំបន់ UTM, Easting (X) និង Northing (Y)។';
+
+  @override
+  String get homeEnterCoordinates => 'បញ្ចូលកូអរដោនេ';
+
+  @override
+  String get homeUseUtmFromALandDocument =>
+      'ប្រើ UTM ពីប័ណ្ណកម្មសិទ្ធិដីធ្លី ឬបញ្ចូលកូអរដោនេដោយដៃ';
+
+  @override
+  String get homeCrsWgs84UtmZone48p => 'CRS: WGS84 / UTM Zone 48P';
+
+  @override
+  String get homeScanUtmFromDocument => 'ស្កេន UTM ពីឯកសារ';
+
+  @override
+  String get homeUseCameraToDetectCoordinates =>
+      'ប្រើកាមេរ៉ាដើម្បីស្វែងរកកូអរដោនេ';
+
+  @override
+  String get homeStartScanning => 'ចាប់ផ្ដើមស្កេន';
+
+  @override
+  String get propertySetPropertyLocation => 'កំណត់ទីតាំងអចលនទ្រព្យ';
+
+  @override
+  String get propertyLocationBoundary => 'ទីតាំង និងព្រំប្រទល់';
+
+  @override
+  String get propertyDrawingProperty => 'គូរអចលនទ្រព្យ';
+
+  @override
+  String get propertyMapPreview => 'មើលផែនទីជាមុន';
+
+  @override
+  String get propertyAddProperty => 'បន្ថែមអចលនទ្រព្យ';
+
+  @override
+  String get propertyPropertyType => 'ប្រភេទអចលនទ្រព្យ';
+
+  @override
+  String get propertyTitleHeadline => 'ចំណងជើង';
+
+  @override
+  String get propertyExample10x30LandNearNationalRoad =>
+      'ឧទាហរណ៍៖ ដី 10x30 ជិតផ្លូវជាតិលេខ ១';
+
+  @override
+  String get propertyDescription => 'ការពិពណ៌នា';
+
+  @override
+  String get propertyDescribeWhatMakesThisPropertySpecial =>
+      'ពិពណ៌នាអំពីអ្វីដែលធ្វើឱ្យអចលនទ្រព្យនេះពិសេស';
+
+  @override
+  String get propertyKeywordsFeatures => 'ពាក្យគន្លឹះ / លក្ខណៈពិសេស';
+
+  @override
+  String get propertyUploadPropertyPhotos => 'បញ្ចូលរូបថតអចលនទ្រព្យ';
+
+  @override
+  String get propertyContactInformation => 'ព័ត៌មានទំនាក់ទំនង';
+
+  @override
+  String get propertyPhoneNumber0 => 'លេខទូរសព្ទ (0...)';
+
+  @override
+  String get propertyValidateRequiredFields => 'ពិនិត្យព័ត៌មានដែលត្រូវបំពេញ';
+
+  @override
+  String get propertyPleaseCompleteRequiredFieldsBeforePublis =>
+      'សូមបំពេញព័ត៌មានដែលចាំបាច់ឱ្យគ្រប់ មុននឹងផ្សព្វផ្សាយ។';
+
+  @override
+  String get propertyClose => 'បិទ';
+
+  @override
+  String get propertyYourListingIsNowVisibleTo =>
+      'ការប្រកាសរបស់អ្នកអាចឱ្យអ្នកទិញមើលឃើញហើយ។';
+
+  @override
+  String get propertyYouAreOfflinePleaseConnectTo =>
+      'អ្នកមិនមានអ៊ីនធឺណិតទេ។ សូមភ្ជាប់អ៊ីនធឺណិតដើម្បីទទួលព័ត៌មានថ្មី។';
+
+  @override
+  String get propertyCouldNotLoadProperties => 'មិនអាចបង្ហាញអចលនទ្រព្យបានទេ';
+
+  @override
+  String get propertySortBy => 'តម្រៀបតាម';
+
+  @override
+  String get propertyFailedToLoadSavedProperties =>
+      'មិនអាចបង្ហាញអចលនទ្រព្យដែលបានរក្សាទុកបានទេ';
+
+  @override
+  String get propertyYouHavenTSavedAnyProperties =>
+      'អ្នកមិនទាន់បានរក្សាទុកអចលនទ្រព្យណាមួយទេ។';
+
+  @override
+  String get propertyTapTheHeartIconOnListings =>
+      'ចុចរូបបេះដូងលើការប្រកាស ដើម្បីរក្សាទុកសម្រាប់មើលពេលក្រោយ។';
+
+  @override
+  String get propertySavedProperties => 'អចលនទ្រព្យដែលបានរក្សាទុក';
+
+  @override
+  String get propertySortOrder => 'លំដាប់តម្រៀប';
+
+  @override
+  String get propertyAddAtLeast3ClearPhotos =>
+      'បន្ថែមរូបថតច្បាស់ៗយ៉ាងតិច ៣ សន្លឹក នៃអចលនទ្រព្យ និងតំបន់ជុំវិញ';
+
+  @override
+  String get propertyOpenCamera => 'បើកកាមេរ៉ា';
+
+  @override
+  String get propertyCallNow => 'ហៅទូរសព្ទឥឡូវនេះ';
+
+  @override
+  String get propertyCannotChatOwnerInformationMissing =>
+      'មិនអាចជជែកបានទេ៖ ខ្វះព័ត៌មានម្ចាស់។';
+
+  @override
+  String get propertySimilarProperty => 'អចលនទ្រព្យស្រដៀងគ្នា';
+
+  @override
+  String get propertyPropertyForYou => 'អចលនទ្រព្យសម្រាប់អ្នក';
+
+  @override
+  String get propertyPropertyHighlights => 'ចំណុចលេចធ្លោនៃអចលនទ្រព្យ';
+
+  @override
+  String get propertyGenie => 'Genie';
+
+  @override
+  String get propertyViews => 'ចំនួនមើល';
+
+  @override
+  String get propertySaves => 'ចំនួនរក្សាទុក';
+
+  @override
+  String get propertyShareThisProperty => 'ចែករំលែកអចលនទ្រព្យនេះ';
+
+  @override
+  String get propertyScanThisQrCodeToView =>
+      'ស្កេនកូដ QR នេះ ដើម្បីមើលអចលនទ្រព្យនេះនៅលើទូរសព្ទរបស់អ្នក';
+
+  @override
+  String get propertyShare => 'ចែករំលែក';
+
+  @override
+  String get propertyDownload => 'ទាញយក';
+
+  @override
+  String get propertyTitleType => 'ប្រភេទប័ណ្ណកម្មសិទ្ធិ';
+
+  @override
+  String get propertyBedrooms => 'បន្ទប់គេង';
+
+  @override
+  String get propertyNumberOfBedrooms => 'ចំនួនបន្ទប់គេង';
+
+  @override
+  String get propertyBathrooms => 'បន្ទប់ទឹក';
+
+  @override
+  String get propertyNumberOfBathrooms => 'ចំនួនបន្ទប់ទឹក';
+
+  @override
+  String get propertyFloors => 'ជាន់';
+
+  @override
+  String get propertyTotalFloorsEG2 => 'ចំនួនជាន់សរុប (ឧ. 2)';
+
+  @override
+  String get propertyNumberOfFloors => 'ចំនួនជាន់';
+
+  @override
+  String get propertyFloorNumber => 'ជាន់ទី';
+
+  @override
+  String get propertyEnterFloorNumberEG12 => 'បញ្ចូលលេខជាន់ (ឧ. 12)';
+
+  @override
+  String get propertyTotalFloors => 'ចំនួនជាន់សរុប';
+
+  @override
+  String get propertyTotalFloorsInBuilding => 'ចំនួនជាន់សរុបក្នុងអគារ';
+
+  @override
+  String get propertyParking => 'ចំណតរថយន្ត';
+
+  @override
+  String get propertySelectParking => 'ជ្រើសរើសចំណត';
+
+  @override
+  String get propertyFurnished => 'គ្រឿងសង្ហារឹម';
+
+  @override
+  String get propertySelectFurnished => 'ជ្រើសរើសគ្រឿងសង្ហារឹម';
+
+  @override
+  String get propertyBuildingType => 'ប្រភេទអគារ';
+
+  @override
+  String get propertySelectBuildingType => 'ជ្រើសរើសប្រភេទអគារ';
+
+  @override
+  String get propertyTotalUnits => 'ចំនួនយូនីតសរុប';
+
+  @override
+  String get propertyNumberOfUnits => 'ចំនួនយូនីត';
+
+  @override
+  String get propertyBalcony => 'យ៉រ';
+
+  @override
+  String get propertySelectBalcony => 'ជ្រើសរើសយ៉រ';
+
+  @override
+  String get propertyCompletionStatus => 'ស្ថានភាពសាងសង់';
+
+  @override
+  String get propertySelectStatus => 'ជ្រើសរើសស្ថានភាព';
+
+  @override
+  String get propertyViewType => 'ប្រភេទទេសភាព';
+
+  @override
+  String get propertySelectViewType => 'ជ្រើសរើសប្រភេទទេសភាព';
+
+  @override
+  String get propertyProjectType => 'ប្រភេទគម្រោង';
+
+  @override
+  String get propertySelectProjectType => 'ជ្រើសរើសប្រភេទគម្រោង';
+
+  @override
+  String get propertySelectStatus2 => 'ជ្រើសរើសស្ថានភាព';
+
+  @override
+  String get propertyBuildingManagementFeePerMonth =>
+      'ថ្លៃសេវាគ្រប់គ្រងអគារប្រចាំខែ';
+
+  @override
+  String get propertyRemainingContractDurationWithLandlord =>
+      'រយៈពេលកិច្ចសន្យាដែលនៅសល់ជាមួយម្ចាស់ផ្ទះ';
+
+  @override
+  String get propertyMaintenanceFee => 'ថ្លៃថែទាំ';
+
+  @override
+  String get propertyLeaseRemaining => 'រយៈពេលជួលដែលនៅសល់';
+
+  @override
+  String get propertyPrice => 'តម្លៃ';
+
+  @override
+  String get propertyEnterSellingPriceUsd => 'បញ្ចូលតម្លៃលក់ (USD)';
+
+  @override
+  String get propertyListingSettings => 'ការកំណត់ការប្រកាស';
+
+  @override
+  String get propertyAutoFromMap => 'ស្វ័យប្រវត្តិពីផែនទី';
+
+  @override
+  String get propertyTotalLandAreaOfTheProperty => 'ផ្ទៃដីសរុបនៃអចលនទ្រព្យ';
+
+  @override
+  String get propertyTotalBuiltUpArea => 'ផ្ទៃសំណង់សរុប';
+
+  @override
+  String get propertyTotalUsableAreaOfTheUnit => 'ផ្ទៃប្រើប្រាស់សរុបនៃយូនីត';
+
+  @override
+  String get propertyBuildingSize => 'ទំហំអគារ';
+
+  @override
+  String get propertyUnitSize => 'ទំហំយូនីត';
+
+  @override
+  String get propertyDeveloperName => 'ឈ្មោះក្រុមហ៊ុនអភិវឌ្ឍន៍';
+
+  @override
+  String get propertyExampleAbcDevelopmentCoLtd =>
+      'ឧទាហរណ៍៖ ABC Development Co., Ltd';
+
+  @override
+  String get propertyProjectName => 'ឈ្មោះគម្រោង';
+
+  @override
+  String get propertyProjectName2 => 'ឈ្មោះគម្រោង';
+
+  @override
+  String get propertyTotalProjectArea => 'ផ្ទៃក្រឡាគម្រោងសរុប';
+
+  @override
+  String get propertyEnterTotalLandSize => 'បញ្ចូលទំហំដីសរុប';
+
+  @override
+  String get propertyTotalNumberOfUnitsInProject => 'ចំនួនយូនីតសរុបក្នុងគម្រោង';
+
+  @override
+  String get propertyStartingPrice => 'តម្លៃចាប់ផ្ដើម';
+
+  @override
+  String get propertyStartingPriceInUsd => 'តម្លៃចាប់ផ្ដើមគិតជា USD';
+
+  @override
+  String get propertyMonthlyRent => 'ថ្លៃជួលប្រចាំខែ';
+
+  @override
+  String get propertyEnterMonthlyShopRentUsd =>
+      'បញ្ចូលថ្លៃជួលហាងប្រចាំខែ (USD)';
+
+  @override
+  String get propertyEquipmentIncluded => 'សម្ភារៈដែលរួមបញ្ចូល';
+
+  @override
+  String get propertyListFurnitureKitchenEquipmentMachinesPos =>
+      'រៀបរាប់គ្រឿងសង្ហារឹម សម្ភារៈផ្ទះបាយ ម៉ាស៊ីន ប្រព័ន្ធ POS ជាដើម។';
+
+  @override
+  String get propertyReasonForSelling => 'មូលហេតុនៃការលក់';
+
+  @override
+  String get propertyExampleOwnerRelocatingAbroad =>
+      'ឧទាហរណ៍៖ ម្ចាស់ផ្លាស់ទៅរស់នៅបរទេស';
+
+  @override
+  String get propertyEdit => 'កែប្រែ';
+
+  @override
+  String get propertyPublishToPublic => 'ផ្សព្វផ្សាយជាសាធារណៈ';
+
+  @override
+  String get propertyMoveToDraft => 'ប្ដូរទៅជាសេចក្ដីព្រាង';
+
+  @override
+  String get propertyDeleteProperty => 'លុបអចលនទ្រព្យ';
+
+  @override
+  String get propertyPropertyDeleted => 'បានលុបអចលនទ្រព្យ';
+
+  @override
+  String chatSecurityCodeExplanation(String name) {
+    return 'សារត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ ដើម្បីប្រាកដថាគ្មាននរណានៅចន្លោះកណ្ដាល សូមផ្ទៀងផ្ទាត់លេខកូដនេះជាមួយ $name ដោយផ្ទាល់ ឬតាមការហៅទូរសព្ទ៖ វាត្រូវតែដូចគ្នានៅលើទូរសព្ទទាំងពីរ។';
+  }
+
+  @override
+  String get commonContinue => 'បន្ត';
+
+  @override
+  String get sessionEnded => 'អ្នកត្រូវបានចាកចេញពីឧបករណ៍នេះ។';
+
+  @override
+  String get securityForgotPin => 'ភ្លេចលេខកូដ PIN បម្រុងទុក';
+
+  @override
+  String get securityCreatePassword => 'បង្កើតពាក្យសម្ងាត់';
+
+  @override
+  String get createPasswordIntro =>
+      'អ្នកចូលគណនីដោយប្រើ Google ដូច្នេះគណនីនេះមិនទាន់មានពាក្យសម្ងាត់ទេ។ សូមជ្រើសរើសពាក្យសម្ងាត់មួយ រួចបញ្ជាក់ជាមួយគណនី Google របស់អ្នក។ អ្នកនៅតែអាចចូលដោយប្រើ Google បានដដែល។';
+
+  @override
+  String get createPasswordAction => 'បញ្ជាក់ជាមួយ Google រួចបង្កើត';
+
+  @override
+  String get createPasswordDone => 'បានបង្កើតពាក្យសម្ងាត់។';
+
+  @override
+  String get forgotPinTitle => 'ភ្លេចលេខកូដ PIN បម្រុងទុក?';
+
+  @override
+  String get forgotPinKeepsHistory =>
+      'ឧបករណ៍នេះនៅមានសោជជែករបស់អ្នក ដូច្នេះគ្មានអ្វីបាត់បង់ទេ។ សូមបញ្ជាក់ពាក្យសម្ងាត់គណនីរបស់អ្នក រួចជ្រើសរើសលេខកូដ PIN ថ្មី។';
+
+  @override
+  String get forgotPinLosesHistory =>
+      'ឧបករណ៍នេះមិនមានសោជជែករបស់អ្នកទេ ហើយបើគ្មានលេខកូដ PIN ក៏មិនអាចយកវាមកវិញបានដែរ។ បន្ទាប់ពីអ្នកបញ្ជាក់ពាក្យសម្ងាត់គណនី សោថ្មីនឹងត្រូវបានបង្កើត ហើយប្រវត្តិជជែកពីមុនរបស់អ្នកនឹងមិនអាចអានបានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។\n\nបើឧបករណ៍ផ្សេងទៀតរបស់អ្នកនៅអាចបើកការជជែកបាន សូមធ្វើនៅលើឧបករណ៍នោះវិញ ដើម្បីរក្សាប្រវត្តិរបស់អ្នក។';
+
+  @override
+  String get forgotPinNeedsPassword =>
+      'ការយកលេខកូដ PIN មកវិញ ត្រូវការពាក្យសម្ងាត់គណនីរបស់អ្នក។ អ្នកចូលដោយប្រើ Google ដូច្នេះសូមបង្កើតពាក្យសម្ងាត់ជាមុនសិន។';
+
+  @override
+  String get forgotPinPasswordTitle => 'បញ្ជាក់ពាក្យសម្ងាត់របស់អ្នក';
+
+  @override
+  String get forgotPinNewPinHelp =>
+      'លេខកូដ PIN ថ្មីនេះនឹងការពារសោជជែករបស់អ្នកចាប់ពីពេលនេះតទៅ។';
+
+  @override
+  String get forgotPinDone =>
+      'បានកំណត់លេខកូដ PIN បម្រុងទុកថ្មី។ ប្រវត្តិជជែករបស់អ្នកនៅដដែល។';
+
+  @override
+  String get forgotPinProofExpired =>
+      'ចំណាយពេលយូរពេក។ សូមបញ្ជាក់ពាក្យសម្ងាត់របស់អ្នកម្តងទៀត។';
+
+  @override
+  String get pinForgotHint =>
+      'ភ្លេចលេខកូដ PIN? សូមចូលទៅ អ្នកប្រើ > សុវត្ថិភាព > ភ្លេចលេខកូដ PIN បម្រុងទុក។';
+
+  @override
+  String get chatPinNeeded =>
+      'ត្រូវការលេខកូដ PIN បម្រុងទុករបស់អ្នក ដើម្បីអាន និងផ្ញើសារ។';
+
+  @override
+  String get chatOpenFailed =>
+      'មិនអាចបើកការជជែកនេះបានទេ។ សូមពិនិត្យអ៊ីនធឺណិតរបស់អ្នក។';
+
+  @override
+  String get devicesImmediateNote =>
+      'ឧបករណ៍ដែលអ្នកឱ្យចាកចេញ នឹងត្រូវចាកចេញភ្លាមៗ។';
+
+  @override
+  String get devicesTooNew =>
+      'ឧបករណ៍នេះទើបចូលគណនីមិនដល់មួយថ្ងៃ ដូច្នេះមិនទាន់អាចឱ្យឧបករណ៍ផ្សេងចាកចេញបានទេ។ សូមប្រើឧបករណ៍ដែលអ្នកបានចូលគណនីយូរជាងនេះ។';
+
+  @override
+  String devicesTooNewUntil(String when) {
+    return 'ដើម្បីការពារអ្នក ឧបករណ៍មួយអាចឱ្យឧបករណ៍ផ្សេងចាកចេញបាន លុះត្រាតែវាបានចូលគណនីរួចមួយថ្ងៃ។ ឧបករណ៍នេះអាចធ្វើបានចាប់ពី $when។ រហូតដល់ពេលនោះ សូមប្រើឧបករណ៍ដែលអ្នកបានចូលគណនីយូរជាងនេះ។';
+  }
+
+  @override
+  String get newSignInTitle => 'មានការចូលគណនីថ្មី';
+
+  @override
+  String get newSignInMessage =>
+      'មានឧបករណ៍ផ្សេងបានចូលគណនីរបស់អ្នក។ បើមិនមែនជាអ្នកទេ សូមឱ្យវាចាកចេញឥឡូវនេះ រួចប្ដូរពាក្យសម្ងាត់របស់អ្នក។';
+
+  @override
+  String get newSignInWasMe => 'គឺខ្ញុំ';
+
+  @override
+  String get newSignInReview => 'ពិនិត្យឧបករណ៍';
+
+  @override
+  String get avatarRemove => 'លុបរូបថត';
+
+  @override
+  String get avatarUpdated => 'បានប្ដូររូបប្រវត្តិរូប។';
+
+  @override
+  String get avatarFailed =>
+      'មិនអាចប្ដូររូបប្រវត្តិរូបបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get avatarSyncHelp =>
+      'ប្រើរូបថតពីគណនី Google របស់អ្នក ហើយរក្សាវាឱ្យទាន់សម័យ។';
+
+  @override
+  String get avatarNoGooglePhoto => 'គណនី Google របស់អ្នកមិនមានរូបថតទេ។';
+
+  @override
+  String get accountDeviceTooNew =>
+      'ឧបករណ៍នេះទើបចូលគណនីមិនដល់មួយថ្ងៃ ដូច្នេះដើម្បីការពារគណនីរបស់អ្នក វាមិនទាន់អាចធ្វើសកម្មភាពនេះបានទេ។ សូមប្រើឧបករណ៍ដែលអ្នកបានចូលគណនីយូរជាងនេះ ឬព្យាយាមម្តងទៀតនៅថ្ងៃស្អែក។';
+
+  @override
+  String get personalInfoUsernameChecking => 'កំពុងពិនិត្យ…';
+
+  @override
+  String get personalInfoUsernameAvailable => 'ឈ្មោះអ្នកប្រើនេះអាចប្រើបាន។';
+
+  @override
+  String mediaSourceTooLarge(int limitMb) {
+    return 'ឯកសារនេះធំជាង $limitMb MB ហើយមិនអាចបញ្ចូលបានទេ។';
+  }
+
+  @override
+  String get mediaStillTooLarge =>
+      'រូបភាពនេះនៅតែធំពេកបន្ទាប់ពីបង្ហាប់ហើយ។ សូមជ្រើសរើសរូបភាពតូចជាងនេះ។';
+
+  @override
+  String get mediaUnreadable =>
+      'មិនអាចអានរូបភាពនេះបានទេ។ សូមជ្រើសរើសរូបភាពផ្សេង។';
+
+  @override
+  String get searchFieldHint => 'ស្វែងរកតំបន់ ផ្លូវ អចលនទ្រព្យ ឬមនុស្ស';
+
+  @override
+  String get searchClear => 'សម្អាតការស្វែងរក';
+
+  @override
+  String get searchSectionPlaces => 'ទីតាំង';
+
+  @override
+  String get searchSectionListings => 'អចលនទ្រព្យ';
+
+  @override
+  String get searchSectionPeople => 'មនុស្ស និងភ្នាក់ងារ';
+
+  @override
+  String get searchIdleTitle => 'ស្វែងរកទីតាំង អចលនទ្រព្យ ឬមនុស្ស';
+
+  @override
+  String get searchIdleBody =>
+      'វាយឈ្មោះផ្លូវ ភូមិ ឬខណ្ឌ ដើម្បីមើលអ្វីដែលកំពុងលក់នៅទីនោះ ឬឈ្មោះម្ចាស់ ឬភ្នាក់ងារ។';
+
+  @override
+  String searchNoResultsTitle(String query) {
+    return 'រកមិនឃើញលទ្ធផលសម្រាប់ “$query”';
+  }
+
+  @override
+  String get searchNoResultsBody =>
+      'សូមពិនិត្យអក្ខរាវិរុទ្ធ ឬសាកល្បងផ្លូវ ឬខណ្ឌក្បែរនោះ។';
+
+  @override
+  String get searchFailureOffline =>
+      'អ្នកមិនមានអ៊ីនធឺណិត។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get searchFailureTooManyRequests =>
+      'ការស្វែងរកច្រើនពេក។ សូមរង់ចាំបន្តិច ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get searchFailureUnavailable =>
+      'ការស្វែងរកទីតាំងមិនអាចប្រើបានឥឡូវនេះទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get searchFailureNotFound =>
+      'រកមិនឃើញទីតាំងនេះទេ។ សូមសាកល្បងលទ្ធផលផ្សេង។';
+
+  @override
+  String get searchFailureUnknown => 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String searchListingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អចលនទ្រព្យ $count',
+      zero: 'គ្មានអចលនទ្រព្យ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchPropertiesInArea(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អចលនទ្រព្យ $count នៅក្នុងតំបន់នេះ',
+      zero: 'មិនទាន់មានអចលនទ្រព្យនៅទីនេះទេ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchPropertiesByPerson(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អចលនទ្រព្យដែលបានផ្សាយ $count',
+      zero: 'គ្មានអចលនទ្រព្យដែលបានផ្សាយ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get searchAreaEmpty =>
+      'មិនទាន់មានអ្វីដាក់លក់នៅទីនេះទេ។ សូមរំកិលផែនទី ឬស្វែងរកតំបន់ធំជាងនេះ។';
+
+  @override
+  String get searchPersonEmpty =>
+      'បុគ្គលនេះមិនមានអចលនទ្រព្យដែលបានផ្សាយនៅពេលនេះទេ។';
+
+  @override
+  String get searchCloseResults => 'បិទលទ្ធផលស្វែងរក';
+
+  @override
+  String get searchRecentTitle => 'ការស្វែងរកថ្មីៗ';
+
+  @override
+  String get searchHistoryEdit => 'កែការស្វែងរកនេះ';
+
+  @override
+  String get searchHistoryRemove => 'លុបចេញពីប្រវត្តិ';
+
+  @override
+  String get searchHistoryRemoveFailed =>
+      'មិនអាចលុបការស្វែងរកនេះបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String profileMemberSince(String date) {
+    return 'សមាជិកតាំងពី $date';
+  }
+
+  @override
+  String get profileListingsTitle => 'អចលនទ្រព្យ';
+
+  @override
+  String get profileViewOnMap => 'មើលលើផែនទី';
+
+  @override
+  String get profileListingsStat => 'អចលនទ្រព្យ';
+
+  @override
+  String get profileFollow => 'តាមដាន';
+
+  @override
+  String get profileContactTitle => 'ទំនាក់ទំនង';
+
+  @override
+  String get profilePhone => 'ទូរស័ព្ទ';
+
+  @override
+  String get profileEmail => 'អ៊ីមែល';
+
+  @override
+  String profileCopied(String label) {
+    return 'បានចម្លង$label';
+  }
+
+  @override
+  String get profileCopy => 'ចម្លង';
+
+  @override
+  String get profileChat => 'ជជែក';
+
+  @override
+  String get chatTabProfile => 'ប្រវត្តិរូប';
+
+  @override
+  String get chatViewFullProfile => 'មើលប្រវត្តិរូបពេញ';
+
+  @override
+  String get profileTabAbout => 'អំពី';
+
+  @override
+  String get profileNoContact => 'មិនមានព័ត៌មានទំនាក់ទំនងទេ។';
+}

@@ -1,13 +1,24 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/core/network/api_client.dart';
 import 'package:genie/core/network/api_cache_manager.dart';
 
+/// Goes up by one each time the server ends this device's session: it was
+/// signed out from another device, the password changed, or the account was
+/// deactivated or deleted. The app shell listens and returns to the welcome
+/// screen (`lib/app/app.dart`).
+final sessionEndedProvider = StateProvider<int>((ref) => 0);
+
 final apiClientProvider = Provider<Dio>((ref) {
-  return createApiClient();
+  return createApiClient(
+    onSessionEnded: () => ref.read(sessionEndedProvider.notifier).state++,
+  );
 });
 
 final authServiceProvider = Provider<AuthService>((ref) {
@@ -38,6 +49,27 @@ class AuthService {
 
   bool _isEmail(String value) {
     return RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$').hasMatch(value.trim());
+  }
+
+  /// Gives this device an anonymous session so guests can browse.
+  /// Never throws: browsing must keep working if registration fails.
+  Future<void> ensureGuestSession() async {
+    try {
+      var guestId = await AuthStorage.getGuestSessionId();
+      if (guestId == null) {
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final random = Random.secure().nextInt(1000000);
+        guestId = 'guest_${timestamp}_$random';
+        await AuthStorage.saveGuestSessionId(guestId);
+      }
+
+      await dio.post(
+        '/public/properties/guest-session',
+        data: {'deviceId': guestId},
+      );
+    } catch (e) {
+      AppLogger.error('Guest session init failed', e);
+    }
   }
 
   // 1. Standard Registration
@@ -127,7 +159,11 @@ class AuthService {
   }
 
   // 7. Reset Password
-  Future<void> resetPassword(String email, String otp, String newPassword) async {
+  Future<void> resetPassword(
+    String email,
+    String otp,
+    String newPassword,
+  ) async {
     try {
       await dio.post(
         '/auth/reset-password',

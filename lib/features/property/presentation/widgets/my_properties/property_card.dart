@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class PropertyCard extends StatelessWidget {
   final PropertyModel property;
@@ -33,8 +35,8 @@ class PropertyCard extends StatelessWidget {
         break;
       case 'Draft':
       default:
-        statusBgColor = const Color(0xFFF3F4F6);
-        statusTextColor = const Color(0xFF6B7280);
+        statusBgColor = context.colors.divider;
+        statusTextColor = context.colors.textMuted;
         break;
     }
 
@@ -44,9 +46,9 @@ class PropertyCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
+          border: Border.all(color: context.colors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -64,11 +66,11 @@ class PropertyCard extends StatelessWidget {
                 Container(
                   height: 160,
                   width: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(12),
                     ),
-                    color: Color(0xFFF3F4F6),
+                    color: context.colors.divider,
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: property.imageUrls.isNotEmpty
@@ -77,10 +79,10 @@ class PropertyCard extends StatelessWidget {
                           cacheWidth: 800,
                           fit: BoxFit.cover,
                         )
-                      : const Center(
+                      : Center(
                           child: Icon(
                             Icons.image_outlined,
-                            color: Color(0xFF9CA3AF),
+                            color: context.colors.textHint,
                             size: 48,
                           ),
                         ),
@@ -95,7 +97,7 @@ class PropertyCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.colors.surface,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -105,7 +107,7 @@ class PropertyCard extends StatelessWidget {
                               ? Icons.landscape
                               : Icons.home_outlined,
                           size: 14,
-                          color: const Color(0xFF4B5563),
+                          color: context.colors.textSecondary,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -113,7 +115,7 @@ class PropertyCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF4B5563),
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ],
@@ -126,14 +128,14 @@ class PropertyCard extends StatelessWidget {
                   right: 12,
                   child: Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: context.colors.surface,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.favorite_border,
                       size: 18,
-                      color: Color(0xFF9CA3AF),
+                      color: context.colors.textHint,
                     ),
                   ),
                 ),
@@ -175,7 +177,7 @@ class PropertyCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF111827),
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       Container(
@@ -206,7 +208,7 @@ class PropertyCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: const Color(0xFF4B5563),
+                      color: context.colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -214,14 +216,14 @@ class PropertyCard extends StatelessWidget {
                     property.title,
                     style: GoogleFonts.inter(
                       fontSize: 12,
-                      color: const Color(0xFF6B7280),
+                      color: context.colors.textMuted,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Edit',
+                    context.l10n.propertyEdit,
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -234,11 +236,11 @@ class PropertyCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatItem('5', 'Contacts'),
+                        _buildStatItem(context, '5', 'Contacts'),
                         const SizedBox(width: 12),
-                        _buildStatItem('1,688', 'Views'),
+                        _buildStatItem(context, '1,688', 'Views'),
                         const SizedBox(width: 12),
-                        _buildStatItem('99', 'Saves'),
+                        _buildStatItem(context, '99', 'Saves'),
                       ],
                     ),
                   ),
@@ -251,7 +253,7 @@ class PropertyCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String count, String label) {
+  Widget _buildStatItem(BuildContext context, String count, String label) {
     return Row(
       children: [
         Text(
@@ -259,7 +261,7 @@ class PropertyCard extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF111827),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(width: 4),
@@ -268,7 +270,7 @@ class PropertyCard extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w500,
-            color: const Color(0xFF6B7280),
+            color: context.colors.textMuted,
           ),
         ),
       ],

@@ -4,19 +4,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/app_header_bar.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:genie/shared/widgets/user_avatar.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class ChatListPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
   final VoidCallback? onBackPressed;
 
-  const ChatListPage({
-    super.key,
-    this.isEmbedded = false,
-    this.onBackPressed,
-  });
+  const ChatListPage({super.key, this.isEmbedded = false, this.onBackPressed});
 
   @override
   ConsumerState<ChatListPage> createState() => _ChatListPageState();
@@ -32,36 +31,39 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
             AppHeaderBar(
-              title: 'Chat',
+              title: context.l10n.navChat,
               onBackPressed: widget.onBackPressed,
             ),
             Expanded(
-              child: ref.watch(conversationsProvider).when(
-                data: (conversations) {
-                  if (conversations.isEmpty) return _buildEmptyState();
-                  return ListView.separated(
-                    itemCount: conversations.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color(0xFFF3F4F6),
-                      indent: 16,
-                      endIndent: 16,
-                    ),
-                    itemBuilder: (context, index) {
-                      final chat = conversations[index];
-                      return _buildChatItem(context, chat);
+              child: ref
+                  .watch(conversationsProvider)
+                  .when(
+                    data: (conversations) {
+                      if (conversations.isEmpty) return _buildEmptyState();
+                      return ListView.separated(
+                        itemCount: conversations.length,
+                        separatorBuilder: (context, index) => Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: context.colors.divider,
+                          indent: 16,
+                          endIndent: 16,
+                        ),
+                        itemBuilder: (context, index) {
+                          final chat = conversations[index];
+                          return _buildChatItem(context, chat);
+                        },
+                      );
                     },
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => _buildEmptyState(),
-              ),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => _buildErrorState(),
+                  ),
             ),
           ],
         ),
@@ -79,36 +81,58 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F6),
+                color: context.colors.divider,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.chat_bubble_outline,
                 size: 64,
-                color: Color(0xFF9CA3AF),
+                color: context.colors.textHint,
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              'No chats yet!',
+              context.l10n.chatNoChatsYet,
               style: GoogleFonts.inter(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF111827),
+                color: context.colors.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Message a property owner to start a conversation.',
+              context.l10n.chatMessageAPropertyOwnerToStart,
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 15,
-                color: const Color(0xFF6B7280),
+                color: context.colors.textMuted,
                 height: 1.5,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            context.l10n.chatCouldNotLoadYourChats,
+            style: GoogleFonts.inter(
+              fontSize: 15,
+              color: context.colors.textMuted,
+            ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton(
+            onPressed: () => ref.read(conversationsProvider.notifier).refresh(),
+            child: Text(context.l10n.chatTryAgain),
+          ),
+        ],
       ),
     );
   }
@@ -130,6 +154,11 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            UserAvatar(
+              name: chat.participantName,
+              avatarUrl: chat.participantAvatar,
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +168,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF111827),
+                      color: context.colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -147,7 +176,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                     chat.lastMessage,
                     style: GoogleFonts.inter(
                       fontSize: 14,
-                      color: const Color(0xFF6B7280),
+                      color: context.colors.textMuted,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -164,15 +193,15 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF111827),
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 6),
                 if (chat.unreadCount > 0)
                   Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF5B5FEF),
+                    decoration: BoxDecoration(
+                      color: context.colors.accent,
                       shape: BoxShape.circle,
                     ),
                     child: Text(

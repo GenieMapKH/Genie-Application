@@ -45,7 +45,7 @@ class AppTransitionPage<T> extends CustomTransitionPage<T> {
            );
 
            return Container(
-             color: Colors.white,
+             color: Theme.of(context).scaffoldBackgroundColor,
              child: SlideTransition(
                position: slideIn,
                child: FadeTransition(opacity: fadeIn, child: child),

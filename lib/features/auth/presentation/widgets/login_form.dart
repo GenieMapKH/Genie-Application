@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/widgets/app_text_field.dart';
-import '../screens/login_page.dart';
+
 import '../view_models/login_form_provider.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class LoginForm extends StatelessWidget {
   final Animation<Offset> slideAnimation;
@@ -79,8 +81,8 @@ class LoginForm extends StatelessWidget {
                 child: selectedMethod == AuthMethod.email
                     ? AppTextField(
                         key: const Key('email_field'),
-                        label: 'Email Address',
-                        hintText: 'example@gmail.com',
+                        label: context.l10n.authEmailAddress,
+                        hintText: context.l10n.authExampleGmailCom,
                         errorText: emailError,
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -89,8 +91,8 @@ class LoginForm extends StatelessWidget {
                       )
                     : AppTextField(
                         key: const Key('phone_field'),
-                        label: 'Phone number',
-                        hintText: 'Phone number',
+                        label: context.l10n.personalInfoPhone,
+                        hintText: context.l10n.personalInfoPhone,
                         errorText: phoneError,
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
@@ -103,8 +105,8 @@ class LoginForm extends StatelessWidget {
               // Password Field with "Forget Password?" link & Error handling
               AppTextField(
                 key: const Key('password_field'),
-                label: 'Password',
-                hintText: 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢',
+                label: context.l10n.identityConfirmPassword,
+                hintText: '********',
                 errorText: passwordError,
                 controller: passwordController,
                 obscureText: obscurePassword,
@@ -113,11 +115,11 @@ class LoginForm extends StatelessWidget {
                 topTrailingWidget: GestureDetector(
                   onTap: onForgotPasswordPressed ?? () {},
                   child: Text(
-                    'Forget Password?',
+                    context.l10n.authForgetPassword,
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF4F5BD5),
+                      color: context.colors.primary,
                     ),
                   ),
                 ),
@@ -131,7 +133,7 @@ class LoginForm extends StatelessWidget {
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
                       key: ValueKey<bool>(obscurePassword),
-                      color: const Color(0xFF64748B),
+                      color: context.colors.textMuted,
                       size: 20,
                     ),
                   ),
@@ -148,26 +150,28 @@ class LoginForm extends StatelessWidget {
                     height: 24,
                     child: Checkbox(
                       value: keepMeSignedIn,
-                      activeColor: const Color(0xFF4F5BD5),
+                      activeColor: context.colors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4.0),
                       ),
-                      side: const BorderSide(
-                        color: Color(0xFFCBD5E1),
+                      side: BorderSide(
+                        color: context.colors.iconSubtle,
                         width: 1.5,
                       ),
                       onChanged: onKeepMeSignedInChanged,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () => onKeepMeSignedInChanged(!keepMeSignedIn),
-                    child: Text(
-                      'Keep me signed in',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xFF4B5563),
+                  Flexible(
+                    child: GestureDetector(
+                      onTap: () => onKeepMeSignedInChanged(!keepMeSignedIn),
+                      child: Text(
+                        context.l10n.authKeepMeSignedIn,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: context.colors.textSecondary,
+                        ),
                       ),
                     ),
                   ),

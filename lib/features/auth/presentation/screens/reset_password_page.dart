@@ -5,16 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/shared/widgets/app_text_field.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class ResetPasswordPage extends ConsumerStatefulWidget {
   final String email;
   final String otp;
 
-  const ResetPasswordPage({
-    super.key,
-    required this.email,
-    required this.otp,
-  });
+  const ResetPasswordPage({super.key, required this.email, required this.otp});
 
   @override
   ConsumerState<ResetPasswordPage> createState() => _ResetPasswordPageState();
@@ -42,13 +40,14 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _entryController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
     _entryController.forward();
   }
 
@@ -67,8 +66,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       if (_passwordController.text.isEmpty) {
         _passwordError = 'Please enter a new password';
         isValid = false;
-      } else if (_passwordController.text.length < 6) {
-        _passwordError = 'Password must be at least 6 characters';
+      } else if (_passwordController.text.length < 8) {
+        _passwordError = 'Password must be at least 8 characters';
         isValid = false;
       } else {
         _passwordError = null;
@@ -94,15 +93,13 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
     setState(() => _isLoading = true);
 
     try {
-      await ref.read(authServiceProvider).resetPassword(
-            widget.email,
-            widget.otp,
-            _passwordController.text,
-          );
+      await ref
+          .read(authServiceProvider)
+          .resetPassword(widget.email, widget.otp, _passwordController.text);
       if (!mounted) return;
       AppPopup.showSuccess(
         context,
-        'Password reset successfully! Please log in with your new password.',
+        context.l10n.authPasswordResetSuccessfullyPleaseLogIn,
       );
       context.go('/login');
     } catch (e) {
@@ -116,12 +113,14 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 408.0),
               child: FadeTransition(
@@ -137,13 +136,13 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(color: context.colors.border),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_back,
                             size: 20,
-                            color: Color(0xFF1E293B),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                       ),
@@ -151,19 +150,19 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
                       // Title
                       Text(
-                        'Reset Password',
+                        context.l10n.authResetPassword,
                         style: GoogleFonts.inter(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF1E293B),
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your new password twice below to reset a new password',
+                        context.l10n.authEnterYourNewPasswordTwiceBelow,
                         style: GoogleFonts.inter(
                           fontSize: 15,
-                          color: const Color(0xFF64748B),
+                          color: context.colors.textMuted,
                           height: 1.5,
                         ),
                       ),
@@ -171,7 +170,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
                       // New password
                       AppTextField(
-                        label: 'Enter new password',
+                        label: context.l10n.authEnterNewPassword,
                         hintText: '123!@#\$%',
                         controller: _passwordController,
                         errorText: _passwordError,
@@ -187,7 +186,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                             _obscurePassword
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: const Color(0xFF94A3B8),
+                            color: context.colors.textHint,
                             size: 22,
                           ),
                         ),
@@ -196,9 +195,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                             setState(() {
                               if (val.isEmpty) {
                                 _passwordError = 'Please enter a new password';
-                              } else if (val.length < 6) {
+                              } else if (val.length < 8) {
                                 _passwordError =
-                                    'Password must be at least 6 characters';
+                                    'Password must be at least 8 characters';
                               } else {
                                 _passwordError = null;
                               }
@@ -210,7 +209,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
                       // Confirm password
                       AppTextField(
-                        label: 'Re-enter new password',
+                        label: context.l10n.authReEnterNewPassword,
                         hintText: '••••••••',
                         controller: _confirmPasswordController,
                         errorText: _confirmPasswordError,
@@ -227,7 +226,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                             _obscureConfirmPassword
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: const Color(0xFF94A3B8),
+                            color: context.colors.textHint,
                             size: 22,
                           ),
                         ),
@@ -254,7 +253,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleReset,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F5BD5),
+                            backgroundColor: context.colors.primary,
                             disabledBackgroundColor: const Color(0x994F5BD5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -271,7 +270,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                                   ),
                                 )
                               : Text(
-                                  'Reset Password',
+                                  context.l10n.authResetPassword,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -288,11 +287,11 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                         child: GestureDetector(
                           onTap: () => context.go('/register'),
                           child: Text(
-                            'Create a Account',
+                            context.l10n.authCreateAAccount,
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF4F5BD5),
+                              color: context.colors.primary,
                             ),
                           ),
                         ),

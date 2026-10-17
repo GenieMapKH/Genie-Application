@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/app_header_bar.dart';
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Full screen / sub-page allowing users to select the sort order for saved properties.
 /// Matches Screenshot 3.
@@ -19,20 +21,20 @@ class SortOrderPage extends ConsumerWidget {
     final currentOption = ref.watch(savedSortOptionProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: context.colors.surfaceMuted,
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeaderBar(
-              title: 'Sort Order',
-              backgroundColor: Color(0xFFFAFAFA),
+            AppHeaderBar(
+              title: context.l10n.propertySortOrder,
+              backgroundColor: context.colors.surfaceMuted,
             ),
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: SortOption.values.length,
                 separatorBuilder: (context, index) =>
-                    const Divider(height: 1, color: Color(0xFFF3F4F6)),
+                    Divider(height: 1, color: context.colors.divider),
                 itemBuilder: (context, index) {
                   final option = SortOption.values[index];
                   final isSelected = option == currentOption;
@@ -57,14 +59,14 @@ class SortOrderPage extends ConsumerWidget {
                                 fontWeight: isSelected
                                     ? FontWeight.w600
                                     : FontWeight.w500,
-                                color: const Color(0xFF111827),
+                                color: context.colors.textPrimary,
                               ),
                             ),
                           ),
                           if (isSelected)
-                            const Icon(
+                            Icon(
                               Icons.check,
-                              color: Color(0xFF5B5FEF),
+                              color: context.colors.accent,
                               size: 22,
                             ),
                         ],
