@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:genie/shared/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -76,12 +76,9 @@ class PropertyCard extends StatelessWidget {
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: property.imageUrls.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: property.imageUrls.first,
-                          memCacheWidth: 800,
-                          fit: BoxFit.cover,
-                          errorWidget: (_, _, _) =>
-                              const PropertyImagePlaceholder(),
+                      ? AppNetworkImage(
+                          url: property.imageUrls.first,
+                          errorWidget: const PropertyImagePlaceholder(),
                         )
                       : Center(
                           child: Icon(

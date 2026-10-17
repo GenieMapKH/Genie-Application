@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/config/app_config.dart';
 import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/core/media/app_image_cache.dart';
 import 'package:genie/features/chat/e2ee/crypto_service.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/settings/data/app_settings_storage.dart';
@@ -44,6 +45,7 @@ Future<void> _configureAndroidGraphics() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AppImageCache.configureMemory();
   // A debug run must say which server it talks to. Without an env file the
   // app would quietly use the production server, so it says how to start
   // it properly instead (throwing here would only leave a blank screen).

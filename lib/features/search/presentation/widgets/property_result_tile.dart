@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:genie/shared/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -97,9 +97,6 @@ class _Thumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final url = property.imageUrls.isEmpty ? null : property.imageUrls.first;
-    // Decoded at the size drawn, not the photo's full size: long lists stay
-    // light on memory and scroll smoothly.
-    final cacheSize = (size * MediaQuery.devicePixelRatioOf(context)).round();
 
     final placeholder = Container(
       color: colors.divider,
@@ -119,14 +116,10 @@ class _Thumbnail extends StatelessWidget {
         height: size,
         child: url == null
             ? placeholder
-            : CachedNetworkImage(
-                imageUrl: url,
-                fit: BoxFit.cover,
-                memCacheWidth: cacheSize,
-                memCacheHeight: cacheSize,
-                fadeInDuration: const Duration(milliseconds: 150),
-                placeholder: (_, _) => placeholder,
-                errorWidget: (_, _, _) => placeholder,
+            : AppNetworkImage(
+                url: url,
+                placeholder: placeholder,
+                errorWidget: placeholder,
               ),
       ),
     );

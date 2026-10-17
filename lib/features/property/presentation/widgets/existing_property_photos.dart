@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:genie/shared/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -35,20 +35,11 @@ class ExistingPropertyPhotos extends StatelessWidget {
             separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) => ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: urls[index],
+              child: AppNetworkImage(
+                url: urls[index],
                 width: _size,
                 height: _size,
-                fit: BoxFit.cover,
-                placeholder: (context, _) =>
-                    ColoredBox(color: context.colors.surfaceMuted),
-                errorWidget: (context, _, _) => ColoredBox(
-                  color: context.colors.surfaceMuted,
-                  child: Icon(
-                    Icons.broken_image_outlined,
-                    color: context.colors.textHint,
-                  ),
-                ),
+                placeholder: ColoredBox(color: context.colors.surfaceMuted),
               ),
             ),
           ),

@@ -59,6 +59,9 @@ dependencies:
   qr_flutter: 4.1.0
   animations: ^3.0.0
   cached_network_image: ^3.4.1
+  # Already installed by cached_network_image; listed because the app
+  # configures its own disk caches (pictures, chat attachments).
+  flutter_cache_manager: ^3.4.1
   shared_preferences: ^2.5.5
   sodium_libs: ^3.4.6+4
   cryptography: ^2.9.0

@@ -4,6 +4,7 @@ import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/widgets/avatar_options_sheet.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/app_network_image.dart';
 
 /// Top of the account screen: the picture, the name people see and the handle.
 class ProfileHeader extends StatelessWidget {
@@ -70,7 +71,9 @@ class ProfileAvatar extends StatelessWidget {
         CircleAvatar(
           radius: 50,
           backgroundColor: colors.border,
-          backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
+          backgroundImage: avatarUrl != null
+              ? AppNetworkImage.provider(context, avatarUrl, size: 100)
+              : null,
           child: avatarUrl == null
               ? Text(
                   name.characters.first.toUpperCase(),
