@@ -110,6 +110,10 @@ class FakeAttachmentService extends Fake implements ChatAttachmentService {
     return fakeAttachment(uploads.length, name: name, mimeType: mimeType);
   }
 
+  /// Nothing is ready without waiting: pictures go through loading.
+  @override
+  Uint8List? cached(ChatAttachment attachment) => null;
+
   @override
   Future<Uint8List> open(ChatAttachment attachment) async {
     final bytes = files[attachment.path];

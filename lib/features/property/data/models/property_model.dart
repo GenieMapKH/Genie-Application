@@ -2,11 +2,21 @@ import 'package:genie/core/logging/app_logger.dart';
 import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'nearby_place.dart';
+import 'property_details.dart';
+
 class PropertyModel {
   final String id;
   final String title;
   final String price;
   final String propertyType;
+
+  /// 'Sale', 'Rent' or 'To Let'; null for listings saved before it was asked.
+  final String? listingType;
+
+  /// 'percent' or 'amount' (USD off [price]); null without a discount.
+  final String? discountType;
+  final double? discountValue;
   final String status; // 'Active', 'Draft', 'Pending', 'Sold'
   final DateTime createdAt;
   final List<String> imageUrls;
@@ -17,6 +27,18 @@ class PropertyModel {
   final double? landSize;
   final double? buildingSize;
   final double? unitSize;
+
+  /// Feature codes, see `PropertyKeyword`.
+  final List<String> keywords;
+  final PropertyDetails details;
+
+  /// Markets, hospitals and schools near the listing, closest first within
+  /// each category. Only in a full listing (not the map's list).
+  final List<NearbyPlace> nearbyPlaces;
+
+  /// When [nearbyPlaces] were looked up; null if never, so an empty list
+  /// then means "not looked up" rather than "nothing nearby".
+  final DateTime? nearbySearchedAt;
   final double? lat;
   final double? lng;
   final String? ownerId;
@@ -33,6 +55,9 @@ class PropertyModel {
     required this.title,
     required this.price,
     required this.propertyType,
+    this.listingType,
+    this.discountType,
+    this.discountValue,
     required this.status,
     required this.createdAt,
     this.imageUrls = const [],
@@ -43,6 +68,10 @@ class PropertyModel {
     this.landSize,
     this.buildingSize,
     this.unitSize,
+    this.keywords = const [],
+    this.details = const PropertyDetails(),
+    this.nearbyPlaces = const [],
+    this.nearbySearchedAt,
     this.lat,
     this.lng,
     this.ownerId,
@@ -64,10 +93,23 @@ class PropertyModel {
   /// Listings younger than 12 hours get the "New" badge on the map.
   bool get isNew => hoursListed <= 12;
 
-  /// Formatted price for map markers (e.g. 10000 -> 10K, 1500000 -> 1.5M)
+  bool get hasDiscount => discountType != null && discountValue != null;
+
+  /// The price before any discount.
+  double get askingPrice => double.tryParse(price) ?? 0;
+
+  /// What a buyer pays: the asking price less the discount.
+  double get finalPrice {
+    if (!hasDiscount) return askingPrice;
+    final off = discountType == 'percent'
+        ? askingPrice * discountValue! / 100
+        : discountValue!;
+    return askingPrice - off;
+  }
+
+  /// Formatted (discounted) price for map markers (e.g. 10000 -> 10K, 1500000 -> 1.5M)
   String get formattedPrice {
-    final double? val = double.tryParse(price);
-    if (val == null) return price;
+    final double val = finalPrice;
     if (val >= 1000000) {
       return '${(val / 1000000).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}M';
     } else if (val >= 1000) {
@@ -154,6 +196,11 @@ class PropertyModel {
       title: json['title'] ?? 'Untitled',
       price: json['price']?.toString() ?? '0',
       propertyType: json['propertyType'] ?? 'Land',
+      listingType: json['listingType'] as String?,
+      discountType: json['discountType'] as String?,
+      discountValue: json['discountValue'] == null
+          ? null
+          : double.tryParse(json['discountValue'].toString()),
       status: json['status'] ?? 'Draft',
       createdAt: DateTime.parse(json['createdAt']),
       imageUrls: images,
@@ -170,6 +217,16 @@ class PropertyModel {
       unitSize: json['unitSize'] != null
           ? double.tryParse(json['unitSize'].toString())
           : null,
+      keywords: _keywordCodes(json['keywords']),
+      details: PropertyDetails.fromJson(json),
+      nearbyPlaces: [
+        if (json['nearbyPlaces'] is List)
+          for (final place in json['nearbyPlaces'] as List)
+            NearbyPlace.fromJson(place as Map<String, dynamic>),
+      ],
+      nearbySearchedAt: json['nearbySearchedAt'] == null
+          ? null
+          : DateTime.tryParse(json['nearbySearchedAt'] as String),
       lat: json['lat'] != null ? (json['lat'] as num).toDouble() : null,
       lng: json['lng'] != null ? (json['lng'] as num).toDouble() : null,
       ownerId: owner is Map ? owner['id'] as String? : null,
@@ -186,6 +243,18 @@ class PropertyModel {
       contactCount: counts is Map ? (counts['contacts'] as int? ?? 0) : 0,
       isVisited: json['isVisited'] == true,
     );
+  }
+
+  /// The server sends `[{keyword: 'road_access'}, ...]`.
+  static List<String> _keywordCodes(Object? keywords) {
+    if (keywords is! List) return const [];
+    return [
+      for (final entry in keywords)
+        if (entry is Map && entry['keyword'] is String)
+          entry['keyword'] as String
+        else if (entry is String)
+          entry,
+    ];
   }
 
   Map<String, dynamic> toJson() {
@@ -206,6 +275,9 @@ class PropertyModel {
     String? title,
     String? price,
     String? propertyType,
+    String? listingType,
+    String? discountType,
+    double? discountValue,
     String? status,
     DateTime? createdAt,
     List<String>? imageUrls,
@@ -216,6 +288,10 @@ class PropertyModel {
     double? landSize,
     double? buildingSize,
     double? unitSize,
+    List<String>? keywords,
+    PropertyDetails? details,
+    List<NearbyPlace>? nearbyPlaces,
+    DateTime? nearbySearchedAt,
     double? lat,
     double? lng,
     String? ownerId,
@@ -232,6 +308,9 @@ class PropertyModel {
       title: title ?? this.title,
       price: price ?? this.price,
       propertyType: propertyType ?? this.propertyType,
+      listingType: listingType ?? this.listingType,
+      discountType: discountType ?? this.discountType,
+      discountValue: discountValue ?? this.discountValue,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       imageUrls: imageUrls ?? this.imageUrls,
@@ -242,6 +321,10 @@ class PropertyModel {
       landSize: landSize ?? this.landSize,
       buildingSize: buildingSize ?? this.buildingSize,
       unitSize: unitSize ?? this.unitSize,
+      keywords: keywords ?? this.keywords,
+      details: details ?? this.details,
+      nearbyPlaces: nearbyPlaces ?? this.nearbyPlaces,
+      nearbySearchedAt: nearbySearchedAt ?? this.nearbySearchedAt,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,
       ownerId: ownerId ?? this.ownerId,

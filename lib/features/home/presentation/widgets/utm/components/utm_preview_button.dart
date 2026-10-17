@@ -43,7 +43,7 @@ class UtmPreviewButton extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: context.colors.onPrimary,
               ),
             ),
           ),

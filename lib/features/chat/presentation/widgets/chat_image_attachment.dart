@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/core/media/app_image_cache.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
+import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/core/theme/app_colors.dart';
 
 /// The picture of a chat message: the local copy while it is being sent,
@@ -27,6 +29,10 @@ class ChatImageAttachment extends ConsumerWidget {
     if (local != null) return _picture(context, local);
 
     final attachment = message.attachment!;
+    // Opened recently: drawn now, with no loading frame in between.
+    final opened = ref.read(chatAttachmentServiceProvider).cached(attachment);
+    if (opened != null) return _picture(context, opened);
+
     return ref
         .watch(chatAttachmentBytesProvider(attachment))
         .when(
@@ -70,6 +76,13 @@ class ChatImageAttachment extends ConsumerWidget {
           child: Image.memory(
             bytes,
             fit: BoxFit.cover,
+            // Decoded at the size of the bubble, not the photo's own size:
+            // quicker to show, and far less memory per picture.
+            cacheWidth: AppImageCache.decodeWidth(
+              _width,
+              _height * 1.5,
+              MediaQuery.devicePixelRatioOf(context),
+            ),
             gaplessPlayback: true,
             errorBuilder: (_, _, _) => _placeholder(
               context,

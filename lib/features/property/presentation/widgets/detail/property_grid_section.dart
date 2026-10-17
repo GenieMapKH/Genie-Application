@@ -103,7 +103,7 @@ class _PropertyTile extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            PropertyFormat.price(property.price),
+            PropertyFormat.money(property.finalPrice),
             style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w700,

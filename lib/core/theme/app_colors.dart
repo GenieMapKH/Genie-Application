@@ -38,17 +38,24 @@ class AppColors extends ThemeExtension<AppColors> {
   /// The brand colour: main buttons and focused fields.
   final Color primary;
 
-  /// The brighter brand tone used for links, toggles and highlights.
+  /// The second brand tone, for links, toggles and secondary buttons.
   final Color accent;
 
-  /// The deeper brand tone that marks the selected tab.
+  /// The brand tone that marks the selected tab.
   final Color primaryStrong;
 
-  /// A tint of the brand colour behind an icon or a selected row.
+  /// A soft gold tint behind an icon or a selected row.
   final Color primarySoft;
 
   /// Text and icons on top of [primary] or [accent].
   final Color onPrimary;
+
+  /// The gold brand tone: badges, progress and selections that should catch
+  /// the eye without being the main action. Same in both themes.
+  final Color highlight;
+
+  /// Text and icons on top of [highlight].
+  final Color onHighlight;
 
   /// Destructive actions and errors.
   final Color danger;
@@ -81,6 +88,8 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.primaryStrong,
     required this.primarySoft,
     required this.onPrimary,
+    required this.highlight,
+    required this.onHighlight,
     required this.danger,
     required this.dangerSoft,
     required this.dangerBorder,
@@ -91,19 +100,21 @@ class AppColors extends ThemeExtension<AppColors> {
   static const light = AppColors(
     background: Color(0xFFFFFFFF),
     surface: Color(0xFFFFFFFF),
-    surfaceMuted: Color(0xFFF9FAFB),
-    border: Color(0xFFE5E7EB),
-    divider: Color(0xFFF3F4F6),
-    textPrimary: Color(0xFF111827),
-    textSecondary: Color(0xFF4B5563),
-    textMuted: Color(0xFF6B7280),
-    textHint: Color(0xFF9CA3AF),
-    iconSubtle: Color(0xFFD1D5DB),
-    primary: Color(0xFF4F5BD5),
-    accent: Color(0xFF5B5FEF),
-    primaryStrong: Color(0xFF3E49C7),
-    primarySoft: Color(0xFFEEF2FF),
+    surfaceMuted: Color(0xFFF6F8FB),
+    border: Color(0xFFE2E7EE),
+    divider: Color(0xFFEEF2F6),
+    textPrimary: Color(0xFF0F1F36),
+    textSecondary: Color(0xFF3F4F66),
+    textMuted: Color(0xFF64748B),
+    textHint: Color(0xFF98A3B3),
+    iconSubtle: Color(0xFFCBD3DE),
+    primary: Color(0xFF142B4A),
+    accent: Color(0xFF1E3D66),
+    primaryStrong: Color(0xFF142B4A),
+    primarySoft: Color(0xFFFBF5E8),
     onPrimary: Color(0xFFFFFFFF),
+    highlight: Color(0xFFD7A84B),
+    onHighlight: Color(0xFF142B4A),
     danger: Color(0xFFEF4444),
     dangerSoft: Color(0xFFFEF2F2),
     dangerBorder: Color(0xFFFECACA),
@@ -111,24 +122,26 @@ class AppColors extends ThemeExtension<AppColors> {
     success: Color(0xFF10B981),
   );
 
-  /// Brand tones are lighter here than in [light]: the light theme's blues
-  /// are too dark to read as text on a dark surface.
+  /// Navy recedes into the surfaces here, so the gold takes over as the
+  /// brand colour on buttons and links, with navy text on top of it.
   static const dark = AppColors(
-    background: Color(0xFF0F1115),
-    surface: Color(0xFF181B20),
-    surfaceMuted: Color(0xFF20242B),
-    border: Color(0xFF2C313A),
-    divider: Color(0xFF23272E),
-    textPrimary: Color(0xFFF3F4F6),
-    textSecondary: Color(0xFFC5CAD3),
-    textMuted: Color(0xFF9AA1AC),
-    textHint: Color(0xFF6B7280),
-    iconSubtle: Color(0xFF4B5563),
-    primary: Color(0xFF6570E3),
-    accent: Color(0xFF8286F5),
-    primaryStrong: Color(0xFF99A1F7),
-    primarySoft: Color(0xFF23274A),
-    onPrimary: Color(0xFFFFFFFF),
+    background: Color(0xFF0A1628),
+    surface: Color(0xFF11223A),
+    surfaceMuted: Color(0xFF182C47),
+    border: Color(0xFF243A58),
+    divider: Color(0xFF1A2F4B),
+    textPrimary: Color(0xFFF4F1EA),
+    textSecondary: Color(0xFFC9CFD9),
+    textMuted: Color(0xFF98A3B5),
+    textHint: Color(0xFF6B7A90),
+    iconSubtle: Color(0xFF3D5170),
+    primary: Color(0xFFD7A84B),
+    accent: Color(0xFFE0B865),
+    primaryStrong: Color(0xFFECCB85),
+    primarySoft: Color(0xFF2D353C),
+    onPrimary: Color(0xFF142B4A),
+    highlight: Color(0xFFD7A84B),
+    onHighlight: Color(0xFF142B4A),
     danger: Color(0xFFF87171),
     dangerSoft: Color(0xFF341A1C),
     dangerBorder: Color(0xFF7F1D1D),
@@ -160,6 +173,8 @@ class AppColors extends ThemeExtension<AppColors> {
       primaryStrong: mix(primaryStrong, other.primaryStrong),
       primarySoft: mix(primarySoft, other.primarySoft),
       onPrimary: mix(onPrimary, other.onPrimary),
+      highlight: mix(highlight, other.highlight),
+      onHighlight: mix(onHighlight, other.onHighlight),
       danger: mix(danger, other.danger),
       dangerSoft: mix(dangerSoft, other.dangerSoft),
       dangerBorder: mix(dangerBorder, other.dangerBorder),

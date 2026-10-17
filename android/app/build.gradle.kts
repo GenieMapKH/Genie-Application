@@ -11,11 +11,27 @@ plugins {
 }
 
 // Release signing: android/key.properties (never committed) points at the keystore.
-// Without it the release build falls back to the debug key, so local
-// `flutter run --release` and CI keep working. Play Store uploads need the real key.
+// Without it a local release build falls back to the debug key, so
+// `flutter run --release` keeps working. CI refuses to release without the
+// real key (see .github/workflows). Play Store uploads need the real key.
 val keystoreProperties = Properties().apply {
     val file = rootProject.file("key.properties")
     if (file.exists()) file.inputStream().use { load(it) }
+}
+
+// Google Maps key for Android: the MAPS_API_KEY environment variable (CI's
+// secret), else MAPS_API_KEY in android/local.properties (never committed).
+// Restrict it in Google Cloud to this app's package name and signing
+// certificate; the web build uses a separate key restricted to its sites.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val mapsApiKey: String = System.getenv("MAPS_API_KEY")
+    ?: localProperties.getProperty("MAPS_API_KEY")
+    ?: ""
+if (mapsApiKey.isEmpty()) {
+    logger.warn("MAPS_API_KEY is not set: the map will stay blank.")
 }
 
 android {
@@ -39,6 +55,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
 
     signingConfigs {

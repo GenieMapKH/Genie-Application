@@ -3,25 +3,44 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:genie/shared/utils/app_popup.dart';
 import 'add_property_page.dart';
+import 'add_property_page_form_binding.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {
+  /// Publishes a new listing, or saves the edits to an existing one. A
+  /// draft being edited may stay incomplete; anything else must be complete.
   void validateAndSubmit() async {
+    final editedDraft = isEditing && widget.property!.status == 'Draft';
+    if (!editedDraft && !_isComplete()) return;
+
+    if (isEditing) {
+      await _saveChanges();
+    } else {
+      await _publish();
+    }
+  }
+
+  /// Checks the required fields, pointing at the first one missing.
+  bool _isComplete() {
     setState(() => hasAttemptedSubmit = true);
 
     final validation = ref
         .read(addPropertyControllerProvider.notifier)
         .validatePropertyForm(
           title: titleController.text,
-          price: priceController.text,
+          price: effectivePrice,
           propertyType: selectedPropertyType,
           listingSetting: selectedListingSetting,
           landSize: landSizeController.text,
           buildingSize: buildingSizeController.text,
           unitSize: unitSizeController.text,
+          discount: discountController.text,
+          discountType: selectedDiscountType,
         );
 
     if (!validation.isValid) {
@@ -45,6 +64,9 @@ extension AddPropertyPageLogic on AddPropertyPageState {
         case PropertyField.unitSize:
           firstErrorKey = unitSizeKey;
           break;
+        case PropertyField.discount:
+          firstErrorKey = discountKey;
+          break;
         default:
           break;
       }
@@ -52,19 +74,36 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       if (firstErrorKey != null) {
         showErrorDialog(firstErrorKey);
       }
-      return;
+      return false;
     }
+    return true;
+  }
 
+  Future<void> _saveChanges() async {
+    try {
+      final property = await ref
+          .read(addPropertyControllerProvider.notifier)
+          .updateProperty(
+            propertyId: widget.property!.id,
+            input: collectFormInput(),
+            newPhotos: selectedPhotos,
+          );
+      if (!mounted) return;
+      AppPopup.showSuccess(context, context.l10n.propertyChangesSaved);
+      Navigator.of(context).pop(property);
+    } catch (e) {
+      AppLogger.error('Saving property changes failed', e);
+      if (!mounted) return;
+      AppPopup.showError(context, context.l10n.propertyCouldNotSaveChanges);
+    }
+  }
+
+  Future<void> _publish() async {
     try {
       final property = await ref
           .read(addPropertyControllerProvider.notifier)
           .submitProperty(
-            title: titleController.text,
-            price: priceController.text,
-            propertyType: selectedPropertyType,
-            landSize: landSizeController.text,
-            buildingSize: buildingSizeController.text,
-            unitSize: unitSizeController.text,
+            input: collectFormInput(),
             boundaryPoints: widget.boundaryPoints,
             selectedPhotos: selectedPhotos,
             status: 'Active',
@@ -190,11 +229,15 @@ extension AddPropertyPageLogic on AddPropertyPageState {
 class PublishButtonWidget extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onPressed;
+  final String label;
+  final String loadingLabel;
 
   const PublishButtonWidget({
     super.key,
     required this.isLoading,
     required this.onPressed,
+    this.label = 'Publish Property',
+    this.loadingLabel = 'Publishing your property...',
   });
 
   @override
@@ -221,23 +264,23 @@ class PublishButtonWidget extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: isLoading ? null : onPressed,
               icon: isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                        color: Colors.white,
+                        color: context.colors.onPrimary,
                         strokeWidth: 2,
                       ),
                     )
-                  : const Icon(
+                  : Icon(
                       Icons.upload_outlined,
-                      color: Colors.white,
+                      color: context.colors.onPrimary,
                       size: 20,
                     ),
               label: Text(
-                isLoading ? 'Publishing your property...' : 'Publish Property',
+                isLoading ? loadingLabel : label,
                 style: GoogleFonts.inter(
-                  color: Colors.white,
+                  color: context.colors.onPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),

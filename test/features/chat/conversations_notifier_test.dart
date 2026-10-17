@@ -157,4 +157,72 @@ void main() {
     expect(repository.markedRead, [peer]);
     expect(notifier.state.value!.map((c) => c.unreadCount), [0, 1]);
   });
+
+  group('a new message', () {
+    test(
+      'updates its conversation in place, without reloading the list',
+      () async {
+        repository.conversations = [
+          _conversation('user-other'),
+          _conversation(peer, unread: 1),
+        ];
+        final notifier = build();
+        await settle();
+        repository.conversationRequests = 0;
+
+        socket.messages.add(
+          encrypted('m2', 'Is it still for sale?', from: peer),
+        );
+        await settle();
+
+        expect(repository.conversationRequests, 0);
+        final top = notifier.state.value!.first;
+        expect(top.participantId, peer, reason: 'moved to the top');
+        expect(top.lastMessage, 'Is it still for sale?');
+        expect(top.unreadCount, 2);
+      },
+    );
+
+    test('read in the open chat ends up unread by none', () async {
+      repository.conversations = [_conversation(peer)];
+      final notifier = build();
+      await settle();
+
+      socket.messages.add(encrypted('m2', 'hi', from: peer));
+      // The open chat marks each message read once it has shown it, which
+      // can be before the list has decrypted its preview.
+      await Future<void>.microtask(() {});
+      unawaited(notifier.markAsRead(peer));
+      await settle();
+
+      expect(notifier.state.value!.single.unreadCount, 0);
+    });
+
+    test('sent from my other device is not unread', () async {
+      repository.conversations = [_conversation(peer)];
+      final notifier = build();
+      await settle();
+
+      socket.messages.add(encrypted('m2', 'On my way', from: me));
+      await settle();
+
+      final conversation = notifier.state.value!.single;
+      expect(conversation.lastMessage, 'On my way');
+      expect(conversation.unreadCount, 0);
+    });
+
+    test('from someone not in the list yet loads the list again', () async {
+      final notifier = build();
+      await settle();
+      repository.conversationRequests = 0;
+      repository.conversations = [_conversation(peer)];
+
+      socket.messages.add(encrypted('m2', 'Hello', from: peer));
+      await settle();
+      await settle();
+
+      expect(repository.conversationRequests, 1);
+      expect(notifier.state.value, hasLength(1));
+    });
+  });
 }

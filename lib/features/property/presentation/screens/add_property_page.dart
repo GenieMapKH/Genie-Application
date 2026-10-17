@@ -10,18 +10,38 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/home/utils/map/map_measurements.dart';
+import 'package:genie/features/property/utils/property_format.dart';
 
+import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
+
+import 'add_property_page_form_binding.dart';
 import 'add_property_page_layout.dart';
 
+/// Creates a listing, or edits [property] when one is given: the form
+/// opens filled in and saving updates it instead of creating another.
 class AddPropertyPage extends ConsumerStatefulWidget {
   final List<LatLng> boundaryPoints;
   final double propertyArea;
+  final PropertyModel? property;
 
   const AddPropertyPage({
     super.key,
     required this.boundaryPoints,
     required this.propertyArea,
+    this.property,
   });
+
+  /// The edit form for [property], showing its drawn boundary.
+  factory AddPropertyPage.edit(PropertyModel property, {Key? key}) {
+    return AddPropertyPage(
+      key: key,
+      boundaryPoints: property.boundaryPoints,
+      propertyArea: 0,
+      property: property,
+    );
+  }
 
   @override
   ConsumerState<AddPropertyPage> createState() => AddPropertyPageState();
@@ -56,10 +76,14 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
 
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController discountController = TextEditingController();
 
   String selectedPropertyType = 'Land';
   String selectedListingSetting = 'Sale';
   String selectedTitleType = 'Hard Title';
+
+  /// 'percent' or 'amount'.
+  String selectedDiscountType = 'percent';
 
   String? selectedBedrooms;
   String? selectedBathrooms;
@@ -87,28 +111,57 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
   final GlobalKey landSizeKey = GlobalKey();
   final GlobalKey buildingSizeKey = GlobalKey();
   final GlobalKey unitSizeKey = GlobalKey();
+  final GlobalKey discountKey = GlobalKey();
 
   final ImagePicker picker = ImagePicker();
   final List<XFile> selectedPhotos = [];
 
+  bool get isEditing => widget.property != null;
+
+  /// The price the form sets: a Borey project's starting price, else the price.
+  String get effectivePrice => selectedPropertyType == 'Borey'
+      ? startingPriceController.text
+      : priceController.text;
+
+  /// Photos the listing already has; editing can add more, not remove.
+  List<String> get existingPhotoUrls => widget.property?.imageUrls ?? const [];
+
   Future<void> pickImage(ImageSource source) async {
+    final room =
+        maxListingPhotos - existingPhotoUrls.length - selectedPhotos.length;
+    if (room <= 0) {
+      _sayPhotoLimit();
+      return;
+    }
     try {
       final List<XFile> picked;
       if (source == ImageSource.gallery) {
-        picked = await picker.pickMultiImage();
+        // A limit of 1 is not allowed: one picture is picked on its own.
+        picked = room == 1
+            ? [?await picker.pickImage(source: source)]
+            : await picker.pickMultiImage(limit: room);
       } else {
         final image = await picker.pickImage(source: source);
         picked = [?image];
       }
       if (picked.isEmpty) return;
+      if (picked.length > room) _sayPhotoLimit();
 
-      final prepared = await _prepare(picked);
+      final prepared = await _prepare(picked.take(room).toList());
       if (prepared.isNotEmpty && mounted) {
         setState(() => selectedPhotos.addAll(prepared));
       }
     } catch (e) {
       AppLogger.debug('Error picking image: $e');
     }
+  }
+
+  void _sayPhotoLimit() {
+    if (!mounted) return;
+    AppPopup.showInfo(
+      context,
+      context.l10n.propertyPhotoLimit(maxListingPhotos),
+    );
   }
 
   /// Compresses each picture to a small JPEG. One that is too large or
@@ -133,44 +186,41 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
     return prepared;
   }
 
-  final List<Map<String, dynamic>> keywords = [
-    {'name': 'Road Access', 'iconPath': 'assets/icons/keyword_road_access.svg'},
-    {'name': 'Corner Land', 'iconPath': 'assets/icons/keyword_corner_land.svg'},
-    {'name': 'Near Market', 'iconPath': 'assets/icons/keyword_near_market.svg'},
-    {'name': 'Near School', 'iconPath': 'assets/icons/keyword_near_school.svg'},
-    {
-      'name': 'Near Hospital',
-      'iconPath': 'assets/icons/keyword_near_hospital.svg',
-    },
-    {
-      'name': 'River / Lake Nearby',
-      'iconPath': 'assets/icons/keyword_river_lake.svg',
-    },
-    {
-      'name': 'Electricity Ready',
-      'iconPath': 'assets/icons/keyword_electricity_ready.svg',
-    },
-    {
-      'name': 'Water Supply',
-      'iconPath': 'assets/icons/keyword_water_supply.svg',
-    },
-    {
-      'name': 'Residential Area',
-      'iconPath': 'assets/icons/keyword_residential_area.svg',
-    },
-    {
-      'name': 'Commercial Area',
-      'iconPath': 'assets/icons/keyword_commercial_area.svg',
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
-    if (widget.propertyArea > 0) {
-      landSizeController.text = formatArea(widget.propertyArea);
+    final property = widget.property;
+    if (property != null) {
+      applyFormInput(PropertyFormInput.fromProperty(property));
+      // Listings saved before sizes were stored as numbers lost theirs:
+      // measure the boundary again rather than open the form empty.
+      if (landSizeController.text.isEmpty) _measureBoundary();
+    } else if (widget.propertyArea > 0) {
+      landSizeController.text = _squareMeters(widget.propertyArea);
     }
   }
+
+  /// "Auto from map": the land size of the drawn boundary.
+  void fillLandSizeFromMap() {
+    if (!_measureBoundary()) {
+      AppPopup.showInfo(context, context.l10n.propertyDrawBoundaryFirst);
+      return;
+    }
+    setState(() {});
+  }
+
+  /// Puts the boundary's area in the land size; false without a boundary.
+  bool _measureBoundary() {
+    final measurements = calculateMeasurements(widget.boundaryPoints);
+    if (measurements == null) return false;
+    landSizeController.text = _squareMeters(measurements.area);
+    return true;
+  }
+
+  /// Sizes are typed and stored as plain m², e.g. "1670" or "83.5": a unit
+  /// ("m²", "ha") in the field would not be saved as a number.
+  static String _squareMeters(double area) =>
+      PropertyFormat.size((area * 10).round() / 10);
 
   @override
   void dispose() {
@@ -191,6 +241,7 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
     reasonForSellingController.dispose();
     descriptionController.dispose();
     phoneController.dispose();
+    discountController.dispose();
     super.dispose();
   }
 

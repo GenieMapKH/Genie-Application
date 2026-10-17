@@ -828,7 +828,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get propertyPropertyHighlights => 'ចំណុចលេចធ្លោនៃអចលនទ្រព្យ';
 
   @override
-  String get propertyGenie => 'Genie';
+  String get propertyGenie => 'ទីលំនៅ';
 
   @override
   String get propertyViews => 'ចំនួនមើល';
@@ -1331,4 +1331,129 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get profileNoContact => 'មិនមានព័ត៌មានទំនាក់ទំនងទេ។';
+
+  @override
+  String propertyPhotoLimit(int count) {
+    return 'អចលនទ្រព្យមួយអាចមានរូបថតបានច្រើនបំផុត $count។';
+  }
+
+  @override
+  String get propertyEditProperty => 'កែប្រែអចលនទ្រព្យ';
+
+  @override
+  String get propertySaveChanges => 'រក្សាទុកការផ្លាស់ប្តូរ';
+
+  @override
+  String get propertySavingChanges => 'កំពុងរក្សាទុក...';
+
+  @override
+  String get propertyChangesSaved => 'បានរក្សាទុកការផ្លាស់ប្តូរ។';
+
+  @override
+  String get propertyCouldNotSaveChanges =>
+      'មិនអាចរក្សាទុកការផ្លាស់ប្តូរបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String propertyCurrentPhotos(int count) {
+    return 'រូបថតបច្ចុប្បន្ន ($count)';
+  }
+
+  @override
+  String get propertyNearby => 'ទីតាំងនៅជិត';
+
+  @override
+  String get propertyNearbyCaption => 'ចម្ងាយជិតបំផុតតាមផ្លូវពីអចលនទ្រព្យនេះ';
+
+  @override
+  String get propertyNearbyMarkets => 'ផ្សារ';
+
+  @override
+  String get propertyNearbyHospitals => 'មន្ទីរពេទ្យ';
+
+  @override
+  String get propertyNearbySchools => 'សាលារៀន';
+
+  @override
+  String propertyNearbyNoneWithin(int km) {
+    return 'រកមិនឃើញក្នុងចម្ងាយ $km គ.ម';
+  }
+
+  @override
+  String propertyDistanceKm(String distance) {
+    return '$distance គ.ម';
+  }
+
+  @override
+  String propertyDistanceM(int distance) {
+    return '$distance ម';
+  }
+
+  @override
+  String propertyDriveMinutes(int minutes) {
+    return 'បើកបរ $minutes នាទី';
+  }
+
+  @override
+  String propertyStraightLine(String distance) {
+    return '$distance ជាបន្ទាត់ត្រង់';
+  }
+
+  @override
+  String get propertyNearbyCouldNotLoad => 'មិនអាចផ្ទុកទីតាំងនៅជិតបានទេ។';
+
+  @override
+  String get propertyDiscount => 'បញ្ចុះតម្លៃ (ស្រេចចិត្ត)';
+
+  @override
+  String get propertyDiscountHint => 'ឧ. 10';
+
+  @override
+  String get propertyDiscountInvalid =>
+      'ត្រូវលើសពី 0 និងតិចជាង 100% ឬតិចជាងតម្លៃ។';
+
+  @override
+  String propertyPriceCut(String amount) {
+    return 'បញ្ចុះតម្លៃ៖ $amount';
+  }
+
+  @override
+  String get propertyVisibility => 'ភាពមើលឃើញ';
+
+  @override
+  String get propertyVisibilityPublic => 'សាធារណៈ';
+
+  @override
+  String get propertyVisibilityPublicHint => 'អ្នកណាក៏អាចរកឃើញវានៅលើផែនទីដែរ។';
+
+  @override
+  String get propertyVisibilityDraft => 'ព្រាង';
+
+  @override
+  String get propertyVisibilityDraftHint => 'លាក់ទុក មានតែអ្នកទេដែលមើលឃើញ។';
+
+  @override
+  String get propertyVisibilitySold => 'លក់រួច';
+
+  @override
+  String get propertyVisibilitySoldHint =>
+      'បានសម្គាល់ថាលក់រួច ហើយដកចេញពីផែនទី។';
+
+  @override
+  String get propertyVisibilitySoldNeedsPublic =>
+      'សូមផ្សព្វផ្សាយជាមុនសិន ដើម្បីសម្គាល់ថាលក់រួច។';
+
+  @override
+  String get propertyVisibilityChanged => 'បានធ្វើបច្ចុប្បន្នភាពភាពមើលឃើញ។';
+
+  @override
+  String get propertyCouldNotChangeVisibility =>
+      'មិនអាចប្តូរភាពមើលឃើញបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get propertyCouldNotOpenEditor =>
+      'មិនអាចបើកការកែប្រែបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get propertyDrawBoundaryFirst =>
+      'សូមគូសអចលនទ្រព្យលើផែនទីជាមុនសិន ដើម្បីវាស់ទំហំ។';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/splash/presentation/screens/loading_page.dart';
+import 'package:genie/shared/widgets/app_logo.dart';
 
 void main() {
   testWidgets('LoadingPage renders core logo image', (
@@ -17,9 +18,24 @@ void main() {
     final imageWidget = tester.widget<Image>(imageFinder);
     expect(imageWidget.image, isA<AssetImage>());
     final assetImage = imageWidget.image as AssetImage;
-    expect(assetImage.assetName, equals('assets/images/login/image.png'));
-    expect(imageWidget.width, equals(114.0));
-    expect(imageWidget.height, equals(159.0));
+    expect(assetImage.assetName, equals(AppLogo.lightAssetPath));
+    expect(imageWidget.width, equals(220.0));
+    expect(imageWidget.height, equals(150.0));
+  });
+
+  testWidgets('LoadingPage shows the dark logo in the dark theme', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(brightness: Brightness.dark),
+        home: const LoadingPage(displayDuration: Duration.zero),
+      ),
+    );
+
+    final imageWidget = tester.widget<Image>(find.byType(Image));
+    final assetImage = imageWidget.image as AssetImage;
+    expect(assetImage.assetName, equals(AppLogo.darkAssetPath));
   });
 
   testWidgets('LoadingPage invokes onFinished when timer expires', (

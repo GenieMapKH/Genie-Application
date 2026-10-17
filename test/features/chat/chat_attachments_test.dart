@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_attachment_service.dart';
+import 'package:genie/features/chat/data/chat_attachment_store.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/crypto_service.dart';
@@ -57,18 +58,43 @@ class _FileStore extends Fake implements ChatRepository {
   }
 }
 
+/// The device's store of encrypted files, kept in a map.
+class _DeviceStore extends Fake implements ChatAttachmentStore {
+  final files = <String, Uint8List>{};
+
+  @override
+  Future<Uint8List?> read(String path) async => files[path];
+
+  @override
+  Future<void> write(String path, Uint8List encrypted) async =>
+      files[path] = encrypted;
+
+  @override
+  Future<void> remove(String path) async => files.remove(path);
+}
+
 void main() {
   final picture = Uint8List.fromList([1, 2, 3, 4, 5]);
 
   group('ChatAttachmentService', () {
     late _FileStore store;
+    late _DeviceStore device;
     late ChatAttachmentService service;
+
+    /// Another device (or this app after a restart): its own memory.
+    ChatAttachmentService receiver({_DeviceStore? on}) => ChatAttachmentService(
+      repository: store,
+      cryptoService: _ReversingCrypto(),
+      store: on ?? _DeviceStore(),
+    );
 
     setUp(() {
       store = _FileStore();
+      device = _DeviceStore();
       service = ChatAttachmentService(
         repository: store,
         cryptoService: _ReversingCrypto(),
+        store: device,
       );
     });
 
@@ -90,25 +116,68 @@ void main() {
 
     test('the other side gets the original file back', () async {
       final attachment = await send(picture);
-      final receiver = ChatAttachmentService(
-        repository: store,
-        cryptoService: _ReversingCrypto(),
-      );
 
-      expect(await receiver.open(attachment), picture);
+      expect(await receiver().open(attachment), picture);
     });
 
     test('a file is downloaded once, however often it is shown', () async {
       final attachment = await send(picture);
-      final receiver = ChatAttachmentService(
-        repository: store,
-        cryptoService: _ReversingCrypto(),
-      );
+      final other = receiver();
 
-      await receiver.open(attachment);
-      await receiver.open(attachment);
+      await other.open(attachment);
+      await other.open(attachment);
 
       expect(store.downloads, 1);
+    });
+
+    test('only the encrypted file is kept on the device', () async {
+      final attachment = await send(picture);
+      final otherDevice = _DeviceStore();
+      await receiver(on: otherDevice).open(attachment);
+
+      expect(device.files[attachment.path], [5, 4, 3, 2, 1]);
+      expect(otherDevice.files[attachment.path], [5, 4, 3, 2, 1]);
+    });
+
+    test('after a restart a stored file opens without downloading', () async {
+      final attachment = await send(picture);
+      final otherDevice = _DeviceStore();
+      await receiver(on: otherDevice).open(attachment);
+
+      final restarted = receiver(on: otherDevice);
+
+      expect(await restarted.open(attachment), picture);
+      expect(store.downloads, 1);
+    });
+
+    test('a stored copy that no longer opens is downloaded again', () async {
+      final attachment = await send(picture);
+      final otherDevice = _DeviceStore()
+        ..files[attachment.path] = Uint8List.fromList([9, 9]);
+      final forged = ChatAttachment(
+        path: attachment.path,
+        key: 'other',
+        nonce: attachment.nonce,
+        name: attachment.name,
+        mimeType: attachment.mimeType,
+        size: attachment.size,
+      );
+
+      await expectLater(
+        receiver(on: otherDevice).open(forged),
+        throwsException,
+      );
+      expect(otherDevice.files, isNot(contains(attachment.path)));
+      expect(store.downloads, 1);
+    });
+
+    test('a recently opened file is available without waiting', () async {
+      final attachment = await send(picture);
+      final other = receiver();
+
+      expect(other.cached(attachment), isNull);
+      await other.open(attachment);
+      expect(other.cached(attachment), picture);
     });
 
     test('a wrong key opens nothing', () async {
@@ -121,12 +190,8 @@ void main() {
         mimeType: attachment.mimeType,
         size: attachment.size,
       );
-      final receiver = ChatAttachmentService(
-        repository: store,
-        cryptoService: _ReversingCrypto(),
-      );
 
-      await expectLater(receiver.open(forged), throwsException);
+      await expectLater(receiver().open(forged), throwsException);
     });
 
     test('refuses a file over the size limit before uploading', () async {

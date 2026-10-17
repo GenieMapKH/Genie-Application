@@ -33,7 +33,10 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   );
 
   bool _isLoading = false;
-  int _resendCountdown = 30;
+  /// The server sends at most one code per address a minute.
+  static const _resendWaitSeconds = 60;
+
+  int _resendCountdown = _resendWaitSeconds;
   Timer? _resendTimer;
 
   late AnimationController _entryController;
@@ -73,7 +76,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   }
 
   void _startResendTimer() {
-    _resendCountdown = 30;
+    _resendCountdown = _resendWaitSeconds;
     _resendTimer?.cancel();
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
@@ -310,19 +313,20 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                           onPressed: _isLoading ? null : _handleVerify,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.colors.primary,
-                            disabledBackgroundColor: const Color(0x994F5BD5),
+                            disabledBackgroundColor: context.colors.primary
+                                .withValues(alpha: 0.6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
                           ),
                           child: _isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 22,
                                   height: 22,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
-                                    color: Colors.white,
+                                    color: context.colors.onPrimary,
                                   ),
                                 )
                               : Text(
@@ -330,7 +334,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                                    color: context.colors.onPrimary,
                                   ),
                                 ),
                         ),

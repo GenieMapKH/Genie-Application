@@ -76,9 +76,7 @@ class UtmManualEntry extends StatelessWidget {
                   height: 44,
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   decoration: BoxDecoration(
-                    color: const Color(
-                      0xFF5B5FEF,
-                    ), // Purple color from screenshot
+                    color: context.colors.accent, // Purple color from screenshot
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(

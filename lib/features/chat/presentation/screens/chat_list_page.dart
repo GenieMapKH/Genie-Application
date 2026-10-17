@@ -201,7 +201,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: context.colors.accent,
+                      color: context.colors.highlight,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
@@ -209,7 +209,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                       style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: context.colors.onHighlight,
                       ),
                     ),
                   ),

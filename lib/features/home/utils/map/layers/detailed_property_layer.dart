@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
 import 'package:genie/features/home/utils/map/map_measurements.dart';
 import 'package:genie/features/home/utils/map/markers/label_markers.dart';
@@ -9,7 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// Zoomed-in view: each property's boundary polygon, plus (for the one the
 /// user is looking at) vertex numbers, edge lengths and area.
 abstract final class DetailedPropertyLayer {
-  static const _boundaryColor = Color(0xFF4F5BD5);
+  // Gold reads on both the default and the satellite map.
+  static final _boundaryColor = AppColors.light.highlight;
 
   static Future<void> build(
     List<List<LatLng>> detailedProps,

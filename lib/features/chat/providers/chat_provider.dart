@@ -35,9 +35,49 @@ class ConversationsNotifier
       return;
     }
     _subscriptions
-      ..add(socketService.onMessage.listen((_) => refresh()))
+      ..add(socketService.onMessage.listen(_onMessage))
+      // Messages may have been missed while disconnected.
       ..add(socketService.onConnected.listen((_) => refresh()));
     refresh();
+  }
+
+  /// Updates the one conversation [message] belongs to, instead of loading
+  /// the whole list again. The unread count changes at once; the preview
+  /// follows when it has been decrypted. A message from someone not in the
+  /// list yet needs their name and picture, so the list is loaded again.
+  void _onMessage(EncryptedMessage message) {
+    final conversations = state.valueOrNull;
+    if (conversations == null) return;
+
+    final peerId = message.peerOf(cipher!.userId);
+    final index = conversations.indexWhere((c) => c.participantId == peerId);
+    if (index < 0) {
+      refresh();
+      return;
+    }
+
+    final updated = conversations[index].withNewMessage(message);
+    state = AsyncValue.data([
+      updated,
+      for (final (i, conversation) in conversations.indexed)
+        if (i != index) conversation,
+    ]);
+    unawaited(_showPreview(updated));
+  }
+
+  /// Replaces the "encrypted" placeholder of [conversation]'s last message
+  /// with its text, unless a newer message arrived meanwhile.
+  Future<void> _showPreview(ChatConversation conversation) async {
+    final withPreview = await _withPreview(conversation);
+    final conversations = state.valueOrNull;
+    if (!mounted || conversations == null) return;
+    state = AsyncValue.data([
+      for (final current in conversations)
+        current.participantId == conversation.participantId &&
+                current.lastMessageId == conversation.lastMessageId
+            ? current.copyWith(lastMessage: withPreview.lastMessage)
+            : current,
+    ]);
   }
 
   /// Reloads the list. Calls made while a reload is running are merged into
@@ -85,17 +125,21 @@ class ConversationsNotifier
     );
   }
 
+  /// Clears the unread count at once, then tells the server. Cleared first,
+  /// so a message counted as it arrived in an open chat never stays unread.
   Future<void> markAsRead(String participantId) async {
-    try {
-      await repository.markAsRead(participantId);
-      if (!mounted || !state.hasValue) return;
+    if (mounted && state.hasValue) {
       state = AsyncValue.data([
         for (final conversation in state.value!)
           conversation.participantId == participantId
               ? conversation.copyWith(unreadCount: 0)
               : conversation,
       ]);
+    }
+    try {
+      await repository.markAsRead(participantId);
     } catch (e) {
+      // The server still counts them; the next full reload shows that.
       AppLogger.error('Failed to mark messages as read', e);
     }
   }

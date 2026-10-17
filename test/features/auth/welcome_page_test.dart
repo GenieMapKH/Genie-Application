@@ -29,8 +29,8 @@ void main() {
     final imageFinder = find.byType(Image);
     expect(imageFinder, findsOneWidget);
     final imageWidget = tester.widget<Image>(imageFinder);
-    expect(imageWidget.width, equals(114.0));
-    expect(imageWidget.height, equals(159.0));
+    expect(imageWidget.width, equals(220.0));
+    expect(imageWidget.height, equals(150.0));
 
     // Verify headline and subtitle
     expect(find.text('Welcome to the app'), findsOneWidget);

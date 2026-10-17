@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/shared/widgets/app_logo.dart';
 
 /// A modern, responsive splash/loading page displaying the Genie core logo.
 /// Seamlessly transitions to [WelcomePage] after a brief splash display.
@@ -15,9 +16,8 @@ class LoadingPage extends StatefulWidget {
     this.onFinished,
   });
 
-  static const String logoAssetPath = 'assets/images/login/image.png';
-  static const double logoWidth = 114.0;
-  static const double logoHeight = 159.0;
+  static const double logoWidth = 220.0;
+  static const double logoHeight = 150.0;
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();
@@ -88,12 +88,9 @@ class _LoadingPageState extends State<LoadingPage>
             scale: _pulseAnimation,
             child: Hero(
               tag: 'genie_core_logo',
-              child: Image.asset(
-                LoadingPage.logoAssetPath,
+              child: AppLogo(
                 width: LoadingPage.logoWidth,
                 height: LoadingPage.logoHeight,
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
               ),
             ),
           ),

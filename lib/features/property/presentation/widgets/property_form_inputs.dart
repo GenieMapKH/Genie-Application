@@ -167,7 +167,9 @@ class PropertyDropdown extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          initialValue: value,
+          // A value this list does not offer (kept from another property
+          // type) shows as unpicked instead of failing the dropdown.
+          initialValue: items.contains(value) ? value : null,
           isExpanded: true,
           icon: Icon(Icons.keyboard_arrow_down, color: context.colors.textHint),
           style: GoogleFonts.inter(

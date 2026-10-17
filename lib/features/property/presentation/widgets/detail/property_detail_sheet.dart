@@ -7,6 +7,9 @@ import 'package:genie/features/property/presentation/view_models/saved_propertie
 import 'package:genie/features/property/presentation/widgets/detail/property_contact_bar.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_actions.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_gallery.dart';
+import 'package:genie/features/property/presentation/widgets/detail/property_nearby_section.dart';
+import 'package:genie/features/property/presentation/widgets/detail/property_owner_actions.dart';
+import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_summary.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_grid_section.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_highlights.dart';
@@ -106,6 +109,10 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
     final heroTag =
         widget.heroTag ?? 'property_card_hero_${widget.property.id}';
 
+    // The owner manages the listing instead of contacting themselves.
+    final viewerId = ref.watch(userProfileProvider).valueOrNull?.id;
+    final isOwner = viewerId != null && viewerId == widget.property.ownerId;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -204,39 +211,45 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                 ],
                               ),
                             ),
-                            PropertyContactBar(
-                              onChat: () {
-                                if (widget.property.ownerId != null) {
-                                  // Use root navigator so chat opens as a full-screen page
-                                  Navigator.of(
-                                    context,
-                                    rootNavigator: true,
-                                  ).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChatConversationPage(
-                                            participantId:
-                                                widget.property.ownerId!,
-                                            participantName:
-                                                widget.property.ownerName ??
-                                                'Property Owner',
-                                          ),
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        context
-                                            .l10n
-                                            .propertyCannotChatOwnerInformationMissing,
+                            if (isOwner)
+                              PropertyOwnerActions(
+                                property: widget.property,
+                                onEdited: _dismiss,
+                              )
+                            else
+                              PropertyContactBar(
+                                onChat: () {
+                                  if (widget.property.ownerId != null) {
+                                    // Use root navigator so chat opens as a full-screen page
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ChatConversationPage(
+                                              participantId:
+                                                  widget.property.ownerId!,
+                                              participantName:
+                                                  widget.property.ownerName ??
+                                                  'Property Owner',
+                                            ),
                                       ),
-                                    ),
-                                  );
-                                }
-                              },
-                              onCall: () {},
-                            ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          context
+                                              .l10n
+                                              .propertyCannotChatOwnerInformationMissing,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                onCall: () {},
+                              ),
                           ],
                         ),
                       ),
@@ -292,6 +305,8 @@ class _Body extends StatelessWidget {
               property: property,
               onTap: () => Navigator.of(context).maybePop(),
             ),
+            // Below where the listing is: how near "near market" really is.
+            PropertyNearbySection(propertyId: property.id),
             const _SectionGap(),
             PropertyShareSection(property: property),
             if (recommendations.similar.isNotEmpty) ...[

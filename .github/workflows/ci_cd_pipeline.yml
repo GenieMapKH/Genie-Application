@@ -50,9 +50,11 @@ jobs:
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          # A release signed with a throwaway debug key cannot be updated
+          # by the next release and is refused by Google Play: stop instead.
           if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "No release keystore configured; building with the debug key."
-            exit 0
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not set; refusing to release an APK signed with the debug key."
+            exit 1
           fi
           echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload-keystore.jks"
           {
@@ -67,7 +69,14 @@ jobs:
       - name: Build Release APK
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
-        run: flutter build apk --release --split-per-abi --dart-define=API_BASE_URL="$API_BASE_URL"
+          # Android Maps key, restricted to this app (see android/app/build.gradle.kts).
+          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+        run: |
+          if [ -z "$MAPS_API_KEY" ]; then
+            echo "::error::MAPS_API_KEY is not set; the released app would show a blank map."
+            exit 1
+          fi
+          flutter build apk --release --split-per-abi --dart-define=API_BASE_URL="$API_BASE_URL"
 
       - name: Prepare Telegram Message
         env:

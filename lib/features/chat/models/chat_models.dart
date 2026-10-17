@@ -40,19 +40,10 @@ class ChatConversation {
   factory ChatConversation.fromJson(Map<String, dynamic> json) {
     final lastMsg = json['lastMessage'];
     final createdAtStr = lastMsg != null ? lastMsg['createdAt'] : null;
-    String formattedTime = '';
-    if (createdAtStr != null) {
-      final dt = DateTime.tryParse(createdAtStr)?.toLocal();
-      if (dt != null) {
-        final now = DateTime.now();
-        if (dt.day == now.day && dt.month == now.month && dt.year == now.year) {
-          formattedTime =
-              '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-        } else {
-          formattedTime = '${dt.month}/${dt.day}';
-        }
-      }
-    }
+    final createdAt = createdAtStr is String
+        ? DateTime.tryParse(createdAtStr)
+        : null;
+    final formattedTime = createdAt == null ? '' : _timeOf(createdAt);
 
     final ciphertext = lastMsg != null
         ? lastMsg['ciphertext'] as String?
@@ -90,6 +81,38 @@ class ChatConversation {
       ciphertext: ciphertext,
       nonce: nonce,
       createdAt: DateTime.now(),
+    );
+  }
+
+  /// "14:05" for today, "10/3" for an earlier day.
+  static String _timeOf(DateTime moment) {
+    final dt = moment.toLocal();
+    final now = DateTime.now();
+    if (dt.day == now.day && dt.month == now.month && dt.year == now.year) {
+      return '${dt.hour.toString().padLeft(2, '0')}:'
+          '${dt.minute.toString().padLeft(2, '0')}';
+    }
+    return '${dt.month}/${dt.day}';
+  }
+
+  /// This conversation once [message] arrived in it: it becomes the last
+  /// message (shown as [encryptedPreview] until it is decrypted), and one
+  /// more is unread when the other person sent it.
+  ChatConversation withNewMessage(EncryptedMessage message) {
+    return ChatConversation(
+      id: id,
+      participantName: participantName,
+      participantId: participantId,
+      participantAvatar: participantAvatar,
+      lastMessage: encryptedPreview,
+      lastMessageTime: _timeOf(message.createdAt),
+      unreadCount: message.senderId == participantId
+          ? unreadCount + 1
+          : unreadCount,
+      lastMessageId: message.id,
+      lastSenderId: message.senderId,
+      lastCiphertext: message.ciphertext,
+      lastNonce: message.nonce,
     );
   }
 

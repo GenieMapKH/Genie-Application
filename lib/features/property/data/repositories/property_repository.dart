@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:genie/core/network/api_cache_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/property_model.dart';
 
@@ -10,7 +11,18 @@ List<PropertyModel> _parseProperties(List<dynamic> data) {
 class PropertyRepository {
   final Dio dio;
 
-  PropertyRepository(this.dio);
+  /// For the signed upload links. They carry their own permission, so this
+  /// client sends no session token to the storage host.
+  final Dio storageDio;
+
+  PropertyRepository(this.dio, {Dio? storageDio})
+    : storageDio = storageDio ?? Dio();
+
+  /// Public listings may be reused for a short while without asking the
+  /// server; any change the user makes to a property drops them at once.
+  static final _publicListings = Options(
+    extra: CacheInterceptor.freshFor(const Duration(seconds: 30)),
+  );
 
   // Cache for client-side filtering
   List<PropertyModel> _cachedProperties = [];
@@ -36,11 +48,15 @@ class PropertyRepository {
     }
   }
 
+  /// Published listings inside the given map area, of [propertyType] and
+  /// [listingType] when given: at most the newest 500, however large the area.
   Future<List<PropertyModel>> fetchPublicMapProperties({
-    double minLat = -90,
-    double maxLat = 90,
-    double minLng = -180,
-    double maxLng = 180,
+    required double minLat,
+    required double maxLat,
+    required double minLng,
+    required double maxLng,
+    String? propertyType,
+    String? listingType,
   }) async {
     final response = await dio.get(
       '/public/properties/map',
@@ -49,7 +65,12 @@ class PropertyRepository {
         'maxLat': maxLat,
         'minLng': minLng,
         'maxLng': maxLng,
+        'propertyType': ?propertyType,
+        'listingType': ?listingType,
       },
+      // The server keeps this list for 30 s too: going back to an area just
+      // seen shows it at once.
+      options: _publicListings,
     );
     final List<dynamic> data = response.data;
     return compute(_parseProperties, data);
@@ -61,7 +82,10 @@ class PropertyRepository {
       return PropertyModel.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401 || e.response?.statusCode == 404) {
-        final publicRes = await dio.get('/public/properties/$id');
+        final publicRes = await dio.get(
+          '/public/properties/$id',
+          options: _publicListings,
+        );
         return PropertyModel.fromJson(publicRes.data);
       }
       rethrow;
@@ -76,6 +100,16 @@ class PropertyRepository {
     final response = await dio.post('/properties', data: data);
     final property = PropertyModel.fromJson(response.data);
     _cachedProperties.insert(0, property);
+    return property;
+  }
+
+  /// Changes the listing's details (any field of the create body, keywords
+  /// included). Returns it as saved.
+  Future<PropertyModel> update(String id, Map<String, dynamic> data) async {
+    final response = await dio.patch('/properties/$id', data: data);
+    final property = PropertyModel.fromJson(response.data);
+    final index = _cachedProperties.indexWhere((p) => p.id == id);
+    if (index != -1) _cachedProperties[index] = property;
     return property;
   }
 
@@ -99,48 +133,40 @@ class PropertyRepository {
     return PropertyModel.fromJson(response.data);
   }
 
+  /// Uploads [images] to [id]: the server hands out one upload link per
+  /// picture, in the same order; each picture goes straight to storage; then
+  /// the server is told which files arrived.
   Future<PropertyModel> uploadImages(String id, List<XFile> images) async {
-    // 1. Get presigned URLs
-    final fileNames = images.map((i) => i.name).toList();
     final presignedResponse = await dio.post(
       '/properties/$id/images/presigned-url',
-      data: {'fileNames': fileNames},
+      data: {'fileNames': images.map((image) => image.name).toList()},
     );
+    final uploads = (presignedResponse.data as List<dynamic>)
+        .cast<Map<String, dynamic>>();
 
-    final List<dynamic> presignedData = presignedResponse.data;
-
-    // 2. Upload directly to Supabase Storage
-    for (int i = 0; i < images.length; i++) {
-      final image = images[i];
-      final urlData = presignedData.firstWhere(
-        (d) => d['fileName'].toString().endsWith(image.name),
-        orElse: () => null,
+    for (var i = 0; i < images.length && i < uploads.length; i++) {
+      final bytes = await images[i].readAsBytes();
+      await storageDio.put<void>(
+        uploads[i]['signedUrl'] as String,
+        data: Stream.fromIterable([bytes]),
+        options: Options(
+          headers: {
+            Headers.contentLengthHeader: bytes.length,
+            // Storage only accepts pictures, by their type.
+            Headers.contentTypeHeader: images[i].mimeType ?? 'image/jpeg',
+          },
+        ),
       );
-      if (urlData != null) {
-        final signedUrl = urlData['signedUrl'];
-        final bytes = await image.readAsBytes();
-
-        final dioUpload = Dio(); // Use new Dio instance to avoid interceptors
-        await dioUpload.put(
-          signedUrl,
-          data: bytes,
-          options: Options(
-            headers: {
-              'Content-Type':
-                  'application/octet-stream', // Supabase requires content-type
-            },
-          ),
-        );
-      }
     }
 
-    // 3. Confirm upload
-    final uploadedFileNames = presignedData
-        .map((d) => d['fileName'].toString())
-        .toList();
     final response = await dio.post(
       '/properties/$id/images/confirm',
-      data: {'fileNames': uploadedFileNames},
+      data: {
+        'fileNames': [
+          for (var i = 0; i < images.length && i < uploads.length; i++)
+            uploads[i]['fileName'] as String,
+        ],
+      },
     );
 
     _refreshCache();
@@ -155,6 +181,18 @@ class PropertyRepository {
 
   Future<PropertyModel> unpublish(String id) async {
     final response = await dio.patch('/properties/$id/unpublish');
+    _refreshCache();
+    return PropertyModel.fromJson(response.data);
+  }
+
+  Future<PropertyModel> markSold(String id) async {
+    final response = await dio.patch('/properties/$id/mark-sold');
+    _refreshCache();
+    return PropertyModel.fromJson(response.data);
+  }
+
+  Future<PropertyModel> relist(String id) async {
+    final response = await dio.patch('/properties/$id/relist');
     _refreshCache();
     return PropertyModel.fromJson(response.data);
   }

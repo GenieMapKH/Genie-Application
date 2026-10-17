@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:genie/shared/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:genie/core/theme/app_colors.dart';
 
@@ -93,24 +93,9 @@ class _PropertyImageGalleryState extends State<PropertyImageGallery> {
         errorBuilder: (_, _, _) => const PropertyImagePlaceholder(),
       );
     }
-    return CachedNetworkImage(
-      imageUrl: url,
-      fit: BoxFit.cover,
-      memCacheWidth: 900,
-      placeholder: (context, url) => Container(
-        color: context.colors.divider,
-        child: Center(
-          child: SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: context.colors.accent,
-            ),
-          ),
-        ),
-      ),
-      errorWidget: (context, url, error) => const PropertyImagePlaceholder(),
+    return AppNetworkImage(
+      url: url,
+      errorWidget: const PropertyImagePlaceholder(),
     );
   }
 }

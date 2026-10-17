@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:genie/core/theme/app_colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'marker_renderer.dart';
@@ -115,7 +116,7 @@ abstract final class VertexMarkers {
         canvas.drawCircle(
           center,
           size / 2.5,
-          Paint()..color = const Color(0xFF3E49C7),
+          Paint()..color = AppColors.light.primary,
         );
         canvas.drawCircle(
           center,

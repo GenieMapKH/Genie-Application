@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/shared/widgets/app_network_image.dart';
 
 /// Round picture of a person, or their initial when they have none.
 class UserAvatar extends StatelessWidget {
@@ -23,7 +24,9 @@ class UserAvatar extends StatelessWidget {
     return CircleAvatar(
       radius: radius,
       backgroundColor: context.colors.border,
-      backgroundImage: hasPicture ? NetworkImage(url) : null,
+      backgroundImage: hasPicture
+          ? AppNetworkImage.provider(context, url, size: radius * 2)
+          : null,
       child: hasPicture
           ? null
           : Text(

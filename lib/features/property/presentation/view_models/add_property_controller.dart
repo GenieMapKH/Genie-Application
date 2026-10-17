@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 
 enum PropertyField {
@@ -11,7 +12,27 @@ enum PropertyField {
   landSize,
   buildingSize,
   unitSize,
+  discount,
 }
+
+/// A discount is optional; when given it must leave a price above zero: a
+/// percentage below 100, or an amount below [price]. Mirrors the server.
+bool isValidDiscount({
+  required String discount,
+  required String discountType,
+  required String price,
+}) {
+  final text = discount.replaceAll(',', '').trim();
+  if (text.isEmpty) return true;
+  final value = double.tryParse(text);
+  if (value == null || value <= 0) return false;
+  if (discountType == 'percent') return value < 100;
+  final priceValue = double.tryParse(price.replaceAll(',', '').trim()) ?? 0;
+  return value < priceValue;
+}
+
+/// The most photos a listing can have. The server refuses more.
+const maxListingPhotos = 30;
 
 class ValidationResult {
   final bool isValid;
@@ -68,8 +89,9 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
       PropertyField.unitSize,
     ],
     'Business for Sale': [
-      PropertyField.landSize,
+      PropertyField.price,
       PropertyField.listingSettings,
+      PropertyField.landSize,
     ],
     'Borey': [],
   };
@@ -82,6 +104,8 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
     required String landSize,
     required String buildingSize,
     required String unitSize,
+    String discount = '',
+    String discountType = 'percent',
   }) {
     final values = {
       PropertyField.title: title,
@@ -96,9 +120,14 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
     final type = propertyType.isEmpty ? 'Land' : propertyType;
     final required = [PropertyField.title, ...?_requiredFieldsByType[type]];
 
-    final firstErrorField = required
-        .where((field) => values[field]!.trim().isEmpty)
-        .firstOrNull;
+    final discountOk = isValidDiscount(
+      discount: discount,
+      discountType: discountType,
+      price: price,
+    );
+    final firstErrorField =
+        required.where((field) => values[field]!.trim().isEmpty).firstOrNull ??
+        (discountOk ? null : PropertyField.discount);
 
     return ValidationResult(
       isValid: firstErrorField == null,
@@ -106,37 +135,20 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
     );
   }
 
+  /// Creates the listing from [input], then attaches its boundary and photos.
   Future<PropertyModel?> submitProperty({
-    required String title,
-    required String price,
-    required String propertyType,
-    required String landSize,
-    required String buildingSize,
-    required String unitSize,
+    required PropertyFormInput input,
     required List<LatLng> boundaryPoints,
     required List<XFile> selectedPhotos,
     String status = 'Active',
-  }) async {
-    state = state.copyWith(isLoading: true);
-    try {
+  }) {
+    return _whileLoading(() async {
       final repo = ref.read(propertyRepositoryProvider);
-      final data = {
-        'title': title.trim().isEmpty ? 'Untitled Property' : title.trim(),
-        'price': double.tryParse(price.trim()) ?? 0,
-        'propertyType': propertyType.isEmpty ? 'Land' : propertyType,
-        if (landSize.trim().isNotEmpty)
-          'landSize': double.tryParse(landSize.trim()),
-        if (buildingSize.trim().isNotEmpty)
-          'buildingSize': double.tryParse(buildingSize.trim()),
-        if (unitSize.trim().isNotEmpty)
-          'unitSize': double.tryParse(unitSize.trim()),
+      var property = await repo.create({
+        ...input.toRequestBody(),
         'status': status,
-      };
+      });
 
-      // 1. Create property
-      var property = await repo.create(data);
-
-      // 2. Attach boundary points if we have them
       if (boundaryPoints.isNotEmpty) {
         final points = boundaryPoints
             .map((p) => {'lat': p.latitude, 'lng': p.longitude})
@@ -144,16 +156,36 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
         property = await repo.updateBoundary(property.id, points);
       }
 
-      // 3. Upload images if selected
       if (selectedPhotos.isNotEmpty) {
         property = await repo.uploadImages(property.id, selectedPhotos);
       }
-
-      state = state.copyWith(isLoading: false);
       return property;
-    } catch (e) {
+    });
+  }
+
+  /// Saves the edited form over listing [propertyId] and adds [newPhotos].
+  /// Its status, location and existing photos stay as they are.
+  Future<PropertyModel> updateProperty({
+    required String propertyId,
+    required PropertyFormInput input,
+    required List<XFile> newPhotos,
+  }) {
+    return _whileLoading(() async {
+      final repo = ref.read(propertyRepositoryProvider);
+      var property = await repo.update(propertyId, input.toRequestBody());
+      if (newPhotos.isNotEmpty) {
+        property = await repo.uploadImages(propertyId, newPhotos);
+      }
+      return property;
+    });
+  }
+
+  Future<T> _whileLoading<T>(Future<T> Function() work) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      return await work();
+    } finally {
       state = state.copyWith(isLoading: false);
-      rethrow;
     }
   }
 }

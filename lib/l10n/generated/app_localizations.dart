@@ -1565,7 +1565,7 @@ abstract class AppLocalizations {
   /// No description provided for @propertyGenie.
   ///
   /// In en, this message translates to:
-  /// **'Genie'**
+  /// **'Tilomnov'**
   String get propertyGenie;
 
   /// No description provided for @propertyViews.
@@ -2431,6 +2431,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No contact details shared.'**
   String get profileNoContact;
+
+  /// No description provided for @propertyPhotoLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'A listing can have up to {count} photos.'**
+  String propertyPhotoLimit(int count);
+
+  /// No description provided for @propertyEditProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Property'**
+  String get propertyEditProperty;
+
+  /// No description provided for @propertySaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get propertySaveChanges;
+
+  /// No description provided for @propertySavingChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving changes...'**
+  String get propertySavingChanges;
+
+  /// No description provided for @propertyChangesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved.'**
+  String get propertyChangesSaved;
+
+  /// No description provided for @propertyCouldNotSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your changes. Please try again.'**
+  String get propertyCouldNotSaveChanges;
+
+  /// No description provided for @propertyCurrentPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Current photos ({count})'**
+  String propertyCurrentPhotos(int count);
+
+  /// No description provided for @propertyNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s nearby'**
+  String get propertyNearby;
+
+  /// No description provided for @propertyNearbyCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Closest by road from this property'**
+  String get propertyNearbyCaption;
+
+  /// No description provided for @propertyNearbyMarkets.
+  ///
+  /// In en, this message translates to:
+  /// **'Markets'**
+  String get propertyNearbyMarkets;
+
+  /// No description provided for @propertyNearbyHospitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Hospitals'**
+  String get propertyNearbyHospitals;
+
+  /// No description provided for @propertyNearbySchools.
+  ///
+  /// In en, this message translates to:
+  /// **'Schools'**
+  String get propertyNearbySchools;
+
+  /// No description provided for @propertyNearbyNoneWithin.
+  ///
+  /// In en, this message translates to:
+  /// **'None found within {km} km'**
+  String propertyNearbyNoneWithin(int km);
+
+  /// No description provided for @propertyDistanceKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} km'**
+  String propertyDistanceKm(String distance);
+
+  /// No description provided for @propertyDistanceM.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} m'**
+  String propertyDistanceM(int distance);
+
+  /// No description provided for @propertyDriveMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min drive'**
+  String propertyDriveMinutes(int minutes);
+
+  /// No description provided for @propertyStraightLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} straight line'**
+  String propertyStraightLine(String distance);
+
+  /// No description provided for @propertyNearbyCouldNotLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load nearby places.'**
+  String get propertyNearbyCouldNotLoad;
+
+  /// No description provided for @propertyDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount (optional)'**
+  String get propertyDiscount;
+
+  /// No description provided for @propertyDiscountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 10'**
+  String get propertyDiscountHint;
+
+  /// No description provided for @propertyDiscountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use more than 0 and less than 100%, or less than the price.'**
+  String get propertyDiscountInvalid;
+
+  /// No description provided for @propertyPriceCut.
+  ///
+  /// In en, this message translates to:
+  /// **'Price cut: {amount}'**
+  String propertyPriceCut(String amount);
+
+  /// No description provided for @propertyVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get propertyVisibility;
+
+  /// No description provided for @propertyVisibilityPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get propertyVisibilityPublic;
+
+  /// No description provided for @propertyVisibilityPublicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can find it on the map.'**
+  String get propertyVisibilityPublicHint;
+
+  /// No description provided for @propertyVisibilityDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get propertyVisibilityDraft;
+
+  /// No description provided for @propertyVisibilityDraftHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden; only you can see it.'**
+  String get propertyVisibilityDraftHint;
+
+  /// No description provided for @propertyVisibilitySold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get propertyVisibilitySold;
+
+  /// No description provided for @propertyVisibilitySoldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked sold and taken off the map.'**
+  String get propertyVisibilitySoldHint;
+
+  /// No description provided for @propertyVisibilitySoldNeedsPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish it first to mark it sold.'**
+  String get propertyVisibilitySoldNeedsPublic;
+
+  /// No description provided for @propertyVisibilityChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility updated.'**
+  String get propertyVisibilityChanged;
+
+  /// No description provided for @propertyCouldNotChangeVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not change the visibility. Please try again.'**
+  String get propertyCouldNotChangeVisibility;
+
+  /// No description provided for @propertyCouldNotOpenEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the listing for editing. Please try again.'**
+  String get propertyCouldNotOpenEditor;
+
+  /// No description provided for @propertyDrawBoundaryFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw the property on the map first to measure it.'**
+  String get propertyDrawBoundaryFirst;
 }
 
 class _AppLocalizationsDelegate
