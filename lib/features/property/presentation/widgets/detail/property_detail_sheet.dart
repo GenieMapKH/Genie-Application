@@ -85,10 +85,14 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
   @override
   void initState() {
     super.initState();
-    // Opened from anywhere (map, saved, a publisher's page): one more viewer.
-    ref.read(visitedPropertyIdsProvider.notifier).recordView(widget.property.id);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        // Opened from anywhere (map, saved, a publisher's page): one more
+        // viewer. After the first frame, since providers cannot change while
+        // the tree is building.
+        ref
+            .read(visitedPropertyIdsProvider.notifier)
+            .recordView(widget.property.id);
         Future.delayed(const Duration(milliseconds: 120), () {
           if (mounted) {
             setState(() => _isReady = true);
