@@ -14,11 +14,12 @@ void main() {
         'createdAt': '2026-01-01T00:00:00.000Z',
         'landSize': '1670',
         'user': {'username': 'Pisal'},
-        '_count': {'favorites': 99, 'contacts': 5},
+        '_count': {'favorites': 99, 'views': 1688, 'contacts': 5},
       });
 
       expect(property.ownerName, 'Pisal');
       expect(property.saveCount, 99);
+      expect(property.viewCount, 1688);
       expect(property.contactCount, 5);
       expect(property.landSize, 1670);
     });
@@ -35,6 +36,7 @@ void main() {
 
       expect(property.ownerName, isNull);
       expect(property.saveCount, 0);
+      expect(property.viewCount, 0);
       expect(property.contactCount, 0);
     });
 
@@ -86,6 +88,7 @@ void main() {
         createdAt: DateTime(2026, 1, 1),
         ownerName: 'Pisal',
         saveCount: 12,
+        viewCount: 40,
         contactCount: 3,
       );
 
@@ -94,6 +97,7 @@ void main() {
       expect(copy.status, 'Draft');
       expect(copy.ownerName, 'Pisal');
       expect(copy.saveCount, 12);
+      expect(copy.viewCount, 40);
       expect(copy.contactCount, 3);
     });
   });

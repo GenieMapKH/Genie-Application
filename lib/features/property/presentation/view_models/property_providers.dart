@@ -153,6 +153,16 @@ class VisitedPropertyIdsNotifier extends Notifier<Set<String>> {
     _save(newState);
   }
 
+  /// The user opened listing [id]: marks it visited on the map and, when
+  /// signed in, counts them as one of its viewers. The server keeps one view
+  /// per person and ignores the owner, so repeating this is harmless.
+  void recordView(String id) {
+    add(id);
+    if (ref.read(isSignedInProvider)) {
+      ref.read(propertyRepositoryProvider).markAsViewed(id);
+    }
+  }
+
   Future<void> _save(Set<String> ids) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(_key, ids.toList());

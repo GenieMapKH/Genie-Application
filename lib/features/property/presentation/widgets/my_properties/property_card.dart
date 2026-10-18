@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
+import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/l10n/l10n.dart';
 
 class PropertyCard extends StatelessWidget {
@@ -237,11 +238,23 @@ class PropertyCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatItem(context, '5', 'Contacts'),
+                        _buildStatItem(
+                          context,
+                          PropertyFormat.count(property.contactCount),
+                          'Contacts',
+                        ),
                         const SizedBox(width: 12),
-                        _buildStatItem(context, '1,688', 'Views'),
+                        _buildStatItem(
+                          context,
+                          PropertyFormat.count(property.viewCount),
+                          'Views',
+                        ),
                         const SizedBox(width: 12),
-                        _buildStatItem(context, '99', 'Saves'),
+                        _buildStatItem(
+                          context,
+                          PropertyFormat.count(property.saveCount),
+                          'Saves',
+                        ),
                       ],
                     ),
                   ),

@@ -238,10 +238,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
         _focusOnProperty(property);
 
         if (!property.isVisited) {
-          // Optimistically mark as visited in UI when swiped to
-          ref.read(visitedPropertyIdsProvider.notifier).add(property.id);
-          // Send to backend
-          ref.read(propertyRepositoryProvider).markAsViewed(property.id);
+          ref.read(visitedPropertyIdsProvider.notifier).recordView(property.id);
         }
       }
     });

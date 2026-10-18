@@ -46,7 +46,11 @@ class PropertyModel {
   final String? ownerAvatarUrl;
   final String? ownerEmail;
   final String? ownerPhone;
+  /// People who saved the listing.
   final int saveCount;
+
+  /// People other than the owner who opened the listing, each counted once.
+  final int viewCount;
   final int contactCount;
   final bool isVisited;
 
@@ -80,6 +84,7 @@ class PropertyModel {
     this.ownerEmail,
     this.ownerPhone,
     this.saveCount = 0,
+    this.viewCount = 0,
     this.contactCount = 0,
     this.isVisited = false,
   });
@@ -240,6 +245,7 @@ class PropertyModel {
       ownerEmail: owner is Map ? owner['email'] as String? : null,
       ownerPhone: owner is Map ? owner['phone'] as String? : null,
       saveCount: counts is Map ? (counts['favorites'] as int? ?? 0) : 0,
+      viewCount: counts is Map ? (counts['views'] as int? ?? 0) : 0,
       contactCount: counts is Map ? (counts['contacts'] as int? ?? 0) : 0,
       isVisited: json['isVisited'] == true,
     );
@@ -300,6 +306,7 @@ class PropertyModel {
     String? ownerEmail,
     String? ownerPhone,
     int? saveCount,
+    int? viewCount,
     int? contactCount,
     bool? isVisited,
   }) {
@@ -333,6 +340,7 @@ class PropertyModel {
       ownerEmail: ownerEmail ?? this.ownerEmail,
       ownerPhone: ownerPhone ?? this.ownerPhone,
       saveCount: saveCount ?? this.saveCount,
+      viewCount: viewCount ?? this.viewCount,
       contactCount: contactCount ?? this.contactCount,
       isVisited: isVisited ?? this.isVisited,
     );

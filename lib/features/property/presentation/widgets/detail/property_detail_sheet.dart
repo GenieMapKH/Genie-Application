@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_recommendations_provider.dart';
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_contact_bar.dart';
@@ -83,6 +84,8 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
   @override
   void initState() {
     super.initState();
+    // Opened from anywhere (map, saved, a publisher's page): one more viewer.
+    ref.read(visitedPropertyIdsProvider.notifier).recordView(widget.property.id);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         Future.delayed(const Duration(milliseconds: 120), () {

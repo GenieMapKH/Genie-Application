@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:genie/core/network/api_cache_manager.dart';
+import 'package:genie/core/logging/app_logger.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/property_model.dart';
 
@@ -213,11 +214,13 @@ class PropertyRepository {
     _cachedProperties.removeWhere((p) => p.id == id);
   }
 
+  /// Counts the signed-in user as one viewer of listing [id]. A failure only
+  /// leaves the count one short, so it is logged rather than shown.
   Future<void> markAsViewed(String id) async {
     try {
       await dio.post('/properties/$id/view');
     } catch (e) {
-      // Ignore errors for tracking views
+      AppLogger.error('Recording a listing view failed', e);
     }
   }
 
