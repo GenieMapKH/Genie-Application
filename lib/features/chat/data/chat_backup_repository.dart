@@ -1,19 +1,34 @@
 import 'package:dio/dio.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
 
+/// What the identity key backup is locked with. An account that signs in
+/// with a password uses the password, so it never needs a PIN; one that
+/// signs in only with Google can choose a backup PIN.
+enum BackupLock {
+  pin,
+  password;
+
+  /// As the server names it (`protectedBy`); anything unknown is a PIN.
+  static BackupLock fromName(Object? name) =>
+      name == 'password' ? BackupLock.password : BackupLock.pin;
+}
+
 /// The identity private key, encrypted on the device with a key made from the
-/// user's PIN. [verifier] lets the server check the PIN without knowing it.
+/// user's PIN (or account password, see [lock]). [verifier] lets the server
+/// check it without knowing it.
 class EncryptedBackup {
   final String blob;
   final String salt;
   final String nonce;
   final String verifier;
+  final BackupLock lock;
 
   const EncryptedBackup({
     required this.blob,
     required this.salt,
     required this.nonce,
     required this.verifier,
+    this.lock = BackupLock.pin,
   });
 }
 
@@ -29,11 +44,18 @@ class SealedKey {
 class StoredBackup {
   final String salt;
 
+  /// Whether to ask for the backup PIN or the account password.
+  final BackupLock lock;
+
   /// Only for a backup made before the server counted PIN tries: it is still
   /// handed out whole, and replaced the first time it is opened.
   final SealedKey? legacyKey;
 
-  const StoredBackup({required this.salt, this.legacyKey});
+  const StoredBackup({
+    required this.salt,
+    this.legacyKey,
+    this.lock = BackupLock.pin,
+  });
 }
 
 /// Thrown while the server refuses backup requests: too many lookups, or the
@@ -71,6 +93,11 @@ class WrongPinException extends AppException {
   const WrongPinException() : super('Wrong PIN', code: '403');
 }
 
+/// The account password typed to open the chat keys is not the account's.
+class WrongPasswordException extends AppException {
+  const WrongPasswordException() : super('Wrong password', code: '403');
+}
+
 /// API access for the E2EE key backup and public keys.
 class ChatBackupRepository {
   final Dio dio;
@@ -86,6 +113,7 @@ class ChatBackupRepository {
       final legacyNonce = data['backupNonce'] as String?;
       return StoredBackup(
         salt: data['backupSalt'] as String,
+        lock: BackupLock.fromName(data['protectedBy']),
         legacyKey: legacyBlob != null && legacyNonce != null
             ? SealedKey(blob: legacyBlob, nonce: legacyNonce)
             : null,
@@ -159,12 +187,32 @@ class ChatBackupRepository {
     );
   }
 
+  /// A token, good for a few minutes, proving [password] is the account's.
+  /// The chat server takes it in place of the old PIN or password when a
+  /// backup is replaced. Throws [WrongPasswordException] for another
+  /// password and [BackupRateLimitedException] after too many.
+  Future<String> provePassword(String password) async {
+    try {
+      final response = await dio.post(
+        '/auth/account/password-proof',
+        data: {'password': password},
+      );
+      return response.data['proofToken'] as String;
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      if (status == 403) throw const WrongPasswordException();
+      if (status == 429) throw const BackupRateLimitedException();
+      rethrow;
+    }
+  }
+
   Map<String, String> _body(EncryptedBackup backup, BackupOwnerProof? proof) {
     return {
       'backupBlob': backup.blob,
       'backupSalt': backup.salt,
       'backupNonce': backup.nonce,
       'backupVerifier': backup.verifier,
+      'protectedBy': backup.lock.name,
       ...?proof?.toJson(),
     };
   }

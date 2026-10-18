@@ -165,16 +165,27 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
     return isValid;
   }
 
-  Future<bool> submit() async {
+  /// [afterSignIn] as in [LoginController.login].
+  Future<bool> submit({
+    Future<void> Function(String password)? afterSignIn,
+  }) async {
     if (!validateForm()) return false;
 
     final controller = ref.read(loginControllerProvider.notifier);
 
     if (state.selectedMethod == AuthMethod.email) {
-      return controller.login(state.email.trim(), state.password);
+      return controller.login(
+        state.email.trim(),
+        state.password,
+        afterSignIn: afterSignIn,
+      );
     } else {
       final cleanPhone = state.phone.replaceAll(RegExp(r'[\s\-()]'), '');
-      return controller.login(cleanPhone, state.password);
+      return controller.login(
+        cleanPhone,
+        state.password,
+        afterSignIn: afterSignIn,
+      );
     }
   }
 }

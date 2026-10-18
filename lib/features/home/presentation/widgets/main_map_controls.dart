@@ -14,6 +14,11 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/screens/add_property_page.dart';
 import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/home/utils/map/map_measurements.dart';
+import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
+import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/utils/app_popup.dart';
 
 class MainMapControls extends ConsumerWidget {
   final VoidCallback onGoToCurrentPosition;
@@ -127,7 +132,15 @@ class MainMapControls extends ConsumerWidget {
             onCancelPressed: () =>
                 ref.read(mapStateProvider.notifier).cancelDrawing(),
             onSavePressed: () {
-              if (mapState.drawnPoints.length >= 3) {
+              final editing = mapState.editingProperty;
+              if (mapState.drawnPoints.length >= 3 && editing != null) {
+                _showEditPropertyForm(
+                  context,
+                  ref,
+                  editing,
+                  mapState.drawnPoints,
+                );
+              } else if (mapState.drawnPoints.length >= 3) {
                 _showAddPropertyForm(context, ref, mapState.drawnPoints);
               } else {
                 ref.read(mapStateProvider.notifier).clearDrawing();
@@ -162,5 +175,44 @@ class MainMapControls extends ConsumerWidget {
       ref.read(mapStateProvider.notifier).finalizeDrawing();
       onSavePropertySuccess();
     }
+  }
+
+  /// Opens [property]'s edit form, filled in with everything saved before and
+  /// the boundary just redrawn as [drawnPoints].
+  Future<void> _showEditPropertyForm(
+    BuildContext context,
+    WidgetRef ref,
+    PropertyModel property,
+    List<LatLng> drawnPoints,
+  ) async {
+    if (!requireSignIn(context, ref)) return;
+
+    final PropertyModel full;
+    try {
+      // The map holds a slim copy; the form needs every detail.
+      full = await ref.read(propertyDetailProvider(property.id).future);
+    } catch (e, stack) {
+      AppLogger.error('Opening the listing editor failed', e, stack);
+      if (context.mounted) {
+        AppPopup.showError(context, context.l10n.propertyCouldNotOpenEditor);
+      }
+      return;
+    }
+    if (!context.mounted) return;
+
+    final saved = await Navigator.push<PropertyModel>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddPropertyPage.edit(
+          full,
+          boundaryPoints: List<LatLng>.from(drawnPoints),
+        ),
+      ),
+    );
+    if (saved == null) return;
+
+    ref.invalidate(propertyDetailProvider(property.id));
+    ref.read(mapStateProvider.notifier).finalizeDrawing();
+    await ref.read(propertiesProvider.notifier).refreshQuietly();
   }
 }

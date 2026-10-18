@@ -48,20 +48,6 @@ enum ResetKeysResult {
   saveFailed,
 }
 
-/// How recovering from a forgotten PIN ended.
-enum RecoverKeysResult {
-  /// This device still had the keys: only the PIN changed, no history lost.
-  keptKeys,
-
-  /// New keys were made: earlier chat history can no longer be read.
-  newKeys,
-  cancelled,
-
-  /// The server no longer accepts the password proof (it lasts a few minutes).
-  proofRejected,
-  failed,
-}
-
 /// Asks the user for a PIN. Returns null if they cancel.
 typedef PinRequest = Future<String?> Function();
 
@@ -260,73 +246,6 @@ class E2eeKeyManager {
     } catch (e) {
       AppLogger.error('Could not compare the keys with the server', e);
       return false;
-    }
-  }
-
-  /// The way back in for someone who forgot the PIN: [passwordProof] shows
-  /// they typed their account password (`AccountRepository.requestPasswordProof`).
-  ///
-  /// If this device still holds the account's keys, they are kept and only
-  /// backed up again under the new PIN. Otherwise the keys cannot be had
-  /// without the old PIN, so new ones are made and old history is lost.
-  Future<RecoverKeysResult> recoverWithPassword(
-    String userId, {
-    required String passwordProof,
-    required PinRequest askNewPin,
-  }) async {
-    final keepsKeys = await holdsCurrentKeys(userId);
-    final newPin = await askNewPin();
-    if (newPin == null) return RecoverKeysResult.cancelled;
-
-    final ownerProof = BackupOwnerProof.password(passwordProof);
-    try {
-      if (keepsKeys) {
-        final keyPair = (await keyService.getIdentityKeyPair(userId))!;
-        await _vault.save(
-          newPin,
-          keyPair.secretKey.extractBytes(),
-          ownerProof: ownerProof,
-        );
-        return RecoverKeysResult.keptKeys;
-      }
-
-      final keyPair = keyService.cryptoService.generateKeyPair();
-      await backupRepository.resetKeys(
-        publicKey: base64Encode(keyPair.publicKey),
-        backup: await _vault.seal(newPin, keyPair.secretKey.extractBytes()),
-        ownerProof: ownerProof,
-      );
-      await keyService.saveIdentityKeyPair(userId, keyPair);
-      return RecoverKeysResult.newKeys;
-    } on WrongPinException {
-      // No PIN was sent: it is the password proof the server refused.
-      return RecoverKeysResult.proofRejected;
-    } catch (e) {
-      AppLogger.error('Could not recover the chat keys', e);
-      return RecoverKeysResult.failed;
-    }
-  }
-
-  /// For someone who forgot the PIN and would rather have none: the
-  /// password proof removes the backup. A device without the account's keys
-  /// gets new ones, so chat works here at once.
-  Future<RecoverKeysResult> turnOffWithPassword(
-    String userId, {
-    required String passwordProof,
-  }) async {
-    final keepsKeys = await holdsCurrentKeys(userId);
-    try {
-      await backupRepository.removeBackup(
-        ownerProof: BackupOwnerProof.password(passwordProof),
-      );
-      if (keepsKeys) return RecoverKeysResult.keptKeys;
-      await keyService.createAndPublishKeyPair(userId);
-      return RecoverKeysResult.newKeys;
-    } on WrongPinException {
-      return RecoverKeysResult.proofRejected;
-    } catch (e) {
-      AppLogger.error('Could not turn the PIN off', e);
-      return RecoverKeysResult.failed;
     }
   }
 

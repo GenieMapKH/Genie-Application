@@ -137,8 +137,14 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                         required: false,
                       ),
                       const SizedBox(height: 12),
-                      if (existingPhotoUrls.isNotEmpty)
-                        ExistingPropertyPhotos(urls: existingPhotoUrls),
+                      if (existingPhotoUrls.isNotEmpty ||
+                          removedPhotoUrls.isNotEmpty)
+                        ExistingPropertyPhotos(
+                          urls: existingPhotoUrls,
+                          removedCount: removedPhotoUrls.length,
+                          onRemove: removeExistingPhoto,
+                          onRestore: restoreRemovedPhotos,
+                        ),
                       PropertyImagePicker(
                         selectedPhotos: selectedPhotos,
                         onPhotoPicked: pickImage,

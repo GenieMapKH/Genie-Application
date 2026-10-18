@@ -159,6 +159,13 @@ class _FakeBackupRepository extends Fake implements ChatBackupRepository {
   String serverPublicKey = 'CQ=='; // base64 of [9], the fake key pair
   final List<String> resetPublicKeys = [];
 
+  /// When set, only this PIN or password opens [stored].
+  String? opensWith;
+
+  /// The account's password, as the sign-in server knows it.
+  String accountPassword = 'right-password';
+  int passwordProofs = 0;
+
   @override
   Future<StoredBackup?> fetchBackup() async {
     if (fetchError != null) throw fetchError!;
@@ -169,7 +176,18 @@ class _FakeBackupRepository extends Fake implements ChatBackupRepository {
   Future<SealedKey> unlockBackup(String verifier) async {
     unlockTries.add(verifier);
     if (unlockError != null) throw unlockError!;
+    final secret = opensWith;
+    if (secret != null && verifier != 'proof-of-$secret') {
+      throw const WrongPinException();
+    }
     return const SealedKey(blob: 'b', nonce: 'n');
+  }
+
+  @override
+  Future<String> provePassword(String password) async {
+    if (password != accountPassword) throw const WrongPasswordException();
+    passwordProofs++;
+    return 'password-proof';
   }
 
   @override
@@ -405,91 +423,6 @@ void main() {
     });
   });
 
-  group('E2eeKeyManager.recoverWithPassword (forgotten PIN)', () {
-    const passwordProof = {'passwordProofToken': 'proof-of-password'};
-    late _FakeKeyService keys;
-    late _FakeBackupRepository repository;
-    late E2eeKeyManager manager;
-
-    setUp(() {
-      keys = _FakeKeyService();
-      repository = _FakeBackupRepository()..stored = existingBackup;
-      manager = E2eeKeyManager(
-        keyService: keys,
-        backupService: _FakeBackupService(),
-        backupRepository: repository,
-      );
-    });
-
-    Future<RecoverKeysResult> recover({String? newPin = '222222'}) {
-      return manager.recoverWithPassword(
-        'user-1',
-        passwordProof: 'proof-of-password',
-        askNewPin: () async => newPin,
-      );
-    }
-
-    test(
-      'a device that still has the keys keeps them: only the PIN changes',
-      () async {
-        keys.hasLocal = true;
-
-        expect(await recover(), RecoverKeysResult.keptKeys);
-
-        // The same keys, backed up again: nothing was reset, no PIN was asked for.
-        expect(repository.resetPublicKeys, isEmpty);
-        expect(repository.saved.single.verifier, 'new-verifier');
-        expect(repository.proofs, [passwordProof]);
-        expect(repository.unlockTries, isEmpty);
-        expect(keys.savedKeyPairs, 0);
-      },
-    );
-
-    test('a device without the keys gets new ones', () async {
-      expect(await manager.holdsCurrentKeys('user-1'), isFalse);
-
-      expect(await recover(), RecoverKeysResult.newKeys);
-
-      expect(repository.resetPublicKeys, ['CQ==']);
-      expect(repository.proofs, [passwordProof]);
-      expect(keys.savedKeyPairs, 1);
-    });
-
-    test(
-      'keys that were replaced on another device are not backed up again',
-      () async {
-        keys.hasLocal = true;
-        repository.serverPublicKey = 'bmV3ZXI=';
-
-        expect(await manager.holdsCurrentKeys('user-1'), isFalse);
-        expect(await recover(), RecoverKeysResult.newKeys);
-      },
-    );
-
-    test('cancelling the new PIN changes nothing', () async {
-      expect(await recover(newPin: null), RecoverKeysResult.cancelled);
-
-      expect(repository.saved, isEmpty);
-      expect(keys.savedKeyPairs, 0);
-    });
-
-    test(
-      'a password proof the server no longer accepts changes nothing here',
-      () async {
-        repository.resetError = const WrongPinException();
-
-        expect(await recover(), RecoverKeysResult.proofRejected);
-        expect(keys.savedKeyPairs, 0);
-      },
-    );
-
-    test('reports a server that cannot be reached', () async {
-      repository.resetError = Exception('offline');
-
-      expect(await recover(), RecoverKeysResult.failed);
-    });
-  });
-
   group('E2eeKeyManager: the optional backup PIN', () {
     late _FakeKeyService keys;
     late _FakeBackupRepository repository;
@@ -575,53 +508,6 @@ void main() {
 
       expect(result, TurnOffPinResult.noBackup);
     });
-
-    test(
-      'a forgotten PIN can be turned off with the password, keeping the keys',
-      () async {
-        repository.stored = existingBackup;
-
-        final result = await manager.turnOffWithPassword(
-          'user-1',
-          passwordProof: 'proof-of-password',
-        );
-
-        expect(result, RecoverKeysResult.keptKeys);
-        expect(repository.removedWith, [
-          {'passwordProofToken': 'proof-of-password'},
-        ]);
-        expect(keys.publishedNewPairs, 0);
-      },
-    );
-
-    test(
-      'a device without the keys gets new ones once the PIN is off',
-      () async {
-        keys.hasLocal = false;
-        repository.stored = existingBackup;
-
-        final result = await manager.turnOffWithPassword(
-          'user-1',
-          passwordProof: 'proof-of-password',
-        );
-
-        expect(result, RecoverKeysResult.newKeys);
-        expect(keys.publishedNewPairs, 1);
-      },
-    );
-
-    test('an expired password proof turns nothing off', () async {
-      repository.stored = existingBackup;
-      repository.removeError = const WrongPinException();
-
-      final result = await manager.turnOffWithPassword(
-        'user-1',
-        passwordProof: 'proof-of-password',
-      );
-
-      expect(result, RecoverKeysResult.proofRejected);
-      expect(keys.publishedNewPairs, 0);
-    });
   });
 
   group('E2eeSetupService.initialize', () {
@@ -646,7 +532,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => fail('must not ask'),
+        askPin: (_) async => fail('must not ask'),
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -659,7 +545,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => fail('must not ask'),
+        askPin: (_) async => fail('must not ask'),
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -673,7 +559,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '123456',
+        askPin: (_) async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -684,7 +570,7 @@ void main() {
     test('first use makes keys without asking for a PIN', () async {
       final result = await service.initialize(
         'u1',
-        askPin: () async => fail('the PIN is optional'),
+        askPin: (_) async => fail('the PIN is optional'),
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -712,14 +598,17 @@ void main() {
       },
     );
 
-    test('without a prompt, keys behind a PIN wait for the chat screen', () async {
-      repository.stored = existingBackup;
+    test(
+      'without a prompt, keys behind a PIN wait for the chat screen',
+      () async {
+        repository.stored = existingBackup;
 
-      expect(await service.initialize('u1'), E2eeSetupResult.cancelled);
-      expect(repository.unlockTries, isEmpty);
-      expect(keys.savedKeyPairs, 0);
-      expect(keys.publishedNewPairs, 0);
-    });
+        expect(await service.initialize('u1'), E2eeSetupResult.cancelled);
+        expect(repository.unlockTries, isEmpty);
+        expect(keys.savedKeyPairs, 0);
+        expect(keys.publishedNewPairs, 0);
+      },
+    );
 
     test('setups running at once make keys only once', () async {
       keys.publishGate = Completer<void>();
@@ -727,7 +616,7 @@ void main() {
       final quiet = service.initialize('u1');
       final fromChat = service.initialize(
         'u1',
-        askPin: () async => fail('the PIN is optional'),
+        askPin: (_) async => fail('the PIN is optional'),
       );
       await Future<void>.delayed(Duration.zero);
       keys.publishGate!.complete();
@@ -749,7 +638,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '123456',
+        askPin: (_) async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -759,10 +648,7 @@ void main() {
     test('the server decides whether the PIN is right', () async {
       repository.stored = existingBackup;
 
-      await service.initialize(
-        'u1',
-        askPin: () async => '123456',
-      );
+      await service.initialize('u1', askPin: (_) async => '123456');
 
       expect(repository.unlockTries, ['proof-of-123456']);
     });
@@ -773,7 +659,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '000000',
+        askPin: (_) async => '000000',
       );
 
       expect(result, E2eeSetupResult.rateLimited);
@@ -785,7 +671,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '123456',
+        askPin: (_) async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -800,7 +686,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '123456',
+        askPin: (_) async => '123456',
       );
 
       expect(result, E2eeSetupResult.ready);
@@ -813,7 +699,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '000000',
+        askPin: (_) async => '000000',
       );
 
       expect(result, E2eeSetupResult.wrongPin);
@@ -826,7 +712,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '000000',
+        askPin: (_) async => '000000',
       );
 
       expect(result, E2eeSetupResult.wrongPin);
@@ -840,7 +726,7 @@ void main() {
 
       final result = await service.initialize(
         'u1',
-        askPin: () async => '123456',
+        askPin: (_) async => '123456',
       );
 
       expect(result, E2eeSetupResult.failed);
@@ -851,10 +737,7 @@ void main() {
     test('cancelling the restore prompt does nothing', () async {
       repository.stored = existingBackup;
 
-      final result = await service.initialize(
-        'u1',
-        askPin: () async => null,
-      );
+      final result = await service.initialize('u1', askPin: (_) async => null);
 
       expect(result, E2eeSetupResult.cancelled);
       expect(keys.savedKeyPairs, 0);
@@ -863,21 +746,215 @@ void main() {
     test('maps server rate limiting and other failures', () async {
       repository.fetchError = const BackupRateLimitedException();
       expect(
-        await service.initialize(
-          'u1',
-          askPin: () async => '1',
-        ),
+        await service.initialize('u1', askPin: (_) async => '1'),
         E2eeSetupResult.rateLimited,
       );
 
       repository.fetchError = Exception('boom');
       expect(
-        await service.initialize(
-          'u1',
-          askPin: () async => '1',
-        ),
+        await service.initialize('u1', askPin: (_) async => '1'),
         E2eeSetupResult.failed,
       );
+    });
+  });
+
+  group('E2eeSetupService with the account password', () {
+    late _FakeKeyService keys;
+    late _FakeBackupRepository repository;
+    late E2eeSetupService service;
+    const passwordBackup = StoredBackup(salt: 's', lock: BackupLock.password);
+    const pinBackup = StoredBackup(salt: 's');
+
+    setUp(() {
+      keys = _FakeKeyService();
+      repository = _FakeBackupRepository();
+      service = E2eeSetupService(
+        keyService: keys,
+        backupService: _FakeBackupService(),
+        backupRepository: repository,
+      );
+    });
+
+    Future<E2eeSetupResult> signIn({
+      String password = 'right-password',
+      PinPrompt? askPin,
+      bool takeOver = false,
+    }) => service.initialize(
+      'u1',
+      password: password,
+      askPin: askPin ?? (_) async => fail('must not ask'),
+      takeOver: takeOver,
+    );
+
+    group('on a device that has the keys', () {
+      setUp(() => keys.hasLocal = true);
+
+      test('a first sign-in locks them with the password', () async {
+        expect(await signIn(), E2eeSetupResult.ready);
+
+        expect(repository.saved.single.lock, BackupLock.password);
+        expect(repository.proofs.single, isNull);
+      });
+
+      test(
+        'a PIN backup is switched to the password, without the PIN',
+        () async {
+          repository.stored = pinBackup;
+          repository.opensWith = '123456';
+
+          expect(await signIn(), E2eeSetupResult.ready);
+
+          expect(repository.saved.single.lock, BackupLock.password);
+          expect(repository.proofs.single, {
+            'passwordProofToken': 'password-proof',
+          });
+        },
+      );
+
+      test('nothing changes when the password already locks them', () async {
+        repository.stored = passwordBackup;
+        repository.opensWith = 'right-password';
+
+        expect(await signIn(), E2eeSetupResult.ready);
+
+        expect(repository.saved, isEmpty);
+      });
+
+      test('they are locked again after the password was reset', () async {
+        repository.stored = passwordBackup;
+        repository.opensWith = 'old-password';
+
+        expect(await signIn(), E2eeSetupResult.ready);
+
+        expect(repository.saved.single.lock, BackupLock.password);
+        expect(repository.passwordProofs, 1);
+      });
+    });
+
+    group('on a new device', () {
+      test('the password brings the chats back, asking nothing', () async {
+        repository.stored = passwordBackup;
+        repository.opensWith = 'right-password';
+
+        expect(await signIn(), E2eeSetupResult.ready);
+
+        expect(keys.savedKeyPairs, 1);
+        expect(repository.saved, isEmpty);
+      });
+
+      test('a PIN backup asks the PIN one last time, then uses the '
+          'password', () async {
+        repository.stored = pinBackup;
+        repository.opensWith = '123456';
+        final asked = <BackupLock>[];
+
+        final result = await signIn(
+          askPin: (lock) async {
+            asked.add(lock);
+            return '123456';
+          },
+        );
+
+        expect(result, E2eeSetupResult.ready);
+        expect(asked, [BackupLock.pin]);
+        expect(keys.savedKeyPairs, 1);
+        expect(repository.saved.single.lock, BackupLock.password);
+      });
+
+      test('skipping that PIN changes nothing', () async {
+        repository.stored = pinBackup;
+
+        final result = await signIn(askPin: (_) async => null);
+
+        expect(result, E2eeSetupResult.cancelled);
+        expect(repository.saved, isEmpty);
+        expect(keys.savedKeyPairs, 0);
+      });
+
+      test('without any backup, new keys are made and locked', () async {
+        expect(await signIn(), E2eeSetupResult.ready);
+
+        expect(repository.resetPublicKeys, hasLength(1));
+        expect(repository.saved.single.lock, BackupLock.password);
+        expect(keys.savedKeyPairs, 1);
+      });
+
+      group('after the password was reset', () {
+        setUp(() {
+          repository.stored = passwordBackup;
+          repository.opensWith = 'old-password';
+        });
+
+        test('nothing is replaced until the user asks for chat here', () async {
+          expect(await signIn(), E2eeSetupResult.lockedWithEarlierPassword);
+
+          expect(repository.resetPublicKeys, isEmpty);
+          expect(keys.savedKeyPairs, 0);
+        });
+
+        test('asking for chat here makes new keys, locked with the new '
+            'password', () async {
+          expect(await signIn(takeOver: true), E2eeSetupResult.ready);
+
+          expect(repository.resetPublicKeys, hasLength(1));
+          expect(repository.saved.single.lock, BackupLock.password);
+          expect(repository.proofs.single, {
+            'passwordProofToken': 'password-proof',
+          });
+        });
+      });
+    });
+
+    group('opening a chat on a new device', () {
+      setUp(() {
+        repository.stored = passwordBackup;
+        repository.opensWith = 'right-password';
+      });
+
+      test('asks for the account password, not a PIN', () async {
+        final asked = <BackupLock>[];
+
+        final result = await service.initialize(
+          'u1',
+          askPin: (lock) async {
+            asked.add(lock);
+            return 'right-password';
+          },
+        );
+
+        expect(result, E2eeSetupResult.ready);
+        expect(asked, [BackupLock.password]);
+        expect(keys.savedKeyPairs, 1);
+      });
+
+      test('a mistyped password is reported as such', () async {
+        final result = await service.initialize(
+          'u1',
+          askPin: (_) async => 'typo',
+        );
+
+        expect(result, E2eeSetupResult.wrongPassword);
+        expect(keys.savedKeyPairs, 0);
+        expect(repository.resetPublicKeys, isEmpty);
+      });
+    });
+
+    test('reset keys needs the right password', () async {
+      keys.hasLocal = true;
+      repository.stored = passwordBackup;
+
+      expect(
+        await service.startOver('u1', 'typo'),
+        E2eeSetupResult.wrongPassword,
+      );
+      expect(repository.resetPublicKeys, isEmpty);
+
+      expect(
+        await service.startOver('u1', 'right-password'),
+        E2eeSetupResult.ready,
+      );
+      expect(repository.resetPublicKeys, hasLength(1));
+      expect(repository.saved.single.lock, BackupLock.password);
     });
   });
 }

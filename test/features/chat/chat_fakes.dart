@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_attachment_service.dart';
+import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
@@ -10,6 +11,7 @@ import 'package:genie/features/chat/e2ee/message_cipher.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
+import 'package:genie/features/chat/models/conversation_change.dart';
 
 const me = 'user-me';
 const peer = 'user-peer';
@@ -214,6 +216,14 @@ final tinyPng = Uint8List.fromList(const [
 
 class FakeChatRepository extends Fake implements ChatRepository {
   List<ChatConversation> conversations = [];
+  List<ChatConversation> archivedConversations = [];
+
+  /// Archive, unarchive and delete calls, e.g. "archive peer-1" or
+  /// "delete peer-1 forEveryone".
+  final conversationChanges = <String>[];
+
+  /// When set, archive, unarchive and delete fail with it.
+  Object? changeError;
   List<EncryptedMessage> history = [];
   Object? conversationsError;
   ChatParticipantProfile? participant;
@@ -226,12 +236,33 @@ class FakeChatRepository extends Fake implements ChatRepository {
   final markedRead = <String>[];
 
   @override
-  Future<List<ChatConversation>> fetchConversations() async {
+  Future<List<ChatConversation>> fetchConversations({
+    bool archived = false,
+  }) async {
     conversationRequests++;
     await gate?.future;
     if (conversationsError != null) throw conversationsError!;
-    return conversations;
+    return archived ? archivedConversations : conversations;
   }
+
+  Future<void> _change(String change) async {
+    if (changeError != null) throw changeError!;
+    conversationChanges.add(change);
+  }
+
+  @override
+  Future<void> archiveConversation(String participantId) =>
+      _change('archive $participantId');
+
+  @override
+  Future<void> unarchiveConversation(String participantId) =>
+      _change('unarchive $participantId');
+
+  @override
+  Future<void> deleteConversation(
+    String participantId, {
+    required bool forEveryone,
+  }) => _change('delete $participantId${forEveryone ? ' forEveryone' : ''}');
 
   @override
   Future<List<EncryptedMessage>> fetchMessages(String participantId) async {
@@ -256,6 +287,7 @@ class FakeChatSocket extends Fake implements ChatSocketService {
   final messages = StreamController<EncryptedMessage>.broadcast();
   final connections = StreamController<void>.broadcast();
   final presence = StreamController<ChatPresence>.broadcast();
+  final conversationChanges = StreamController<ConversationChange>.broadcast();
   final sent = <EncryptedMessage>[];
   final watching = <String>[];
   Object? sendError;
@@ -272,6 +304,10 @@ class FakeChatSocket extends Fake implements ChatSocketService {
 
   @override
   Stream<ChatPresence> get onPresence => presence.stream;
+
+  @override
+  Stream<ConversationChange> get onConversationChanged =>
+      conversationChanges.stream;
 
   @override
   Future<ChatPresence> watchPresence(String userId) async {
@@ -315,6 +351,7 @@ class FakeSetupService extends Fake implements E2eeSetupService {
     String userId, {
     PinPrompt? askPin,
     bool takeOver = false,
+    String? password,
   }) async {
     runs++;
     takeOvers.add(takeOver);
@@ -322,4 +359,5 @@ class FakeSetupService extends Fake implements E2eeSetupService {
   }
 }
 
-Future<String?> neverAskPin() async => fail('must not ask for a PIN');
+Future<String?> neverAskPin(BackupLock lock) async =>
+    fail('must not ask for a PIN or password');

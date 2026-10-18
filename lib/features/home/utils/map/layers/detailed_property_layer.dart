@@ -7,56 +7,49 @@ import 'package:genie/features/home/utils/map/markers/vertex_markers.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-/// Zoomed-in view: each property's boundary polygon, plus (for the one the
-/// user is looking at) vertex numbers, edge lengths and area.
+/// The tapped listing's real shape: its boundary polygon with vertex numbers,
+/// edge lengths and area. Drawn at every zoom level, under its price tag.
 abstract final class DetailedPropertyLayer {
   // Gold reads on both the default and the satellite map.
   static final _boundaryColor = AppColors.light.highlight;
 
-  static Future<void> build(
-    List<List<LatLng>> detailedProps,
-    List<bool> detailedPropsIsOwned,
-    List<PropertyModel?> detailedPropModels,
-    Set<Polygon> polygons,
-    Set<Marker> markers,
-    bool Function(int index, PropertyModel? property) isHighlighted,
-    double currentZoom,
-    void Function(int index, PropertyModel? property) onViewProperty,
-    void Function(List<LatLng> propertyPoints) onEditProperty,
-  ) async {
-    for (var index = 0; index < detailedProps.length; index++) {
-      final points = detailedProps[index];
-      final model = detailedPropModels[index];
-      final isViewed = isHighlighted(index, model);
+  static Future<void> build({
+    required int index,
+    required List<LatLng> points,
+    required PropertyModel? property,
+    required bool isOwned,
+    required double zoom,
+    required Set<Polygon> polygons,
+    required Set<Marker> markers,
+    required void Function(int index, PropertyModel? property) onViewProperty,
+    required void Function(List<LatLng> points, PropertyModel? property)
+    onEditProperty,
+  }) async {
+    polygons.add(
+      Polygon(
+        polygonId: PolygonId('final_polygon_$index'),
+        points: points,
+        strokeColor: _boundaryColor,
+        strokeWidth: 3,
+        fillColor: _boundaryColor.withValues(alpha: 0.25),
+        consumeTapEvents: true,
+        onTap: () => onViewProperty(index, property),
+      ),
+    );
 
-      polygons.add(
-        Polygon(
-          polygonId: PolygonId('final_polygon_$index'),
-          points: points,
-          strokeColor: _boundaryColor,
-          strokeWidth: isViewed ? 3 : 2,
-          fillColor: _boundaryColor.withValues(alpha: isViewed ? 0.25 : 0.15),
+    await _addMeasurements(index, points, zoom, markers);
+
+    if (isOwned) {
+      markers.add(
+        Marker(
+          markerId: MarkerId('edit_$index'),
+          position: points[0],
+          icon: await VertexMarkers.edit(),
+          anchor: const Offset(1.2, 1.2),
           consumeTapEvents: true,
-          onTap: () => onViewProperty(index, model),
+          onTap: () => onEditProperty(points, property),
         ),
       );
-
-      if (isViewed) {
-        await _addMeasurements(index, points, currentZoom, markers);
-      }
-
-      if (detailedPropsIsOwned[index]) {
-        markers.add(
-          Marker(
-            markerId: MarkerId('edit_$index'),
-            position: points[0],
-            icon: await VertexMarkers.edit(),
-            anchor: const Offset(1.2, 1.2),
-            consumeTapEvents: true,
-            onTap: () => onEditProperty(points),
-          ),
-        );
-      }
     }
   }
 
@@ -111,7 +104,8 @@ abstract final class DetailedPropertyLayer {
           isArea: true,
           fontSize: labelFontSize(area, currentZoom, isArea: true),
         ),
-        anchor: const Offset(0.5, 0.5),
+        // The price tag sits on the centroid, so the area goes just below it.
+        anchor: const Offset(0.5, -0.9),
         zIndexInt: 1,
       ),
     );

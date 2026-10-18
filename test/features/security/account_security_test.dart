@@ -68,6 +68,52 @@ void main() {
       });
     });
 
+    test('changing the password keeps the chat keys locked with it', () async {
+      final locked = <String>[];
+      final controller = AccountSecurityController(
+        AccountRepository(StubServer.always(200).dio),
+        lockChatKeys: (password) async => locked.add(password),
+      );
+
+      await controller.changePassword(
+        current: 'old-password',
+        next: 'new-password',
+      );
+
+      // Made sure to be here first, then locked with the new one.
+      expect(locked, ['old-password', 'new-password']);
+    });
+
+    test('a refused password change leaves the chat keys alone', () async {
+      final locked = <String>[];
+      final controller = AccountSecurityController(
+        AccountRepository(StubServer.always(403).dio),
+        lockChatKeys: (password) async => locked.add(password),
+      );
+
+      await controller.changePassword(
+        current: 'old-password',
+        next: 'new-password',
+      );
+
+      expect(locked, ['old-password']);
+    });
+
+    test('a first password protects the chats from then on', () async {
+      final locked = <String>[];
+      final controller = AccountSecurityController(
+        AccountRepository(StubServer.always(200).dio),
+        lockChatKeys: (password) async => locked.add(password),
+      );
+
+      await controller.createPassword(
+        googleIdToken: 'google-token',
+        password: 'first-password',
+      );
+
+      expect(locked, ['first-password']);
+    });
+
     test('deactivating proves identity with the password', () async {
       final server = StubServer.always(200);
       final controller = AccountSecurityController(

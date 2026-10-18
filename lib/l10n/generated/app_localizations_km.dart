@@ -606,6 +606,107 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatTryAgain => 'ព្យាយាមម្តងទៀត';
 
   @override
+  String get resetKeysPasswordHelp =>
+      'កូនសោការជជែកថ្មីរបស់អ្នកនឹងត្រូវចាក់សោដោយពាក្យសម្ងាត់គណនីរបស់អ្នក។';
+
+  @override
+  String get chatPasswordTitle => 'បញ្ចូលពាក្យសម្ងាត់គណនីរបស់អ្នក';
+
+  @override
+  String get chatPasswordHelp =>
+      'ការជជែករបស់អ្នកត្រូវបានចាក់សោដោយពាក្យសម្ងាត់គណនី។ សូមបញ្ចូលវា ដើម្បីអាន និងផ្ញើសារនៅលើឧបករណ៍នេះ។';
+
+  @override
+  String get chatPasswordLabel => 'ពាក្យសម្ងាត់គណនី';
+
+  @override
+  String get chatPasswordWrong => 'នេះមិនមែនជាពាក្យសម្ងាត់គណនីរបស់អ្នកទេ។';
+
+  @override
+  String get chatPasswordTooManyTries =>
+      'ព្យាយាមច្រើនដងពេក។ សូមរង់ចាំប៉ុន្មាននាទី ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get chatPasswordChangedElsewhere =>
+      'ការជជែករបស់អ្នកត្រូវបានចាក់សោដោយពាក្យសម្ងាត់ចាស់។ សូមចូលម្តងនៅលើទូរស័ព្ទដែលអ្នកធ្លាប់ប្រើ ដើម្បីរក្សាសារមុនៗ ឬប្រើការជជែកនៅទីនេះឥឡូវនេះ៖ សារមុនៗមិនអាចអានបាននៅលើទូរស័ព្ទនេះទេ។';
+
+  @override
+  String get chatPinLastTimeTitle =>
+      'បញ្ចូលលេខ PIN ការជជែករបស់អ្នកជាលើកចុងក្រោយ';
+
+  @override
+  String get chatPinLastTimeHelp =>
+      'ចាប់ពីពេលនេះតទៅ ពាក្យសម្ងាត់គណនីរបស់អ្នកការពារការជជែករបស់អ្នក ដូច្នេះអ្នកនឹងមិនត្រូវការលេខ PIN នេះទៀតទេ។';
+
+  @override
+  String get securityChatsUsePassword =>
+      'ការជជែករបស់អ្នកតែងតែត្រូវបានអ៊ិនគ្រីបពីចុងម្ខាងទៅចុងម្ខាង ហើយចាក់សោដោយពាក្យសម្ងាត់គណនីរបស់អ្នក ដូច្នេះការចូលនៅលើឧបករណ៍ណាមួយនឹងនាំវាមកវិញ។ មិនត្រូវការលេខ PIN ទេ។';
+
+  @override
+  String get chatMoreOptions => 'ជម្រើសបន្ថែម';
+
+  @override
+  String get chatArchivedChats => 'ការជជែកក្នុងបណ្ណសារ';
+
+  @override
+  String get chatNoArchivedChats => 'មិនមានការជជែកក្នុងបណ្ណសារទេ';
+
+  @override
+  String get chatArchivedChatsHint =>
+      'ការជជែកក្នុងបណ្ណសារនឹងត្រឡប់មកបញ្ជីរបស់អ្នកវិញ ពេលមានសារថ្មី។';
+
+  @override
+  String get chatArchive => 'ដាក់បណ្ណសារ';
+
+  @override
+  String get chatUnarchive => 'ដកពីបណ្ណសារ';
+
+  @override
+  String get chatDelete => 'លុប';
+
+  @override
+  String get chatArchiveChat => 'ដាក់ការជជែកក្នុងបណ្ណសារ';
+
+  @override
+  String get chatUnarchiveChat => 'ដាក់ត្រឡប់មកការជជែកវិញ';
+
+  @override
+  String get chatDeleteChat => 'លុបការជជែក';
+
+  @override
+  String get chatDeleteChatQuestion => 'លុបការជជែកនេះ?';
+
+  @override
+  String chatDeleteForMeExplained(String name) {
+    return 'វាត្រូវបានដកចេញពីការជជែករបស់អ្នកតែប៉ុណ្ណោះ។ $name នៅតែមានវា។';
+  }
+
+  @override
+  String chatDeleteForBoth(String name) {
+    return 'លុបសម្រាប់ $name ផងដែរ';
+  }
+
+  @override
+  String get chatDeleteForBothExplained =>
+      'សារ និងរូបថតទាំងអស់នឹងត្រូវលុបសម្រាប់អ្នកទាំងពីរ។ មិនអាចត្រឡប់វិញបានទេ។';
+
+  @override
+  String get chatArchivedDone => 'បានដាក់ការជជែកក្នុងបណ្ណសារ';
+
+  @override
+  String get chatUnarchivedDone => 'បានដាក់ការជជែកត្រឡប់មកវិញ';
+
+  @override
+  String get chatDeletedDone => 'បានលុបការជជែក';
+
+  @override
+  String get chatUndo => 'មិនធ្វើវិញ';
+
+  @override
+  String get chatActionFailed =>
+      'មិនដំណើរការទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
+
+  @override
   String get chatThisIsYourOwnAccount => 'នេះជាគណនីរបស់អ្នកផ្ទាល់។';
 
   @override
@@ -1072,30 +1173,19 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get forgotPinKeepsHistory =>
-      'ឧបករណ៍នេះនៅមានសោជជែករបស់អ្នក ដូច្នេះគ្មានអ្វីបាត់បង់ទេ។ សូមបញ្ជាក់ពាក្យសម្ងាត់គណនីរបស់អ្នក រួចជ្រើសរើសលេខកូដ PIN ថ្មី ឬបិទលេខកូដ PIN។';
+      'ឧបករណ៍នេះនៅមានសោជជែករបស់អ្នក ដូច្នេះគ្មានអ្វីបាត់បង់ទេ។ សូមបង្កើតពាក្យសម្ងាត់គណនី៖ ចាប់ពីពេលនោះ វានឹងការពារការជជែករបស់អ្នកជំនួសលេខកូដ PIN។';
 
   @override
   String get forgotPinLosesHistory =>
-      'ឧបករណ៍នេះមិនមានសោជជែករបស់អ្នកទេ ហើយបើគ្មានលេខកូដ PIN ក៏មិនអាចយកវាមកវិញបានដែរ។ បន្ទាប់ពីអ្នកបញ្ជាក់ពាក្យសម្ងាត់គណនី សោថ្មីនឹងត្រូវបានបង្កើត ហើយប្រវត្តិជជែកពីមុនរបស់អ្នកនឹងមិនអាចអានបានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។\n\nបើឧបករណ៍ផ្សេងទៀតរបស់អ្នកនៅអាចបើកការជជែកបាន សូមធ្វើនៅលើឧបករណ៍នោះវិញ ដើម្បីរក្សាប្រវត្តិរបស់អ្នក។';
+      'ឧបករណ៍នេះមិនមានសោជជែករបស់អ្នកទេ ហើយបើគ្មានលេខកូដ PIN ក៏មិនអាចយកវាមកវិញបានដែរ។ បន្ទាប់ពីអ្នកបង្កើតពាក្យសម្ងាត់គណនី សោថ្មីនឹងត្រូវបានបង្កើត ហើយប្រវត្តិជជែកពីមុនរបស់អ្នកនឹងមិនអាចអានបានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។\n\nបើឧបករណ៍ផ្សេងទៀតរបស់អ្នកនៅអាចបើកការជជែកបាន សូមធ្វើនៅលើឧបករណ៍នោះវិញ ដើម្បីរក្សាប្រវត្តិរបស់អ្នក។';
 
   @override
   String get forgotPinNeedsPassword =>
-      'ការយកលេខកូដ PIN មកវិញ ត្រូវការពាក្យសម្ងាត់គណនីរបស់អ្នក។ អ្នកចូលដោយប្រើ Google ដូច្នេះសូមបង្កើតពាក្យសម្ងាត់ជាមុនសិន។';
+      'អ្នកចូលដោយប្រើ Google ដូច្នេះសូមបង្កើតពាក្យសម្ងាត់គណនី។ វានឹងការពារការជជែករបស់អ្នកចាប់ពីពេលនេះតទៅ ជំនួសលេខកូដ PIN។';
 
   @override
-  String get forgotPinPasswordTitle => 'បញ្ជាក់ពាក្យសម្ងាត់របស់អ្នក';
-
-  @override
-  String get forgotPinNewPinHelp =>
-      'លេខកូដ PIN ថ្មីនេះនឹងការពារសោជជែករបស់អ្នកចាប់ពីពេលនេះតទៅ។';
-
-  @override
-  String get forgotPinDone =>
-      'បានកំណត់លេខកូដ PIN បម្រុងទុកថ្មី។ ប្រវត្តិជជែករបស់អ្នកនៅដដែល។';
-
-  @override
-  String get forgotPinProofExpired =>
-      'ចំណាយពេលយូរពេក។ សូមបញ្ជាក់ពាក្យសម្ងាត់របស់អ្នកម្តងទៀត។';
+  String get forgotPinNowPassword =>
+      'រួចរាល់។ ឥឡូវនេះ ការជជែករបស់អ្នកត្រូវបានការពារដោយពាក្យសម្ងាត់គណនីរបស់អ្នក។';
 
   @override
   String get pinForgotHint =>
@@ -1152,19 +1242,6 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get pinTurnOffFailed =>
       'មិនអាចបិទលេខកូដ PIN បានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្ដូរឡើយ។';
-
-  @override
-  String get forgotPinChoiceTitle => 'រក្សាលេខកូដ PIN បម្រុងទុក?';
-
-  @override
-  String get forgotPinChoiceMessage =>
-      'បើមានលេខកូដ PIN ថ្មី អ្នកអាចអានការជជែករបស់អ្នកនៅលើទូរស័ព្ទថ្មីបាន។ បើគ្មាន ការជជែករបស់អ្នកនៅតែត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង ប៉ុន្តែមានតែទូរស័ព្ទនេះទេដែលអាចអានវាបាន។';
-
-  @override
-  String get forgotPinChoiceNoPin => 'គ្មាន PIN';
-
-  @override
-  String get forgotPinChoiceNewPin => 'PIN ថ្មី';
 
   @override
   String get chatPinRestoreTitle => 'បញ្ចូលលេខកូដ PIN បម្រុងទុករបស់អ្នក';
@@ -1427,6 +1504,14 @@ class AppLocalizationsKm extends AppLocalizations {
   String propertyCurrentPhotos(int count) {
     return 'រូបថតបច្ចុប្បន្ន ($count)';
   }
+
+  @override
+  String propertyRestoreRemovedPhotos(int count) {
+    return 'មិនដកវិញ ($count)';
+  }
+
+  @override
+  String get propertyRemovePhoto => 'ដករូបថតចេញ';
 
   @override
   String get propertyNearby => 'ទីតាំងនៅជិត';

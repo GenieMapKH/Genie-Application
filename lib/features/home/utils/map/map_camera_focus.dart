@@ -23,6 +23,15 @@ class MapCameraFocus {
     return 180 / math.pi * math.atan(0.5 * (math.exp(n) - math.exp(-n)));
   }
 
+  /// Where [point] sits on the whole-world map at [zoom], in logical pixels.
+  static math.Point<double> worldPixel(LatLng point, double zoom) {
+    final worldPixels = _tileSize * math.pow(2, zoom);
+    return math.Point(
+      _mercatorX(point.longitude) * worldPixels,
+      _mercatorY(point.latitude) * worldPixels,
+    );
+  }
+
   /// The zoom at which [points] fit inside a [width] x [height] viewport
   /// (logical pixels), leaving [padding] of breathing room on each side.
   static double zoomToFit(

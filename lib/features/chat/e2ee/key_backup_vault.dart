@@ -18,14 +18,20 @@ class KeyBackupVault {
 
   KeyBackupVault({required this.backupService, required this.backupRepository});
 
-  /// Encrypts [privateKey] under [pin], ready to be uploaded.
-  Future<EncryptedBackup> seal(String pin, List<int> privateKey) async {
+  /// Encrypts [privateKey] under [pin] (or, with [lock], the account
+  /// password), ready to be uploaded.
+  Future<EncryptedBackup> seal(
+    String pin,
+    List<int> privateKey, {
+    BackupLock lock = BackupLock.pin,
+  }) async {
     final created = await backupService.createBackup(pin, privateKey);
     return EncryptedBackup(
       blob: created['blob']!,
       salt: created['salt']!,
       nonce: created['nonce']!,
       verifier: created['verifier']!,
+      lock: lock,
     );
   }
 
@@ -35,8 +41,9 @@ class KeyBackupVault {
     String pin,
     List<int> privateKey, {
     BackupOwnerProof? ownerProof,
+    BackupLock lock = BackupLock.pin,
   }) async {
-    final backup = await seal(pin, privateKey);
+    final backup = await seal(pin, privateKey, lock: lock);
     await backupRepository.saveBackup(backup, ownerProof: ownerProof);
     return backup;
   }
