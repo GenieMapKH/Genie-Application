@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -87,13 +89,35 @@ class _PropertyHighlightsState extends State<PropertyHighlights> {
   }
 }
 
-class _StatsRow extends StatelessWidget {
+/// The counts come from the server when the listing was loaded. Saving or
+/// unsaving it here moves the saves count straight away.
+class _StatsRow extends ConsumerStatefulWidget {
   final PropertyModel property;
 
   const _StatsRow({required this.property});
 
   @override
+  ConsumerState<_StatsRow> createState() => _StatsRowState();
+}
+
+class _StatsRowState extends ConsumerState<_StatsRow> {
+  /// Whether the user had saved the listing when the counts were loaded;
+  /// unknown until their saved list has loaded.
+  bool? _savedAtLoad;
+
+  int _saveCount() {
+    final property = widget.property;
+    final saved = ref.watch(savedPropertiesProvider).valueOrNull;
+    if (saved == null) return property.saveCount;
+    final savedNow = saved.any((p) => p.id == property.id);
+    _savedAtLoad ??= savedNow;
+    final change = (savedNow ? 1 : 0) - (_savedAtLoad! ? 1 : 0);
+    return (property.saveCount + change).clamp(0, 1 << 31);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final property = widget.property;
     return Row(
       children: [
         _Stat(
@@ -101,11 +125,13 @@ class _StatsRow extends StatelessWidget {
           label: context.l10n.propertyGenie,
         ),
         const SizedBox(width: 24),
-        // TODO(backend): no view counter exists yet; placeholder until it does.
-        _Stat(value: '1,688', label: context.l10n.propertyViews),
+        _Stat(
+          value: PropertyFormat.count(property.viewCount),
+          label: context.l10n.propertyViews,
+        ),
         const SizedBox(width: 24),
         _Stat(
-          value: PropertyFormat.count(property.saveCount),
+          value: PropertyFormat.count(_saveCount()),
           label: context.l10n.propertySaves,
         ),
       ],

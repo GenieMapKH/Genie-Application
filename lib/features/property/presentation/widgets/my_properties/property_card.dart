@@ -242,19 +242,19 @@ class PropertyCard extends StatelessWidget {
                       children: [
                         _buildStatItem(
                           context,
-                          '5',
+                          PropertyFormat.count(property.contactCount),
                           context.l10n.propertyContacts,
                         ),
                         const SizedBox(width: 12),
                         _buildStatItem(
                           context,
-                          '1,688',
+                          PropertyFormat.count(property.viewCount),
                           context.l10n.propertyViews,
                         ),
                         const SizedBox(width: 12),
                         _buildStatItem(
                           context,
-                          '99',
+                          PropertyFormat.count(property.saveCount),
                           context.l10n.propertySaves,
                         ),
                       ],
