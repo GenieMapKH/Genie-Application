@@ -6,6 +6,8 @@ import 'package:genie/features/home/presentation/providers/map_camera_provider.d
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:genie/features/home/utils/map/cluster_layout.dart';
+import 'package:genie/features/home/utils/map/cluster_transition.dart';
 import 'package:genie/features/home/utils/map/coalesced_rebuild.dart';
 import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
 import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
@@ -32,6 +34,16 @@ class MainMapOverlays {
 
   /// Both layers together, as the map draws them.
   MapOverlays current = const MapOverlays();
+
+  /// The zoomed-out dots merging or splitting, while it plays.
+  ClusterTransition? get transition => _transition;
+  ClusterTransition? _transition;
+
+  /// Whether the drops of [transition] have reached their new spots.
+  bool _landed = false;
+
+  /// Off when the user asked the system for less motion.
+  bool animateClusters = true;
 
   MainMapOverlays({
     required WidgetRef ref,
@@ -81,10 +93,47 @@ class MainMapOverlays {
   /// Stops all further redraws; the map view is going away.
   void dispose() => _disposed = true;
 
+  /// The drops have landed: the map's own markers come back underneath.
+  void onTransitionLanded(ClusterTransition transition) {
+    if (_transition != transition) return;
+    _landed = true;
+    _show();
+  }
+
+  /// The overlay is gone.
+  void onTransitionDone(ClusterTransition transition) {
+    if (_transition != transition || _disposed) return;
+    _transition = null;
+    _onChanged();
+  }
+
   void _show() {
     if (_disposed) return;
-    current = _listings.merge(_drawing);
+    final moving = _transition;
+    final hidden = moving != null && !_landed
+        ? moving.hiddenMarkerIds
+        : const <String>{};
+    current = _listings.withoutMarkers(hidden).merge(_drawing);
     _onChanged();
+  }
+
+  /// Animates only a change of zoom level among dots, on a flat north-up
+  /// map (the overlay cannot follow a rotated or tilted one).
+  ClusterTransition? _transitionBetween(
+    ClusterLayout? from,
+    ClusterLayout? to,
+  ) {
+    if (!animateClusters || from == null || to == null) return null;
+    if (from.zoomLevel == to.zoomLevel) return null;
+    if (!_ref.read(mapCameraProvider).isFlatNorthUp) return null;
+    if (_ref.read(mapStateProvider).isDrawing) return null;
+
+    return ClusterTransition.between(
+      from: from,
+      to: to,
+      now: DateTime.now(),
+      running: _landed ? null : _transition,
+    );
   }
 
   Future<void> _buildListings() async {
@@ -97,7 +146,7 @@ class MainMapOverlays {
       _ref.read(propertyCarouselProvider.notifier).clear();
     }
 
-    _listings = await MapOverlayBuilder.buildListings(
+    final next = await MapOverlayBuilder.buildListings(
       mapState: mapState,
       zoom: _ref.read(mapCameraProvider).zoom,
       mapProperties: _ref.read(mapPropertiesProvider),
@@ -114,6 +163,11 @@ class MainMapOverlays {
         onZoomToCluster: _onZoomToCluster,
       ),
     );
+    if (_disposed) return;
+
+    _transition = _transitionBetween(_listings.clusters, next.clusters);
+    _landed = false;
+    _listings = next;
     _show();
   }
 

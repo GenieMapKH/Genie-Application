@@ -16,6 +16,7 @@ import 'package:genie/features/home/utils/map/map_camera_focus.dart';
 import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/storage/map_storage.dart';
+import 'package:genie/features/home/presentation/widgets/map/liquid/liquid_cluster_overlay.dart';
 import 'package:genie/features/home/presentation/widgets/map/main_map_overlays.dart';
 import 'package:genie/features/home/presentation/widgets/map/property_carousel.dart';
 
@@ -69,6 +70,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _overlays.animateClusters = !MediaQuery.disableAnimationsOf(context);
     final l10n = context.l10n;
     if (_iconsLanguage == l10n.localeName) return;
     _iconsLanguage = l10n.localeName;
@@ -222,6 +224,8 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     cameraNotifier.state = MapCamera(
       center: position.target,
       zoom: position.zoom,
+      bearing: position.bearing,
+      tilt: position.tilt,
     );
 
     if (_zoomBand(previousZoom) != _zoomBand(position.zoom) &&
@@ -299,6 +303,21 @@ class MainMapViewState extends ConsumerState<MainMapView> {
               myLocationEnabled: true,
             ),
           ),
+
+          // Dots merging or splitting after a zoom, over the map's frame.
+          if (_overlays.transition case final transition?)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: -_mapFrameOverflow,
+              child: LiquidClusterOverlay(
+                transition: transition,
+                readCamera: () => ref.read(mapCameraProvider),
+                onLanded: () => _overlays.onTransitionLanded(transition),
+                onDone: () => _overlays.onTransitionDone(transition),
+              ),
+            ),
 
           // Crosshair for drawing mode
           if (showCrosshair)

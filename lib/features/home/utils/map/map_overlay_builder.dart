@@ -2,6 +2,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
+import 'package:genie/features/home/utils/map/cluster_layout.dart';
 import 'package:genie/features/home/utils/map/layers/clustered_layer.dart';
 import 'package:genie/features/home/utils/map/layers/detailed_property_layer.dart';
 import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
@@ -51,10 +52,14 @@ class MapOverlays {
   final Set<Polygon> polygons;
   final Set<Polyline> polylines;
 
+  /// Where the zoomed-out dots and bubbles are; null zoomed in.
+  final ClusterLayout? clusters;
+
   const MapOverlays({
     this.markers = const {},
     this.polygons = const {},
     this.polylines = const {},
+    this.clusters,
   });
 
   /// Both sets of layers drawn together.
@@ -62,7 +67,21 @@ class MapOverlays {
     markers: {...markers, ...other.markers},
     polygons: {...polygons, ...other.polygons},
     polylines: {...polylines, ...other.polylines},
+    clusters: clusters ?? other.clusters,
   );
+
+  /// The same layers without the markers named in [ids].
+  MapOverlays withoutMarkers(Set<String> ids) => ids.isEmpty
+      ? this
+      : MapOverlays(
+          markers: {
+            for (final marker in markers)
+              if (!ids.contains(marker.markerId.value)) marker,
+          },
+          polygons: polygons,
+          polylines: polylines,
+          clusters: clusters,
+        );
 }
 
 /// Turns property data plus map state into Google Maps layers.
@@ -154,8 +173,9 @@ class MapOverlayBuilder {
       );
     }
 
+    ClusterLayout? clusters;
     if (zoom <= clusterZoomThreshold) {
-      await ClusteredLayer.build(
+      clusters = await ClusteredLayer.build(
         positions: positions,
         models: models,
         zoom: zoom,
@@ -185,6 +205,7 @@ class MapOverlayBuilder {
       markers: markers,
       polygons: polygons,
       polylines: polylines,
+      clusters: clusters,
     );
   }
 

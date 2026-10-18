@@ -7,6 +7,23 @@ import 'marker_renderer.dart';
 /// Markers for listings on the explore map.
 abstract final class PropertyMarkers {
   static const _green = Color(0xFF028752);
+
+  /// The listing green, also used by the merge animation.
+  static const green = _green;
+
+  /// Radius of an unselected [greenDot], in logical pixels.
+  static const dotRadius = 12.5;
+
+  /// The white ring around a [clusterBubble].
+  static const clusterRing = 2.5;
+
+  /// How far above its map position a [clusterBubble]'s circle is drawn,
+  /// leaving room for its shadow below.
+  static const clusterLift = 2.0;
+
+  /// How wide a [clusterBubble] holding [count] listings is drawn.
+  static double clusterDiameter(int count) =>
+      count < 10 ? 34.0 : (count < 100 ? 40.0 : 48.0);
   static final _priceCache = MarkerCache();
   static final _clusterCache = MarkerCache();
 
@@ -15,7 +32,7 @@ abstract final class PropertyMarkers {
   static Future<BitmapDescriptor> greenDot({bool isSelected = false}) {
     const size = 57.0;
     const center = Offset(size / 2, size / 2);
-    final radius = isSelected ? 17.0 : 12.5;
+    final radius = isSelected ? 17.0 : dotRadius;
 
     return renderMarker(
       width: size,
@@ -57,10 +74,10 @@ abstract final class PropertyMarkers {
   }
 
   static Future<BitmapDescriptor> _renderClusterBubble(int count, String text) {
-    final diameter = count < 10 ? 34.0 : (count < 100 ? 40.0 : 48.0);
+    final diameter = clusterDiameter(count);
     const shadowRoom = 8.0;
     final size = diameter + shadowRoom;
-    final center = Offset(size / 2, size / 2 - 2);
+    final center = Offset(size / 2, size / 2 - clusterLift);
     final label = layoutText(
       text,
       const TextStyle(
@@ -80,7 +97,11 @@ abstract final class PropertyMarkers {
           markerShadowPaint(alpha: 0.18, blur: 4.0),
         );
         canvas.drawCircle(center, diameter / 2, Paint()..color = Colors.white);
-        canvas.drawCircle(center, diameter / 2 - 2.5, Paint()..color = _green);
+        canvas.drawCircle(
+          center,
+          diameter / 2 - clusterRing,
+          Paint()..color = _green,
+        );
         label.paint(
           canvas,
           center.translate(-label.width / 2, -label.height / 2),

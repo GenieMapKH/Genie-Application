@@ -1,6 +1,7 @@
 import 'package:flutter/painting.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:genie/features/home/utils/map/cluster_layout.dart';
 import 'package:genie/features/home/utils/map/markers/property_markers.dart';
 import 'package:genie/features/home/utils/map/screen_clustering.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -8,7 +9,10 @@ import 'package:genie/features/property/data/models/property_model.dart';
 /// Zoomed-out view: a green dot at each listing's real position. Dots that
 /// would overlap on screen merge into a bubble showing how many it holds.
 abstract final class ClusteredLayer {
-  static Future<void> build({
+  /// Adds the markers, and returns where each listing ended up so a change
+  /// of zoom level can be animated. The selected listing is left out: its
+  /// marker never merges.
+  static Future<ClusterLayout> build({
     required List<LatLng> positions,
     required List<PropertyModel?> models,
     required double zoom,
@@ -34,6 +38,7 @@ abstract final class ClusteredLayer {
     final clusters = clusterByScreenDistance([
       for (final i in others) positions[i],
     ], zoom.floorToDouble());
+    final spotOf = <String, ClusterSpot>{};
 
     for (final i in selected.where((i) => !isOutlined(i))) {
       markers.add(
@@ -52,6 +57,13 @@ abstract final class ClusteredLayer {
     for (final cluster in clusters) {
       if (cluster.indices.length == 1) {
         final i = others[cluster.indices.single];
+        spotOf[listingKey(i, models[i])] = ClusterSpot(
+          markerId: _dotId(i),
+          position: positions[i],
+          count: 1,
+          radius: PropertyMarkers.dotRadius,
+          ring: 1,
+        );
         markers.add(
           _dot(
             i,
@@ -66,11 +78,24 @@ abstract final class ClusteredLayer {
         continue;
       }
 
+      final count = cluster.indices.length;
+      final spot = ClusterSpot(
+        markerId: 'cluster_${others[cluster.indices.first]}',
+        position: cluster.position,
+        count: count,
+        radius: PropertyMarkers.clusterDiameter(count) / 2,
+        ring: PropertyMarkers.clusterRing,
+        lift: PropertyMarkers.clusterLift,
+      );
+      for (final member in cluster.indices) {
+        spotOf[listingKey(others[member], models[others[member]])] = spot;
+      }
+
       markers.add(
         Marker(
-          markerId: MarkerId('cluster_${others[cluster.indices.first]}'),
+          markerId: MarkerId(spot.markerId),
           position: cluster.position,
-          icon: await PropertyMarkers.clusterBubble(cluster.indices.length),
+          icon: await PropertyMarkers.clusterBubble(count),
           anchor: const Offset(0.5, 0.5),
           consumeTapEvents: true,
           zIndexInt: 2,
@@ -78,7 +103,16 @@ abstract final class ClusteredLayer {
         ),
       );
     }
+
+    return ClusterLayout(zoomLevel: zoom.floor(), spotOf: spotOf);
   }
+
+  /// Names a listing the same way in every layout: by id, or by its place
+  /// among the shapes drawn on this device, which have none.
+  static String listingKey(int index, PropertyModel? property) =>
+      property?.id ?? 'local_$index';
+
+  static String _dotId(int index) => 'dot_$index';
 
   static Marker _dot(
     int index,
@@ -88,7 +122,7 @@ abstract final class ClusteredLayer {
     required VoidCallback onTap,
   }) {
     return Marker(
-      markerId: MarkerId('dot_$index'),
+      markerId: MarkerId(_dotId(index)),
       position: position,
       icon:
           icon ??
