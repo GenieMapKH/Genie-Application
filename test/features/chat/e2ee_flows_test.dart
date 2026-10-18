@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/pin_check.dart';
+import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 
 import 'e2ee_fakes.dart';
 

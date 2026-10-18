@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/app_header_bar.dart';
-import 'package:genie/features/property/presentation/screens/add_property_page.dart';
+import 'package:genie/shared/widgets/layout/app_header_bar.dart';
+import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
+import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';

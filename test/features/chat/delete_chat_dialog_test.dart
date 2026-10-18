@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/presentation/widgets/delete_chat_dialog.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation_list/delete_chat_dialog.dart';
 
 import '../../support/test_app.dart';
 

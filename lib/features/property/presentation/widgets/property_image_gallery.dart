@@ -1,4 +1,4 @@
-import 'package:genie/shared/widgets/app_network_image.dart';
+import 'package:genie/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:genie/core/theme/app_colors.dart';
 

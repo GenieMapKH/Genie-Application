@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../shared/widgets/app_text_field.dart';
+import '../../../../shared/widgets/forms/app_text_field.dart';
 
 import '../view_models/login_form_provider.dart';
 import 'package:genie/core/theme/app_colors.dart';

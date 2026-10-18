@@ -7,14 +7,14 @@ import 'package:genie/features/chat/data/chat_attachment_store.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/backup_service.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
+import 'package:genie/features/chat/e2ee/backup/backup_service.dart';
+import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/key_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
-import 'package:genie/features/chat/e2ee/password_lock_migration.dart';
-import 'package:genie/features/chat/e2ee/peer_key_store.dart';
+import 'package:genie/features/chat/e2ee/keys/key_service.dart';
+import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:genie/features/chat/e2ee/backup/password_lock_migration.dart';
+import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 /// Overridden in `main.dart` once libsodium has been initialised.

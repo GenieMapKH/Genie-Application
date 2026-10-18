@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_conversation_header.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
 import 'package:genie/features/chat/providers/chat_profile_opener.dart';
 

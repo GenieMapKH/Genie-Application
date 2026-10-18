@@ -6,7 +6,7 @@ import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:genie/features/search/presentation/view_models/search_selection.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/user_avatar.dart';
+import 'package:genie/shared/widgets/media/user_avatar.dart';
 
 /// Top of the results panel: what is shown, how many listings, and a close
 /// button.

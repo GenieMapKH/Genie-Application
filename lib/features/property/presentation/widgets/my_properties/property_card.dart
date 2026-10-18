@@ -1,4 +1,4 @@
-import 'package:genie/shared/widgets/app_network_image.dart';
+import 'package:genie/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';

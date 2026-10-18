@@ -10,8 +10,8 @@ import 'package:genie/features/security/presentation/widgets/e2ee_settings_actio
 import 'package:genie/features/security/presentation/widgets/forgot_pin_actions.dart';
 import 'package:genie/features/security/presentation/widgets/info_note.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/settings_list.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/lists/settings_list.dart';
 
 /// Everything that protects the account: chat encryption keys, the password,
 /// the devices signed in, and deactivating or deleting the account.

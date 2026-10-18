@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/settings/providers/app_settings_providers.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/option_sheet.dart';
-import 'package:genie/shared/widgets/settings_list.dart';
+import 'package:genie/shared/widgets/lists/option_sheet.dart';
+import 'package:genie/shared/widgets/lists/settings_list.dart';
 
 /// Settings row that shows the theme in use and opens the picker for it.
 class AppearanceRow extends ConsumerWidget {

@@ -12,8 +12,8 @@ import 'package:genie/features/profile/presentation/widgets/profile_avatar.dart'
 import 'package:genie/features/security/presentation/screens/security_page.dart';
 import 'package:genie/features/settings/presentation/widgets/preference_rows.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/settings_list.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/lists/settings_list.dart';
 
 /// The "User" tab: who is signed in, and the way into every account setting.
 class UserProfilePage extends ConsumerStatefulWidget {

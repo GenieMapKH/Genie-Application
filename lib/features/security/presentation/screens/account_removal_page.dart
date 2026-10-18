@@ -11,7 +11,7 @@ import 'package:genie/features/security/presentation/view_models/security_provid
 import 'package:genie/features/security/presentation/widgets/identity_confirm_dialog.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
 
 /// Two ways to leave: deactivate (hidden until the next sign-in, nothing
 /// lost) or delete (gone for good). Both ask for proof of identity first.

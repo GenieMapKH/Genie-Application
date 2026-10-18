@@ -5,7 +5,7 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
 import 'package:genie/features/property/presentation/view_models/property_visibility.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_summary.dart';
+import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
 import 'package:genie/l10n/generated/app_localizations.dart';
 
 PropertyModel _listing({
