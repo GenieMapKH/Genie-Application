@@ -94,6 +94,42 @@ void main() {
     );
   });
 
+  test('a refusal carries what the server says: tries left, or the wait', () async {
+    await expectLater(
+      _repositoryWith(
+        _StubAdapter(403, '{"message":"Wrong PIN","attemptsLeft":2}'),
+      ).unlockBackup('proof'),
+      throwsA(
+        isA<WrongPinException>().having((e) => e.attemptsLeft, 'left', 2),
+      ),
+    );
+    await expectLater(
+      _repositoryWith(
+        _StubAdapter(429, '{"retryAfterSeconds":900}'),
+      ).unlockBackup('proof'),
+      throwsA(
+        isA<BackupRateLimitedException>().having(
+          (e) => e.retryAfter,
+          'wait',
+          const Duration(minutes: 15),
+        ),
+      ),
+    );
+    // A plain refusal, e.g. from the lookup limit, still says what it is.
+    await expectLater(
+      _repositoryWith(
+        _StubAdapter(429, '"Too Many Requests"'),
+      ).fetchBackup(),
+      throwsA(
+        isA<BackupRateLimitedException>().having(
+          (e) => e.retryAfter,
+          'wait',
+          isNull,
+        ),
+      ),
+    );
+  });
+
   test('fetchBackup returns null when the user has no backup yet', () async {
     final repository = _repositoryWith(_StubAdapter(404));
 
@@ -129,6 +165,7 @@ void main() {
       'backupSalt': 's',
       'backupNonce': 'n',
       'backupVerifier': 'v',
+      'protectedBy': 'pin',
     });
   });
 
@@ -184,6 +221,7 @@ void main() {
         'backupSalt': 's',
         'backupNonce': 'n',
         'backupVerifier': 'v',
+        'protectedBy': 'pin',
         'currentBackupVerifier': 'proof-of-current-pin',
         'identityPublicKey': 'new-public-key',
       });

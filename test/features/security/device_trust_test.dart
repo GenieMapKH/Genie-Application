@@ -63,46 +63,14 @@ class _Sessions extends Fake implements SessionRepository {
   }
 }
 
-/// Records how a forgotten PIN was recovered, without doing any key work.
+/// Says whether this device holds the account's keys, without any key work.
 class _FakeKeyManager extends Fake implements E2eeKeyManager {
   final bool holdsKeys;
-  String? passwordProof;
-  String? newPin;
 
   _FakeKeyManager({required this.holdsKeys});
 
   @override
   Future<bool> holdsCurrentKeys(String userId) async => holdsKeys;
-
-  @override
-  Future<RecoverKeysResult> recoverWithPassword(
-    String userId, {
-    required String passwordProof,
-    required PinRequest askNewPin,
-  }) async {
-    this.passwordProof = passwordProof;
-    newPin = await askNewPin();
-    if (newPin == null) return RecoverKeysResult.cancelled;
-    return holdsKeys ? RecoverKeysResult.keptKeys : RecoverKeysResult.newKeys;
-  }
-
-  bool turnedOff = false;
-
-  @override
-  Future<RecoverKeysResult> turnOffWithPassword(
-    String userId, {
-    required String passwordProof,
-  }) async {
-    this.passwordProof = passwordProof;
-    turnedOff = true;
-    return holdsKeys ? RecoverKeysResult.keptKeys : RecoverKeysResult.newKeys;
-  }
-}
-
-/// Toasts stay for a few seconds; a test must not end while one is showing.
-Future<void> _letToastsLeave(WidgetTester tester) async {
-  await tester.pump(const Duration(seconds: 5));
-  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -379,93 +347,45 @@ void main() {
     });
   });
 
-  group('forgotten backup PIN', () {
-    Future<_FakeKeyManager> open(
-      WidgetTester tester, {
-      required bool holdsKeys,
-      UserProfile? profile,
-      int proofStatus = 200,
-    }) async {
-      final manager = _FakeKeyManager(holdsKeys: holdsKeys);
+  // The account password proves a forgotten chat PIN is the owner's: an
+  // account that signs in with Google alone creates one first.
+  group('forgotten chat PIN of a Google-only account', () {
+    Future<void> open(WidgetTester tester, {required bool holdsKeys}) async {
       await pumpTestApp(
         tester,
         const SecurityPage(),
         overrides: [
-          _signedInAs(profile ?? _profile()),
-          e2eeKeyManagerProvider.overrideWithValue(manager),
-          accountRepositoryProvider.overrideWithValue(
-            AccountRepository(
-              StubServer.always(
-                proofStatus,
-                '{"proofToken":"signed-proof"}',
-              ).dio,
-            ),
+          _signedInAs(_profile(firebaseUid: 'fb1', hasPassword: false)),
+          e2eeKeyManagerProvider.overrideWithValue(
+            _FakeKeyManager(holdsKeys: holdsKeys),
           ),
         ],
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Forgot backup PIN'));
+      await tester.tap(find.text('Forgot chat PIN'));
       await tester.pumpAndSettle();
-      return manager;
     }
 
-    testWidgets(
-      'the account password is the way back in, and no history is lost',
-      (tester) async {
-        final manager = await open(tester, holdsKeys: true);
-        expect(find.textContaining('nothing is lost'), findsOneWidget);
-        await tester.tap(find.text('Continue'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('Confirm your password'), findsOneWidget);
-        await tester.enterText(find.byType(TextField), 'my-password');
-        await tester.tap(find.text('Continue'));
-        await tester.pumpAndSettle();
-
-        // A new PIN, or none at all.
-        expect(find.text('Keep a backup PIN?'), findsOneWidget);
-        await tester.tap(find.text('New PIN'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('Enter new PIN'), findsOneWidget);
-        await tester.enterText(find.byType(TextField), '739206');
-        await tester.tap(find.text('Submit'));
-        await tester.pumpAndSettle();
-
-        expect(manager.passwordProof, 'signed-proof');
-        expect(manager.newPin, '739206');
-        expect(
-          find.text('New backup PIN set. Your chat history is intact.'),
-          findsOneWidget,
-        );
-        await _letToastsLeave(tester);
-      },
-    );
-
-    testWidgets('the PIN can be turned off instead of replaced', (
+    testWidgets('first creates a password, and no history is lost', (
       tester,
     ) async {
-      final manager = await open(tester, holdsKeys: true);
-      await tester.tap(find.text('Continue'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'my-password');
+      await open(tester, holdsKeys: true);
+      expect(find.textContaining('nothing is lost'), findsOneWidget);
+
       await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('No PIN'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Enter new PIN'), findsNothing);
-      expect(manager.turnedOff, isTrue);
-      expect(manager.passwordProof, 'signed-proof');
-      expect(find.text('Backup PIN turned off.'), findsOneWidget);
-      await _letToastsLeave(tester);
+      expect(find.byType(CreatePasswordPage), findsOneWidget);
+      expect(
+        find.textContaining('when you choose a new chat PIN'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('warns first when this device cannot keep the history', (
       tester,
     ) async {
-      final manager = await open(tester, holdsKeys: false);
+      await open(tester, holdsKeys: false);
 
       expect(
         find.textContaining('earlier chat history can no longer be read'),
@@ -474,38 +394,7 @@ void main() {
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
 
-      expect(manager.passwordProof, isNull);
-    });
-
-    testWidgets('a wrong password recovers nothing', (tester) async {
-      final manager = await open(tester, holdsKeys: true, proofStatus: 403);
-      await tester.tap(find.text('Continue'));
-      await tester.pumpAndSettle();
-
-      await tester.enterText(find.byType(TextField), 'a-guess');
-      await tester.tap(find.text('Continue'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('The password is incorrect.'), findsOneWidget);
-      expect(manager.passwordProof, isNull);
-    });
-
-    testWidgets('a Google account is sent to create a password first', (
-      tester,
-    ) async {
-      await open(
-        tester,
-        holdsKeys: true,
-        profile: _profile(firebaseUid: 'fb1', hasPassword: false),
-      );
-      await tester.tap(find.text('Continue'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(CreatePasswordPage), findsOneWidget);
-      expect(
-        find.textContaining('Recovering your PIN needs your account password'),
-        findsOneWidget,
-      );
+      expect(find.byType(CreatePasswordPage), findsNothing);
     });
   });
 }

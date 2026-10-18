@@ -87,6 +87,8 @@ extension AddPropertyPageLogic on AddPropertyPageState {
             propertyId: widget.property!.id,
             input: collectFormInput(),
             newPhotos: selectedPhotos,
+            removedPhotoUrls: removedPhotoUrls.toList(),
+            boundaryPoints: isBoundaryChanged ? widget.boundaryPoints : null,
           );
       if (!mounted) return;
       AppPopup.showSuccess(context, context.l10n.propertyChangesSaved);

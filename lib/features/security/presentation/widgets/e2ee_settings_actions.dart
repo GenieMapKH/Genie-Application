@@ -12,44 +12,6 @@ import 'package:genie/shared/utils/app_popup.dart';
 /// The actual key work is done by [E2eeKeyManager]. A forgotten PIN is
 /// handled by `ForgotPinActions`.
 abstract final class E2eeSettingsActions {
-  /// The backup PIN is optional; this adds one for someone who has none.
-  static Future<void> setUpBackupPin(
-    BuildContext context,
-    WidgetRef ref, {
-    required String userId,
-  }) async {
-    final l10n = context.l10n;
-    final result = await ref
-        .read(e2eeKeyManagerProvider)
-        .setUpBackupPin(
-          userId,
-          askNewPin: () => showPinPrompt(
-            context,
-            title: l10n.pinSetUpTitle,
-            helper: l10n.pinSetUpHelp,
-            isNewPin: true,
-          ),
-        );
-    if (!context.mounted) return;
-
-    switch (result) {
-      case SetUpPinResult.created:
-        AppPopup.showSuccess(context, l10n.pinSetUpDone);
-      case SetUpPinResult.cancelled:
-        break;
-      case SetUpPinResult.alreadySet:
-        AppPopup.showInfo(context, l10n.pinAlreadySet);
-      case SetUpPinResult.keysNotReady:
-        AppPopup.showInfo(context, l10n.pinKeysNotReady);
-      case SetUpPinResult.rateLimited:
-        AppPopup.showError(context, l10n.pinLocked);
-      case SetUpPinResult.fetchFailed:
-        AppPopup.showError(context, l10n.pinFetchFailed);
-      case SetUpPinResult.saveFailed:
-        AppPopup.showError(context, l10n.pinSaveFailed);
-    }
-  }
-
   static Future<void> changeBackupPin(
     BuildContext context,
     WidgetRef ref,
@@ -86,45 +48,7 @@ abstract final class E2eeSettingsActions {
     }
   }
 
-  /// Back to no PIN: says what is given up, then asks for the current PIN.
-  static Future<void> turnOffBackupPin(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    final l10n = context.l10n;
-    final goAhead = await showSecurityConfirmDialog(
-      context,
-      title: l10n.pinTurnOffConfirmTitle,
-      message: l10n.pinTurnOffConfirmMessage,
-      action: l10n.pinTurnOffAction,
-      isDestructive: true,
-    );
-    if (!goAhead || !context.mounted) return;
-
-    final result = await ref
-        .read(e2eeKeyManagerProvider)
-        .turnOffBackupPin(askCurrentPin: () => _askCurrentPin(context));
-    if (!context.mounted) return;
-
-    switch (result) {
-      case TurnOffPinResult.turnedOff:
-        AppPopup.showSuccess(context, l10n.pinTurnedOff);
-      case TurnOffPinResult.cancelled:
-        break;
-      case TurnOffPinResult.noBackup:
-        AppPopup.showInfo(context, l10n.pinNoBackup);
-      case TurnOffPinResult.wrongPin:
-        AppPopup.showError(context, l10n.pinWrong);
-      case TurnOffPinResult.rateLimited:
-        AppPopup.showError(context, l10n.pinLocked);
-      case TurnOffPinResult.fetchFailed:
-        AppPopup.showError(context, l10n.pinFetchFailed);
-      case TurnOffPinResult.removeFailed:
-        AppPopup.showError(context, l10n.pinTurnOffFailed);
-    }
-  }
-
-  /// With a backup PIN, asks for it before anything is replaced: without it,
+  /// Asks for the current PIN before anything is replaced: without it,
   /// whoever holds the unlocked phone could take over the account's chats.
   static Future<void> resetKeys(
     BuildContext context,

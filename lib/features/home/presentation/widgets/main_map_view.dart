@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,12 +12,10 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/home/utils/map/map_camera_focus.dart';
-import 'package:genie/features/home/utils/map/markers/property_markers.dart';
-import 'package:genie/features/home/utils/map/markers/vertex_markers.dart';
 import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
-import 'package:genie/features/home/utils/map/svg_marker.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/storage/map_storage.dart';
+import 'package:genie/features/home/presentation/widgets/main_map_overlays.dart';
 import 'package:genie/features/home/presentation/widgets/property_carousel.dart';
 
 class MainMapView extends ConsumerStatefulWidget {
@@ -36,10 +36,13 @@ class MainMapView extends ConsumerStatefulWidget {
 }
 
 class MainMapViewState extends ConsumerState<MainMapView> {
-  MapOverlays _overlays = const MapOverlays();
-  MapIcons _icons = const MapIcons();
-  bool _overlayBuildRunning = false;
-  bool _overlayBuildQueued = false;
+  late final _overlays = MainMapOverlays(
+    ref: ref,
+    onChanged: () {
+      if (mounted) setState(() {});
+    },
+    onZoomToCluster: _zoomToCluster,
+  );
 
   /// The map frame extends this many logical pixels past the bottom of the
   /// screen (see the `GoogleMap`'s `bottom: -40` below), which shifts its
@@ -55,21 +58,14 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   @override
   void initState() {
     super.initState();
-    _loadMapIcons();
+    _overlays.loadIcons();
     _loadInitialMapPosition();
   }
 
-  Future<void> _loadMapIcons() async {
-    final icons = MapIcons(
-      pin: await getSvgMarker('assets/icons/pin.svg'),
-      greenDot: await PropertyMarkers.greenDot(),
-      selectedDot: await PropertyMarkers.greenDot(isSelected: true),
-      newBadge: await PropertyMarkers.newBadge(),
-      smallWhiteDot: await VertexMarkers.smallWhiteDot(),
-    );
-    if (!mounted) return;
-    _icons = icons;
-    _updateMapOverlays();
+  @override
+  void dispose() {
+    _overlays.dispose();
+    super.dispose();
   }
 
   Future<void> _loadInitialMapPosition() async {
@@ -84,65 +80,27 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     }
   }
 
-  /// Rebuilds the overlays. Calls that arrive while a build is running are
-  /// folded into a single follow-up build, so a burst of triggers (data
-  /// arriving while the user crosses a zoom threshold) never stacks builds.
-  Future<void> _updateMapOverlays() async {
-    if (!mounted) return;
-    if (_overlayBuildRunning) {
-      _overlayBuildQueued = true;
-      return;
+  /// Zooms in until the listings merged into a cluster bubble fit on screen,
+  /// which is where they split back into separate dots or price tags.
+  Future<void> _zoomToCluster(List<LatLng> points) async {
+    final controller = await widget.mapControllerCompleter.future;
+    var south = points.first.latitude, north = south;
+    var west = points.first.longitude, east = west;
+    for (final point in points) {
+      south = math.min(south, point.latitude);
+      north = math.max(north, point.latitude);
+      west = math.min(west, point.longitude);
+      east = math.max(east, point.longitude);
     }
-
-    _overlayBuildRunning = true;
-    try {
-      do {
-        _overlayBuildQueued = false;
-        await _buildMapOverlays();
-      } while (_overlayBuildQueued && mounted);
-    } finally {
-      _overlayBuildRunning = false;
-    }
-  }
-
-  Future<void> _buildMapOverlays() async {
-    if (!mounted) return;
-
-    final notifier = ref.read(mapStateProvider.notifier);
-    final mapState = ref.read(mapStateProvider);
-
-    if (mapState.isDrawing) {
-      ref.read(propertyCarouselProvider.notifier).clear();
-    }
-
-    final overlays = await MapOverlayBuilder.build(
-      mapState: mapState,
-      zoom: ref.read(mapCameraProvider).zoom,
-      mapProperties: ref.read(mapPropertiesProvider),
-      selectedProperty: ref.read(propertyCarouselProvider).selected,
-      icons: _icons,
-      callbacks: MapOverlayCallbacks(
-        onSelectProperty: (property) {
-          if (ref.read(mapStateProvider).isDrawing) return;
-          ref.read(propertyCarouselProvider.notifier).select(property);
-
-          if (!property.isVisited) {
-            // Optimistically mark as visited in UI
-            ref.read(visitedPropertyIdsProvider.notifier).add(property.id);
-            // Send to backend
-            ref.read(propertyRepositoryProvider).markAsViewed(property.id);
-          }
-        },
-        onHighlightLocalPolygon: notifier.highlightLocalPolygon,
-        onEditProperty: notifier.editProperty,
-        onUpdatePoint: notifier.updatePoint,
-        onInsertPoint: notifier.insertPoint,
-        onSelectVertex: notifier.selectVertex,
-        onClosePolygon: notifier.closePolygonForEditing,
+    await controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(south, west),
+          northeast: LatLng(north, east),
+        ),
+        80,
       ),
     );
-
-    if (mounted) setState(() => _overlays = overlays);
   }
 
   /// Frames [property] in the strip of map still visible above the card.
@@ -190,16 +148,6 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     );
   }
 
-  void _handleMapStateChange(MapState? previous, MapState next) {
-    if (previous?.drawnPoints != next.drawnPoints ||
-        previous?.isDrawing != next.isDrawing ||
-        previous?.highlightedLocalPolygon != next.highlightedLocalPolygon ||
-        previous?.selectedVertexIndex != next.selectedVertexIndex ||
-        previous?.isEditingPolygon != next.isEditingPolygon) {
-      _updateMapOverlays();
-    }
-  }
-
   Future<void> _handleCameraIdle() async {
     final state = ref.read(mapStateProvider);
     final camera = ref.read(mapCameraProvider);
@@ -243,11 +191,14 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     }
   }
 
+  /// Zoomed out, the dot clusters change at every whole zoom level. Zoomed
+  /// in, only the measurement label sizes change, at 15, 18 and 19.
   static int _zoomBand(double zoom) {
-    if (zoom <= MapOverlayBuilder.clusterZoomThreshold) return 1;
-    if (zoom <= MapOverlayBuilder.detailZoomThreshold) return 2;
-    if (zoom <= 18.0) return 3;
-    return 4;
+    if (zoom <= MapOverlayBuilder.clusterZoomThreshold) return zoom.floor();
+    if (zoom <= 15.0) return 100;
+    if (zoom < 18.0) return 101;
+    if (zoom < 19.0) return 102;
+    return 103;
   }
 
   /// Runs on every frame of a pan or zoom, so it must stay trivial: record the
@@ -262,7 +213,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
 
     if (_zoomBand(previousZoom) != _zoomBand(position.zoom) &&
         !ref.read(mapStateProvider).isDrawing) {
-      _updateMapOverlays();
+      _overlays.rebuildAll();
     }
   }
 
@@ -276,11 +227,11 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     );
     final navIndex = ref.watch(mainNavProvider.select((s) => s.currentIndex));
 
-    ref.listen(mapPropertiesProvider, (_, _) => _updateMapOverlays());
-    ref.listen(mapStateProvider, _handleMapStateChange);
+    ref.listen(mapPropertiesProvider, (_, _) => _overlays.rebuildListings());
+    ref.listen(mapStateProvider, _overlays.onMapStateChanged);
     ref.listen(propertyCarouselProvider, (previous, next) {
       if (previous?.selected?.id == next.selected?.id) return;
-      _updateMapOverlays();
+      _overlays.rebuildListings();
 
       final property = next.selected;
       if (property != null) {
@@ -313,7 +264,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
                 if (!widget.mapControllerCompleter.isCompleted) {
                   widget.mapControllerCompleter.complete(controller);
                 }
-                _updateMapOverlays();
+                _overlays.rebuildAll();
               },
               onCameraMove: _handleCameraMove,
               onCameraIdle: _handleCameraIdle,
@@ -327,9 +278,9 @@ class MainMapViewState extends ConsumerState<MainMapView> {
                       .highlightLocalPolygon(null);
                 }
               },
-              markers: _overlays.markers,
-              polygons: _overlays.polygons,
-              polylines: _overlays.polylines,
+              markers: _overlays.current.markers,
+              polygons: _overlays.current.polygons,
+              polylines: _overlays.current.polylines,
               zoomControlsEnabled: false,
               myLocationButtonEnabled: false,
               minMaxZoomPreference: const MinMaxZoomPreference(0, null),

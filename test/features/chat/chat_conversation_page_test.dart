@@ -132,54 +132,60 @@ void main() {
     expect(find.text('Hello'), findsOneWidget);
   });
 
-  testWidgets('explains a wrong PIN and offers another try', (tester) async {
-    setup.result = E2eeSetupResult.wrongPin;
+  testWidgets('a closed PIN prompt says chat is locked and offers the PIN', (
+    tester,
+  ) async {
+    setup.result = E2eeSetupResult.cancelled;
 
     await openChat(tester);
 
-    expect(
-      find.textContaining(
-        'Incorrect PIN. After 5 wrong tries the backup locks for a while.',
-      ),
-      findsOneWidget,
-    );
+    expect(find.text('Chats are locked on this phone'), findsOneWidget);
     // Someone who cannot remember it is told where the way back is.
-    expect(find.textContaining('Forgot backup PIN'), findsOneWidget);
+    expect(find.textContaining('Forgot chat PIN'), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
 
     setup.result = E2eeSetupResult.ready;
-    await tester.tap(find.text('Try again'));
+    await tester.tap(find.text('Enter PIN'));
     for (var i = 0; i < 5; i++) {
       await tester.pump();
     }
 
+    expect(setup.runs, 2);
     expect(find.byType(TextField), findsOneWidget);
   });
 
-  testWidgets(
-    'chat moved to another device is taken back only when the user asks',
-    (tester) async {
-      setup.result = E2eeSetupResult.usedOnAnotherDevice;
+  testWidgets('too many wrong PINs is shown as a lock, not a broken chat', (
+    tester,
+  ) async {
+    setup.result = E2eeSetupResult.rateLimited;
 
-      await openChat(tester);
+    await openChat(tester);
 
-      expect(
-        find.textContaining('now set up on another device'),
-        findsOneWidget,
-      );
-      expect(find.byType(TextField), findsNothing);
-      expect(setup.takeOvers, [false]);
+    expect(find.text('Too many wrong PINs'), findsOneWidget);
+    expect(find.byIcon(Icons.lock_clock_outlined), findsOneWidget);
+    expect(find.text('Try again'), findsOneWidget);
+  });
 
-      setup.result = E2eeSetupResult.ready;
-      await tester.tap(find.text('Use chat on this phone'));
-      for (var i = 0; i < 5; i++) {
-        await tester.pump();
-      }
+  testWidgets('an account without a chat PIN is sent to create one', (
+    tester,
+  ) async {
+    setup.result = E2eeSetupResult.pinNotSet;
 
-      expect(setup.takeOvers, [false, true]);
-      expect(find.byType(TextField), findsOneWidget);
-    },
-  );
+    await openChat(tester);
+
+    expect(find.text('Create your chat PIN'), findsOneWidget);
+    expect(find.byType(TextField), findsNothing);
+
+    await tester.tap(find.text('Create PIN'));
+    await tester.pumpAndSettle();
+
+    // The setup screen, with the six PIN boxes.
+    expect(find.text('Type the same 6 digits again.'), findsNothing);
+    expect(
+      find.textContaining('This 6-digit PIN brings them back'),
+      findsOneWidget,
+    );
+  });
 
   testWidgets('the header shows whether the other person is online', (
     tester,

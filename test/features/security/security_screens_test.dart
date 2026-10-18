@@ -15,16 +15,24 @@ import 'package:genie/features/security/presentation/view_models/security_provid
 
 import '../../support/test_app.dart';
 
-UserProfile _profile({String? firebaseUid}) => UserProfile(
-  id: 'u1',
-  role: 'user',
-  createdAt: DateTime(2026),
-  firebaseUid: firebaseUid,
-);
+UserProfile _profile({String? firebaseUid, bool hasPassword = true}) =>
+    UserProfile(
+      id: 'u1',
+      role: 'user',
+      createdAt: DateTime(2026),
+      firebaseUid: firebaseUid,
+      hasPassword: hasPassword,
+    );
 
-Override _signedIn({String? firebaseUid}) => userProfileProvider.overrideWith(
-  (ref) async => _profile(firebaseUid: firebaseUid),
-);
+Override _signedIn({String? firebaseUid, bool hasPassword = true}) =>
+    userProfileProvider.overrideWith(
+      (ref) async =>
+          _profile(firebaseUid: firebaseUid, hasPassword: hasPassword),
+    );
+
+/// An account that signs in only with Google: it has no password.
+Override _signedInWithGoogleOnly() =>
+    _signedIn(firebaseUid: 'fb1', hasPassword: false);
 
 /// [established] is false for a device that signed in less than a day ago.
 String _sessionsJson({bool established = true}) {
@@ -39,10 +47,28 @@ String _sessionsJson({bool established = true}) {
       '"canSignOutOthersFrom":"2026-03-02T08:00:00.000Z"}';
 }
 
-/// Records which PINs the reset asked for, without doing any key work.
+/// Records which PINs and password were asked for, without doing any key
+/// work.
 class _FakeKeyManager extends Fake implements E2eeKeyManager {
   String? currentPin;
   String? newPin;
+  String? password;
+  bool holdsKeys = true;
+
+  @override
+  Future<bool> holdsCurrentKeys(String userId) async => holdsKeys;
+
+  @override
+  Future<RecoverPinResult> recoverWithPassword(
+    String userId, {
+    required String password,
+    required PinRequest askNewPin,
+  }) async {
+    this.password = password;
+    newPin = await askNewPin();
+    if (newPin == null) return RecoverPinResult.cancelled;
+    return holdsKeys ? RecoverPinResult.recovered : RecoverPinResult.startedOver;
+  }
 
   @override
   Future<ResetKeysResult> resetKeys(
@@ -65,26 +91,69 @@ Future<void> _letToastsLeave(WidgetTester tester) async {
 
 void main() {
   group('security screen', () {
-    testWidgets('gathers encryption, sign-in and account tools', (
+    for (final (kind, account) in [
+      ('a password account', _signedIn()),
+      ('a Google-only account', _signedInWithGoogleOnly()),
+    ]) {
+      testWidgets('$kind has a chat PIN it cannot turn off', (tester) async {
+        await pumpTestApp(tester, const SecurityPage(), overrides: [account]);
+
+        expect(
+          find.textContaining('protected by your 6-digit chat PIN'),
+          findsOneWidget,
+        );
+        for (final row in [
+          'Change chat PIN',
+          'Forgot chat PIN',
+          'Reset encryption keys',
+          'Logged-in devices',
+          'Deactivate or delete account',
+        ]) {
+          await tester.scrollUntilVisible(find.text(row), 100);
+          expect(find.text(row), findsOneWidget);
+        }
+        expect(find.textContaining('Turn off'), findsNothing);
+        expect(find.textContaining('Set up'), findsNothing);
+      });
+    }
+
+    testWidgets('a forgotten PIN is replaced after the account password', (
       tester,
     ) async {
-      await pumpTestApp(tester, const SecurityPage(), overrides: [_signedIn()]);
+      final manager = _FakeKeyManager();
+      await pumpTestApp(
+        tester,
+        const SecurityPage(),
+        overrides: [
+          _signedIn(),
+          e2eeKeyManagerProvider.overrideWithValue(manager),
+        ],
+      );
 
-      // The backup PIN is optional: it can be added and removed here.
-      expect(find.textContaining('A backup PIN is optional'), findsOneWidget);
-      for (final row in [
-        'Set up backup PIN',
-        'Change backup PIN',
-        'Forgot backup PIN',
-        'Turn off backup PIN',
-        'Reset encryption keys',
-        'Change password',
-        'Logged-in devices',
-        'Deactivate or delete account',
-      ]) {
-        await tester.scrollUntilVisible(find.text(row), 100);
-        expect(find.text(row), findsOneWidget);
-      }
+      await tester.tap(find.text('Forgot chat PIN'));
+      await tester.pumpAndSettle();
+      // This phone holds the keys: nothing is lost, so it says so.
+      expect(find.textContaining('nothing is lost'), findsOneWidget);
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Enter your account password'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'my-password');
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      expect(manager.password, 'my-password');
+      expect(find.text('Enter new PIN'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), '739206');
+      await tester.tap(find.text('Submit'));
+      await tester.pumpAndSettle();
+
+      expect(manager.newPin, '739206');
+      expect(
+        find.text('Done. Your new chat PIN protects your chats.'),
+        findsOneWidget,
+      );
+      await _letToastsLeave(tester);
     });
 
     testWidgets('resetting keys asks for the current PIN before a new one', (
@@ -95,7 +164,7 @@ void main() {
         tester,
         const SecurityPage(),
         overrides: [
-          _signedIn(),
+          _signedInWithGoogleOnly(),
           e2eeKeyManagerProvider.overrideWithValue(manager),
         ],
       );
@@ -130,7 +199,7 @@ void main() {
         tester,
         const SecurityPage(),
         overrides: [
-          _signedIn(),
+          _signedInWithGoogleOnly(),
           e2eeKeyManagerProvider.overrideWithValue(manager),
         ],
       );

@@ -1,14 +1,13 @@
-import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/utils/map/layers/clustered_layer.dart';
 import 'package:genie/features/home/utils/map/layers/detailed_property_layer.dart';
+import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
 import 'package:genie/features/home/utils/map/layers/drawing_layer.dart';
 import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
 import 'package:genie/features/home/utils/map/layers/property_dots_layer.dart';
-import 'package:genie/features/home/utils/map/map_measurements.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 
 /// The icon set the overlay builder draws with. Loaded once by the map view.
@@ -32,20 +31,15 @@ class MapIcons {
 class MapOverlayCallbacks {
   final void Function(PropertyModel property) onSelectProperty;
   final void Function(int index) onHighlightLocalPolygon;
-  final void Function(List<LatLng> points) onEditProperty;
-  final void Function(int index, LatLng point) onUpdatePoint;
-  final void Function(int index, LatLng point) onInsertPoint;
-  final void Function(int? index) onSelectVertex;
-  final VoidCallback onClosePolygon;
+  final void Function(List<LatLng> points, PropertyModel? property)
+  onEditProperty;
+  final void Function(List<LatLng> points) onZoomToCluster;
 
   const MapOverlayCallbacks({
     required this.onSelectProperty,
     required this.onHighlightLocalPolygon,
     required this.onEditProperty,
-    required this.onUpdatePoint,
-    required this.onInsertPoint,
-    required this.onSelectVertex,
-    required this.onClosePolygon,
+    required this.onZoomToCluster,
   });
 }
 
@@ -60,14 +54,26 @@ class MapOverlays {
     this.polygons = const {},
     this.polylines = const {},
   });
+
+  /// Both sets of layers drawn together.
+  MapOverlays merge(MapOverlays other) => MapOverlays(
+    markers: {...markers, ...other.markers},
+    polygons: {...polygons, ...other.polygons},
+    polylines: {...polylines, ...other.polylines},
+  );
 }
 
 /// Turns property data plus map state into Google Maps layers.
+///
+/// Zoomed out, listings are green dots (merged into count bubbles where they
+/// would overlap); zoomed in, they are price tags. A tapped listing also shows
+/// its boundary and side lengths, at any zoom.
 class MapOverlayBuilder {
+  /// At or below this zoom the map shows dots instead of price tags.
   static const double clusterZoomThreshold = 13.0;
-  static const double detailZoomThreshold = 16.5;
 
-  static Future<MapOverlays> build({
+  /// The listings: dots, bubbles or price tags, and the tapped one's outline.
+  static Future<MapOverlays> buildListings({
     required MapState mapState,
     required double zoom,
     required MapProperties mapProperties,
@@ -79,71 +85,32 @@ class MapOverlayBuilder {
     final Set<Polyline> polylines = {};
     final Set<Polygon> polygons = {};
 
-    final bool isClusteredView = zoom <= clusterZoomThreshold;
+    // One entry per listing. Locally drawn polygons come first so their index
+    // matches [MapState.finalizedProperties]; they have no backend model.
+    final List<LatLng> positions = [];
+    final List<List<LatLng>> boundaries = [];
+    final List<PropertyModel?> models = [];
+    final List<bool> isOwned = [];
 
-    // Locally drawn polygons come first so their indices stay stable; they have
-    // no backend model, hence the null entries.
-    final List<List<LatLng>> allProps = List.from(mapState.finalizedProperties);
-    final List<bool> allPropsIsOwned = List.filled(
-      mapState.finalizedProperties.length,
-      true,
-      growable: true,
-    );
-    final List<PropertyModel?> allPropModels = List.filled(
-      mapState.finalizedProperties.length,
-      null,
-      growable: true,
-    );
-
-    final List<LatLng> allCentroids = [];
-    final List<PropertyModel?> allCentroidModels = [];
-    final List<List<LatLng>> detailedProps = [];
-    final List<bool> detailedPropsIsOwned = [];
-    final List<PropertyModel?> detailedPropModels = [];
-
-    for (final property in mapProperties.properties) {
-      final bool isOwned = mapProperties.isOwned(property.id);
-      if (property.boundaryPoints.isNotEmpty) {
-        allProps.add(property.boundaryPoints);
-        allPropsIsOwned.add(isOwned);
-        allPropModels.add(property);
-      } else if (property.lat != null && property.lng != null) {
-        allCentroids.add(LatLng(property.lat!, property.lng!));
-        allCentroidModels.add(property);
-      }
+    for (final points in mapState.finalizedProperties) {
+      positions.add(centroidOf(points));
+      boundaries.add(points);
+      models.add(null);
+      isOwned.add(true);
     }
 
-    for (int i = 0; i < allProps.length; i++) {
-      final points = allProps[i];
-      if (points.length < 3) continue;
-
-      double sumLat = 0, sumLng = 0;
-      for (final point in points) {
-        sumLat += point.latitude;
-        sumLng += point.longitude;
-      }
-      final centroid = LatLng(sumLat / points.length, sumLng / points.length);
-      final model = allPropModels[i];
-
-      bool isDetailed =
-          zoom > detailZoomThreshold ||
-          (selectedProperty != null && selectedProperty.id == model?.id);
-
-      if (!isDetailed) {
-        final measurements = calculateMeasurements(points);
-        if (measurements != null) {
-          isDetailed = shouldShowDetailedView(measurements.area, zoom);
-        }
-      }
-
-      if (isDetailed) {
-        detailedProps.add(points);
-        detailedPropsIsOwned.add(allPropsIsOwned[i]);
-        detailedPropModels.add(model);
+    for (final property in mapProperties.properties) {
+      final boundary = property.boundaryPoints;
+      if (boundary.length >= 3) {
+        positions.add(centroidOf(boundary));
+      } else if (property.lat != null && property.lng != null) {
+        positions.add(LatLng(property.lat!, property.lng!));
       } else {
-        allCentroids.add(centroid);
-        allCentroidModels.add(model);
+        continue;
       }
+      boundaries.add(boundary);
+      models.add(property);
+      isOwned.add(mapProperties.isOwned(property.id));
     }
 
     /// Backend properties match on id; locally drawn ones fall back to index.
@@ -152,68 +119,84 @@ class MapOverlayBuilder {
       return mapState.highlightedLocalPolygon == index;
     }
 
-    if (isClusteredView) {
-      ClusteredLayer.build(allCentroids, markers, icons.greenDot);
-    } else {
-      if (detailedProps.isNotEmpty) {
-        await DetailedPropertyLayer.build(
-          detailedProps,
-          detailedPropsIsOwned,
-          detailedPropModels,
-          polygons,
-          markers,
-          isHighlighted,
-          zoom,
-          (index, property) {
-            if (mapState.isDrawing) return;
-            if (property != null) {
-              callbacks.onSelectProperty(property);
-            } else {
-              callbacks.onHighlightLocalPolygon(index);
-            }
-          },
-          callbacks.onEditProperty,
-        );
-      }
-
-      if (allCentroids.isNotEmpty) {
-        await PropertyDotsLayer.build(
-          allCentroids,
-          allCentroidModels,
-          markers,
-          icons.greenDot,
-          icons.selectedDot,
-          isHighlighted,
-          (index, property) {
-            if (mapState.isDrawing) return;
-            if (property != null) {
-              callbacks.onSelectProperty(property);
-            } else {
-              callbacks.onHighlightLocalPolygon(index);
-            }
-          },
-        );
+    void onViewProperty(int index, PropertyModel? property) {
+      if (mapState.isDrawing) return;
+      if (property != null) {
+        callbacks.onSelectProperty(property);
+      } else {
+        callbacks.onHighlightLocalPolygon(index);
       }
     }
 
-    if (mapState.isDrawing) {
-      await DrawingLayer.build(
-        mapState.drawnPoints,
-        mapState.isEditingPolygon,
-        mapState.selectedVertexIndex,
-        zoom,
-        polygons,
-        markers,
-        polylines,
-        icons.pin,
-        icons.smallWhiteDot,
-        callbacks.onUpdatePoint,
-        callbacks.onInsertPoint,
-        callbacks.onSelectVertex,
-        callbacks.onClosePolygon,
+    for (var i = 0; i < positions.length; i++) {
+      if (boundaries[i].length < 3 || !isHighlighted(i, models[i])) continue;
+      await DetailedPropertyLayer.build(
+        index: i,
+        points: boundaries[i],
+        property: models[i],
+        isOwned: isOwned[i],
+        zoom: zoom,
+        polygons: polygons,
+        markers: markers,
+        onViewProperty: onViewProperty,
+        onEditProperty: callbacks.onEditProperty,
       );
     }
 
+    if (zoom <= clusterZoomThreshold) {
+      await ClusteredLayer.build(
+        positions: positions,
+        models: models,
+        zoom: zoom,
+        markers: markers,
+        dotIcon: icons.greenDot,
+        selectedDotIcon: icons.selectedDot,
+        isHighlighted: isHighlighted,
+        onViewProperty: onViewProperty,
+        onZoomToCluster: callbacks.onZoomToCluster,
+      );
+    } else {
+      await PropertyDotsLayer.build(
+        positions,
+        models,
+        markers,
+        icons.greenDot,
+        icons.selectedDot,
+        isHighlighted,
+        onViewProperty,
+      );
+    }
+
+    return MapOverlays(
+      markers: markers,
+      polygons: polygons,
+      polylines: polylines,
+    );
+  }
+
+  /// The boundary being drawn or edited. Built apart from the listings so a
+  /// dragged corner redraws only this layer, many times a second.
+  static Future<MapOverlays> buildDrawing({
+    required MapState mapState,
+    required double zoom,
+    required MapIcons icons,
+    required DrawingCallbacks callbacks,
+  }) async {
+    if (!mapState.isDrawing) return const MapOverlays();
+
+    final Set<Marker> markers = {};
+    final Set<Polyline> polylines = {};
+    final Set<Polygon> polygons = {};
+    await DrawingLayer.build(
+      mapState: mapState,
+      zoom: zoom,
+      polygons: polygons,
+      markers: markers,
+      polylines: polylines,
+      pinIcon: icons.pin,
+      smallWhiteDotIcon: icons.smallWhiteDot,
+      callbacks: callbacks,
+    );
     return MapOverlays(
       markers: markers,
       polygons: polygons,

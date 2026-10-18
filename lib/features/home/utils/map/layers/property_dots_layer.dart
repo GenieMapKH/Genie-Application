@@ -3,8 +3,8 @@ import 'package:genie/features/home/utils/map/markers/property_markers.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-/// Mid-zoom view: one tappable marker per listing (a price tag, or a dot when
-/// the property details are not loaded).
+/// Zoomed-in view: one tappable marker per listing (a price tag, or a dot for
+/// a locally drawn polygon with no listing behind it).
 abstract final class PropertyDotsLayer {
   static Future<void> build(
     List<LatLng> allCentroids,

@@ -30,21 +30,11 @@ class SecurityPage extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
           SettingsSectionTitle(l10n.securitySectionEncryption),
-          InfoNote(l10n.securityPinOptionalNote),
+          // Every account protects its chats with a chat PIN.
+          InfoNote(l10n.securityPinRequiredNote),
           const SizedBox(height: 12),
           SettingsSection(
             children: [
-              SettingsRow(
-                icon: Icons.lock_open_outlined,
-                title: l10n.securitySetUpPin,
-                onTap: profile == null
-                    ? null
-                    : () => E2eeSettingsActions.setUpBackupPin(
-                        context,
-                        ref,
-                        userId: profile.id,
-                      ),
-              ),
               SettingsRow(
                 icon: Icons.lock_outline,
                 title: l10n.securityChangePin,
@@ -60,11 +50,6 @@ class SecurityPage extends ConsumerWidget {
                         ref,
                         profile: profile,
                       ),
-              ),
-              SettingsRow(
-                icon: Icons.no_encryption_outlined,
-                title: l10n.securityTurnOffPin,
-                onTap: () => E2eeSettingsActions.turnOffBackupPin(context, ref),
               ),
               SettingsRow(
                 icon: Icons.key_off_outlined,

@@ -83,8 +83,9 @@ void main() {
     });
 
     for (final result in [
+      E2eeSetupResult.pinNotSet,
+      E2eeSetupResult.lockedWithPassword,
       E2eeSetupResult.cancelled,
-      E2eeSetupResult.wrongPin,
       E2eeSetupResult.rateLimited,
       E2eeSetupResult.failed,
     ]) {
@@ -103,7 +104,7 @@ void main() {
     }
 
     test('can be retried after a failure', () async {
-      setup.result = E2eeSetupResult.wrongPin;
+      setup.result = E2eeSetupResult.rateLimited;
       await chat.open(askPin: neverAskPin);
 
       setup.result = E2eeSetupResult.ready;

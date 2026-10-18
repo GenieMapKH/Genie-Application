@@ -68,6 +68,23 @@ void main() {
       });
     });
 
+    test('a first password is confirmed with a fresh Google sign-in', () async {
+      final server = StubServer.always(200);
+      final controller = AccountSecurityController(
+        AccountRepository(server.dio),
+      );
+
+      final result = await controller.createPassword(
+        googleIdToken: 'google-token',
+        password: 'first-password',
+      );
+
+      expect(result, AccountActionResult.done);
+      // The chat PIN, not the password, protects the chats: only the
+      // account server hears about it.
+      expect(server.requests, hasLength(1));
+    });
+
     test('deactivating proves identity with the password', () async {
       final server = StubServer.always(200);
       final controller = AccountSecurityController(

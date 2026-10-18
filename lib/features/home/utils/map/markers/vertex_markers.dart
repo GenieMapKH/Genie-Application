@@ -9,6 +9,7 @@ abstract final class VertexMarkers {
   static final Map<int, BitmapDescriptor> _numberedCache = {};
   static BitmapDescriptor? _selectedCache;
   static BitmapDescriptor? _smallWhiteDotCache;
+  static BitmapDescriptor? _addCornerCache;
 
   /// White circle with the vertex number inside.
   static Future<BitmapDescriptor> numbered(int number) async {
@@ -97,6 +98,45 @@ abstract final class VertexMarkers {
       },
     );
     return _smallWhiteDotCache = marker;
+  }
+
+  /// White circle with a "+" on an edge: tap or drag it to add a corner.
+  static Future<BitmapDescriptor> addCorner() async {
+    final cached = _addCornerCache;
+    if (cached != null) return cached;
+
+    const size = 30.0;
+    const center = Offset(size / 2, size / 2);
+    const radius = size / 3;
+    const arm = radius * 0.5;
+
+    final marker = await renderMarker(
+      width: size,
+      height: size,
+      draw: (canvas) {
+        canvas.drawCircle(
+          center.translate(0, 1),
+          radius,
+          markerShadowPaint(alpha: 0.18, blur: 2.0),
+        );
+        canvas.drawCircle(center, radius, Paint()..color = Colors.white);
+        final plus = Paint()
+          ..color = const Color(0xFFE5484D)
+          ..strokeWidth = 2.0
+          ..strokeCap = StrokeCap.round;
+        canvas.drawLine(
+          center.translate(-arm, 0),
+          center.translate(arm, 0),
+          plus,
+        );
+        canvas.drawLine(
+          center.translate(0, -arm),
+          center.translate(0, arm),
+          plus,
+        );
+      },
+    );
+    return _addCornerCache = marker;
   }
 
   /// Blue circle with a white pen icon: the "edit this boundary" button.

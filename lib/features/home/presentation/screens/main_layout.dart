@@ -147,7 +147,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
           bounds,
           Size(size.width, size.height + _mapFrameOverflow),
           covered,
-          // Below this the map shows clusters instead of listings.
+          // Below this the map shows dots instead of price tags.
           minZoom: MapOverlayBuilder.clusterZoomThreshold + 1,
         ),
       ),

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/app_header_bar.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/shared/widgets/user_avatar.dart';
+import 'package:genie/features/chat/presentation/screens/archived_chats_page.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_conversation_list_view.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
@@ -38,6 +37,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
             AppHeaderBar(
               title: context.l10n.navChat,
               onBackPressed: widget.onBackPressed,
+              trailing: _buildMoreMenu(),
             ),
             Expanded(
               child: ref
@@ -45,19 +45,9 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                   .when(
                     data: (conversations) {
                       if (conversations.isEmpty) return _buildEmptyState();
-                      return ListView.separated(
-                        itemCount: conversations.length,
-                        separatorBuilder: (context, index) => Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: context.colors.divider,
-                          indent: 16,
-                          endIndent: 16,
-                        ),
-                        itemBuilder: (context, index) {
-                          final chat = conversations[index];
-                          return _buildChatItem(context, chat);
-                        },
+                      return ChatConversationListView(
+                        conversations: conversations,
+                        isArchived: false,
                       );
                     },
                     loading: () =>
@@ -68,6 +58,29 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
           ],
         ),
       ),
+    );
+  }
+
+  /// The coloured "more" button at the top right: the way into the archive.
+  Widget _buildMoreMenu() {
+    return PopupMenuButton<void>(
+      tooltip: context.l10n.chatMoreOptions,
+      icon: Icon(Icons.more_vert, color: context.colors.accent),
+      color: context.colors.surface,
+      itemBuilder: (menuContext) => [
+        PopupMenuItem<void>(
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const ArchivedChatsPage())),
+          child: Row(
+            children: [
+              Icon(Icons.archive_outlined, color: context.colors.textSecondary),
+              const SizedBox(width: 12),
+              Text(context.l10n.chatArchivedChats),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -133,90 +146,6 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
             child: Text(context.l10n.chatTryAgain),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildChatItem(BuildContext context, ChatConversation chat) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ChatConversationPage(
-              participantId: chat.participantId,
-              participantName: chat.participantName,
-            ),
-          ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            UserAvatar(
-              name: chat.participantName,
-              avatarUrl: chat.participantAvatar,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    chat.participantName,
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    chat.lastMessage,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: context.colors.textMuted,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  chat.lastMessageTime,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                if (chat.unreadCount > 0)
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: context.colors.highlight,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      chat.unreadCount.toString(),
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: context.colors.onHighlight,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -133,6 +133,17 @@ class PropertyRepository {
     return PropertyModel.fromJson(response.data);
   }
 
+  /// Takes the photos at [urls] off listing [id]; the server deletes their
+  /// files. URLs the listing does not have are ignored.
+  Future<PropertyModel> removeImages(String id, List<String> urls) async {
+    final response = await dio.post(
+      '/properties/$id/images/remove',
+      data: {'urls': urls},
+    );
+    _refreshCache();
+    return PropertyModel.fromJson(response.data);
+  }
+
   /// Uploads [images] to [id]: the server hands out one upload link per
   /// picture, in the same order; each picture goes straight to storage; then
   /// the server is told which files arrived.

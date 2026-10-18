@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'marker_cache.dart';
 import 'marker_renderer.dart';
 
 /// Markers for listings on the explore map.
 abstract final class PropertyMarkers {
   static const _green = Color(0xFF028752);
-  static final Map<String, BitmapDescriptor> _priceCache = {};
+  static final _priceCache = MarkerCache();
+  static final _clusterCache = MarkerCache();
 
   /// Green dot with a white border. When [isSelected] it grows and gets a
   /// white ring so the listing behind the open card is easy to spot.
@@ -42,6 +44,46 @@ abstract final class PropertyMarkers {
             ..color = isSelected ? Colors.white : const Color(0xFFE5E7EB)
             ..style = PaintingStyle.stroke
             ..strokeWidth = isSelected ? 3.0 : 1.0,
+        );
+      },
+    );
+  }
+
+  /// Green bubble with the number of listings merged into it. Grows a little
+  /// with the count so busy areas stand out.
+  static Future<BitmapDescriptor> clusterBubble(int count) {
+    final text = count > 999 ? '999+' : '$count';
+    return _clusterCache.get(text, () => _renderClusterBubble(count, text));
+  }
+
+  static Future<BitmapDescriptor> _renderClusterBubble(int count, String text) {
+    final diameter = count < 10 ? 34.0 : (count < 100 ? 40.0 : 48.0);
+    const shadowRoom = 8.0;
+    final size = diameter + shadowRoom;
+    final center = Offset(size / 2, size / 2 - 2);
+    final label = layoutText(
+      text,
+      const TextStyle(
+        color: Colors.white,
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+
+    return renderMarker(
+      width: size,
+      height: size,
+      draw: (canvas) {
+        canvas.drawCircle(
+          center.translate(0, 2),
+          diameter / 2,
+          markerShadowPaint(alpha: 0.18, blur: 4.0),
+        );
+        canvas.drawCircle(center, diameter / 2, Paint()..color = Colors.white);
+        canvas.drawCircle(center, diameter / 2 - 2.5, Paint()..color = _green);
+        label.paint(
+          canvas,
+          center.translate(-label.width / 2, -label.height / 2),
         );
       },
     );
@@ -86,11 +128,21 @@ abstract final class PropertyMarkers {
     bool isSelected = false,
     String propertyType = 'Sell',
     bool isVisited = false,
-  }) async {
+  }) {
     final cacheKey = 'price-$price-$isNew-$isSelected-$propertyType-$isVisited';
-    final cached = _priceCache[cacheKey];
-    if (cached != null) return cached;
+    return _priceCache.get(
+      cacheKey,
+      () => _renderPriceTag(price, isNew, isSelected, propertyType, isVisited),
+    );
+  }
 
+  static Future<BitmapDescriptor> _renderPriceTag(
+    String price,
+    bool isNew,
+    bool isSelected,
+    String propertyType,
+    bool isVisited,
+  ) {
     final priceLabel = layoutText(
       price,
       TextStyle(
@@ -132,7 +184,7 @@ abstract final class PropertyMarkers {
         ? baseColor.withValues(alpha: 0.8)
         : baseColor;
 
-    final marker = await renderMarker(
+    return renderMarker(
       width: (width + 8).toInt().toDouble(),
       height: (height + 8).toInt().toDouble(),
       draw: (canvas) {
@@ -159,7 +211,6 @@ abstract final class PropertyMarkers {
         priceLabel.paint(canvas, Offset((width - priceLabel.width) / 2, y));
       },
     );
-    return _priceCache[cacheKey] = marker;
   }
 
   static Color _priceColor(String propertyType, bool isVisited) {

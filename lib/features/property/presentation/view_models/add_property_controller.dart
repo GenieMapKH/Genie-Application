@@ -150,10 +150,10 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
       });
 
       if (boundaryPoints.isNotEmpty) {
-        final points = boundaryPoints
-            .map((p) => {'lat': p.latitude, 'lng': p.longitude})
-            .toList();
-        property = await repo.updateBoundary(property.id, points);
+        property = await repo.updateBoundary(
+          property.id,
+          _boundaryBody(boundaryPoints),
+        );
       }
 
       if (selectedPhotos.isNotEmpty) {
@@ -163,22 +163,40 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
     });
   }
 
-  /// Saves the edited form over listing [propertyId] and adds [newPhotos].
-  /// Its status, location and existing photos stay as they are.
+  /// Saves the edited form over listing [propertyId], takes off
+  /// [removedPhotoUrls] and adds [newPhotos]. Given [boundaryPoints], the
+  /// boundary is replaced too and the server moves the pin to its centre;
+  /// otherwise the location stays as it is. Its status stays as it is.
   Future<PropertyModel> updateProperty({
     required String propertyId,
     required PropertyFormInput input,
     required List<XFile> newPhotos,
+    List<String> removedPhotoUrls = const [],
+    List<LatLng>? boundaryPoints,
   }) {
     return _whileLoading(() async {
       final repo = ref.read(propertyRepositoryProvider);
       var property = await repo.update(propertyId, input.toRequestBody());
+      if (boundaryPoints != null) {
+        property = await repo.updateBoundary(
+          propertyId,
+          _boundaryBody(boundaryPoints),
+        );
+      }
+      // Removed first, so the new photos fit under the per-listing limit.
+      if (removedPhotoUrls.isNotEmpty) {
+        property = await repo.removeImages(propertyId, removedPhotoUrls);
+      }
       if (newPhotos.isNotEmpty) {
         property = await repo.uploadImages(propertyId, newPhotos);
       }
       return property;
     });
   }
+
+  static List<Map<String, double>> _boundaryBody(List<LatLng> points) => [
+    for (final p in points) {'lat': p.latitude, 'lng': p.longitude},
+  ];
 
   Future<T> _whileLoading<T>(Future<T> Function() work) async {
     state = state.copyWith(isLoading: true);

@@ -12,6 +12,9 @@ typedef OpenedBackup = ({List<int> privateKey, BackupOwnerProof? proof});
 
 /// Saves and opens the PIN-protected copy of the identity key on the server.
 /// The server only releases it for the right PIN and counts every wrong one.
+///
+/// A backup still locked with the account password (see [BackupLock]) opens
+/// the same way, with the password in place of the PIN.
 class KeyBackupVault {
   final BackupService backupService;
   final ChatBackupRepository backupRepository;

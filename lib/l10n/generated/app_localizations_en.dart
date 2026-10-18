@@ -216,7 +216,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securitySectionAccount => 'Account';
 
   @override
-  String get securityChangePin => 'Change backup PIN';
+  String get securityChangePin => 'Change chat PIN';
 
   @override
   String get securityResetKeys => 'Reset encryption keys';
@@ -263,14 +263,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'This PIN will protect your new keys. You need it to read your chats on another device.';
 
   @override
-  String get pinChanged => 'Backup PIN changed.';
+  String get pinChanged => 'Chat PIN changed.';
 
   @override
-  String get pinNoBackup => 'You have no backup PIN.';
+  String get pinNoBackup => 'You have no chat PIN yet.';
 
   @override
   String get pinLocked =>
-      'Too many wrong PINs. The backup is locked; try again later.';
+      'Too many wrong PINs. Your PIN is locked for a while; try again later.';
 
   @override
   String get pinFetchFailed =>
@@ -278,7 +278,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinWrong =>
-      'Incorrect PIN. After 5 wrong tries the backup locks for a while.';
+      'Incorrect PIN. After 5 wrong tries your PIN locks for a while.';
 
   @override
   String get pinSaveFailed =>
@@ -289,7 +289,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetKeysConfirmMessage =>
-      'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nIf you have a backup PIN, you will be asked for it first.';
+      'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current chat PIN first.';
 
   @override
   String get resetKeysConfirmAction => 'Reset keys';
@@ -608,6 +608,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatTryAgain => 'Try again';
+
+  @override
+  String get chatPasswordTitle => 'Enter your account password';
+
+  @override
+  String get chatPasswordLabel => 'Account password';
+
+  @override
+  String get chatPasswordWrong => 'That is not your account password.';
+
+  @override
+  String get chatPasswordTooManyTries =>
+      'Too many tries. Wait a few minutes and try again.';
+
+  @override
+  String get chatMoreOptions => 'More options';
+
+  @override
+  String get chatArchivedChats => 'Archived chats';
+
+  @override
+  String get chatNoArchivedChats => 'No archived chats';
+
+  @override
+  String get chatArchivedChatsHint =>
+      'An archived chat comes back to your list when a new message arrives.';
+
+  @override
+  String get chatArchive => 'Archive';
+
+  @override
+  String get chatUnarchive => 'Unarchive';
+
+  @override
+  String get chatDelete => 'Delete';
+
+  @override
+  String get chatArchiveChat => 'Archive chat';
+
+  @override
+  String get chatUnarchiveChat => 'Move back to chats';
+
+  @override
+  String get chatDeleteChat => 'Delete chat';
+
+  @override
+  String get chatDeleteChatQuestion => 'Delete this chat?';
+
+  @override
+  String chatDeleteForMeExplained(String name) {
+    return 'It is removed from your chats only. $name still has it.';
+  }
+
+  @override
+  String chatDeleteForBoth(String name) {
+    return 'Also delete for $name';
+  }
+
+  @override
+  String get chatDeleteForBothExplained =>
+      'Every message and photo is deleted for both of you. This cannot be undone.';
+
+  @override
+  String get chatArchivedDone => 'Chat archived';
+
+  @override
+  String get chatUnarchivedDone => 'Chat moved back to your chats';
+
+  @override
+  String get chatDeletedDone => 'Chat deleted';
+
+  @override
+  String get chatUndo => 'Undo';
+
+  @override
+  String get chatActionFailed =>
+      'That did not work. Check your connection and try again.';
 
   @override
   String get chatThisIsYourOwnAccount => 'This is your own account.';
@@ -1059,7 +1136,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionEnded => 'You were signed out of this device.';
 
   @override
-  String get securityForgotPin => 'Forgot backup PIN';
+  String get securityForgotPin => 'Forgot chat PIN';
 
   @override
   String get securityCreatePassword => 'Create password';
@@ -1075,117 +1152,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createPasswordDone => 'Password created.';
 
   @override
-  String get forgotPinTitle => 'Forgot your backup PIN?';
+  String get forgotPinTitle => 'Forgot your chat PIN?';
 
   @override
   String get forgotPinKeepsHistory =>
-      'This device still has your chat keys, so nothing is lost. Confirm your account password, then choose a new PIN or turn the PIN off.';
+      'This phone still has your chat keys, so nothing is lost. Confirm it is you with your account password, then choose a new PIN.';
 
   @override
   String get forgotPinLosesHistory =>
-      'This device does not have your chat keys, and without the PIN they cannot be recovered. After you confirm your account password, new keys are created and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your devices can still open your chats, do this there instead to keep your history.';
+      'This phone does not have your chat keys, and without the PIN they cannot be recovered. After you confirm with your account password and choose a new PIN, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your phones can still open your chats, do this there instead to keep your history.';
 
   @override
   String get forgotPinNeedsPassword =>
-      'Recovering your PIN needs your account password. You sign in with Google, so create a password first.';
-
-  @override
-  String get forgotPinPasswordTitle => 'Confirm your password';
-
-  @override
-  String get forgotPinNewPinHelp =>
-      'This new PIN will protect your chat keys from now on.';
-
-  @override
-  String get forgotPinDone =>
-      'New backup PIN set. Your chat history is intact.';
-
-  @override
-  String get forgotPinProofExpired =>
-      'That took too long. Please confirm your password again.';
+      'You sign in with Google, so create an account password first. It confirms it is you when you choose a new chat PIN.';
 
   @override
   String get pinForgotHint =>
-      'Forgot your PIN? Go to User > Security > Forgot backup PIN to choose a new one or turn it off.';
+      'Forgot your PIN? Go to User > Security > Forgot chat PIN.';
 
   @override
   String get chatPinNeeded =>
-      'Your chats are protected with a backup PIN. Enter it to read and send messages on this phone.';
+      'Enter your chat PIN to read and send messages on this phone.';
 
   @override
   String get chatOpenFailed =>
       'Could not open this chat. Check your connection.';
 
   @override
-  String get securitySetUpPin => 'Set up backup PIN';
-
-  @override
-  String get securityTurnOffPin => 'Turn off backup PIN';
-
-  @override
-  String get securityPinOptionalNote =>
-      'Your chats are always end-to-end encrypted. A backup PIN is optional: with one, you can read your earlier chats on a new phone, and nobody can replace your chat keys without it.';
-
-  @override
-  String get pinSetUpTitle => 'Create a backup PIN';
-
-  @override
   String get pinSetUpHelp =>
       'You will need this PIN to read your chats on a new phone. Choose one you will remember.';
 
   @override
-  String get pinSetUpDone => 'Backup PIN set.';
-
-  @override
-  String get pinAlreadySet => 'You already have a backup PIN.';
-
-  @override
-  String get pinKeysNotReady =>
-      'Open a chat on this phone first, then set up the PIN.';
-
-  @override
-  String get pinTurnOffConfirmTitle => 'Turn off backup PIN?';
-
-  @override
-  String get pinTurnOffConfirmMessage =>
-      'Your chats stay end-to-end encrypted. Without a PIN, a new phone cannot read your earlier messages.\n\nYou will be asked for your current PIN first.';
-
-  @override
-  String get pinTurnOffAction => 'Turn off';
-
-  @override
-  String get pinTurnedOff => 'Backup PIN turned off.';
-
-  @override
-  String get pinTurnOffFailed =>
-      'Could not turn off the PIN. Nothing was changed.';
-
-  @override
-  String get forgotPinChoiceTitle => 'Keep a backup PIN?';
-
-  @override
-  String get forgotPinChoiceMessage =>
-      'With a new PIN you can read your chats on a new phone. Without one, your chats stay end-to-end encrypted, but only this phone can read them.';
-
-  @override
-  String get forgotPinChoiceNoPin => 'No PIN';
-
-  @override
-  String get forgotPinChoiceNewPin => 'New PIN';
-
-  @override
-  String get chatPinRestoreTitle => 'Enter your backup PIN';
+  String get chatPinRestoreTitle => 'Enter your chat PIN';
 
   @override
   String get chatPinRestoreHelp =>
-      'You protected your chats with a backup PIN. Enter it to read them on this phone.';
-
-  @override
-  String get chatUsedOnAnotherDevice =>
-      'Your chat is now set up on another device. Use it on this phone instead? Earlier messages cannot be read here, and the other device will need to switch back the same way.\n\nTo use chat on several devices, set up a backup PIN in User > Security.';
-
-  @override
-  String get chatUseOnThisDevice => 'Use chat on this phone';
+      'Your chats are protected by your 6-digit chat PIN. Enter it to read them on this phone.';
 
   @override
   String get devicesImmediateNote =>
@@ -1439,6 +1441,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String propertyRestoreRemovedPhotos(int count) {
+    return 'Undo remove ($count)';
+  }
+
+  @override
+  String get propertyRemovePhoto => 'Remove photo';
+
+  @override
   String get propertyNearby => 'What\'s nearby';
 
   @override
@@ -1535,4 +1545,121 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get propertyDrawBoundaryFirst =>
       'Draw the property on the map first to measure it.';
+
+  @override
+  String get forgotPinPasswordHelp =>
+      'Enter your account password to confirm it is you. Then choose a new chat PIN.';
+
+  @override
+  String get forgotPinRecovered =>
+      'Done. Your new chat PIN protects your chats.';
+
+  @override
+  String get securityPinRequiredNote =>
+      'Your chats are always end-to-end encrypted and protected by your 6-digit chat PIN. You need it to read your chats on a new phone.';
+
+  @override
+  String get pinUnlock => 'Unlock';
+
+  @override
+  String get pinChecking => 'Checking your PIN...';
+
+  @override
+  String pinWrongTriesLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Incorrect PIN. $count tries left.',
+      one: 'Incorrect PIN. 1 try left before your PIN locks for a while.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pinWrongNoCount => 'Incorrect PIN. Please try again.';
+
+  @override
+  String pinLockedFor(String time) {
+    return 'Too many wrong PINs. Try again in $time.';
+  }
+
+  @override
+  String get pinLockedLater => 'Too many wrong PINs. Please try again later.';
+
+  @override
+  String get pinCheckFailed =>
+      'Could not check your PIN. Check your connection and try again.';
+
+  @override
+  String get chatPinSaving => 'Saving your PIN...';
+
+  @override
+  String get chatPasswordChecking => 'Checking your password...';
+
+  @override
+  String get chatPinSetupSignOut => 'Sign out';
+
+  @override
+  String get chatPinCreateTitle => 'Create your chat PIN';
+
+  @override
+  String get chatPinCreateHelp =>
+      'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Genie, can see it.';
+
+  @override
+  String get chatPinConfirmTitle => 'Confirm your chat PIN';
+
+  @override
+  String get chatPinConfirmHelp => 'Type the same 6 digits again.';
+
+  @override
+  String get chatPinMismatch =>
+      'The PINs did not match. Choose your PIN again.';
+
+  @override
+  String get chatPinSaveFailed =>
+      'Could not save your PIN. Check your connection and try again.';
+
+  @override
+  String get chatPinChooseAnother => 'Choose a different PIN';
+
+  @override
+  String get chatPinMoveTitle => 'Protect your chats with a PIN';
+
+  @override
+  String get chatPinMoveHelp =>
+      'Your chats are now protected by a 6-digit chat PIN instead of your account password. Enter your account password once, then choose your PIN.';
+
+  @override
+  String get chatPinStartOverLink => 'Can\'t unlock? Start over';
+
+  @override
+  String get chatPinStartOverTitle => 'Start over with new chat keys?';
+
+  @override
+  String get chatPinStartOverMessage =>
+      'If your password was reset, your old chats cannot be unlocked. Starting over keeps your account, but your earlier messages can no longer be read. This cannot be undone.';
+
+  @override
+  String get chatPinStartOverAction => 'Start over';
+
+  @override
+  String get chatPinRequiredMessage =>
+      'Your messages are end-to-end encrypted. Create a 6-digit chat PIN to protect them before you start chatting.';
+
+  @override
+  String get chatPinCreateAction => 'Create PIN';
+
+  @override
+  String get chatLockedTitle => 'Chats are locked on this phone';
+
+  @override
+  String get chatEnterPinAction => 'Enter PIN';
+
+  @override
+  String get chatPinLockedTitle => 'Too many wrong PINs';
+
+  @override
+  String get chatPinLockedMessage =>
+      'For your security, entering your chat PIN is paused for a while. Please try again later.';
 }

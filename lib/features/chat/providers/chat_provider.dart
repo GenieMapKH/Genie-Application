@@ -9,11 +9,15 @@ import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
-/// The signed-in user's conversation list, kept current by the chat socket.
+/// The signed-in user's conversation list (or, with [archived], the
+/// archive), kept current by the chat socket.
 class ConversationsNotifier
     extends StateNotifier<AsyncValue<List<ChatConversation>>> {
   final ChatRepository repository;
   final ChatSocketService socketService;
+
+  /// Lists the archive instead of the main list.
+  final bool archived;
 
   /// Decrypts the last-message previews. Null for a guest, who has no chats.
   final MessageCipher? cipher;
@@ -28,6 +32,7 @@ class ConversationsNotifier
     required this.repository,
     required this.socketService,
     required this.cipher,
+    this.archived = false,
     bool signInPending = false,
   }) : super(const AsyncValue.loading()) {
     if (cipher == null) {
@@ -36,6 +41,8 @@ class ConversationsNotifier
     }
     _subscriptions
       ..add(socketService.onMessage.listen(_onMessage))
+      // Archived or deleted on another device, or deleted by the other person.
+      ..add(socketService.onConversationChanged.listen((_) => refresh()))
       // Messages may have been missed while disconnected.
       ..add(socketService.onConnected.listen((_) => refresh()));
     refresh();
@@ -50,6 +57,11 @@ class ConversationsNotifier
     if (conversations == null) return;
 
     final peerId = message.peerOf(cipher!.userId);
+    // A new message takes a conversation out of the archive.
+    if (archived) {
+      removeLocally(peerId);
+      return;
+    }
     final index = conversations.indexWhere((c) => c.participantId == peerId);
     if (index < 0) {
       refresh();
@@ -102,7 +114,9 @@ class ConversationsNotifier
 
   Future<void> _load() async {
     try {
-      final conversations = await repository.fetchConversations();
+      final conversations = await repository.fetchConversations(
+        archived: archived,
+      );
       final withPreviews = await Future.wait(conversations.map(_withPreview));
       if (mounted) state = AsyncValue.data(withPreviews);
     } catch (e, stackTrace) {
@@ -123,6 +137,17 @@ class ConversationsNotifier
           ? ChatConversation.photoPreview
           : opened.text,
     );
+  }
+
+  /// Takes [participantId]'s conversation off this list at once, before the
+  /// server confirms an archive or delete; [refresh] puts it back if needed.
+  void removeLocally(String participantId) {
+    final conversations = state.valueOrNull;
+    if (!mounted || conversations == null) return;
+    state = AsyncValue.data([
+      for (final conversation in conversations)
+        if (conversation.participantId != participantId) conversation,
+    ]);
   }
 
   /// Clears the unread count at once, then tells the server. Cleared first,
@@ -171,6 +196,25 @@ final conversationsProvider =
       );
     });
 
+/// Archived conversations, for the archive page.
+final archivedConversationsProvider =
+    StateNotifierProvider.autoDispose<
+      ConversationsNotifier,
+      AsyncValue<List<ChatConversation>>
+    >((ref) {
+      final userId = ref.watch(currentUserIdProvider);
+      return ConversationsNotifier(
+        repository: ref.watch(chatRepositoryProvider),
+        socketService: ref.watch(chatSocketServiceProvider),
+        cipher: userId == null
+            ? null
+            : ref.watch(messageCipherProvider(userId)),
+        archived: true,
+      );
+    });
+
+/// Unread messages in the main list. Archived conversations hold none that
+/// matter: a new message takes a conversation out of the archive.
 final unreadCountProvider = Provider<int>((ref) {
   final convsState = ref.watch(conversationsProvider);
   return convsState.maybeWhen(
