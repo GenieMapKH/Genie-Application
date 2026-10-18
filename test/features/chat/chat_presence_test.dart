@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genie/l10n/l10n.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_presence_label.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
@@ -7,25 +9,28 @@ import 'package:genie/features/chat/providers/chat_service_providers.dart';
 
 import 'chat_fakes.dart';
 
+final _en = lookupAppLocalizations(const Locale('en'));
+
 void main() {
   group('describePresence', () {
     final now = DateTime(2026, 5, 20, 15, 30);
 
     String seen(DateTime lastSeenAt) => describePresence(
+      _en,
       ChatPresence(userId: peer, online: false, lastSeenAt: lastSeenAt),
       now: now,
     );
 
     test('online', () {
       expect(
-        describePresence(const ChatPresence(userId: peer, online: true)),
+        describePresence(_en, const ChatPresence(userId: peer, online: true)),
         'Online',
       );
     });
 
     test('says nothing about someone who was never seen', () {
       expect(
-        describePresence(const ChatPresence(userId: peer, online: false)),
+        describePresence(_en, const ChatPresence(userId: peer, online: false)),
         '',
       );
     });

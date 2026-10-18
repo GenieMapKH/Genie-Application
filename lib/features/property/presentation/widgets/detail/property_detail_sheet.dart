@@ -19,6 +19,7 @@ import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/utils/owner_display_name.dart';
 
 /// Full-detail view for a property, opened by tapping or flicking up the map
 /// card.
@@ -233,9 +234,10 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                             ChatConversationPage(
                                               participantId:
                                                   widget.property.ownerId!,
-                                              participantName:
-                                                  widget.property.ownerName ??
-                                                  'Property Owner',
+                                              participantName: ownerDisplayName(
+                                                context.l10n,
+                                                widget.property.ownerName,
+                                              ),
                                             ),
                                       ),
                                     );

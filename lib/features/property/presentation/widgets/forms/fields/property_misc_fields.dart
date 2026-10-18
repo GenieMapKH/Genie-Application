@@ -4,6 +4,7 @@ import 'package:genie/features/property/presentation/widgets/property_form_input
 import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
 
 class MaintenanceFeeFieldWidget extends StatelessWidget {
   final AddPropertyPageState state;
@@ -46,7 +47,7 @@ class MaintenanceFeeFieldWidget extends StatelessWidget {
           controller: state.maintenanceFeeController,
           decoration: defaultPropertyInputDecoration(
             context,
-            'Monthly maintenance fee (USD)',
+            context.l10n.propertyMaintenanceFeeHint,
           ),
         ),
       ],
@@ -102,7 +103,10 @@ class LeaseRemainingFieldWidget extends StatelessWidget {
               flex: 1,
               child: TextField(
                 controller: state.leaseRemainingController,
-                decoration: defaultPropertyInputDecoration(context, 'Duration'),
+                decoration: defaultPropertyInputDecoration(
+                  context,
+                  context.l10n.propertyDuration,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -124,13 +128,13 @@ class LeaseRemainingFieldWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.0),
                 decoration: defaultPropertyInputDecoration(
                   context,
-                  'Select unit',
+                  context.l10n.propertySelectUnit,
                 ),
                 onChanged: onUnitChanged,
                 items: ['Months', 'Years'].map((String item) {
                   return DropdownMenuItem<String>(
                     value: item,
-                    child: Text(item),
+                    child: Text(propertyValueLabel(context.l10n, item)),
                   );
                 }).toList(),
               ),

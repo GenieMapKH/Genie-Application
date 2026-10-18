@@ -128,7 +128,9 @@ class MapTopControls extends StatelessWidget {
   }
 
   Future<void> _handleScanClick(BuildContext context) async {
-    final coordinates = await DocumentScannerService.scanCoordinates();
+    final coordinates = await DocumentScannerService.scanCoordinates(
+      cropTitle: context.l10n.homeCropDocument,
+    );
 
     if (coordinates == null) return; // User cancelled
 
@@ -136,7 +138,7 @@ class MapTopControls extends StatelessWidget {
       if (coordinates.isNotEmpty) {
         AppPopup.showSuccess(
           context,
-          'Extracted ${coordinates.length} coordinate(s)!',
+          context.l10n.homeExtractedCoordinates(coordinates.length),
         );
       } else {
         AppPopup.showError(

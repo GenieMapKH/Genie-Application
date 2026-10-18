@@ -10,6 +10,7 @@ import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_emoji_panel.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
@@ -299,18 +300,18 @@ void main() {
 
     test('a failed upload is reported and nothing is sent', () async {
       attachments.uploadError = const ChatSendException(
-        'Could not upload the file.',
+        ChatSendProblem.uploadFailed,
       );
 
       await sendPicture();
 
       expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-      expect(chat.state.sendError, 'Could not upload the file.');
+      expect(chat.state.sendError, ChatSendProblem.uploadFailed);
       expect(socket.sent, isEmpty);
     });
 
     test('retrying after the upload succeeded does not upload again', () async {
-      socket.sendError = const ChatSendException('offline');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
       await sendPicture();
 
       socket.sendError = null;
@@ -321,7 +322,9 @@ void main() {
     });
 
     test('retrying after a failed upload uploads it then', () async {
-      attachments.uploadError = const ChatSendException('offline');
+      attachments.uploadError = const ChatSendException(
+        ChatSendProblem.noConnection,
+      );
       await sendPicture();
 
       attachments.uploadError = null;

@@ -16,6 +16,7 @@ import 'add_property_page_forms_dynamic.dart';
 import 'add_property_page_logic.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/core/logging/app_logger.dart';
 
 extension AddPropertyPageLayout on AddPropertyPageState {
   Widget buildAddPropertyLayout(BuildContext context) {
@@ -203,10 +204,11 @@ extension AddPropertyPageLayout on AddPropertyPageState {
           if (context.mounted && property != null) {
             Navigator.of(context).pop(property);
           }
-        } catch (e) {
+        } catch (e, stackTrace) {
+          AppLogger.error('Could not save the draft', e, stackTrace);
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error saving draft: ${e.toString()}')),
+              SnackBar(content: Text(context.l10n.propertySaveFailed)),
             );
           }
         }

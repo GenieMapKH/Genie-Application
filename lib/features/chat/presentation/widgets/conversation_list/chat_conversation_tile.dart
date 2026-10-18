@@ -3,7 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/shared/utils/owner_display_name.dart';
 import 'package:genie/shared/widgets/media/user_avatar.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// One conversation in a chat list: picture, name, last message, time and
 /// unread count.
@@ -18,6 +20,16 @@ class ChatConversationTile extends StatelessWidget {
     required this.onTap,
     required this.onLongPress,
   });
+
+  /// The last message, with the stand-ins for one not decrypted yet and for
+  /// a picture in the user's language.
+  String _preview(BuildContext context) {
+    return switch (chat.lastMessage) {
+      ChatConversation.encryptedPreview => context.l10n.chatPreviewEncrypted,
+      ChatConversation.photoPreview => context.l10n.chatPreviewPhoto,
+      final text => text,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +51,7 @@ class ChatConversationTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    chat.participantName,
+                    ownerDisplayName(context.l10n, chat.participantName),
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -48,7 +60,7 @@ class ChatConversationTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    chat.lastMessage,
+                    _preview(context),
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       color: context.colors.textMuted,

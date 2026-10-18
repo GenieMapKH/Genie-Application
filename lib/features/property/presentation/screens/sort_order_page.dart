@@ -6,6 +6,7 @@ import 'package:genie/shared/widgets/layout/app_header_bar.dart';
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
 
 /// Full screen / sub-page allowing users to select the sort order for saved properties.
 /// Matches Screenshot 3.
@@ -53,7 +54,7 @@ class SortOrderPage extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              option.label,
+                              sortOptionLabel(context.l10n, option),
                               style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: isSelected

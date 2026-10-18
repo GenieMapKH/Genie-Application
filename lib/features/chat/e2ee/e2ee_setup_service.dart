@@ -128,10 +128,7 @@ class E2eeSetupService {
     return result;
   }
 
-  Future<E2eeSetupResult> _initialize(
-    String userId,
-    PinPrompt? askPin,
-  ) async {
+  Future<E2eeSetupResult> _initialize(String userId, PinPrompt? askPin) async {
     try {
       final hasKeys = await _hasKeys(userId);
       if (hasKeys && await keyService.publishPublicKeyIfMissing(userId)) {

@@ -6,12 +6,28 @@ import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
-/// Thrown when a message could not be handed to the server.
+/// Thrown when a message could not be handed to the server. [message] is
+/// for logs; the user is told [problem] in their language.
 class ChatSendException extends AppException {
-  const ChatSendException(super.message);
+  final ChatSendProblem problem;
+
+  const ChatSendException(this.problem, [String? message])
+    : super(message ?? 'Message not sent');
+
+  /// Names a refusal by what the server said, which is English.
+  factory ChatSendException.rejected(Object? reason) {
+    final text = reason is String ? reason : '';
+    final problem = text.contains('chat PIN')
+        ? ChatSendProblem.pinRequired
+        : text.contains('too quickly')
+        ? ChatSendProblem.tooFast
+        : ChatSendProblem.rejected;
+    return ChatSendException(problem, text.isEmpty ? null : text);
+  }
 }
 
 /// The real-time connection of one signed-in user. It carries ciphertext
@@ -116,7 +132,7 @@ class ChatSocketService {
   ) async {
     final socket = await connect() ? _socket : null;
     if (socket == null) {
-      throw const ChatSendException('You are signed out.');
+      throw const ChatSendException(ChatSendProblem.signedOut);
     }
 
     final dynamic ack;
@@ -127,23 +143,21 @@ class ChatSocketService {
           .emitWithAckAsync(event, payload);
     } catch (e) {
       AppLogger.error('$event was not acknowledged', e);
-      throw const ChatSendException(
-        'Could not reach the server. Check your connection.',
-      );
+      throw const ChatSendException(ChatSendProblem.noConnection);
     }
 
     if (ack is! Map || ack['status'] != 'ok') {
-      final reason = ack is Map ? ack['message'] : null;
-      throw ChatSendException(
-        reason is String ? reason : 'The server rejected the request.',
-      );
+      throw ChatSendException.rejected(ack is Map ? ack['message'] : null);
     }
     return ack;
   }
 
   Map<String, dynamic> _asJson(dynamic json) {
     if (json is! Map) {
-      throw const ChatSendException('The server sent an unexpected reply.');
+      throw const ChatSendException(
+        ChatSendProblem.failed,
+        'The server sent an unexpected reply',
+      );
     }
     return Map<String, dynamic>.from(json);
   }

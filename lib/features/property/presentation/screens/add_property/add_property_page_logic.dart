@@ -114,11 +114,12 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       if (property != null) {
         showSuccessDialog(property);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('Could not publish the property', e, stackTrace);
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.propertySaveFailed)));
     }
   }
 
@@ -186,7 +187,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
           ),
           contentPadding: const EdgeInsets.all(24),
           title: Text(
-            'Property Published\nSuccessfully!',
+            context.l10n.propertyPublishedTitle,
             style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -231,15 +232,19 @@ extension AddPropertyPageLogic on AddPropertyPageState {
 class PublishButtonWidget extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onPressed;
-  final String label;
-  final String loadingLabel;
+
+  /// "Publish Property" when null.
+  final String? label;
+
+  /// "Publishing your property..." when null.
+  final String? loadingLabel;
 
   const PublishButtonWidget({
     super.key,
     required this.isLoading,
     required this.onPressed,
-    this.label = 'Publish Property',
-    this.loadingLabel = 'Publishing your property...',
+    this.label,
+    this.loadingLabel,
   });
 
   @override
@@ -280,7 +285,9 @@ class PublishButtonWidget extends StatelessWidget {
                       size: 20,
                     ),
               label: Text(
-                isLoading ? loadingLabel : label,
+                isLoading
+                    ? loadingLabel ?? context.l10n.propertyPublishing
+                    : label ?? context.l10n.propertyPublishProperty,
                 style: GoogleFonts.inter(
                   color: context.colors.onPrimary,
                   fontSize: 16,

@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/features/auth/presentation/screens/terms_of_service_page.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
@@ -12,6 +11,7 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 import '../widgets/create_account_form.dart';
 import '../widgets/create_account_actions.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/auth/presentation/auth_error_message.dart';
 import 'package:genie/l10n/l10n.dart';
 
 /// Create an account screen for Genie.
@@ -74,31 +74,31 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
     setState(() {
       if (_nameController.text.trim().isEmpty) {
-        _nameError = 'Please enter your name';
+        _nameError = context.l10n.authErrEnterName;
         isValid = false;
       } else {
         _nameError = null;
       }
 
       if (!_validateIdentifier(_identifierController.text)) {
-        _identifierError = 'Enter a valid email address or phone number';
+        _identifierError = context.l10n.authErrEnterEmailOrPhone;
         isValid = false;
       } else {
         _identifierError = null;
       }
 
       if (_passwordController.text.isEmpty) {
-        _passwordError = 'Enter a valid password';
+        _passwordError = context.l10n.authErrEnterPassword;
         isValid = false;
       } else if (_passwordController.text.length < 8) {
-        _passwordError = 'Password must be at least 8 characters';
+        _passwordError = context.l10n.authErrPasswordMin8;
         isValid = false;
       } else {
         _passwordError = null;
       }
 
       if (!_agreeToTerms) {
-        _termsError = 'Please agree to the terms of services to continue.';
+        _termsError = context.l10n.authErrAgreeTerms;
         isValid = false;
       } else {
         _termsError = null;
@@ -134,13 +134,9 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
             _navigateToLogin();
           }
         }
-      } on AppException catch (e) {
-        if (mounted) {
-          AppPopup.showError(context, 'Registration failed: ${e.message}');
-        }
       } catch (e) {
         if (mounted) {
-          AppPopup.showError(context, 'An unexpected error occurred: $e');
+          AppPopup.showError(context, authErrorMessage(context.l10n, e));
         }
       } finally {
         if (mounted) setState(() => _isLoading = false);
@@ -199,10 +195,10 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
       if (next.hasError) {
         if (!mounted) return;
-        final errorMessage = next.error is AppException
-            ? (next.error as AppException).message
-            : 'Authentication failed: ${next.error}';
-        AppPopup.showError(context, errorMessage);
+        AppPopup.showError(
+          context,
+          authErrorMessage(context.l10n, next.error!),
+        );
       } else if (next.hasValue && next.value == true) {
         if (!mounted) return;
         _onAuthSuccess();
@@ -297,7 +293,9 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
                       onGoogleSignUp: () {
                         if (widget.onGoogleSignUpPressed != null) {
                           widget.onGoogleSignUpPressed!();
-                        } else if (!ref.read(loginControllerProvider).isLoading) {
+                        } else if (!ref
+                            .read(loginControllerProvider)
+                            .isLoading) {
                           // The listener in build reacts to the outcome.
                           ref
                               .read(loginControllerProvider.notifier)

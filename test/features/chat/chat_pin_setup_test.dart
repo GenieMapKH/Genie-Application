@@ -105,7 +105,10 @@ void main() {
 
       await typePin(tester, '123456');
 
-      expect(find.text('Too easy to guess. Choose another PIN.'), findsOneWidget);
+      expect(
+        find.text('Too easy to guess. Choose another PIN.'),
+        findsOneWidget,
+      );
       expect(find.text('Create your chat PIN'), findsOneWidget);
     });
 

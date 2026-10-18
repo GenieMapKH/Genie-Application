@@ -180,6 +180,11 @@ enum ChatMessageStatus { sending, sent, failed }
 
 /// One decrypted chat message.
 class ChatMessage {
+  /// Stands in for a message this device cannot decrypt. The bubble shows
+  /// it in the user's language.
+  static const undecryptableText =
+      'This message cannot be read on this device.';
+
   final String id;
   final String senderId;
   final String recipientId;

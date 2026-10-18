@@ -3,6 +3,7 @@ import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 
@@ -228,28 +229,29 @@ void main() {
     });
 
     test('marks the message failed and says why', () async {
-      socket.sendError = const ChatSendException('Could not reach the server.');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
 
       await chat.sendMessage('hello');
 
       expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-      expect(chat.state.sendError, 'Could not reach the server.');
+      expect(chat.state.sendError, ChatSendProblem.noConnection);
     });
 
     test('explains when the other person has no keys yet', () async {
       cipher.encryptError = const ChatEncryptionException(
-        'This person has not set up secure chat yet.',
+        ChatSendProblem.peerNotReady,
+        'no keys',
       );
 
       await chat.sendMessage('hello');
 
       expect(socket.sent, isEmpty);
       expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-      expect(chat.state.sendError, contains('not set up secure chat'));
+      expect(chat.state.sendError, ChatSendProblem.peerNotReady);
     });
 
     test('retries a failed message under the same id', () async {
-      socket.sendError = const ChatSendException('offline');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
       await chat.sendMessage('hello');
       final failedId = chat.state.messages.single.id;
 
@@ -367,7 +369,7 @@ void main() {
 
     test('keeps a message that failed to send', () async {
       await chat.open(askPin: neverAskPin);
-      socket.sendError = const ChatSendException('offline');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
       await chat.sendMessage('unsent');
 
       repository.history = [encrypted('m1', 'from the server', from: peer)];

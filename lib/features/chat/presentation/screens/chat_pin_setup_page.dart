@@ -142,12 +142,11 @@ class _ChatPinSetupPageState extends ConsumerState<ChatPinSetupPage> {
     );
   }
 
-  String _title(AppLocalizations l10n, ChatPinSetupStep step) =>
-      switch (step) {
-        ChatPinSetupStep.password => l10n.chatPinMoveTitle,
-        ChatPinSetupStep.choosePin => l10n.chatPinCreateTitle,
-        ChatPinSetupStep.confirmPin => l10n.chatPinConfirmTitle,
-      };
+  String _title(AppLocalizations l10n, ChatPinSetupStep step) => switch (step) {
+    ChatPinSetupStep.password => l10n.chatPinMoveTitle,
+    ChatPinSetupStep.choosePin => l10n.chatPinCreateTitle,
+    ChatPinSetupStep.confirmPin => l10n.chatPinConfirmTitle,
+  };
 
   String _explanation(AppLocalizations l10n, ChatPinSetupStep step) =>
       switch (step) {

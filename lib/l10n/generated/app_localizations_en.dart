@@ -1662,4 +1662,685 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get chatPinLockedMessage =>
       'For your security, entering your chat PIN is paused for a while. Please try again later.';
+
+  @override
+  String get authErrEnterName => 'Please enter your name';
+
+  @override
+  String get authErrEnterEmailOrPhone =>
+      'Enter a valid email address or phone number';
+
+  @override
+  String get authErrEnterPassword => 'Enter a valid password';
+
+  @override
+  String get authErrPasswordMin8 => 'Password must be at least 8 characters';
+
+  @override
+  String get authErrAgreeTerms =>
+      'Please agree to the terms of services to continue.';
+
+  @override
+  String get authErrEnterEmail => 'Please enter a valid email address';
+
+  @override
+  String get authErrEnterNewPassword => 'Please enter a new password';
+
+  @override
+  String get authErrReEnterPassword => 'Please re-enter your password';
+
+  @override
+  String get authErrPasswordsDontMatch => 'Passwords do not match';
+
+  @override
+  String get termsScrollToAgree =>
+      'Please scroll to the bottom of the terms to agree.';
+
+  @override
+  String get termsTitle => 'Terms of Service for Genie Property';
+
+  @override
+  String get termsLastUpdated => 'Last updated: 14 February 2026';
+
+  @override
+  String get termsWelcome =>
+      'Welcome to Genie Property. By accessing or using the Genie application and services, you agree to comply with and be bound by the following Terms of Service.';
+
+  @override
+  String get termsDisagree =>
+      'If you do not agree with these terms, please do not use the application.';
+
+  @override
+  String get termsAboutTitle => '1. About Genie';
+
+  @override
+  String get termsAboutIntro =>
+      'Genie is a map-based property platform that allows users to:';
+
+  @override
+  String get termsAboutView =>
+      'View property listings with accurate map locations and boundaries';
+
+  @override
+  String get termsAboutManage => 'Add, manage, and share property information';
+
+  @override
+  String get termsAboutConnect =>
+      'Connect buyers, sellers, agents, and developers';
+
+  @override
+  String get termsAboutTools =>
+      'Use coordinate tools such as UTM input and map measurement';
+
+  @override
+  String get termsAboutPlatformOnly =>
+      'Genie acts only as a platform and does not own, sell, or broker any property.';
+
+  @override
+  String get termsAccountsTitle => '2. User Accounts';
+
+  @override
+  String get termsAccountsIntro =>
+      'To use certain features, users must register using a valid phone number or email address.\nYou agree that:';
+
+  @override
+  String get termsAccountsAccurate => 'The information you provide is accurate';
+
+  @override
+  String get termsAccountsConfidential =>
+      'You are responsible for maintaining the confidentiality of your account';
+
+  @override
+  String get termsAccountsNoImpersonation =>
+      'You will not impersonate another person';
+
+  @override
+  String get termsAccountsSuspend =>
+      'Genie reserves the right to suspend accounts that provide false information.';
+
+  @override
+  String get termsListingsTitle => '3. Property Listings';
+
+  @override
+  String get termsListingsIntro =>
+      'Users who post properties (owners, agents, developers) agree that:';
+
+  @override
+  String get termsListingsTruthful =>
+      'All information, boundaries, prices, and details are truthful';
+
+  @override
+  String get termsListingsRight =>
+      'You have the legal right to share and advertise the property';
+
+  @override
+  String get termsListingsCoordinates =>
+      'The map boundary or UTM coordinates you provide are accurate to the best of your knowledge';
+
+  @override
+  String get termsListingsNotResponsible =>
+      'Genie is not responsible for incorrect property data submitted by users.';
+
+  @override
+  String get termsMapTitle => '4. Map and Coordinate Accuracy';
+
+  @override
+  String get termsMapIntro =>
+      'Genie provides tools for map visualization, UTM conversion, and distance measurement.';
+
+  @override
+  String get termsMapGuidanceOnly =>
+      'Map boundaries are for visual guidance only and do not replace official cadastral surveys or land titles.';
+
+  @override
+  String get termsMapVerify =>
+      'Users should verify all land borders and titles with relevant authorities before financial transactions.';
+
+  @override
+  String get termsAgree => 'Agree terms of services';
+
+  @override
+  String get termsScrollHint => 'Scroll to bottom to agree terms of services';
+
+  @override
+  String get authErrEnterValidEmail => 'Enter a valid email address';
+
+  @override
+  String get authErrEnterValidPhone => 'Enter a valid phone number';
+
+  @override
+  String get authErrPasswordMin6 => 'Password must be at least 6 characters';
+
+  @override
+  String get authErrorWrongCredentials =>
+      'Incorrect email, phone number or password.';
+
+  @override
+  String get authErrorAccountExists =>
+      'An account with this email or phone number already exists.';
+
+  @override
+  String get authErrorCheckDetails =>
+      'Please check what you entered and try again.';
+
+  @override
+  String get authErrorInvalidCode => 'The code is wrong or has expired.';
+
+  @override
+  String get authErrorTooManyTries =>
+      'Too many tries. Please wait a few minutes and try again.';
+
+  @override
+  String get authErrorNoConnection =>
+      'Could not reach the server. Check your connection.';
+
+  @override
+  String get authErrorServer =>
+      'Something went wrong on our side. Please try again later.';
+
+  @override
+  String get authErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String authResendOtpIn(int seconds) {
+    return 'Resend OTP in ${seconds}s';
+  }
+
+  @override
+  String get chatPhotoUnavailable => 'Photo unavailable. Tap to retry.';
+
+  @override
+  String get chatPictureCannotBeShown => 'This picture cannot be shown.';
+
+  @override
+  String get chatMessageNotSent => 'Not sent. Tap to retry.';
+
+  @override
+  String get chatMessageSending => 'Sending…';
+
+  @override
+  String get chatPresenceOnline => 'Online';
+
+  @override
+  String get chatLastSeenJustNow => 'Last seen just now';
+
+  @override
+  String chatLastSeenMinutes(int minutes) {
+    return 'Last seen $minutes min ago';
+  }
+
+  @override
+  String chatLastSeenToday(String time) {
+    return 'Last seen today at $time';
+  }
+
+  @override
+  String chatLastSeenYesterday(String time) {
+    return 'Last seen yesterday at $time';
+  }
+
+  @override
+  String chatLastSeenOn(String date) {
+    return 'Last seen $date';
+  }
+
+  @override
+  String chatKeyChangedTitle(String name) {
+    return '$name\'s security key has changed';
+  }
+
+  @override
+  String get chatEmojiSmileys => 'Smileys';
+
+  @override
+  String get chatEmojiGestures => 'Gestures';
+
+  @override
+  String get chatEmojiHearts => 'Hearts';
+
+  @override
+  String get chatEmojiPlaces => 'Places';
+
+  @override
+  String get chatPreviewEncrypted => 'Encrypted message';
+
+  @override
+  String get chatPreviewPhoto => '📷 Photo';
+
+  @override
+  String get chatUndecryptable => 'This message cannot be read on this device.';
+
+  @override
+  String get ownerFallbackName => 'Property Owner';
+
+  @override
+  String get chatSendSignedOut => 'You are signed out.';
+
+  @override
+  String get chatSendNoConnection =>
+      'Could not reach the server. Check your connection.';
+
+  @override
+  String get chatSendRejected =>
+      'The server did not accept this message. Please try again.';
+
+  @override
+  String get chatSendTooFast =>
+      'You are sending messages too quickly. Wait a moment.';
+
+  @override
+  String get chatSendPinRequired =>
+      'Create your chat PIN before sending messages.';
+
+  @override
+  String get chatSendKeyChanged =>
+      'Their security key has changed. Accept the new key to continue.';
+
+  @override
+  String get chatSendNotSetUp => 'Secure chat is not set up on this device.';
+
+  @override
+  String get chatSendPeerNotReady =>
+      'This person has not set up secure chat yet. They can receive messages once they open the app again.';
+
+  @override
+  String chatSendFileTooLarge(int megabytes) {
+    return 'This file is too large (limit $megabytes MB).';
+  }
+
+  @override
+  String get chatSendUploadFailed =>
+      'Could not upload the file. Check your connection.';
+
+  @override
+  String get chatSendFailed => 'Message not sent. Please try again.';
+
+  @override
+  String get mapNewListing => 'New';
+
+  @override
+  String homeExtractedCoordinates(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Found $count coordinates.',
+      one: 'Found 1 coordinate.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeScanFailed => 'Could not read the document. Please try again.';
+
+  @override
+  String get homeInvalidUtm =>
+      'These UTM coordinates are not valid. Please check them.';
+
+  @override
+  String get homeScanProcessing => 'Processing...';
+
+  @override
+  String get homeScanFinished => 'Finished';
+
+  @override
+  String get homeLocationServicesOff =>
+      'Location services are disabled. Please enable them.';
+
+  @override
+  String get homeLocationDenied => 'Location permission was denied.';
+
+  @override
+  String get homeLocationDeniedForever =>
+      'Location permission is permanently denied. You can allow it in the phone\'s settings.';
+
+  @override
+  String get homeLocationFailed =>
+      'Could not get your location. Please try again.';
+
+  @override
+  String get propertyMaintenanceFeeHint => 'Monthly maintenance fee (USD)';
+
+  @override
+  String get propertyDuration => 'Duration';
+
+  @override
+  String get propertySelectUnit => 'Select unit';
+
+  @override
+  String get propertySizeTitle => 'Size';
+
+  @override
+  String get propertyLandSizeTitle => 'Land Size';
+
+  @override
+  String get propertySizeAreaHint => 'Size area (m²)';
+
+  @override
+  String get propertyEnterLandSize => 'Enter land size (m²)';
+
+  @override
+  String get propertyEnterBuildingSize => 'Enter building size';
+
+  @override
+  String get propertyEnterUnitSize => 'Enter unit size';
+
+  @override
+  String get propertyProjectNameInfo =>
+      'Official name of the development project';
+
+  @override
+  String get propertyProjectAreaInfo => 'Total land area of entire project';
+
+  @override
+  String get propertyStartingPriceInfo => 'Lowest available unit price';
+
+  @override
+  String get propertyMonthlyRentInfo => 'Lower rent = higher profit potential';
+
+  @override
+  String get propertyEquipmentInfo => 'Describe assets included in sale';
+
+  @override
+  String get propertySelectHint => 'Select';
+
+  @override
+  String get propertyPublishedTitle => 'Property Published\nSuccessfully!';
+
+  @override
+  String get propertyShowLess => 'Show less';
+
+  @override
+  String get propertyShowMore => 'Show more';
+
+  @override
+  String get propertyNoListingsYet => 'You haven\'t listed any\nproperty yet';
+
+  @override
+  String get propertyPublishedToast => 'Property published';
+
+  @override
+  String get propertyMovedToDraft => 'Property moved to draft';
+
+  @override
+  String get propertyPublishProperty => 'Publish Property';
+
+  @override
+  String get propertyPublishing => 'Publishing your property...';
+
+  @override
+  String get propertySaveFailed =>
+      'Could not save the property. Please try again.';
+
+  @override
+  String get propertyUpdateFailed =>
+      'Could not update the property. Please try again.';
+
+  @override
+  String get propertyDeleteFailed =>
+      'Could not delete the property. Please try again.';
+
+  @override
+  String get propertyFallbackDescription =>
+      'This land parcel is accurately mapped with verified boundaries and exact recorded coordinates, located in a fast-growing area near main infrastructure. It is ideal for residential development, a long-term investment, or a business project. The rectangular shape allows efficient planning and construction, while utilities such as electricity and water are already available nearby. Clear ownership documents and precise UTM location make this property easy to verify and trust.';
+
+  @override
+  String propertyListingBy(String name) {
+    return 'Listing by: $name';
+  }
+
+  @override
+  String propertyTabActive(int count) {
+    return 'Active ($count)';
+  }
+
+  @override
+  String propertyTabPending(int count) {
+    return 'Pending ($count)';
+  }
+
+  @override
+  String propertyTabDraft(int count) {
+    return 'Draft ($count)';
+  }
+
+  @override
+  String propertyTabSold(int count) {
+    return 'Sold ($count)';
+  }
+
+  @override
+  String get propertyContacts => 'Contacts';
+
+  @override
+  String propertySavedCount(int count) {
+    return '$count Saved';
+  }
+
+  @override
+  String propertySpecBeds(int count) {
+    return '$count bds';
+  }
+
+  @override
+  String propertySpecBaths(int count) {
+    return '$count ba';
+  }
+
+  @override
+  String propertyTypeForSale(String type) {
+    return '$type for sale';
+  }
+
+  @override
+  String propertyBedroomCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Beds',
+      one: '1 Bed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String propertyBathroomCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Baths',
+      one: '1 Bath',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String propertyDaysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortPropertyForYou => 'Property for You';
+
+  @override
+  String get sortRecentlyPosted => 'Recently Posted';
+
+  @override
+  String get sortNewest => 'Newest';
+
+  @override
+  String get sortPriceHighToLow => 'Price: High to Low';
+
+  @override
+  String get sortPriceLowToHigh => 'Price: Low to High';
+
+  @override
+  String get listingTypeTitle => 'Listing Type';
+
+  @override
+  String get listingTypeSale => 'Sale';
+
+  @override
+  String get listingTypeRent => 'Rent';
+
+  @override
+  String get listingTypeToLet => 'To Let';
+
+  @override
+  String get propertyTypeLand => 'Land';
+
+  @override
+  String get propertyTypeHouse => 'House';
+
+  @override
+  String get propertyTypeBuilding => 'Building';
+
+  @override
+  String get propertyTypeCondo => 'Condo';
+
+  @override
+  String get propertyTypeBorey => 'Borey';
+
+  @override
+  String get propertyTypeBusiness => 'Business for Sale';
+
+  @override
+  String get propertyTypeBusinessShort => 'Business';
+
+  @override
+  String get propertyTypeWarehouse => 'Warehouse';
+
+  @override
+  String get propertyStatusActive => 'Active';
+
+  @override
+  String get propertyStatusPending => 'Pending';
+
+  @override
+  String get propertyStatusDraft => 'Draft';
+
+  @override
+  String get propertyStatusSold => 'Sold';
+
+  @override
+  String get propertyStatusExpired => 'Expired';
+
+  @override
+  String get propertyOptionHardTitle => 'Hard Title';
+
+  @override
+  String get propertyOptionSoftTitle => 'Soft Title';
+
+  @override
+  String get propertyOptionOther => 'Other';
+
+  @override
+  String get propertyOptionStudio => 'Studio';
+
+  @override
+  String get propertyOptionYes => 'Yes';
+
+  @override
+  String get propertyOptionNo => 'No';
+
+  @override
+  String get propertyOptionUnfurnished => 'Unfurnished';
+
+  @override
+  String get propertyOptionFullyFurnished => 'Fully Furnished';
+
+  @override
+  String get propertyOptionElectricalAppliances => 'Electrical appliances';
+
+  @override
+  String get propertyOptionCommercialBuilding => 'Commercial Building';
+
+  @override
+  String get propertyOptionOfficeBuilding => 'Office Building';
+
+  @override
+  String get propertyOptionMixedUse => 'Mixed-use';
+
+  @override
+  String get propertyOptionRetailBuilding => 'Retail Building';
+
+  @override
+  String get propertyOptionOffPlan => 'Off-plan';
+
+  @override
+  String get propertyOptionUnderConstruction => 'Under Construction';
+
+  @override
+  String get propertyOptionCompleted => 'Completed';
+
+  @override
+  String get propertyOptionCityView => 'City View';
+
+  @override
+  String get propertyOptionRiverView => 'River View';
+
+  @override
+  String get propertyOptionGardenView => 'Garden View';
+
+  @override
+  String get propertyOptionPoolView => 'Pool View';
+
+  @override
+  String get propertyOptionNoView => 'No View';
+
+  @override
+  String get propertyOptionCommercial => 'Commercial';
+
+  @override
+  String get propertyOptionLandSubdivision => 'Land Subdivision';
+
+  @override
+  String get propertyOptionPreLaunch => 'Pre-launch';
+
+  @override
+  String get propertyOptionCompleted50 => '50% Completed';
+
+  @override
+  String get propertyOptionCompleted80 => '80% Completed';
+
+  @override
+  String get propertyOptionMonths => 'Months';
+
+  @override
+  String get propertyOptionYears => 'Years';
+
+  @override
+  String get keywordRoadAccess => 'Road Access';
+
+  @override
+  String get keywordCornerLand => 'Corner Land';
+
+  @override
+  String get keywordNearMarket => 'Near Market';
+
+  @override
+  String get keywordNearSchool => 'Near School';
+
+  @override
+  String get keywordNearHospital => 'Near Hospital';
+
+  @override
+  String get keywordRiverLakeNearby => 'River / Lake Nearby';
+
+  @override
+  String get keywordElectricityReady => 'Electricity Ready';
+
+  @override
+  String get keywordWaterSupply => 'Water Supply';
+
+  @override
+  String get keywordResidentialArea => 'Residential Area';
+
+  @override
+  String get keywordCommercialArea => 'Commercial Area';
 }

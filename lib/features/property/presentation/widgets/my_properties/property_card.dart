@@ -5,6 +5,8 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:genie/features/property/utils/property_format.dart';
 
 class PropertyCard extends StatelessWidget {
   final PropertyModel property;
@@ -112,7 +114,10 @@ class PropertyCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          property.propertyType,
+                          propertyValueLabel(
+                            context.l10n,
+                            property.propertyType,
+                          ),
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -191,7 +196,7 @@ class PropertyCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
-                          property.status,
+                          propertyValueLabel(context.l10n, property.status),
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -203,9 +208,7 @@ class PropertyCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    property.propertyType == 'Land'
-                        ? '1670 m² | Land for sale'
-                        : '4 bds | 5 ba | 115.5 m² | ${property.propertyType} for sale',
+                    PropertyFormat.cardSpecLine(context.l10n, property),
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -237,11 +240,23 @@ class PropertyCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatItem(context, '5', 'Contacts'),
+                        _buildStatItem(
+                          context,
+                          '5',
+                          context.l10n.propertyContacts,
+                        ),
                         const SizedBox(width: 12),
-                        _buildStatItem(context, '1,688', 'Views'),
+                        _buildStatItem(
+                          context,
+                          '1,688',
+                          context.l10n.propertyViews,
+                        ),
                         const SizedBox(width: 12),
-                        _buildStatItem(context, '99', 'Saves'),
+                        _buildStatItem(
+                          context,
+                          '99',
+                          context.l10n.propertySaves,
+                        ),
                       ],
                     ),
                   ),

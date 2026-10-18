@@ -89,37 +89,6 @@ abstract final class PropertyMarkers {
     );
   }
 
-  /// Green "New" pill shown above recently listed properties.
-  static Future<BitmapDescriptor> newBadge() {
-    final label = layoutText(
-      'New',
-      const TextStyle(
-        color: Colors.white,
-        fontSize: 13,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-    final pillWidth = label.width + 20;
-    final pillHeight = label.height + 10;
-
-    return renderMarker(
-      width: (pillWidth + 8).toInt().toDouble(),
-      height: (pillHeight + 8).toInt().toDouble(),
-      draw: (canvas) {
-        const radius = Radius.circular(24.0);
-        canvas.drawRRect(
-          RRect.fromLTRBR(0, 2, pillWidth, pillHeight + 2, radius),
-          markerShadowPaint(alpha: 0.18, blur: 4.0),
-        );
-        canvas.drawRRect(
-          RRect.fromLTRBR(0, 0, pillWidth, pillHeight, radius),
-          Paint()..color = _green,
-        );
-        label.paint(canvas, const Offset(10, 5));
-      },
-    );
-  }
-
   /// Price tag coloured by listing type; dimmed once the user has visited it.
   /// A "New" label is stacked above the price for recent listings.
   static Future<BitmapDescriptor> priceTag({
@@ -128,11 +97,20 @@ abstract final class PropertyMarkers {
     bool isSelected = false,
     String propertyType = 'Sell',
     bool isVisited = false,
+    String newLabel = 'New',
   }) {
-    final cacheKey = 'price-$price-$isNew-$isSelected-$propertyType-$isVisited';
+    final cacheKey =
+        'price-$price-$isNew-$isSelected-$propertyType-$isVisited-$newLabel';
     return _priceCache.get(
       cacheKey,
-      () => _renderPriceTag(price, isNew, isSelected, propertyType, isVisited),
+      () => _renderPriceTag(
+        price,
+        isNew,
+        isSelected,
+        propertyType,
+        isVisited,
+        newLabel,
+      ),
     );
   }
 
@@ -142,6 +120,7 @@ abstract final class PropertyMarkers {
     bool isSelected,
     String propertyType,
     bool isVisited,
+    String newText,
   ) {
     final priceLabel = layoutText(
       price,
@@ -153,7 +132,7 @@ abstract final class PropertyMarkers {
     );
     final newLabel = isNew
         ? layoutText(
-            'New',
+            newText,
             const TextStyle(
               color: Colors.white,
               fontSize: 12.0,

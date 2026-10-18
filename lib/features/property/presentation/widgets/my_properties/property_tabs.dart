@@ -2,22 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class PropertyTabs extends StatelessWidget {
   final List<PropertyModel> properties;
 
   const PropertyTabs({super.key, required this.properties});
 
-  String _getTabTitle(int index) {
+  String _getTabTitle(BuildContext context, int index) {
+    final l10n = context.l10n;
+    int count(String status) =>
+        properties.where((p) => p.status == status).length;
     switch (index) {
       case 0:
-        return 'Active (${properties.where((p) => p.status == 'Active').length})';
+        return l10n.propertyTabActive(count('Active'));
       case 1:
-        return 'Pending (${properties.where((p) => p.status == 'Pending').length})';
+        return l10n.propertyTabPending(count('Pending'));
       case 2:
-        return 'Draft (${properties.where((p) => p.status == 'Draft').length})';
+        return l10n.propertyTabDraft(count('Draft'));
       case 3:
-        return 'Sold (${properties.where((p) => p.status == 'Sold').length})';
+        return l10n.propertyTabSold(count('Sold'));
       default:
         return '';
     }
@@ -50,7 +54,7 @@ class PropertyTabs extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        _getTabTitle(index),
+        _getTabTitle(context, index),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.inter(

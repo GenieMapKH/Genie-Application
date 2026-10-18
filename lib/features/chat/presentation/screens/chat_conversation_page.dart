@@ -13,6 +13,7 @@ import 'package:genie/features/chat/presentation/widgets/conversation/chat_input
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_key_changed_banner.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_message_bubble.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_notice.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_send_problem_text.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
 import 'package:genie/features/chat/presentation/widgets/pin/pin_check_dialog.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
@@ -180,16 +181,16 @@ class _ConversationState extends ConsumerState<_Conversation> {
       if (error == null) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(error)));
+        ..showSnackBar(
+          SnackBar(content: Text(chatSendProblemText(context.l10n, error))),
+        );
     });
 
     return switch (chatState.status) {
       ActiveChatStatus.loading => const Center(
         child: CircularProgressIndicator(),
       ),
-      ActiveChatStatus.unavailable => _unavailableNotice(
-        chatState.setupResult,
-      ),
+      ActiveChatStatus.unavailable => _unavailableNotice(chatState.setupResult),
       ActiveChatStatus.ready => Column(
         children: [
           Expanded(child: _buildMessages(chatState)),

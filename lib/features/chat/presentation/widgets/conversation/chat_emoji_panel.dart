@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// A compact emoji keyboard shown under the message box.
 class ChatEmojiPanel extends StatefulWidget {
@@ -16,27 +17,27 @@ class _ChatEmojiPanelState extends State<ChatEmojiPanel> {
   static final _categories = [
     _EmojiCategory(
       Icons.sentiment_satisfied_alt,
-      'Smileys',
+      (l10n) => l10n.chatEmojiSmileys,
       '😀 😃 😄 😁 😆 😅 😂 🤣 🙂 😉 😊 😇 🥰 😍 😘 😋 😜 🤪 🤗 🤔 🤫 😐 '
-          '😏 🙄 😴 😌 😔 😢 😭 😤 😠 😡 🤯 😳 🥺 😱 😎 🤓 🥳 😷 🤒 🤝 🙏 👀',
+      '😏 🙄 😴 😌 😔 😢 😭 😤 😠 😡 🤯 😳 🥺 😱 😎 🤓 🥳 😷 🤒 🤝 🙏 👀',
     ),
     _EmojiCategory(
       Icons.back_hand_outlined,
-      'Gestures',
+      (l10n) => l10n.chatEmojiGestures,
       '👍 👎 👌 ✌️ 🤞 🤟 🤙 👈 👉 👆 👇 ☝️ ✋ 🖐️ 👋 '
-          '👏 🙌 🤲 💪 🫶 🫡 🤷 🙋 🙅 🙆 💁 🚶 🏃 💃 🕺',
+      '👏 🙌 🤲 💪 🫶 🫡 🤷 🙋 🙅 🙆 💁 🚶 🏃 💃 🕺',
     ),
     _EmojiCategory(
       Icons.favorite_border,
-      'Hearts',
+      (l10n) => l10n.chatEmojiHearts,
       '❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💞 💓 💗 '
-          '💖 💘 💝 💯 ✨ ⭐ 🌟 🔥 🎉 🎊 🎁 🎈 🌹 🌸 🌺',
+      '💖 💘 💝 💯 ✨ ⭐ 🌟 🔥 🎉 🎊 🎁 🎈 🌹 🌸 🌺',
     ),
     _EmojiCategory(
       Icons.home_outlined,
-      'Places',
+      (l10n) => l10n.chatEmojiPlaces,
       '🏠 🏡 🏢 🏬 🏗️ 🏘️ 🏙️ 🏞️ 🌳 🌴 🛏️ 🛋️ 🚪 🪟 🚿 🛁 🔑 🗝️ '
-          '📍 🗺️ 🚗 🛵 🚌 ✈️ 💰 💵 💳 📄 📝 📅 ⏰ 📞 📷 ✅ ❌ ❓',
+      '📍 🗺️ 🚗 🛵 🚌 ✈️ 💰 💵 💳 📄 📝 📅 ⏰ 📞 📷 ✅ ❌ ❓',
     ),
   ];
 
@@ -56,7 +57,7 @@ class _ChatEmojiPanelState extends State<ChatEmojiPanel> {
               for (var i = 0; i < _categories.length; i++)
                 Expanded(
                   child: IconButton(
-                    tooltip: _categories[i].label,
+                    tooltip: _categories[i].label(context.l10n),
                     icon: Icon(
                       _categories[i].icon,
                       color: i == _category
@@ -96,7 +97,7 @@ class _ChatEmojiPanelState extends State<ChatEmojiPanel> {
 
 class _EmojiCategory {
   final IconData icon;
-  final String label;
+  final String Function(AppLocalizations l10n) label;
   final List<String> emojis;
 
   _EmojiCategory(this.icon, this.label, String emojis)

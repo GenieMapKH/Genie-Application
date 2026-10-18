@@ -8,6 +8,8 @@ import 'package:genie/features/chat/presentation/widgets/conversation/chat_prese
 import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/utils/owner_display_name.dart';
 
 /// App-bar title of a conversation: who it is with and whether they are
 /// online. Tapping it opens the participant sheet: their profile (with a way
@@ -56,7 +58,7 @@ class ChatConversationHeader extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    participantName,
+                    ownerDisplayName(context.l10n, participantName),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(

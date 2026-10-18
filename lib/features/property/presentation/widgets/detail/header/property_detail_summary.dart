@@ -5,6 +5,7 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
 
 /// Price, spec row and location — the block that sits directly under the photo
 /// gallery in the detail sheet and stays visible as the sheet expands.
@@ -101,13 +102,13 @@ class _SpecRow extends StatelessWidget {
     if (property.bedrooms != null && property.bedrooms! > 0) {
       specs.add((
         Icons.bed_outlined,
-        PropertyFormat.bedroomLabel(property.bedrooms!),
+        context.l10n.propertyBedroomCount(property.bedrooms!),
       ));
     }
     if (property.bathrooms != null && property.bathrooms! > 0) {
       specs.add((
         Icons.bathtub_outlined,
-        PropertyFormat.bathroomLabel(property.bathrooms!),
+        context.l10n.propertyBathroomCount(property.bathrooms!),
       ));
     }
 
@@ -118,7 +119,9 @@ class _SpecRow extends StatelessWidget {
 
     if (specs.isEmpty) {
       return Text(
-        '${property.propertyType} for sale',
+        context.l10n.propertyTypeForSale(
+          propertyValueLabel(context.l10n, property.propertyType),
+        ),
         style: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w600,

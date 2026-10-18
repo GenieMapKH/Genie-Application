@@ -194,7 +194,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
             }
             AppPopup.showSuccess(
               context,
-              'Successfully extracted ${coordinates.length} coordinate(s) natively!',
+              context.l10n.homeExtractedCoordinates(coordinates.length),
             );
           } else {
             AppPopup.showInfo(
@@ -207,7 +207,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
     } catch (e, stack) {
       AppLogger.debug('OCR Error: $e\n$stack');
       if (mounted) {
-        AppPopup.showError(context, 'Error scanning document: $e');
+        AppPopup.showError(context, context.l10n.homeScanFailed);
       }
     } finally {
       if (mounted) {
@@ -256,7 +256,8 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
         );
         points.add(LatLng(utm.lat, utm.lon));
       } catch (e) {
-        AppPopup.showError(context, 'Invalid UTM coordinates: $e');
+        AppLogger.debug('Invalid UTM coordinates: $e');
+        AppPopup.showError(context, context.l10n.homeInvalidUtm);
         return;
       }
     }

@@ -344,14 +344,17 @@ void main() {
       expect(repository.unlockTries, isEmpty);
     });
 
-    test('without a prompt, keys behind the PIN wait for the chat screen', () async {
-      repository.stored = existingBackup;
+    test(
+      'without a prompt, keys behind the PIN wait for the chat screen',
+      () async {
+        repository.stored = existingBackup;
 
-      expect(await service.initialize('u1'), E2eeSetupResult.cancelled);
-      expect(repository.unlockTries, isEmpty);
-      expect(keys.savedKeyPairs, 0);
-      expect(keys.publishedNewPairs, 0);
-    });
+        expect(await service.initialize('u1'), E2eeSetupResult.cancelled);
+        expect(repository.unlockTries, isEmpty);
+        expect(keys.savedKeyPairs, 0);
+        expect(keys.publishedNewPairs, 0);
+      },
+    );
 
     test('setups running at once make keys only once', () async {
       keys.publishGate = Completer<void>();
@@ -378,10 +381,7 @@ void main() {
       keys.serverAcceptsLocalKey = false;
       repository.stored = existingBackup;
 
-      final result = await service.initialize(
-        'u1',
-        askPin: typing(['123456']),
-      );
+      final result = await service.initialize('u1', askPin: typing(['123456']));
 
       expect(result, E2eeSetupResult.ready);
       expect(keys.savedKeyPairs, 1);
@@ -421,10 +421,7 @@ void main() {
       repository.stored = existingBackup;
       repository.opensWith = '123456';
 
-      final result = await service.initialize(
-        'u1',
-        askPin: typing(['000000']),
-      );
+      final result = await service.initialize('u1', askPin: typing(['000000']));
 
       expect(result, E2eeSetupResult.cancelled);
       expect(keys.savedKeyPairs, 0);
@@ -454,10 +451,7 @@ void main() {
     test('an older backup is opened once and saved in the new form', () async {
       repository.stored = legacyBackup;
 
-      final result = await service.initialize(
-        'u1',
-        askPin: typing(['123456']),
-      );
+      final result = await service.initialize('u1', askPin: typing(['123456']));
 
       expect(result, E2eeSetupResult.ready);
       expect(keys.savedKeyPairs, 1);
@@ -469,10 +463,7 @@ void main() {
       repository.stored = legacyBackup;
       repository.saveError = Exception('offline');
 
-      final result = await service.initialize(
-        'u1',
-        askPin: typing(['123456']),
-      );
+      final result = await service.initialize('u1', askPin: typing(['123456']));
 
       expect(result, E2eeSetupResult.ready);
       expect(keys.savedKeyPairs, 1);
@@ -508,10 +499,7 @@ void main() {
     test('closing the prompt does nothing', () async {
       repository.stored = existingBackup;
 
-      final result = await service.initialize(
-        'u1',
-        askPin: (_) async => false,
-      );
+      final result = await service.initialize('u1', askPin: (_) async => false);
 
       expect(result, E2eeSetupResult.cancelled);
       expect(keys.savedKeyPairs, 0);
@@ -547,15 +535,21 @@ void main() {
       );
     });
 
-    test('protects the keys this device holds, with nothing to prove', () async {
-      keys.hasLocal = true;
+    test(
+      'protects the keys this device holds, with nothing to prove',
+      () async {
+        keys.hasLocal = true;
 
-      expect(await service.createPin('u1', '482915'), CreatePinResult.created);
+        expect(
+          await service.createPin('u1', '482915'),
+          CreatePinResult.created,
+        );
 
-      expect(repository.saved.single.verifier, 'new-verifier');
-      expect(repository.proofs, [null]);
-      expect(repository.resetPublicKeys, isEmpty);
-    });
+        expect(repository.saved.single.verifier, 'new-verifier');
+        expect(repository.proofs, [null]);
+        expect(repository.resetPublicKeys, isEmpty);
+      },
+    );
 
     test('without the keys here, makes new ones under the PIN', () async {
       expect(await service.createPin('u1', '482915'), CreatePinResult.created);
@@ -564,14 +558,20 @@ void main() {
       expect(keys.savedKeyPairs, 1);
     });
 
-    test('keys the account no longer uses are replaced, not backed up', () async {
-      keys.hasLocal = true;
-      keys.serverAcceptsLocalKey = false;
+    test(
+      'keys the account no longer uses are replaced, not backed up',
+      () async {
+        keys.hasLocal = true;
+        keys.serverAcceptsLocalKey = false;
 
-      expect(await service.createPin('u1', '482915'), CreatePinResult.created);
+        expect(
+          await service.createPin('u1', '482915'),
+          CreatePinResult.created,
+        );
 
-      expect(repository.resetPublicKeys, hasLength(1));
-    });
+        expect(repository.resetPublicKeys, hasLength(1));
+      },
+    );
 
     test('a PIN set on another device meanwhile is not overwritten', () async {
       keys.hasLocal = true;

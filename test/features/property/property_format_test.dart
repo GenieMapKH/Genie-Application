@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genie/l10n/l10n.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/utils/property_format.dart';
@@ -28,6 +30,9 @@ PropertyModel _property({
   );
 }
 
+final _en = lookupAppLocalizations(const Locale('en'));
+final _km = lookupAppLocalizations(const Locale('km'));
+
 void main() {
   group('price', () {
     test('formats with a thousands separator and no cents', () {
@@ -52,6 +57,7 @@ void main() {
   group('cardSpecLine', () {
     test('shows size and type for land', () {
       final line = PropertyFormat.cardSpecLine(
+        _en,
         _property(landSize: 1670, propertyType: 'Land'),
       );
 
@@ -60,6 +66,7 @@ void main() {
 
     test('includes beds and baths for built property', () {
       final line = PropertyFormat.cardSpecLine(
+        _en,
         _property(
           propertyType: 'House',
           bedrooms: 4,
@@ -73,10 +80,20 @@ void main() {
 
     test('omits zero and missing values', () {
       final line = PropertyFormat.cardSpecLine(
+        _en,
         _property(propertyType: 'Condo', bedrooms: 0),
       );
 
       expect(line, 'Condo for sale');
+    });
+
+    test('is in the user language, while the stored type stays English', () {
+      final line = PropertyFormat.cardSpecLine(
+        _km,
+        _property(landSize: 1670, propertyType: 'Land'),
+      );
+
+      expect(line, '1670 m² | ដី សម្រាប់លក់');
     });
   });
 
@@ -91,13 +108,13 @@ void main() {
 
   group('bed and bath labels', () {
     test('singularise for one', () {
-      expect(PropertyFormat.bedroomLabel(1), '1 Bed');
-      expect(PropertyFormat.bathroomLabel(1), '1 Bath');
+      expect(_en.propertyBedroomCount(1), '1 Bed');
+      expect(_en.propertyBathroomCount(1), '1 Bath');
     });
 
     test('pluralise beyond one', () {
-      expect(PropertyFormat.bedroomLabel(2), '2 Beds');
-      expect(PropertyFormat.bathroomLabel(3), '3 Baths');
+      expect(_en.propertyBedroomCount(2), '2 Beds');
+      expect(_en.propertyBathroomCount(3), '3 Baths');
     });
   });
 

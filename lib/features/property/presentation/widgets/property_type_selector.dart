@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:genie/l10n/l10n.dart';
 
 class PropertyTypeSelector extends StatelessWidget {
   final String selectedPropertyType;
@@ -68,7 +70,7 @@ class PropertyTypeSelector extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  type['name'],
+                  propertyValueLabel(context.l10n, type['name']),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: isSelected
