@@ -163,14 +163,16 @@ abstract final class PropertyMarkers {
         ? baseColor.withValues(alpha: 0.8)
         : baseColor;
 
+    final borderWidth = isSelected ? 2.5 : 1.5;
+    // Half the border is drawn outside the body; this room on every side
+    // keeps it from being cut off at the bitmap's edges.
+    final inset = borderWidth / 2;
+
     return renderMarker(
-      width: (width + 8).toInt().toDouble(),
-      height: (height + 8).toInt().toDouble(),
+      width: (width + inset * 2).ceilToDouble(),
+      height: (height + inset * 2).ceilToDouble(),
       draw: (canvas) {
-        canvas.drawRRect(
-          RRect.fromLTRBR(0, 2, width, height + 2, radius),
-          markerShadowPaint(alpha: 0.18, blur: 4.0),
-        );
+        canvas.translate(inset, inset);
 
         final body = RRect.fromLTRBR(0, 0, width, height, radius);
         canvas.drawRRect(body, Paint()..color = background);
@@ -179,7 +181,7 @@ abstract final class PropertyMarkers {
           Paint()
             ..color = Colors.white
             ..style = PaintingStyle.stroke
-            ..strokeWidth = isSelected ? 2.5 : 1.5,
+            ..strokeWidth = borderWidth,
         );
 
         var y = paddingY;
