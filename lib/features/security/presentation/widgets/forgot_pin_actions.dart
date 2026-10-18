@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
-import 'package:genie/features/chat/presentation/widgets/account_password_prompt.dart';
-import 'package:genie/features/chat/presentation/widgets/pin_prompt_dialog.dart';
+import 'package:genie/features/chat/presentation/widgets/pin/account_password_prompt.dart';
+import 'package:genie/features/chat/presentation/widgets/pin/pin_prompt_dialog.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/security/presentation/screens/create_password_page.dart';
 import 'package:genie/features/security/presentation/widgets/security_confirm_dialog.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
 
 /// The way back in for someone who forgot the chat PIN: the account
 /// password proves it is them, then they choose a new PIN. An account that

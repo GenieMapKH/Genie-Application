@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
+import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';

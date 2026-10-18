@@ -4,7 +4,7 @@ import 'package:genie/core/config/app_config.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/core/media/app_image_cache.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
+import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/settings/data/app_settings_storage.dart';
 import 'package:genie/features/settings/providers/app_settings_providers.dart';

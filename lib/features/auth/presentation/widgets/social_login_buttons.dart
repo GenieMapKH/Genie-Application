@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/widgets/app_button.dart';
-import '../../../../shared/widgets/google_icon.dart';
+import '../../../../shared/widgets/buttons/app_button.dart';
+import '../../../../shared/widgets/media/google_icon.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 

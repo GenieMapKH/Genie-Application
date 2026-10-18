@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/splash/presentation/screens/loading_page.dart';
-import 'package:genie/shared/widgets/app_logo.dart';
+import 'package:genie/shared/widgets/media/app_logo.dart';
 
 void main() {
   testWidgets('LoadingPage renders core logo image', (

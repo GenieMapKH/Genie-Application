@@ -4,10 +4,10 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart' show SecretKey;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/backup_service.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/key_service.dart';
-import 'package:genie/features/chat/e2ee/pin_check.dart';
+import 'package:genie/features/chat/e2ee/backup/backup_service.dart';
+import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:genie/features/chat/e2ee/keys/key_service.dart';
+import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
 class _FakeSecureKey extends Fake implements SecureKey {

@@ -10,9 +10,9 @@ import 'package:genie/features/security/presentation/view_models/security_provid
 import 'package:genie/features/security/presentation/widgets/info_note.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_button.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/app_text_field.dart';
+import 'package:genie/shared/widgets/buttons/app_button.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/forms/app_text_field.dart';
 
 /// Gives an account that signs in with Google a password of its own.
 ///

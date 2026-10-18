@@ -6,9 +6,9 @@ import 'package:genie/features/security/presentation/view_models/account_securit
 import 'package:genie/features/security/presentation/view_models/security_providers.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_button.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/app_text_field.dart';
+import 'package:genie/shared/widgets/buttons/app_button.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/forms/app_text_field.dart';
 
 /// Sets a new password after checking the current one. Every other device
 /// is signed out by the server; this one stays signed in. An account that

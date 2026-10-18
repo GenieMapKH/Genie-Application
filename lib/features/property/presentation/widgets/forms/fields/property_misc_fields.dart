@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
-import 'package:genie/features/property/presentation/screens/add_property_page.dart';
+import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 

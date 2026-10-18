@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
+import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';

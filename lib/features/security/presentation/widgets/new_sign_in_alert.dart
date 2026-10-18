@@ -9,7 +9,7 @@ import 'package:genie/features/security/presentation/screens/devices_page.dart';
 import 'package:genie/features/security/presentation/view_models/security_providers.dart';
 import 'package:genie/features/security/presentation/widgets/device_session_tile.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
 
 /// Tells the user when another device has signed in to their account.
 ///

@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/search/data/models/publisher_summary.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/cover_banner_header.dart';
-import 'package:genie/shared/widgets/user_avatar.dart';
+import 'package:genie/shared/widgets/layout/cover_banner_header.dart';
+import 'package:genie/shared/widgets/media/user_avatar.dart';
 
 /// Top of a publisher's profile: a cover with their picture and the follow
 /// button, their name and handle, how many listings they have and since

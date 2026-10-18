@@ -11,7 +11,7 @@ import 'package:genie/features/security/presentation/widgets/device_session_tile
 import 'package:genie/features/security/presentation/widgets/info_note.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
 
 /// The devices signed in to the account, with a way to sign out one of them
 /// or all of them.

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:genie/features/property/presentation/screens/add_property_page.dart';
+import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import '../fields/property_size_fields.dart';
 import '../fields/property_dropdown_fields.dart';

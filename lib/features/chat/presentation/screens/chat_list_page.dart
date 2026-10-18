@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/app_header_bar.dart';
+import 'package:genie/shared/widgets/layout/app_header_bar.dart';
 import 'package:genie/features/chat/presentation/screens/archived_chats_page.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_conversation_list_view.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation_list/chat_conversation_list_view.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';

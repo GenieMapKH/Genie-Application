@@ -5,7 +5,7 @@ import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/data/chat_attachment_store.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
+import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 
 /// Sends and opens files in a chat. A file is encrypted on this device with

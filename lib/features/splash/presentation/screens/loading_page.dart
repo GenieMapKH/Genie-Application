@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/shared/widgets/app_logo.dart';
+import 'package:genie/shared/widgets/media/app_logo.dart';
 
 /// A modern, responsive splash/loading page displaying the Genie core logo.
 /// Seamlessly transitions to [WelcomePage] after a brief splash display.

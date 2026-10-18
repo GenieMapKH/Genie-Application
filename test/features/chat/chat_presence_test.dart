@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_presence_label.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_presence_label.dart';
 import 'package:genie/features/chat/providers/chat_participant_providers.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 

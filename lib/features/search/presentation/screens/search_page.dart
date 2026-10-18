@@ -15,7 +15,7 @@ import 'package:genie/features/search/presentation/view_models/search_query_cont
 import 'package:genie/features/search/presentation/view_models/search_selection.dart';
 import 'package:genie/features/search/presentation/widgets/search_input_bar.dart';
 import 'package:genie/features/search/presentation/widgets/search_message_view.dart';
-import 'package:genie/features/search/presentation/widgets/search_results_list.dart';
+import 'package:genie/features/search/presentation/widgets/results/search_results_list.dart';
 import 'package:genie/features/search/presentation/widgets/search_skeleton_list.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';

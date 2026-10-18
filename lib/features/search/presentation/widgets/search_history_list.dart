@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/search/data/models/search_history_entry.dart';
-import 'package:genie/features/search/presentation/widgets/search_section_header.dart';
+import 'package:genie/features/search/presentation/widgets/results/search_section_header.dart';
 import 'package:genie/l10n/l10n.dart';
 
 /// "Recent searches", shown while nothing is typed. Tapping a row searches

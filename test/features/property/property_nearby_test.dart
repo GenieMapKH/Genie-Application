@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_nearby_section.dart';
+import 'package:genie/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
 import 'package:genie/l10n/generated/app_localizations.dart';
 
 /// A full listing as `GET /public/properties/:id` returns it.

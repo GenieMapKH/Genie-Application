@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/screens/add_property_page.dart';
-import 'package:genie/features/property/presentation/screens/add_property_page_form_binding.dart';
+import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:genie/features/property/presentation/screens/add_property/add_property_page_form_binding.dart';
 import 'package:genie/l10n/generated/app_localizations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 

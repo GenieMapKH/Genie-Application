@@ -8,9 +8,9 @@ import 'package:genie/features/profile/presentation/view_models/user_providers.d
 import 'package:genie/features/profile/presentation/widgets/profile_field_editor.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/option_sheet.dart';
-import 'package:genie/shared/widgets/settings_list.dart';
+import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:genie/shared/widgets/lists/option_sheet.dart';
+import 'package:genie/shared/widgets/lists/settings_list.dart';
 
 /// Everything the account knows about its owner, each row editable on its own.
 class PersonalInfoPage extends ConsumerWidget {

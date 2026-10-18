@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/shared/widgets/app_text_field.dart';
+import 'package:genie/shared/widgets/forms/app_text_field.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
-import 'package:genie/shared/widgets/app_button.dart';
+import 'package:genie/shared/widgets/buttons/app_button.dart';
 
 void main() {
   testWidgets('MyApp renders WelcomePage with smooth splash and actions', (

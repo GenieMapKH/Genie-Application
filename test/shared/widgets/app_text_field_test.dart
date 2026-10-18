@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/shared/widgets/app_text_field.dart';
-import 'package:genie/shared/widgets/google_icon.dart';
+import 'package:genie/shared/widgets/forms/app_text_field.dart';
+import 'package:genie/shared/widgets/media/google_icon.dart';
 
 void main() {
   testWidgets('AppTextField renders label, hint, and accepts user input', (
