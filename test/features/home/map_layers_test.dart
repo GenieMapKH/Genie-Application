@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/utils/map/layers/clustered_layer.dart';
 import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:genie/features/home/utils/map/screen_clustering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {
@@ -47,27 +47,54 @@ void main() {
     });
   });
 
-  group('ClusteredLayer', () {
-    test('places one marker per province that has listings', () {
-      final markers = <Marker>{};
-      const phnomPenh = LatLng(11.56, 104.92);
+  group('clusterByScreenDistance', () {
+    const phnomPenh = LatLng(11.5564, 104.9282);
+    const nearPhnomPenh = LatLng(11.5570, 104.9290); // ~100 m away
+    const siemReap = LatLng(13.3611, 103.8606);
+    // Far corner of Siem Reap province, ~60 km from its centre.
+    const siemReapEdge = LatLng(13.9, 104.2);
 
-      ClusteredLayer.build(
-        const [phnomPenh, LatLng(11.57, 104.93), LatLng(13.36, 103.86)],
-        markers,
-        null,
-      );
+    test('merges listings whose dots would overlap', () {
+      final clusters = clusterByScreenDistance(const [
+        phnomPenh,
+        nearPhnomPenh,
+        siemReap,
+      ], 8);
 
-      // Two listings in Phnom Penh collapse to one dot; Siem Reap adds one.
-      expect(markers, hasLength(2));
+      expect(clusters, hasLength(2));
+      expect(clusters.first.indices, [0, 1]);
+      expect(clusters.last.indices, [2]);
     });
 
-    test('adds nothing when there are no listings', () {
-      final markers = <Marker>{};
+    test('keeps an outlying listing at its real position', () {
+      final clusters = clusterByScreenDistance(const [
+        siemReap,
+        siemReapEdge,
+      ], 9);
 
-      ClusteredLayer.build(const [], markers, null);
+      expect(clusters, hasLength(2));
+      expect(clusters.last.position, siemReapEdge);
+    });
 
-      expect(markers, isEmpty);
+    test('a cluster sits at the average of its members', () {
+      final clusters = clusterByScreenDistance(const [
+        LatLng(11.0, 104.0),
+        LatLng(11.002, 104.002),
+      ], 8);
+
+      expect(clusters.single.position.latitude, closeTo(11.001, 1e-9));
+      expect(clusters.single.position.longitude, closeTo(104.001, 1e-9));
+    });
+
+    test('zooming in splits a cluster apart', () {
+      const points = [phnomPenh, nearPhnomPenh];
+
+      expect(clusterByScreenDistance(points, 10), hasLength(1));
+      expect(clusterByScreenDistance(points, 18), hasLength(2));
+    });
+
+    test('returns nothing when there are no listings', () {
+      expect(clusterByScreenDistance(const [], 8), isEmpty);
     });
   });
 }

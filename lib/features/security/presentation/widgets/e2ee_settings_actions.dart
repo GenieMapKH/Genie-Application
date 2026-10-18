@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
+import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:genie/features/chat/presentation/widgets/account_password_prompt.dart';
 import 'package:genie/features/chat/presentation/widgets/pin_prompt_dialog.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/security/presentation/widgets/security_confirm_dialog.dart';
@@ -167,6 +169,47 @@ abstract final class E2eeSettingsActions {
       case ResetKeysResult.fetchFailed:
         AppPopup.showError(context, l10n.pinFetchFailed);
       case ResetKeysResult.saveFailed:
+        AppPopup.showError(context, l10n.resetKeysFailed);
+    }
+  }
+
+  /// "Reset keys" for an account whose chats are locked with its password:
+  /// confirmed with that password, and the new keys are locked with it.
+  static Future<void> resetKeysWithPassword(
+    BuildContext context,
+    WidgetRef ref, {
+    required String userId,
+  }) async {
+    final l10n = context.l10n;
+    final goAhead = await showSecurityConfirmDialog(
+      context,
+      title: l10n.resetKeysConfirmTitle,
+      message: l10n.resetKeysConfirmMessage,
+      action: l10n.resetKeysConfirmAction,
+      isDestructive: true,
+    );
+    if (!goAhead || !context.mounted) return;
+
+    final password = await showAccountPasswordPrompt(
+      context,
+      title: l10n.chatPasswordTitle,
+      helper: l10n.resetKeysPasswordHelp,
+    );
+    if (password == null || !context.mounted) return;
+
+    final result = await ref
+        .read(e2eeSetupServiceProvider)
+        .startOver(userId, password);
+    if (!context.mounted) return;
+
+    switch (result) {
+      case E2eeSetupResult.ready:
+        AppPopup.showSuccess(context, l10n.resetKeysDone);
+      case E2eeSetupResult.wrongPassword:
+        AppPopup.showError(context, l10n.chatPasswordWrong);
+      case E2eeSetupResult.rateLimited:
+        AppPopup.showError(context, l10n.chatPasswordTooManyTries);
+      default:
         AppPopup.showError(context, l10n.resetKeysFailed);
     }
   }

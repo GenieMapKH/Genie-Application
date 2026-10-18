@@ -12,6 +12,7 @@ import '../widgets/login_header.dart';
 import '../widgets/login_form.dart';
 import '../widgets/social_login_buttons.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/auth/presentation/view_models/after_password_sign_in.dart';
 import 'package:genie/l10n/l10n.dart';
 
 /// Login screen supporting Email and Phone Number authentication methods,
@@ -132,7 +133,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
   }
 
   Future<void> _handleLogin() async {
-    final success = await ref.read(loginFormProvider.notifier).submit();
+    final afterSignIn = ref.read(afterPasswordSignInProvider);
+    final success = await ref
+        .read(loginFormProvider.notifier)
+        .submit(
+          afterSignIn: afterSignIn == null
+              ? null
+              : (password) => afterSignIn(context, password),
+        );
     if (success && mounted) widget.onLoginPressed?.call();
   }
 

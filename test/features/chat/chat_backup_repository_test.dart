@@ -129,6 +129,7 @@ void main() {
       'backupSalt': 's',
       'backupNonce': 'n',
       'backupVerifier': 'v',
+      'protectedBy': 'pin',
     });
   });
 
@@ -184,6 +185,7 @@ void main() {
         'backupSalt': 's',
         'backupNonce': 'n',
         'backupVerifier': 'v',
+        'protectedBy': 'pin',
         'currentBackupVerifier': 'proof-of-current-pin',
         'identityPublicKey': 'new-public-key',
       });

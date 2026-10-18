@@ -17,8 +17,14 @@ class ChatRepository {
   ChatRepository({required this.dio, Dio? storageDio})
     : storageDio = storageDio ?? Dio();
 
-  Future<List<ChatConversation>> fetchConversations() async {
-    final response = await dio.get('/chat/conversations');
+  /// The main list, or with [archived] the archive.
+  Future<List<ChatConversation>> fetchConversations({
+    bool archived = false,
+  }) async {
+    final response = await dio.get(
+      '/chat/conversations',
+      queryParameters: {if (archived) 'list': 'archived'},
+    );
     return (response.data as List)
         .map((json) => ChatConversation.fromJson(_asJson(json)))
         .toList();
@@ -30,6 +36,25 @@ class ChatRepository {
     return (response.data as List)
         .map((json) => EncryptedMessage.fromJson(_asJson(json)))
         .toList();
+  }
+
+  Future<void> archiveConversation(String participantId) async {
+    await dio.post('/chat/conversations/$participantId/archive');
+  }
+
+  Future<void> unarchiveConversation(String participantId) async {
+    await dio.post('/chat/conversations/$participantId/unarchive');
+  }
+
+  /// For this user only, or with [forEveryone] for both people, permanently.
+  Future<void> deleteConversation(
+    String participantId, {
+    required bool forEveryone,
+  }) async {
+    await dio.post(
+      '/chat/conversations/$participantId/delete',
+      data: {'forEveryone': forEveryone},
+    );
   }
 
   Future<void> markAsRead(String participantId) async {

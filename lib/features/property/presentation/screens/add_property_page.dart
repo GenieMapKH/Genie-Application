@@ -4,6 +4,7 @@ import 'package:genie/core/media/image_compressor.dart';
 import 'package:genie/core/media/image_upload_policy.dart';
 import 'package:genie/shared/utils/image_rejection_message.dart';
 import 'package:genie/core/logging/app_logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -33,11 +34,16 @@ class AddPropertyPage extends ConsumerStatefulWidget {
     this.property,
   });
 
-  /// The edit form for [property], showing its drawn boundary.
-  factory AddPropertyPage.edit(PropertyModel property, {Key? key}) {
+  /// The edit form for [property], showing its drawn boundary, or
+  /// [boundaryPoints] when the owner has just redrawn it on the map.
+  factory AddPropertyPage.edit(
+    PropertyModel property, {
+    List<LatLng>? boundaryPoints,
+    Key? key,
+  }) {
     return AddPropertyPage(
       key: key,
-      boundaryPoints: property.boundaryPoints,
+      boundaryPoints: boundaryPoints ?? property.boundaryPoints,
       propertyArea: 0,
       property: property,
     );
@@ -118,13 +124,30 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
 
   bool get isEditing => widget.property != null;
 
+  /// Whether the edited listing's boundary was redrawn and must be saved too.
+  bool get isBoundaryChanged =>
+      isEditing &&
+      !listEquals(widget.boundaryPoints, widget.property!.boundaryPoints);
+
   /// The price the form sets: a Borey project's starting price, else the price.
   String get effectivePrice => selectedPropertyType == 'Borey'
       ? startingPriceController.text
       : priceController.text;
 
-  /// Photos the listing already has; editing can add more, not remove.
-  List<String> get existingPhotoUrls => widget.property?.imageUrls ?? const [];
+  /// Saved photos the owner has taken off in this edit. They stay on the
+  /// listing until the changes are saved.
+  final Set<String> removedPhotoUrls = {};
+
+  /// Photos the listing already has and keeps; new ones go after them.
+  List<String> get existingPhotoUrls => [
+    for (final url in widget.property?.imageUrls ?? const <String>[])
+      if (!removedPhotoUrls.contains(url)) url,
+  ];
+
+  void removeExistingPhoto(String url) =>
+      setState(() => removedPhotoUrls.add(url));
+
+  void restoreRemovedPhotos() => setState(removedPhotoUrls.clear);
 
   Future<void> pickImage(ImageSource source) async {
     final room =

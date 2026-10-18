@@ -20,6 +20,8 @@ import 'package:genie/app/missing_config_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:genie/firebase_options.dart';
 import 'package:genie/app/navigation/chat_profile_navigation.dart';
+import 'package:genie/app/session/chat_keys_after_sign_in.dart';
+import 'package:genie/features/auth/presentation/view_models/after_password_sign_in.dart';
 import 'package:genie/features/chat/providers/chat_profile_opener.dart';
 
 /// Android only: asks for the newest Google Maps renderer and for the
@@ -79,6 +81,7 @@ void main() async {
         cryptoServiceProvider.overrideWithValue(cryptoService),
         appSettingsStorageProvider.overrideWithValue(settingsStorage),
         chatProfileOpenerProvider.overrideWith(profileFromChatOpener),
+        afterPasswordSignInProvider.overrideWith(chatKeysAfterSignIn),
       ],
       child: const MyApp(),
     ),

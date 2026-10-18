@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'marker_cache.dart';
 import 'marker_renderer.dart';
 
 /// White pill with a text label, e.g. an edge length or the polygon area.
 abstract final class LabelMarkers {
-  static final Map<String, BitmapDescriptor> _cache = {};
+  // A dragged corner makes a new area label on almost every move, so old
+  // labels are dropped.
+  static final _cache = MarkerCache(maxEntries: 300);
 
   static Future<BitmapDescriptor> text(
     String text, {
     bool isArea = false,
     double? fontSize,
-  }) async {
+  }) {
     final size = fontSize ?? (isArea ? 14.0 : 12.0);
     final cacheKey = '$text-${size.toStringAsFixed(1)}-$isArea';
-    final cached = _cache[cacheKey];
-    if (cached != null) return cached;
+    return _cache.get(cacheKey, () => _render(text, size, isArea));
+  }
 
+  static Future<BitmapDescriptor> _render(
+    String text,
+    double size,
+    bool isArea,
+  ) {
     final label = layoutText(
       text,
       TextStyle(
@@ -37,7 +45,7 @@ abstract final class LabelMarkers {
     final canvasWidth = (pillWidth + 8).toInt().toDouble();
     final canvasHeight = (pillHeight + 8).toInt().toDouble();
 
-    final marker = await renderMarker(
+    return renderMarker(
       width: canvasWidth,
       height: canvasHeight,
       draw: (canvas) {
@@ -53,6 +61,5 @@ abstract final class LabelMarkers {
         label.paint(canvas, Offset(paddingX, paddingY));
       },
     );
-    return _cache[cacheKey] = marker;
   }
 }

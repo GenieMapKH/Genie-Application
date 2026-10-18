@@ -610,6 +610,106 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatTryAgain => 'Try again';
 
   @override
+  String get resetKeysPasswordHelp =>
+      'Your new chat keys will be locked with your account password.';
+
+  @override
+  String get chatPasswordTitle => 'Enter your account password';
+
+  @override
+  String get chatPasswordHelp =>
+      'Your chats are locked with your account password. Enter it to read and send messages on this device.';
+
+  @override
+  String get chatPasswordLabel => 'Account password';
+
+  @override
+  String get chatPasswordWrong => 'That is not your account password.';
+
+  @override
+  String get chatPasswordTooManyTries =>
+      'Too many tries. Wait a few minutes and try again.';
+
+  @override
+  String get chatPasswordChangedElsewhere =>
+      'Your chats are locked with an earlier password. Sign in once on a phone you used before to keep your earlier messages, or use chat here now: earlier messages cannot be read on this phone.';
+
+  @override
+  String get chatPinLastTimeTitle => 'Enter your chat PIN one last time';
+
+  @override
+  String get chatPinLastTimeHelp =>
+      'From now on your account password protects your chats, so you will not need this PIN again.';
+
+  @override
+  String get securityChatsUsePassword =>
+      'Your chats are always end-to-end encrypted and locked with your account password, so signing in on any device brings them back. No PIN is needed.';
+
+  @override
+  String get chatMoreOptions => 'More options';
+
+  @override
+  String get chatArchivedChats => 'Archived chats';
+
+  @override
+  String get chatNoArchivedChats => 'No archived chats';
+
+  @override
+  String get chatArchivedChatsHint =>
+      'An archived chat comes back to your list when a new message arrives.';
+
+  @override
+  String get chatArchive => 'Archive';
+
+  @override
+  String get chatUnarchive => 'Unarchive';
+
+  @override
+  String get chatDelete => 'Delete';
+
+  @override
+  String get chatArchiveChat => 'Archive chat';
+
+  @override
+  String get chatUnarchiveChat => 'Move back to chats';
+
+  @override
+  String get chatDeleteChat => 'Delete chat';
+
+  @override
+  String get chatDeleteChatQuestion => 'Delete this chat?';
+
+  @override
+  String chatDeleteForMeExplained(String name) {
+    return 'It is removed from your chats only. $name still has it.';
+  }
+
+  @override
+  String chatDeleteForBoth(String name) {
+    return 'Also delete for $name';
+  }
+
+  @override
+  String get chatDeleteForBothExplained =>
+      'Every message and photo is deleted for both of you. This cannot be undone.';
+
+  @override
+  String get chatArchivedDone => 'Chat archived';
+
+  @override
+  String get chatUnarchivedDone => 'Chat moved back to your chats';
+
+  @override
+  String get chatDeletedDone => 'Chat deleted';
+
+  @override
+  String get chatUndo => 'Undo';
+
+  @override
+  String get chatActionFailed =>
+      'That did not work. Check your connection and try again.';
+
+  @override
   String get chatThisIsYourOwnAccount => 'This is your own account.';
 
   @override
@@ -1079,30 +1179,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPinKeepsHistory =>
-      'This device still has your chat keys, so nothing is lost. Confirm your account password, then choose a new PIN or turn the PIN off.';
+      'This device still has your chat keys, so nothing is lost. Create an account password: from then on it protects your chats instead of a PIN.';
 
   @override
   String get forgotPinLosesHistory =>
-      'This device does not have your chat keys, and without the PIN they cannot be recovered. After you confirm your account password, new keys are created and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your devices can still open your chats, do this there instead to keep your history.';
+      'This device does not have your chat keys, and without the PIN they cannot be recovered. After you create an account password, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your devices can still open your chats, do this there instead to keep your history.';
 
   @override
   String get forgotPinNeedsPassword =>
-      'Recovering your PIN needs your account password. You sign in with Google, so create a password first.';
+      'You sign in with Google, so create an account password. It protects your chats from now on, instead of a PIN.';
 
   @override
-  String get forgotPinPasswordTitle => 'Confirm your password';
-
-  @override
-  String get forgotPinNewPinHelp =>
-      'This new PIN will protect your chat keys from now on.';
-
-  @override
-  String get forgotPinDone =>
-      'New backup PIN set. Your chat history is intact.';
-
-  @override
-  String get forgotPinProofExpired =>
-      'That took too long. Please confirm your password again.';
+  String get forgotPinNowPassword =>
+      'Done. Your chats are now protected by your account password.';
 
   @override
   String get pinForgotHint =>
@@ -1159,19 +1248,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pinTurnOffFailed =>
       'Could not turn off the PIN. Nothing was changed.';
-
-  @override
-  String get forgotPinChoiceTitle => 'Keep a backup PIN?';
-
-  @override
-  String get forgotPinChoiceMessage =>
-      'With a new PIN you can read your chats on a new phone. Without one, your chats stay end-to-end encrypted, but only this phone can read them.';
-
-  @override
-  String get forgotPinChoiceNoPin => 'No PIN';
-
-  @override
-  String get forgotPinChoiceNewPin => 'New PIN';
 
   @override
   String get chatPinRestoreTitle => 'Enter your backup PIN';
@@ -1437,6 +1513,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String propertyCurrentPhotos(int count) {
     return 'Current photos ($count)';
   }
+
+  @override
+  String propertyRestoreRemovedPhotos(int count) {
+    return 'Undo remove ($count)';
+  }
+
+  @override
+  String get propertyRemovePhoto => 'Remove photo';
 
   @override
   String get propertyNearby => 'What\'s nearby';

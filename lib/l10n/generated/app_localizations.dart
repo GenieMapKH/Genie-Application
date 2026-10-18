@@ -1166,6 +1166,180 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get chatTryAgain;
 
+  /// No description provided for @resetKeysPasswordHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your new chat keys will be locked with your account password.'**
+  String get resetKeysPasswordHelp;
+
+  /// No description provided for @chatPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your account password'**
+  String get chatPasswordTitle;
+
+  /// No description provided for @chatPasswordHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats are locked with your account password. Enter it to read and send messages on this device.'**
+  String get chatPasswordHelp;
+
+  /// No description provided for @chatPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account password'**
+  String get chatPasswordLabel;
+
+  /// No description provided for @chatPasswordWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'That is not your account password.'**
+  String get chatPasswordWrong;
+
+  /// No description provided for @chatPasswordTooManyTries.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries. Wait a few minutes and try again.'**
+  String get chatPasswordTooManyTries;
+
+  /// No description provided for @chatPasswordChangedElsewhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats are locked with an earlier password. Sign in once on a phone you used before to keep your earlier messages, or use chat here now: earlier messages cannot be read on this phone.'**
+  String get chatPasswordChangedElsewhere;
+
+  /// No description provided for @chatPinLastTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your chat PIN one last time'**
+  String get chatPinLastTimeTitle;
+
+  /// No description provided for @chatPinLastTimeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'From now on your account password protects your chats, so you will not need this PIN again.'**
+  String get chatPinLastTimeHelp;
+
+  /// No description provided for @securityChatsUsePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats are always end-to-end encrypted and locked with your account password, so signing in on any device brings them back. No PIN is needed.'**
+  String get securityChatsUsePassword;
+
+  /// No description provided for @chatMoreOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'More options'**
+  String get chatMoreOptions;
+
+  /// No description provided for @chatArchivedChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived chats'**
+  String get chatArchivedChats;
+
+  /// No description provided for @chatNoArchivedChats.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived chats'**
+  String get chatNoArchivedChats;
+
+  /// No description provided for @chatArchivedChatsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'An archived chat comes back to your list when a new message arrives.'**
+  String get chatArchivedChatsHint;
+
+  /// No description provided for @chatArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get chatArchive;
+
+  /// No description provided for @chatUnarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get chatUnarchive;
+
+  /// No description provided for @chatDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chatDelete;
+
+  /// No description provided for @chatArchiveChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive chat'**
+  String get chatArchiveChat;
+
+  /// No description provided for @chatUnarchiveChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Move back to chats'**
+  String get chatUnarchiveChat;
+
+  /// No description provided for @chatDeleteChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete chat'**
+  String get chatDeleteChat;
+
+  /// No description provided for @chatDeleteChatQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this chat?'**
+  String get chatDeleteChatQuestion;
+
+  /// No description provided for @chatDeleteForMeExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'It is removed from your chats only. {name} still has it.'**
+  String chatDeleteForMeExplained(String name);
+
+  /// No description provided for @chatDeleteForBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Also delete for {name}'**
+  String chatDeleteForBoth(String name);
+
+  /// No description provided for @chatDeleteForBothExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'Every message and photo is deleted for both of you. This cannot be undone.'**
+  String get chatDeleteForBothExplained;
+
+  /// No description provided for @chatArchivedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat archived'**
+  String get chatArchivedDone;
+
+  /// No description provided for @chatUnarchivedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat moved back to your chats'**
+  String get chatUnarchivedDone;
+
+  /// No description provided for @chatDeletedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat deleted'**
+  String get chatDeletedDone;
+
+  /// No description provided for @chatUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get chatUndo;
+
+  /// No description provided for @chatActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That did not work. Check your connection and try again.'**
+  String get chatActionFailed;
+
   /// No description provided for @chatThisIsYourOwnAccount.
   ///
   /// In en, this message translates to:
@@ -2033,44 +2207,26 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPinKeepsHistory.
   ///
   /// In en, this message translates to:
-  /// **'This device still has your chat keys, so nothing is lost. Confirm your account password, then choose a new PIN or turn the PIN off.'**
+  /// **'This device still has your chat keys, so nothing is lost. Create an account password: from then on it protects your chats instead of a PIN.'**
   String get forgotPinKeepsHistory;
 
   /// No description provided for @forgotPinLosesHistory.
   ///
   /// In en, this message translates to:
-  /// **'This device does not have your chat keys, and without the PIN they cannot be recovered. After you confirm your account password, new keys are created and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your devices can still open your chats, do this there instead to keep your history.'**
+  /// **'This device does not have your chat keys, and without the PIN they cannot be recovered. After you create an account password, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your devices can still open your chats, do this there instead to keep your history.'**
   String get forgotPinLosesHistory;
 
   /// No description provided for @forgotPinNeedsPassword.
   ///
   /// In en, this message translates to:
-  /// **'Recovering your PIN needs your account password. You sign in with Google, so create a password first.'**
+  /// **'You sign in with Google, so create an account password. It protects your chats from now on, instead of a PIN.'**
   String get forgotPinNeedsPassword;
 
-  /// No description provided for @forgotPinPasswordTitle.
+  /// No description provided for @forgotPinNowPassword.
   ///
   /// In en, this message translates to:
-  /// **'Confirm your password'**
-  String get forgotPinPasswordTitle;
-
-  /// No description provided for @forgotPinNewPinHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'This new PIN will protect your chat keys from now on.'**
-  String get forgotPinNewPinHelp;
-
-  /// No description provided for @forgotPinDone.
-  ///
-  /// In en, this message translates to:
-  /// **'New backup PIN set. Your chat history is intact.'**
-  String get forgotPinDone;
-
-  /// No description provided for @forgotPinProofExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'That took too long. Please confirm your password again.'**
-  String get forgotPinProofExpired;
+  /// **'Done. Your chats are now protected by your account password.'**
+  String get forgotPinNowPassword;
 
   /// No description provided for @pinForgotHint.
   ///
@@ -2167,30 +2323,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not turn off the PIN. Nothing was changed.'**
   String get pinTurnOffFailed;
-
-  /// No description provided for @forgotPinChoiceTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Keep a backup PIN?'**
-  String get forgotPinChoiceTitle;
-
-  /// No description provided for @forgotPinChoiceMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'With a new PIN you can read your chats on a new phone. Without one, your chats stay end-to-end encrypted, but only this phone can read them.'**
-  String get forgotPinChoiceMessage;
-
-  /// No description provided for @forgotPinChoiceNoPin.
-  ///
-  /// In en, this message translates to:
-  /// **'No PIN'**
-  String get forgotPinChoiceNoPin;
-
-  /// No description provided for @forgotPinChoiceNewPin.
-  ///
-  /// In en, this message translates to:
-  /// **'New PIN'**
-  String get forgotPinChoiceNewPin;
 
   /// No description provided for @chatPinRestoreTitle.
   ///
@@ -2599,6 +2731,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current photos ({count})'**
   String propertyCurrentPhotos(int count);
+
+  /// No description provided for @propertyRestoreRemovedPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo remove ({count})'**
+  String propertyRestoreRemovedPhotos(int count);
+
+  /// No description provided for @propertyRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get propertyRemovePhoto;
 
   /// No description provided for @propertyNearby.
   ///

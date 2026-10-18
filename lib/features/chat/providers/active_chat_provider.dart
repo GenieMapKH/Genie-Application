@@ -11,6 +11,7 @@ import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/message_cipher.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/models/conversation_change.dart';
 import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
@@ -58,12 +59,14 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   }) : super(const ActiveChatState()) {
     _subscriptions
       ..add(socketService.onMessage.listen(_queueIncoming))
-      ..add(socketService.onConnected.listen((_) => _reloadAfterReconnect()));
+      ..add(socketService.onConnected.listen((_) => _reloadAfterReconnect()))
+      ..add(socketService.onConversationChanged.listen(_onConversationChanged));
   }
 
   /// Makes encryption ready, then loads the conversation. [askPin] is used
   /// only for an account with a backup PIN on a device without its keys.
-  /// [takeOver] is the user's answer to [E2eeSetupResult.usedOnAnotherDevice].
+  /// [takeOver] is the user's answer to [E2eeSetupResult.usedOnAnotherDevice]
+  /// or [E2eeSetupResult.lockedWithEarlierPassword].
   Future<void> open({required PinPrompt askPin, bool takeOver = false}) async {
     _keysReady = false;
     state = const ActiveChatState();
@@ -274,6 +277,21 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   Future<PeerKeyStatus> _checkPeerKey() {
     _lastKeyCheck = DateTime.now();
     return cipher.checkPeerKey(participantId);
+  }
+
+  /// The conversation was deleted (by the other person, for everyone, or on
+  /// another device): show only what the server still has.
+  Future<void> _onConversationChanged(ConversationChange change) async {
+    if (change.participantId != participantId || !change.historyCleared) {
+      return;
+    }
+    if (state.status != ActiveChatStatus.ready) return;
+    try {
+      final history = await _fetchHistory();
+      if (mounted) state = state.copyWith(messages: history);
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to reload a deleted chat', e, stackTrace);
+    }
   }
 
   /// Messages sent while the connection was down were not delivered live.

@@ -5,7 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/media/image_upload_policy.dart';
 import 'package:genie/shared/utils/image_rejection_message.dart';
 import 'package:genie/core/logging/app_logger.dart';
+import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:genie/features/chat/presentation/widgets/account_password_prompt.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_conversation_header.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_image_picker.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_input_bar.dart';
@@ -98,6 +100,10 @@ class _Conversation extends ConsumerStatefulWidget {
 }
 
 class _ConversationState extends ConsumerState<_Conversation> {
+  /// What the user was last asked for, so a refusal is explained in the
+  /// same terms (PIN or account password).
+  BackupLock _askedFor = BackupLock.pin;
+
   @override
   void initState() {
     super.initState();
@@ -141,15 +147,41 @@ class _ConversationState extends ConsumerState<_Conversation> {
         );
   }
 
-  /// Only for an account that chose a backup PIN, on a device without its
-  /// keys. Anyone else is never asked.
-  Future<String?> _askPin() async {
+  /// Only on a device without the account's keys, when a backup PIN or the
+  /// account password locks them. Anyone else is never asked.
+  Future<String?> _askPin(BackupLock lock) async {
     if (!mounted) return null;
-    return showPinPrompt(
-      context,
-      title: context.l10n.chatPinRestoreTitle,
-      helper: context.l10n.chatPinRestoreHelp,
-    );
+    _askedFor = lock;
+    return switch (lock) {
+      BackupLock.password => showAccountPasswordPrompt(
+        context,
+        title: context.l10n.chatPasswordTitle,
+        helper: context.l10n.chatPasswordHelp,
+      ),
+      BackupLock.pin => showPinPrompt(
+        context,
+        title: context.l10n.chatPinRestoreTitle,
+        helper: context.l10n.chatPinRestoreHelp,
+      ),
+    };
+  }
+
+  /// Why chat cannot open here, in terms of what locks the keys.
+  String _unavailableMessage(E2eeSetupResult? result) {
+    final l10n = context.l10n;
+    final byPassword = _askedFor == BackupLock.password;
+    return switch (result) {
+      E2eeSetupResult.wrongPassword => l10n.chatPasswordWrong,
+      E2eeSetupResult.wrongPin => '${l10n.pinWrong}\n\n${l10n.pinForgotHint}',
+      E2eeSetupResult.rateLimited when byPassword =>
+        l10n.chatPasswordTooManyTries,
+      E2eeSetupResult.rateLimited =>
+        '${l10n.pinLocked}\n\n${l10n.pinForgotHint}',
+      E2eeSetupResult.cancelled when byPassword => l10n.chatPasswordHelp,
+      E2eeSetupResult.cancelled =>
+        '${l10n.chatPinNeeded}\n\n${l10n.pinForgotHint}',
+      _ => l10n.chatOpenFailed,
+    };
   }
 
   @override
@@ -175,16 +207,16 @@ class _ConversationState extends ConsumerState<_Conversation> {
           actionLabel: context.l10n.chatUseOnThisDevice,
           onRetry: () => _open(takeOver: true),
         ),
+      ActiveChatStatus.unavailable
+          when chatState.setupResult ==
+              E2eeSetupResult.lockedWithEarlierPassword =>
+        _ChatNotice(
+          message: context.l10n.chatPasswordChangedElsewhere,
+          actionLabel: context.l10n.chatUseOnThisDevice,
+          onRetry: () => _open(takeOver: true),
+        ),
       ActiveChatStatus.unavailable => _ChatNotice(
-        message: switch (chatState.setupResult) {
-          E2eeSetupResult.wrongPin =>
-            '${context.l10n.pinWrong}\n\n${context.l10n.pinForgotHint}',
-          E2eeSetupResult.rateLimited =>
-            '${context.l10n.pinLocked}\n\n${context.l10n.pinForgotHint}',
-          E2eeSetupResult.cancelled =>
-            '${context.l10n.chatPinNeeded}\n\n${context.l10n.pinForgotHint}',
-          _ => context.l10n.chatOpenFailed,
-        },
+        message: _unavailableMessage(chatState.setupResult),
         onRetry: _open,
       ),
       ActiveChatStatus.ready => Column(

@@ -6,6 +6,7 @@ import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
+import 'package:genie/features/chat/models/conversation_change.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 /// Thrown when a message could not be handed to the server.
@@ -37,6 +38,7 @@ class ChatSocketService {
   final _messages = StreamController<EncryptedMessage>.broadcast();
   final _connections = StreamController<void>.broadcast();
   final _presence = StreamController<ChatPresence>.broadcast();
+  final _conversationChanges = StreamController<ConversationChange>.broadcast();
 
   ChatSocketService({required this.readAccessToken, String? baseUrl})
     : _url = '${baseUrl ?? AppConfig.apiBaseUrl}/chat';
@@ -51,6 +53,10 @@ class ChatSocketService {
 
   /// Online/offline changes of the users being watched.
   Stream<ChatPresence> get onPresence => _presence.stream;
+
+  /// Conversations archived, restored or deleted elsewhere.
+  Stream<ConversationChange> get onConversationChanged =>
+      _conversationChanges.stream;
 
   /// Opens the connection, or re-opens it when the session token changed.
   /// Returns false when there is no session to connect with.
@@ -150,6 +156,7 @@ class ChatSocketService {
     _messages.close();
     _connections.close();
     _presence.close();
+    _conversationChanges.close();
   }
 
   io.Socket _createSocket() {
@@ -172,6 +179,7 @@ class ChatSocketService {
 
     socket.on('newMessage', _onNewMessage);
     socket.on('presence', _onPresence);
+    socket.on('conversationChanged', _onConversationChanged);
 
     // A refused handshake. Network failures are retried by the socket itself.
     socket.onConnectError((error) {
@@ -207,6 +215,17 @@ class ChatSocketService {
       if (!_presence.isClosed) _presence.add(presence);
     } catch (e, stackTrace) {
       AppLogger.error('Ignored a malformed presence update', e, stackTrace);
+    }
+  }
+
+  void _onConversationChanged(dynamic data) {
+    try {
+      final change = ConversationChange.fromJson(
+        Map<String, dynamic>.from(data as Map),
+      );
+      if (!_conversationChanges.isClosed) _conversationChanges.add(change);
+    } catch (e, stackTrace) {
+      AppLogger.error('Ignored a malformed conversation change', e, stackTrace);
     }
   }
 
