@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:genie/core/errors/app_exceptions.dart';
 
-/// What the identity key backup is locked with. An account that signs in
-/// with a password uses the password, so it never needs a PIN; one that
-/// signs in only with Google can choose a backup PIN.
+/// What the identity key backup is locked with. Every account protects its
+/// chats with a 6-digit chat PIN. [password] is only for backups made while
+/// chats were locked with the account password: they are moved to a PIN the
+/// next time the account is used.
 enum BackupLock {
   pin,
   password;
@@ -14,21 +15,18 @@ enum BackupLock {
 }
 
 /// The identity private key, encrypted on the device with a key made from the
-/// user's PIN (or account password, see [lock]). [verifier] lets the server
-/// check it without knowing it.
+/// user's PIN. [verifier] lets the server check the PIN without knowing it.
 class EncryptedBackup {
   final String blob;
   final String salt;
   final String nonce;
   final String verifier;
-  final BackupLock lock;
 
   const EncryptedBackup({
     required this.blob,
     required this.salt,
     required this.nonce,
     required this.verifier,
-    this.lock = BackupLock.pin,
   });
 }
 
@@ -59,9 +57,12 @@ class StoredBackup {
 }
 
 /// Thrown while the server refuses backup requests: too many lookups, or the
-/// backup is locked after too many wrong PINs.
+/// backup is locked after too many wrong PINs. [retryAfter] is how long the
+/// lock lasts, when the server says.
 class BackupRateLimitedException extends AppException {
-  const BackupRateLimitedException()
+  final Duration? retryAfter;
+
+  const BackupRateLimitedException({this.retryAfter})
     : super('Too many backup attempts', code: '429');
 }
 
@@ -88,9 +89,12 @@ class BackupOwnerProof {
 }
 
 /// Thrown when the server rejects the PIN (the try has been counted), or
-/// the [BackupOwnerProof] sent to replace a backup.
+/// the [BackupOwnerProof] sent to replace a backup. [attemptsLeft] is how
+/// many more wrong PINs lock the backup, when the server says.
 class WrongPinException extends AppException {
-  const WrongPinException() : super('Wrong PIN', code: '403');
+  final int? attemptsLeft;
+
+  const WrongPinException({this.attemptsLeft}) : super('Wrong PIN', code: '403');
 }
 
 /// The account password typed to open the chat keys is not the account's.
@@ -119,10 +123,8 @@ class ChatBackupRepository {
             : null,
       );
     } on DioException catch (e) {
-      final status = e.response?.statusCode;
-      if (status == 404) return null;
-      if (status == 429) throw const BackupRateLimitedException();
-      rethrow;
+      if (e.response?.statusCode == 404) return null;
+      _throwRefusal(e);
     }
   }
 
@@ -139,10 +141,7 @@ class ChatBackupRepository {
         nonce: response.data['backupNonce'] as String,
       );
     } on DioException catch (e) {
-      final status = e.response?.statusCode;
-      if (status == 403) throw const WrongPinException();
-      if (status == 429) throw const BackupRateLimitedException();
-      rethrow;
+      _throwRefusal(e);
     }
   }
 
@@ -173,24 +172,10 @@ class ChatBackupRepository {
     );
   }
 
-  /// Removes the backup: the user turned the backup PIN off. The server
-  /// wants [ownerProof] as in [saveBackup] (null only for a backup from
-  /// before PIN tries were counted, which it cannot check). Chat stays
-  /// end-to-end encrypted; only reading earlier messages on a new device is
-  /// given up.
-  Future<void> removeBackup({required BackupOwnerProof? ownerProof}) {
-    return _replaceProtected(
-      () => dio.post(
-        '/chat/backup/remove',
-        data: ownerProof?.toJson() ?? const <String, String>{},
-      ),
-    );
-  }
-
   /// A token, good for a few minutes, proving [password] is the account's.
-  /// The chat server takes it in place of the old PIN or password when a
-  /// backup is replaced. Throws [WrongPasswordException] for another
-  /// password and [BackupRateLimitedException] after too many.
+  /// The chat server takes it in place of a forgotten PIN when a backup is
+  /// replaced. Throws [WrongPasswordException] for another password and
+  /// [BackupRateLimitedException] after too many.
   Future<String> provePassword(String password) async {
     try {
       final response = await dio.post(
@@ -212,7 +197,7 @@ class ChatBackupRepository {
       'backupSalt': backup.salt,
       'backupNonce': backup.nonce,
       'backupVerifier': backup.verifier,
-      'protectedBy': backup.lock.name,
+      'protectedBy': BackupLock.pin.name,
       ...?proof?.toJson(),
     };
   }
@@ -221,11 +206,26 @@ class ChatBackupRepository {
     try {
       await request();
     } on DioException catch (e) {
-      final status = e.response?.statusCode;
-      if (status == 403) throw const WrongPinException();
-      if (status == 429) throw const BackupRateLimitedException();
-      rethrow;
+      _throwRefusal(e);
     }
+  }
+
+  /// A wrong PIN (`403`) or a locked backup (`429`) as its exception, with
+  /// what the server says about tries left or the wait; anything else as is.
+  Never _throwRefusal(DioException e) {
+    final body = e.response?.data;
+    final details = body is Map ? body : const {};
+    switch (e.response?.statusCode) {
+      case 403:
+        final left = details['attemptsLeft'];
+        throw WrongPinException(attemptsLeft: left is int ? left : null);
+      case 429:
+        final seconds = details['retryAfterSeconds'];
+        throw BackupRateLimitedException(
+          retryAfter: seconds is int ? Duration(seconds: seconds) : null,
+        );
+    }
+    Error.throwWithStackTrace(e, e.stackTrace);
   }
 
   /// Base64 public key of [userId] as stored on the server.

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/chat/providers/chat_password_lock.dart';
 import 'package:genie/features/security/data/known_devices_storage.dart';
 import 'package:genie/features/security/data/models/device_session.dart';
 import 'package:genie/features/security/data/repositories/account_repository.dart';
@@ -19,11 +18,7 @@ final accountRepositoryProvider = Provider<AccountRepository>(
 );
 
 final accountSecurityControllerProvider = Provider<AccountSecurityController>(
-  (ref) => AccountSecurityController(
-    ref.watch(accountRepositoryProvider),
-    lockChatKeys: (password) =>
-        ref.read(chatPasswordLockProvider).lockWith(password),
-  ),
+  (ref) => AccountSecurityController(ref.watch(accountRepositoryProvider)),
 );
 
 final newSignInDetectorProvider = Provider<NewSignInDetector>(

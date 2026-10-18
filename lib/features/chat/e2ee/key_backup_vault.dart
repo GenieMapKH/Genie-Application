@@ -12,26 +12,23 @@ typedef OpenedBackup = ({List<int> privateKey, BackupOwnerProof? proof});
 
 /// Saves and opens the PIN-protected copy of the identity key on the server.
 /// The server only releases it for the right PIN and counts every wrong one.
+///
+/// A backup still locked with the account password (see [BackupLock]) opens
+/// the same way, with the password in place of the PIN.
 class KeyBackupVault {
   final BackupService backupService;
   final ChatBackupRepository backupRepository;
 
   KeyBackupVault({required this.backupService, required this.backupRepository});
 
-  /// Encrypts [privateKey] under [pin] (or, with [lock], the account
-  /// password), ready to be uploaded.
-  Future<EncryptedBackup> seal(
-    String pin,
-    List<int> privateKey, {
-    BackupLock lock = BackupLock.pin,
-  }) async {
+  /// Encrypts [privateKey] under [pin], ready to be uploaded.
+  Future<EncryptedBackup> seal(String pin, List<int> privateKey) async {
     final created = await backupService.createBackup(pin, privateKey);
     return EncryptedBackup(
       blob: created['blob']!,
       salt: created['salt']!,
       nonce: created['nonce']!,
       verifier: created['verifier']!,
-      lock: lock,
     );
   }
 
@@ -41,9 +38,8 @@ class KeyBackupVault {
     String pin,
     List<int> privateKey, {
     BackupOwnerProof? ownerProof,
-    BackupLock lock = BackupLock.pin,
   }) async {
-    final backup = await seal(pin, privateKey, lock: lock);
+    final backup = await seal(pin, privateKey);
     await backupRepository.saveBackup(backup, ownerProof: ownerProof);
     return backup;
   }

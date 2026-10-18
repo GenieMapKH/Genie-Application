@@ -10,6 +10,7 @@ import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/message_cipher.dart';
+import 'package:genie/features/chat/e2ee/pin_check.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
 import 'package:genie/features/chat/providers/active_chat_state.dart';
@@ -64,18 +65,13 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   }
 
   /// Makes encryption ready, then loads the conversation. [askPin] is used
-  /// only for an account with a backup PIN on a device without its keys.
-  /// [takeOver] is the user's answer to [E2eeSetupResult.usedOnAnotherDevice]
-  /// or [E2eeSetupResult.lockedWithEarlierPassword].
-  Future<void> open({required PinPrompt askPin, bool takeOver = false}) async {
+  /// only on a device without the account's keys: they come back with the
+  /// chat PIN.
+  Future<void> open({required PinPrompt askPin}) async {
     _keysReady = false;
     state = const ActiveChatState();
     try {
-      final result = await setupService.initialize(
-        userId,
-        askPin: askPin,
-        takeOver: takeOver,
-      );
+      final result = await setupService.initialize(userId, askPin: askPin);
       if (!mounted) return;
       if (result != E2eeSetupResult.ready) {
         state = ActiveChatState(

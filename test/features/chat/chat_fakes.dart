@@ -3,11 +3,11 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/message_cipher.dart';
+import 'package:genie/features/chat/e2ee/pin_check.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
@@ -343,21 +343,12 @@ class FakeSetupService extends Fake implements E2eeSetupService {
   E2eeSetupResult result = E2eeSetupResult.ready;
   int runs = 0;
 
-  /// Whether each run was asked to take the account's chat over.
-  final List<bool> takeOvers = [];
-
   @override
-  Future<E2eeSetupResult> initialize(
-    String userId, {
-    PinPrompt? askPin,
-    bool takeOver = false,
-    String? password,
-  }) async {
+  Future<E2eeSetupResult> initialize(String userId, {PinPrompt? askPin}) async {
     runs++;
-    takeOvers.add(takeOver);
     return result;
   }
 }
 
-Future<String?> neverAskPin(BackupLock lock) async =>
-    fail('must not ask for a PIN or password');
+Future<bool> neverAskPin(PinCheck check) async =>
+    fail('must not ask for a PIN');

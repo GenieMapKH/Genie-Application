@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/core/media/image_upload_policy.dart';
 import 'package:genie/shared/utils/image_rejection_message.dart';
 import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/presentation/widgets/account_password_prompt.dart';
+import 'package:genie/features/chat/e2ee/pin_check.dart';
+import 'package:genie/features/chat/presentation/screens/chat_pin_setup_page.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_conversation_header.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_image_picker.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_input_bar.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_key_changed_banner.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_message_bubble.dart';
+import 'package:genie/features/chat/presentation/widgets/chat_notice.dart';
 import 'package:genie/features/chat/presentation/widgets/chat_participant_sheet.dart';
-import 'package:genie/features/chat/presentation/widgets/pin_prompt_dialog.dart';
+import 'package:genie/features/chat/presentation/widgets/pin_check_dialog.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
+import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -76,14 +77,14 @@ class ChatConversationPage extends ConsumerWidget {
         ),
       ),
       body: userId == participantId
-          ? _ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)
+          ? ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)
           : chat != null
           ? _Conversation(chat: chat, participantName: participantName)
           : profile.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _ChatNotice(
+          : ChatNotice(
               message: context.l10n.chatSignInToChatOrCheck,
-              onRetry: () => ref.invalidate(userProfileProvider),
+              onAction: () => ref.invalidate(userProfileProvider),
             ),
     );
   }
@@ -100,21 +101,44 @@ class _Conversation extends ConsumerStatefulWidget {
 }
 
 class _ConversationState extends ConsumerState<_Conversation> {
-  /// What the user was last asked for, so a refusal is explained in the
-  /// same terms (PIN or account password).
-  BackupLock _askedFor = BackupLock.pin;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _open());
   }
 
-  void _open({bool takeOver = false}) {
+  void _open() {
     if (!mounted) return;
-    ref
-        .read(activeChatProvider(widget.chat).notifier)
-        .open(askPin: _askPin, takeOver: takeOver);
+    ref.read(activeChatProvider(widget.chat).notifier).open(askPin: _askPin);
+  }
+
+  /// Only on a device without the account's keys. The dialog stays open
+  /// while each PIN is checked, and says what went wrong.
+  Future<bool> _askPin(PinCheck check) async {
+    if (!mounted) return false;
+    return showPinCheckDialog(
+      context,
+      title: context.l10n.chatPinRestoreTitle,
+      helper: context.l10n.chatPinRestoreHelp,
+      check: check,
+    );
+  }
+
+  /// The account still has to create its chat PIN (or move its chats from
+  /// the account password to one): then chat opens.
+  Future<void> _createPin({required bool fromPassword}) async {
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => ChatPinSetupPage(
+          userId: widget.chat.userId,
+          fromPassword: fromPassword,
+          onDone: () => Navigator.of(context).pop(true),
+        ),
+      ),
+    );
+    if (created != true || !mounted) return;
+    ref.invalidate(chatPinStatusProvider);
+    _open();
   }
 
   Future<void> _sendPicture() async {
@@ -147,43 +171,6 @@ class _ConversationState extends ConsumerState<_Conversation> {
         );
   }
 
-  /// Only on a device without the account's keys, when a backup PIN or the
-  /// account password locks them. Anyone else is never asked.
-  Future<String?> _askPin(BackupLock lock) async {
-    if (!mounted) return null;
-    _askedFor = lock;
-    return switch (lock) {
-      BackupLock.password => showAccountPasswordPrompt(
-        context,
-        title: context.l10n.chatPasswordTitle,
-        helper: context.l10n.chatPasswordHelp,
-      ),
-      BackupLock.pin => showPinPrompt(
-        context,
-        title: context.l10n.chatPinRestoreTitle,
-        helper: context.l10n.chatPinRestoreHelp,
-      ),
-    };
-  }
-
-  /// Why chat cannot open here, in terms of what locks the keys.
-  String _unavailableMessage(E2eeSetupResult? result) {
-    final l10n = context.l10n;
-    final byPassword = _askedFor == BackupLock.password;
-    return switch (result) {
-      E2eeSetupResult.wrongPassword => l10n.chatPasswordWrong,
-      E2eeSetupResult.wrongPin => '${l10n.pinWrong}\n\n${l10n.pinForgotHint}',
-      E2eeSetupResult.rateLimited when byPassword =>
-        l10n.chatPasswordTooManyTries,
-      E2eeSetupResult.rateLimited =>
-        '${l10n.pinLocked}\n\n${l10n.pinForgotHint}',
-      E2eeSetupResult.cancelled when byPassword => l10n.chatPasswordHelp,
-      E2eeSetupResult.cancelled =>
-        '${l10n.chatPinNeeded}\n\n${l10n.pinForgotHint}',
-      _ => l10n.chatOpenFailed,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = activeChatProvider(widget.chat);
@@ -200,24 +187,8 @@ class _ConversationState extends ConsumerState<_Conversation> {
       ActiveChatStatus.loading => const Center(
         child: CircularProgressIndicator(),
       ),
-      ActiveChatStatus.unavailable
-          when chatState.setupResult == E2eeSetupResult.usedOnAnotherDevice =>
-        _ChatNotice(
-          message: context.l10n.chatUsedOnAnotherDevice,
-          actionLabel: context.l10n.chatUseOnThisDevice,
-          onRetry: () => _open(takeOver: true),
-        ),
-      ActiveChatStatus.unavailable
-          when chatState.setupResult ==
-              E2eeSetupResult.lockedWithEarlierPassword =>
-        _ChatNotice(
-          message: context.l10n.chatPasswordChangedElsewhere,
-          actionLabel: context.l10n.chatUseOnThisDevice,
-          onRetry: () => _open(takeOver: true),
-        ),
-      ActiveChatStatus.unavailable => _ChatNotice(
-        message: _unavailableMessage(chatState.setupResult),
-        onRetry: _open,
+      ActiveChatStatus.unavailable => _unavailableNotice(
+        chatState.setupResult,
       ),
       ActiveChatStatus.ready => Column(
         children: [
@@ -242,12 +213,52 @@ class _ConversationState extends ConsumerState<_Conversation> {
     };
   }
 
+  /// Why chat cannot open here, and the one thing to do about it.
+  Widget _unavailableNotice(E2eeSetupResult? result) {
+    final l10n = context.l10n;
+    return switch (result) {
+      E2eeSetupResult.pinNotSet => ChatNotice(
+        icon: Icons.shield_outlined,
+        title: l10n.chatPinCreateTitle,
+        message: l10n.chatPinRequiredMessage,
+        actionLabel: l10n.chatPinCreateAction,
+        onAction: () => _createPin(fromPassword: false),
+      ),
+      E2eeSetupResult.lockedWithPassword => ChatNotice(
+        icon: Icons.shield_outlined,
+        title: l10n.chatPinMoveTitle,
+        message: l10n.chatPinMoveHelp,
+        actionLabel: l10n.chatPinCreateAction,
+        onAction: () => _createPin(fromPassword: true),
+      ),
+      E2eeSetupResult.cancelled => ChatNotice(
+        icon: Icons.lock_outline,
+        title: l10n.chatLockedTitle,
+        message: l10n.chatPinNeeded,
+        actionLabel: l10n.chatEnterPinAction,
+        onAction: _open,
+        footnote: l10n.pinForgotHint,
+      ),
+      E2eeSetupResult.rateLimited => ChatNotice(
+        icon: Icons.lock_clock_outlined,
+        isWarning: true,
+        title: l10n.chatPinLockedTitle,
+        message: l10n.chatPinLockedMessage,
+        onAction: _open,
+        footnote: l10n.pinForgotHint,
+      ),
+      _ => ChatNotice(
+        icon: Icons.cloud_off_outlined,
+        message: l10n.chatOpenFailed,
+        onAction: _open,
+      ),
+    };
+  }
+
   Widget _buildMessages(ActiveChatState chatState) {
     final messages = chatState.messages;
     if (messages.isEmpty) {
-      return _ChatNotice(
-        message: context.l10n.chatMessagesAreEndToEndEncrypted,
-      );
+      return ChatNotice(message: context.l10n.chatMessagesAreEndToEndEncrypted);
     }
 
     // Reversed, so the list stays anchored to the newest message.
@@ -269,47 +280,6 @@ class _ConversationState extends ConsumerState<_Conversation> {
           ),
         );
       },
-    );
-  }
-}
-
-/// A centred message, with a retry button when there is something to retry.
-class _ChatNotice extends StatelessWidget {
-  final String message;
-  final VoidCallback? onRetry;
-
-  /// The button's label; "Try again" when null.
-  final String? actionLabel;
-
-  const _ChatNotice({required this.message, this.onRetry, this.actionLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 15,
-                color: context.colors.textMuted,
-                height: 1.5,
-              ),
-            ),
-            if (onRetry != null) ...[
-              const SizedBox(height: 16),
-              OutlinedButton(
-                onPressed: onRetry,
-                child: Text(actionLabel ?? context.l10n.chatTryAgain),
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }

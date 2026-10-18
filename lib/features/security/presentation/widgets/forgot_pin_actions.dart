@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
 import 'package:genie/features/chat/presentation/widgets/account_password_prompt.dart';
+import 'package:genie/features/chat/presentation/widgets/pin_prompt_dialog.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/security/presentation/screens/create_password_page.dart';
@@ -11,14 +12,13 @@ import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/shared/widgets/app_page_scaffold.dart';
 
-/// The way back in for someone who forgot the backup PIN. Only an account
-/// that signs in with Google alone has a PIN, so the answer is an account
-/// password: it protects the chats from then on, instead of a PIN.
+/// The way back in for someone who forgot the chat PIN: the account
+/// password proves it is them, then they choose a new PIN. An account that
+/// signs in with Google alone creates a password first.
 ///
-/// Creating it locks the keys this device holds with it, so no history is
-/// lost ([AccountSecurityController.createPassword]). A device without the
-/// keys cannot open them without the PIN: new keys are made, locked with
-/// the new password.
+/// A device that holds the chat keys keeps them under the new PIN, so no
+/// history is lost. One without them cannot open them without the old PIN:
+/// new keys are made, and earlier messages can no longer be read.
 abstract final class ForgotPinActions {
   static Future<void> forgotPin(
     BuildContext context,
@@ -44,46 +44,47 @@ abstract final class ForgotPinActions {
     );
     if (!goAhead || !context.mounted) return;
 
-    final created = await context.pushPage<bool>(
-      CreatePasswordPage(reason: l10n.forgotPinNeedsPassword),
-    );
-    if (created != true || !context.mounted) return;
-
-    if (keepsHistory) {
-      AppPopup.showSuccess(context, l10n.forgotPinNowPassword);
-      return;
+    if (!profile.hasPassword) {
+      final created = await context.pushPage<bool>(
+        CreatePasswordPage(reason: l10n.forgotPinNeedsPassword),
+      );
+      if (created != true || !context.mounted) return;
     }
-    await _startOver(context, ref, profile.id);
-  }
 
-  /// New keys, locked with the password just created.
-  static Future<void> _startOver(
-    BuildContext context,
-    WidgetRef ref,
-    String userId,
-  ) async {
-    final l10n = context.l10n;
     final password = await showAccountPasswordPrompt(
       context,
       title: l10n.chatPasswordTitle,
-      helper: l10n.resetKeysPasswordHelp,
+      helper: l10n.forgotPinPasswordHelp,
     );
     if (password == null || !context.mounted) return;
 
     final result = await ref
-        .read(e2eeSetupServiceProvider)
-        .startOver(userId, password);
+        .read(e2eeKeyManagerProvider)
+        .recoverWithPassword(
+          profile.id,
+          password: password,
+          askNewPin: () => showPinPrompt(
+            context,
+            title: l10n.pinEnterNewTitle,
+            helper: l10n.pinSetUpHelp,
+            isNewPin: true,
+          ),
+        );
     if (!context.mounted) return;
 
     switch (result) {
-      case E2eeSetupResult.ready:
+      case RecoverPinResult.recovered:
+        AppPopup.showSuccess(context, l10n.forgotPinRecovered);
+      case RecoverPinResult.startedOver:
         AppPopup.showSuccess(context, l10n.resetKeysDone);
-      case E2eeSetupResult.wrongPassword:
+      case RecoverPinResult.cancelled:
+        break;
+      case RecoverPinResult.wrongPassword:
         AppPopup.showError(context, l10n.chatPasswordWrong);
-      case E2eeSetupResult.rateLimited:
+      case RecoverPinResult.rateLimited:
         AppPopup.showError(context, l10n.chatPasswordTooManyTries);
-      default:
-        AppPopup.showError(context, l10n.resetKeysFailed);
+      case RecoverPinResult.failed:
+        AppPopup.showError(context, l10n.pinSaveFailed);
     }
   }
 }

@@ -6,29 +6,6 @@ import 'package:genie/features/chat/e2ee/backup_service.dart';
 import 'package:genie/features/chat/e2ee/key_backup_vault.dart';
 import 'package:genie/features/chat/e2ee/key_service.dart';
 
-enum SetUpPinResult {
-  created,
-  alreadySet,
-
-  /// This device does not hold the keys the account uses now: chat has to
-  /// be opened here first.
-  keysNotReady,
-  cancelled,
-  rateLimited,
-  fetchFailed,
-  saveFailed,
-}
-
-enum TurnOffPinResult {
-  turnedOff,
-  noBackup,
-  cancelled,
-  wrongPin,
-  rateLimited,
-  fetchFailed,
-  removeFailed,
-}
-
 enum ChangePinResult {
   changed,
   noBackup,
@@ -48,6 +25,18 @@ enum ResetKeysResult {
   saveFailed,
 }
 
+enum RecoverPinResult {
+  /// A new PIN protects the keys this device holds: nothing was lost.
+  recovered,
+
+  /// A new PIN protects new keys: earlier messages can no longer be read.
+  startedOver,
+  cancelled,
+  wrongPassword,
+  rateLimited,
+  failed,
+}
+
 /// Asks the user for a PIN. Returns null if they cancel.
 typedef PinRequest = Future<String?> Function();
 
@@ -63,12 +52,11 @@ class _KeyAccessRefused implements Exception {
 /// Account-level key maintenance from the security screen. No UI: PINs come
 /// from the [PinRequest] callbacks and the outcome is returned as an enum.
 ///
-/// The backup PIN is optional ([setUpBackupPin], [turnOffBackupPin]). Once
-/// there is one, every operation that replaces what it protects starts with
-/// proof that the owner is asking: the current PIN, or for someone who
-/// forgot it, the account password ([recoverWithPassword]). Without that,
-/// anyone holding the unlocked phone could put keys of their own on the
-/// account and read its chats from then on.
+/// Every account has a chat PIN. Every operation that replaces what it
+/// protects starts with proof that the owner is asking: the current PIN, or
+/// for someone who forgot it, the account password ([recoverWithPassword]).
+/// Without that, anyone holding the unlocked phone could put keys of their
+/// own on the account and read its chats from then on.
 class E2eeKeyManager {
   final KeyService keyService;
   final BackupService backupService;
@@ -84,69 +72,6 @@ class E2eeKeyManager {
     required this.backupService,
     required this.backupRepository,
   });
-
-  /// Protects the keys this device holds with a new backup PIN, so a new
-  /// device can restore them. Only for an account without a PIN yet.
-  Future<SetUpPinResult> setUpBackupPin(
-    String userId, {
-    required PinRequest askNewPin,
-  }) async {
-    try {
-      if (await backupRepository.fetchBackup() != null) {
-        return SetUpPinResult.alreadySet;
-      }
-    } on BackupRateLimitedException {
-      return SetUpPinResult.rateLimited;
-    } catch (e) {
-      AppLogger.error('Could not fetch backup', e);
-      return SetUpPinResult.fetchFailed;
-    }
-    // Backing up a pair the account no longer uses would restore nothing.
-    if (!await holdsCurrentKeys(userId)) return SetUpPinResult.keysNotReady;
-
-    final pin = await askNewPin();
-    if (pin == null) return SetUpPinResult.cancelled;
-
-    try {
-      final keyPair = (await keyService.getIdentityKeyPair(userId))!;
-      await _vault.save(pin, keyPair.secretKey.extractBytes());
-      return SetUpPinResult.created;
-    } catch (e) {
-      AppLogger.error('Could not save the first backup', e);
-      return SetUpPinResult.saveFailed;
-    }
-  }
-
-  /// Removes the backup, after the current PIN proves the owner is asking.
-  /// Chat stays end-to-end encrypted; a new device then makes new keys.
-  Future<TurnOffPinResult> turnOffBackupPin({
-    required PinRequest askCurrentPin,
-  }) async {
-    final OpenedBackup? current;
-    try {
-      current = await _openCurrentBackup(askCurrentPin);
-    } on _KeyAccessRefused catch (refused) {
-      return switch (refused.reason) {
-        _Refusal.cancelled => TurnOffPinResult.cancelled,
-        _Refusal.wrongPin => TurnOffPinResult.wrongPin,
-        _Refusal.rateLimited => TurnOffPinResult.rateLimited,
-        _Refusal.fetchFailed => TurnOffPinResult.fetchFailed,
-      };
-    }
-    if (current == null) return TurnOffPinResult.noBackup;
-
-    try {
-      await backupRepository.removeBackup(ownerProof: current.proof);
-      return TurnOffPinResult.turnedOff;
-    } on WrongPinException {
-      return TurnOffPinResult.wrongPin;
-    } on BackupRateLimitedException {
-      return TurnOffPinResult.rateLimited;
-    } catch (e) {
-      AppLogger.error('Could not remove the backup', e);
-      return TurnOffPinResult.removeFailed;
-    }
-  }
 
   /// Re-encrypts the existing private key under a new PIN.
   Future<ChangePinResult> changeBackupPin({
@@ -199,19 +124,11 @@ class E2eeKeyManager {
       };
     }
 
-    if (current == null) return _resetKeysWithoutPin(userId);
-
     final newPin = await askNewPin();
     if (newPin == null) return ResetKeysResult.cancelled;
 
     try {
-      final keyPair = keyService.cryptoService.generateKeyPair();
-      await backupRepository.resetKeys(
-        publicKey: base64Encode(keyPair.publicKey),
-        backup: await _vault.seal(newPin, keyPair.secretKey.extractBytes()),
-        ownerProof: current.proof,
-      );
-      await keyService.saveIdentityKeyPair(userId, keyPair);
+      await replaceKeys(userId, newPin, current?.proof);
       return ResetKeysResult.reset;
     } on WrongPinException {
       return ResetKeysResult.wrongPin;
@@ -223,14 +140,49 @@ class E2eeKeyManager {
     }
   }
 
-  /// No PIN protects the account: new keys, still without one.
-  Future<ResetKeysResult> _resetKeysWithoutPin(String userId) async {
+  /// A forgotten PIN: the account [password] proves the owner is asking,
+  /// then a new PIN protects the keys this device holds, or new keys when
+  /// it does not hold the account's (earlier messages are then lost).
+  Future<RecoverPinResult> recoverWithPassword(
+    String userId, {
+    required String password,
+    required PinRequest askNewPin,
+  }) async {
+    final BackupOwnerProof proof;
     try {
-      await keyService.createAndPublishKeyPair(userId);
-      return ResetKeysResult.reset;
+      proof = BackupOwnerProof.password(
+        await backupRepository.provePassword(password),
+      );
+    } on WrongPasswordException {
+      return RecoverPinResult.wrongPassword;
+    } on BackupRateLimitedException {
+      return RecoverPinResult.rateLimited;
     } catch (e) {
-      AppLogger.error('Could not reset keys', e);
-      return ResetKeysResult.saveFailed;
+      AppLogger.error('Could not confirm the password', e);
+      return RecoverPinResult.failed;
+    }
+
+    final keepsKeys = await holdsCurrentKeys(userId);
+    final newPin = await askNewPin();
+    if (newPin == null) return RecoverPinResult.cancelled;
+
+    try {
+      if (!keepsKeys) {
+        await replaceKeys(userId, newPin, proof);
+        return RecoverPinResult.startedOver;
+      }
+      final keyPair = (await keyService.getIdentityKeyPair(userId))!;
+      await _vault.save(
+        newPin,
+        keyPair.secretKey.extractBytes(),
+        ownerProof: proof,
+      );
+      return RecoverPinResult.recovered;
+    } on BackupRateLimitedException {
+      return RecoverPinResult.rateLimited;
+    } catch (e) {
+      AppLogger.error('Could not save the new PIN', e);
+      return RecoverPinResult.failed;
     }
   }
 
@@ -247,6 +199,24 @@ class E2eeKeyManager {
       AppLogger.error('Could not compare the keys with the server', e);
       return false;
     }
+  }
+
+  /// New keys, protected by [pin], in place of the account's. [proof] shows
+  /// the owner may replace the backup there is (null when there is none).
+  /// Earlier messages can no longer be read.
+  Future<void> replaceKeys(
+    String userId,
+    String pin,
+    BackupOwnerProof? proof,
+  ) async {
+    final keyPair = keyService.cryptoService.generateKeyPair();
+    await backupRepository.resetKeys(
+      publicKey: base64Encode(keyPair.publicKey),
+      backup: await _vault.seal(pin, keyPair.secretKey.extractBytes()),
+      ownerProof: proof,
+    );
+    // Kept only once the server took it.
+    await keyService.saveIdentityKeyPair(userId, keyPair);
   }
 
   /// Opens the account's backup with the PIN from [askCurrentPin]: the server

@@ -30,81 +30,41 @@ class SecurityPage extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
           SettingsSectionTitle(l10n.securitySectionEncryption),
-          // An account with a password locks its chats with it: no PIN. One
-          // that signs in only with Google may choose a backup PIN.
-          if (profile?.hasPassword ?? true) ...[
-            InfoNote(l10n.securityChatsUsePassword),
-            const SizedBox(height: 12),
-            SettingsSection(
-              children: [
-                SettingsRow(
-                  icon: Icons.key_off_outlined,
-                  title: l10n.securityResetKeys,
-                  isDestructive: true,
-                  onTap: profile == null
-                      ? null
-                      : () => E2eeSettingsActions.resetKeysWithPassword(
-                          context,
-                          ref,
-                          userId: profile.id,
-                        ),
-                ),
-              ],
-            ),
-          ] else ...[
-            InfoNote(l10n.securityPinOptionalNote),
-            const SizedBox(height: 12),
-            SettingsSection(
-              children: [
-                SettingsRow(
-                  icon: Icons.lock_open_outlined,
-                  title: l10n.securitySetUpPin,
-                  onTap: profile == null
-                      ? null
-                      : () => E2eeSettingsActions.setUpBackupPin(
-                          context,
-                          ref,
-                          userId: profile.id,
-                        ),
-                ),
-                SettingsRow(
-                  icon: Icons.lock_outline,
-                  title: l10n.securityChangePin,
-                  onTap: () =>
-                      E2eeSettingsActions.changeBackupPin(context, ref),
-                ),
-                SettingsRow(
-                  icon: Icons.help_outline,
-                  title: l10n.securityForgotPin,
-                  onTap: profile == null
-                      ? null
-                      : () => ForgotPinActions.forgotPin(
-                          context,
-                          ref,
-                          profile: profile,
-                        ),
-                ),
-                SettingsRow(
-                  icon: Icons.no_encryption_outlined,
-                  title: l10n.securityTurnOffPin,
-                  onTap: () =>
-                      E2eeSettingsActions.turnOffBackupPin(context, ref),
-                ),
-                SettingsRow(
-                  icon: Icons.key_off_outlined,
-                  title: l10n.securityResetKeys,
-                  isDestructive: true,
-                  onTap: profile == null
-                      ? null
-                      : () => E2eeSettingsActions.resetKeys(
-                          context,
-                          ref,
-                          userId: profile.id,
-                        ),
-                ),
-              ],
-            ),
-          ],
+          // Every account protects its chats with a chat PIN.
+          InfoNote(l10n.securityPinRequiredNote),
+          const SizedBox(height: 12),
+          SettingsSection(
+            children: [
+              SettingsRow(
+                icon: Icons.lock_outline,
+                title: l10n.securityChangePin,
+                onTap: () => E2eeSettingsActions.changeBackupPin(context, ref),
+              ),
+              SettingsRow(
+                icon: Icons.help_outline,
+                title: l10n.securityForgotPin,
+                onTap: profile == null
+                    ? null
+                    : () => ForgotPinActions.forgotPin(
+                        context,
+                        ref,
+                        profile: profile,
+                      ),
+              ),
+              SettingsRow(
+                icon: Icons.key_off_outlined,
+                title: l10n.securityResetKeys,
+                isDestructive: true,
+                onTap: profile == null
+                    ? null
+                    : () => E2eeSettingsActions.resetKeys(
+                        context,
+                        ref,
+                        userId: profile.id,
+                      ),
+              ),
+            ],
+          ),
           const SizedBox(height: 24),
           SettingsSectionTitle(l10n.securitySectionSignIn),
           SettingsSection(
