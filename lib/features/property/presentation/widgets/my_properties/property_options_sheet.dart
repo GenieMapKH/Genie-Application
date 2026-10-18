@@ -5,6 +5,7 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/core/logging/app_logger.dart';
 
 class PropertyOptionsSheet {
   static void show(
@@ -93,12 +94,15 @@ class PropertyOptionsSheet {
       if (context.mounted) {
         AppPopup.showSuccess(
           context,
-          publish ? 'Property published' : 'Property moved to draft',
+          publish
+              ? context.l10n.propertyPublishedToast
+              : context.l10n.propertyMovedToDraft,
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('Could not change the property status', e, stackTrace);
       if (context.mounted) {
-        AppPopup.showError(context, 'Failed to update property status: $e');
+        AppPopup.showError(context, context.l10n.propertyUpdateFailed);
       }
     }
   }
@@ -113,9 +117,10 @@ class PropertyOptionsSheet {
       if (context.mounted) {
         AppPopup.showSuccess(context, context.l10n.propertyPropertyDeleted);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('Could not delete the property', e, stackTrace);
       if (context.mounted) {
-        AppPopup.showError(context, 'Failed to delete property: $e');
+        AppPopup.showError(context, context.l10n.propertyDeleteFailed);
       }
     }
   }

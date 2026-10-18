@@ -67,7 +67,9 @@ class _FakeKeyManager extends Fake implements E2eeKeyManager {
     this.password = password;
     newPin = await askNewPin();
     if (newPin == null) return RecoverPinResult.cancelled;
-    return holdsKeys ? RecoverPinResult.recovered : RecoverPinResult.startedOver;
+    return holdsKeys
+        ? RecoverPinResult.recovered
+        : RecoverPinResult.startedOver;
   }
 
   @override

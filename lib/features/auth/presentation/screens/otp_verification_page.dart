@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/auth/presentation/auth_error_message.dart';
 import 'package:genie/l10n/l10n.dart';
 
 class OtpVerificationPage extends ConsumerStatefulWidget {
@@ -33,6 +34,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   );
 
   bool _isLoading = false;
+
   /// The server sends at most one code per address a minute.
   static const _resendWaitSeconds = 60;
 
@@ -154,7 +156,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
       }
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(context, e.toString());
+      AppPopup.showError(
+        context,
+        authErrorMessage(
+          context.l10n,
+          e,
+          badRequest: context.l10n.authErrorInvalidCode,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -175,7 +184,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
       _focusNodes[0].requestFocus();
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(context, e.toString());
+      AppPopup.showError(context, authErrorMessage(context.l10n, e));
     }
   }
 
@@ -346,7 +355,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                         child: Column(
                           children: [
                             Text(
-                              'Resend OTP in ${_resendCountdown}s',
+                              context.l10n.authResendOtpIn(_resendCountdown),
                               style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

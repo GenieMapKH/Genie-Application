@@ -2971,6 +2971,1152 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For your security, entering your chat PIN is paused for a while. Please try again later.'**
   String get chatPinLockedMessage;
+
+  /// No description provided for @authErrEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get authErrEnterName;
+
+  /// No description provided for @authErrEnterEmailOrPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address or phone number'**
+  String get authErrEnterEmailOrPhone;
+
+  /// No description provided for @authErrEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid password'**
+  String get authErrEnterPassword;
+
+  /// No description provided for @authErrPasswordMin8.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get authErrPasswordMin8;
+
+  /// No description provided for @authErrAgreeTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Please agree to the terms of services to continue.'**
+  String get authErrAgreeTerms;
+
+  /// No description provided for @authErrEnterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get authErrEnterEmail;
+
+  /// No description provided for @authErrEnterNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a new password'**
+  String get authErrEnterNewPassword;
+
+  /// No description provided for @authErrReEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please re-enter your password'**
+  String get authErrReEnterPassword;
+
+  /// No description provided for @authErrPasswordsDontMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authErrPasswordsDontMatch;
+
+  /// No description provided for @termsScrollToAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'Please scroll to the bottom of the terms to agree.'**
+  String get termsScrollToAgree;
+
+  /// No description provided for @termsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service for Genie Property'**
+  String get termsTitle;
+
+  /// No description provided for @termsLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: 14 February 2026'**
+  String get termsLastUpdated;
+
+  /// No description provided for @termsWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Genie Property. By accessing or using the Genie application and services, you agree to comply with and be bound by the following Terms of Service.'**
+  String get termsWelcome;
+
+  /// No description provided for @termsDisagree.
+  ///
+  /// In en, this message translates to:
+  /// **'If you do not agree with these terms, please do not use the application.'**
+  String get termsDisagree;
+
+  /// No description provided for @termsAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1. About Genie'**
+  String get termsAboutTitle;
+
+  /// No description provided for @termsAboutIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Genie is a map-based property platform that allows users to:'**
+  String get termsAboutIntro;
+
+  /// No description provided for @termsAboutView.
+  ///
+  /// In en, this message translates to:
+  /// **'View property listings with accurate map locations and boundaries'**
+  String get termsAboutView;
+
+  /// No description provided for @termsAboutManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add, manage, and share property information'**
+  String get termsAboutManage;
+
+  /// No description provided for @termsAboutConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect buyers, sellers, agents, and developers'**
+  String get termsAboutConnect;
+
+  /// No description provided for @termsAboutTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Use coordinate tools such as UTM input and map measurement'**
+  String get termsAboutTools;
+
+  /// No description provided for @termsAboutPlatformOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Genie acts only as a platform and does not own, sell, or broker any property.'**
+  String get termsAboutPlatformOnly;
+
+  /// No description provided for @termsAccountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'2. User Accounts'**
+  String get termsAccountsTitle;
+
+  /// No description provided for @termsAccountsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'To use certain features, users must register using a valid phone number or email address.\nYou agree that:'**
+  String get termsAccountsIntro;
+
+  /// No description provided for @termsAccountsAccurate.
+  ///
+  /// In en, this message translates to:
+  /// **'The information you provide is accurate'**
+  String get termsAccountsAccurate;
+
+  /// No description provided for @termsAccountsConfidential.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for maintaining the confidentiality of your account'**
+  String get termsAccountsConfidential;
+
+  /// No description provided for @termsAccountsNoImpersonation.
+  ///
+  /// In en, this message translates to:
+  /// **'You will not impersonate another person'**
+  String get termsAccountsNoImpersonation;
+
+  /// No description provided for @termsAccountsSuspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Genie reserves the right to suspend accounts that provide false information.'**
+  String get termsAccountsSuspend;
+
+  /// No description provided for @termsListingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Property Listings'**
+  String get termsListingsTitle;
+
+  /// No description provided for @termsListingsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Users who post properties (owners, agents, developers) agree that:'**
+  String get termsListingsIntro;
+
+  /// No description provided for @termsListingsTruthful.
+  ///
+  /// In en, this message translates to:
+  /// **'All information, boundaries, prices, and details are truthful'**
+  String get termsListingsTruthful;
+
+  /// No description provided for @termsListingsRight.
+  ///
+  /// In en, this message translates to:
+  /// **'You have the legal right to share and advertise the property'**
+  String get termsListingsRight;
+
+  /// No description provided for @termsListingsCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'The map boundary or UTM coordinates you provide are accurate to the best of your knowledge'**
+  String get termsListingsCoordinates;
+
+  /// No description provided for @termsListingsNotResponsible.
+  ///
+  /// In en, this message translates to:
+  /// **'Genie is not responsible for incorrect property data submitted by users.'**
+  String get termsListingsNotResponsible;
+
+  /// No description provided for @termsMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Map and Coordinate Accuracy'**
+  String get termsMapTitle;
+
+  /// No description provided for @termsMapIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Genie provides tools for map visualization, UTM conversion, and distance measurement.'**
+  String get termsMapIntro;
+
+  /// No description provided for @termsMapGuidanceOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Map boundaries are for visual guidance only and do not replace official cadastral surveys or land titles.'**
+  String get termsMapGuidanceOnly;
+
+  /// No description provided for @termsMapVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Users should verify all land borders and titles with relevant authorities before financial transactions.'**
+  String get termsMapVerify;
+
+  /// No description provided for @termsAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree terms of services'**
+  String get termsAgree;
+
+  /// No description provided for @termsScrollHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll to bottom to agree terms of services'**
+  String get termsScrollHint;
+
+  /// No description provided for @authErrEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get authErrEnterValidEmail;
+
+  /// No description provided for @authErrEnterValidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number'**
+  String get authErrEnterValidPhone;
+
+  /// No description provided for @authErrPasswordMin6.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get authErrPasswordMin6;
+
+  /// No description provided for @authErrorWrongCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect email, phone number or password.'**
+  String get authErrorWrongCredentials;
+
+  /// No description provided for @authErrorAccountExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email or phone number already exists.'**
+  String get authErrorAccountExists;
+
+  /// No description provided for @authErrorCheckDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check what you entered and try again.'**
+  String get authErrorCheckDetails;
+
+  /// No description provided for @authErrorInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'The code is wrong or has expired.'**
+  String get authErrorInvalidCode;
+
+  /// No description provided for @authErrorTooManyTries.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries. Please wait a few minutes and try again.'**
+  String get authErrorTooManyTries;
+
+  /// No description provided for @authErrorNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server. Check your connection.'**
+  String get authErrorNoConnection;
+
+  /// No description provided for @authErrorServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong on our side. Please try again later.'**
+  String get authErrorServer;
+
+  /// No description provided for @authErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get authErrorGeneric;
+
+  /// No description provided for @authResendOtpIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP in {seconds}s'**
+  String authResendOtpIn(int seconds);
+
+  /// No description provided for @chatPhotoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo unavailable. Tap to retry.'**
+  String get chatPhotoUnavailable;
+
+  /// No description provided for @chatPictureCannotBeShown.
+  ///
+  /// In en, this message translates to:
+  /// **'This picture cannot be shown.'**
+  String get chatPictureCannotBeShown;
+
+  /// No description provided for @chatMessageNotSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent. Tap to retry.'**
+  String get chatMessageNotSent;
+
+  /// No description provided for @chatMessageSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get chatMessageSending;
+
+  /// No description provided for @chatPresenceOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get chatPresenceOnline;
+
+  /// No description provided for @chatLastSeenJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen just now'**
+  String get chatLastSeenJustNow;
+
+  /// No description provided for @chatLastSeenMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen {minutes} min ago'**
+  String chatLastSeenMinutes(int minutes);
+
+  /// No description provided for @chatLastSeenToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen today at {time}'**
+  String chatLastSeenToday(String time);
+
+  /// No description provided for @chatLastSeenYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen yesterday at {time}'**
+  String chatLastSeenYesterday(String time);
+
+  /// No description provided for @chatLastSeenOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen {date}'**
+  String chatLastSeenOn(String date);
+
+  /// No description provided for @chatKeyChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\'s security key has changed'**
+  String chatKeyChangedTitle(String name);
+
+  /// No description provided for @chatEmojiSmileys.
+  ///
+  /// In en, this message translates to:
+  /// **'Smileys'**
+  String get chatEmojiSmileys;
+
+  /// No description provided for @chatEmojiGestures.
+  ///
+  /// In en, this message translates to:
+  /// **'Gestures'**
+  String get chatEmojiGestures;
+
+  /// No description provided for @chatEmojiHearts.
+  ///
+  /// In en, this message translates to:
+  /// **'Hearts'**
+  String get chatEmojiHearts;
+
+  /// No description provided for @chatEmojiPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get chatEmojiPlaces;
+
+  /// No description provided for @chatPreviewEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted message'**
+  String get chatPreviewEncrypted;
+
+  /// No description provided for @chatPreviewPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'📷 Photo'**
+  String get chatPreviewPhoto;
+
+  /// No description provided for @chatUndecryptable.
+  ///
+  /// In en, this message translates to:
+  /// **'This message cannot be read on this device.'**
+  String get chatUndecryptable;
+
+  /// No description provided for @ownerFallbackName.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Owner'**
+  String get ownerFallbackName;
+
+  /// No description provided for @chatSendSignedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'You are signed out.'**
+  String get chatSendSignedOut;
+
+  /// No description provided for @chatSendNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server. Check your connection.'**
+  String get chatSendNoConnection;
+
+  /// No description provided for @chatSendRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The server did not accept this message. Please try again.'**
+  String get chatSendRejected;
+
+  /// No description provided for @chatSendTooFast.
+  ///
+  /// In en, this message translates to:
+  /// **'You are sending messages too quickly. Wait a moment.'**
+  String get chatSendTooFast;
+
+  /// No description provided for @chatSendPinRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your chat PIN before sending messages.'**
+  String get chatSendPinRequired;
+
+  /// No description provided for @chatSendKeyChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Their security key has changed. Accept the new key to continue.'**
+  String get chatSendKeyChanged;
+
+  /// No description provided for @chatSendNotSetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure chat is not set up on this device.'**
+  String get chatSendNotSetUp;
+
+  /// No description provided for @chatSendPeerNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'This person has not set up secure chat yet. They can receive messages once they open the app again.'**
+  String get chatSendPeerNotReady;
+
+  /// No description provided for @chatSendFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is too large (limit {megabytes} MB).'**
+  String chatSendFileTooLarge(int megabytes);
+
+  /// No description provided for @chatSendUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not upload the file. Check your connection.'**
+  String get chatSendUploadFailed;
+
+  /// No description provided for @chatSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Message not sent. Please try again.'**
+  String get chatSendFailed;
+
+  /// No description provided for @mapNewListing.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get mapNewListing;
+
+  /// No description provided for @homeExtractedCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Found 1 coordinate.} other{Found {count} coordinates.}}'**
+  String homeExtractedCoordinates(int count);
+
+  /// No description provided for @homeScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the document. Please try again.'**
+  String get homeScanFailed;
+
+  /// No description provided for @homeInvalidUtm.
+  ///
+  /// In en, this message translates to:
+  /// **'These UTM coordinates are not valid. Please check them.'**
+  String get homeInvalidUtm;
+
+  /// No description provided for @homeScanProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get homeScanProcessing;
+
+  /// No description provided for @homeScanFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get homeScanFinished;
+
+  /// No description provided for @homeLocationServicesOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are disabled. Please enable them.'**
+  String get homeLocationServicesOff;
+
+  /// No description provided for @homeLocationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission was denied.'**
+  String get homeLocationDenied;
+
+  /// No description provided for @homeLocationDeniedForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission is permanently denied. You can allow it in the phone\'s settings.'**
+  String get homeLocationDeniedForever;
+
+  /// No description provided for @homeLocationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get your location. Please try again.'**
+  String get homeLocationFailed;
+
+  /// No description provided for @propertyMaintenanceFeeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly maintenance fee (USD)'**
+  String get propertyMaintenanceFeeHint;
+
+  /// No description provided for @propertyDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get propertyDuration;
+
+  /// No description provided for @propertySelectUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Select unit'**
+  String get propertySelectUnit;
+
+  /// No description provided for @propertySizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get propertySizeTitle;
+
+  /// No description provided for @propertyLandSizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Size'**
+  String get propertyLandSizeTitle;
+
+  /// No description provided for @propertySizeAreaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Size area (m²)'**
+  String get propertySizeAreaHint;
+
+  /// No description provided for @propertyEnterLandSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter land size (m²)'**
+  String get propertyEnterLandSize;
+
+  /// No description provided for @propertyEnterBuildingSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter building size'**
+  String get propertyEnterBuildingSize;
+
+  /// No description provided for @propertyEnterUnitSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter unit size'**
+  String get propertyEnterUnitSize;
+
+  /// No description provided for @propertyProjectNameInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Official name of the development project'**
+  String get propertyProjectNameInfo;
+
+  /// No description provided for @propertyProjectAreaInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Total land area of entire project'**
+  String get propertyProjectAreaInfo;
+
+  /// No description provided for @propertyStartingPriceInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest available unit price'**
+  String get propertyStartingPriceInfo;
+
+  /// No description provided for @propertyMonthlyRentInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower rent = higher profit potential'**
+  String get propertyMonthlyRentInfo;
+
+  /// No description provided for @propertyEquipmentInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe assets included in sale'**
+  String get propertyEquipmentInfo;
+
+  /// No description provided for @propertySelectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get propertySelectHint;
+
+  /// No description provided for @propertyPublishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Published\nSuccessfully!'**
+  String get propertyPublishedTitle;
+
+  /// No description provided for @propertyShowLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get propertyShowLess;
+
+  /// No description provided for @propertyShowMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get propertyShowMore;
+
+  /// No description provided for @propertyNoListingsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t listed any\nproperty yet'**
+  String get propertyNoListingsYet;
+
+  /// No description provided for @propertyPublishedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Property published'**
+  String get propertyPublishedToast;
+
+  /// No description provided for @propertyMovedToDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Property moved to draft'**
+  String get propertyMovedToDraft;
+
+  /// No description provided for @propertyPublishProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Property'**
+  String get propertyPublishProperty;
+
+  /// No description provided for @propertyPublishing.
+  ///
+  /// In en, this message translates to:
+  /// **'Publishing your property...'**
+  String get propertyPublishing;
+
+  /// No description provided for @propertySaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the property. Please try again.'**
+  String get propertySaveFailed;
+
+  /// No description provided for @propertyUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update the property. Please try again.'**
+  String get propertyUpdateFailed;
+
+  /// No description provided for @propertyDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete the property. Please try again.'**
+  String get propertyDeleteFailed;
+
+  /// No description provided for @propertyFallbackDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'This land parcel is accurately mapped with verified boundaries and exact recorded coordinates, located in a fast-growing area near main infrastructure. It is ideal for residential development, a long-term investment, or a business project. The rectangular shape allows efficient planning and construction, while utilities such as electricity and water are already available nearby. Clear ownership documents and precise UTM location make this property easy to verify and trust.'**
+  String get propertyFallbackDescription;
+
+  /// No description provided for @propertyListingBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing by: {name}'**
+  String propertyListingBy(String name);
+
+  /// No description provided for @propertyTabActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active ({count})'**
+  String propertyTabActive(int count);
+
+  /// No description provided for @propertyTabPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending ({count})'**
+  String propertyTabPending(int count);
+
+  /// No description provided for @propertyTabDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft ({count})'**
+  String propertyTabDraft(int count);
+
+  /// No description provided for @propertyTabSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold ({count})'**
+  String propertyTabSold(int count);
+
+  /// No description provided for @propertyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Contacts'**
+  String get propertyContacts;
+
+  /// No description provided for @propertySavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Saved'**
+  String propertySavedCount(int count);
+
+  /// No description provided for @propertySpecBeds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bds'**
+  String propertySpecBeds(int count);
+
+  /// No description provided for @propertySpecBaths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ba'**
+  String propertySpecBaths(int count);
+
+  /// No description provided for @propertyTypeForSale.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} for sale'**
+  String propertyTypeForSale(String type);
+
+  /// No description provided for @propertyBedroomCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Bed} other{{count} Beds}}'**
+  String propertyBedroomCount(int count);
+
+  /// No description provided for @propertyBathroomCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Bath} other{{count} Baths}}'**
+  String propertyBathroomCount(int count);
+
+  /// No description provided for @propertyDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String propertyDaysCount(int count);
+
+  /// No description provided for @sortPropertyForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Property for You'**
+  String get sortPropertyForYou;
+
+  /// No description provided for @sortRecentlyPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently Posted'**
+  String get sortRecentlyPosted;
+
+  /// No description provided for @sortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get sortNewest;
+
+  /// No description provided for @sortPriceHighToLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: High to Low'**
+  String get sortPriceHighToLow;
+
+  /// No description provided for @sortPriceLowToHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: Low to High'**
+  String get sortPriceLowToHigh;
+
+  /// No description provided for @listingTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing Type'**
+  String get listingTypeTitle;
+
+  /// No description provided for @listingTypeSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale'**
+  String get listingTypeSale;
+
+  /// No description provided for @listingTypeRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get listingTypeRent;
+
+  /// No description provided for @listingTypeToLet.
+  ///
+  /// In en, this message translates to:
+  /// **'To Let'**
+  String get listingTypeToLet;
+
+  /// No description provided for @propertyTypeLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Land'**
+  String get propertyTypeLand;
+
+  /// No description provided for @propertyTypeHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get propertyTypeHouse;
+
+  /// No description provided for @propertyTypeBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Building'**
+  String get propertyTypeBuilding;
+
+  /// No description provided for @propertyTypeCondo.
+  ///
+  /// In en, this message translates to:
+  /// **'Condo'**
+  String get propertyTypeCondo;
+
+  /// No description provided for @propertyTypeBorey.
+  ///
+  /// In en, this message translates to:
+  /// **'Borey'**
+  String get propertyTypeBorey;
+
+  /// No description provided for @propertyTypeBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business for Sale'**
+  String get propertyTypeBusiness;
+
+  /// No description provided for @propertyTypeBusinessShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get propertyTypeBusinessShort;
+
+  /// No description provided for @propertyTypeWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get propertyTypeWarehouse;
+
+  /// No description provided for @propertyStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get propertyStatusActive;
+
+  /// No description provided for @propertyStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get propertyStatusPending;
+
+  /// No description provided for @propertyStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get propertyStatusDraft;
+
+  /// No description provided for @propertyStatusSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get propertyStatusSold;
+
+  /// No description provided for @propertyStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get propertyStatusExpired;
+
+  /// No description provided for @propertyOptionHardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard Title'**
+  String get propertyOptionHardTitle;
+
+  /// No description provided for @propertyOptionSoftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft Title'**
+  String get propertyOptionSoftTitle;
+
+  /// No description provided for @propertyOptionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get propertyOptionOther;
+
+  /// No description provided for @propertyOptionStudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Studio'**
+  String get propertyOptionStudio;
+
+  /// No description provided for @propertyOptionYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get propertyOptionYes;
+
+  /// No description provided for @propertyOptionNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get propertyOptionNo;
+
+  /// No description provided for @propertyOptionUnfurnished.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfurnished'**
+  String get propertyOptionUnfurnished;
+
+  /// No description provided for @propertyOptionFullyFurnished.
+  ///
+  /// In en, this message translates to:
+  /// **'Fully Furnished'**
+  String get propertyOptionFullyFurnished;
+
+  /// No description provided for @propertyOptionElectricalAppliances.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrical appliances'**
+  String get propertyOptionElectricalAppliances;
+
+  /// No description provided for @propertyOptionCommercialBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Building'**
+  String get propertyOptionCommercialBuilding;
+
+  /// No description provided for @propertyOptionOfficeBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Office Building'**
+  String get propertyOptionOfficeBuilding;
+
+  /// No description provided for @propertyOptionMixedUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed-use'**
+  String get propertyOptionMixedUse;
+
+  /// No description provided for @propertyOptionRetailBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Retail Building'**
+  String get propertyOptionRetailBuilding;
+
+  /// No description provided for @propertyOptionOffPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-plan'**
+  String get propertyOptionOffPlan;
+
+  /// No description provided for @propertyOptionUnderConstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Construction'**
+  String get propertyOptionUnderConstruction;
+
+  /// No description provided for @propertyOptionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get propertyOptionCompleted;
+
+  /// No description provided for @propertyOptionCityView.
+  ///
+  /// In en, this message translates to:
+  /// **'City View'**
+  String get propertyOptionCityView;
+
+  /// No description provided for @propertyOptionRiverView.
+  ///
+  /// In en, this message translates to:
+  /// **'River View'**
+  String get propertyOptionRiverView;
+
+  /// No description provided for @propertyOptionGardenView.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden View'**
+  String get propertyOptionGardenView;
+
+  /// No description provided for @propertyOptionPoolView.
+  ///
+  /// In en, this message translates to:
+  /// **'Pool View'**
+  String get propertyOptionPoolView;
+
+  /// No description provided for @propertyOptionNoView.
+  ///
+  /// In en, this message translates to:
+  /// **'No View'**
+  String get propertyOptionNoView;
+
+  /// No description provided for @propertyOptionCommercial.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial'**
+  String get propertyOptionCommercial;
+
+  /// No description provided for @propertyOptionLandSubdivision.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Subdivision'**
+  String get propertyOptionLandSubdivision;
+
+  /// No description provided for @propertyOptionPreLaunch.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-launch'**
+  String get propertyOptionPreLaunch;
+
+  /// No description provided for @propertyOptionCompleted50.
+  ///
+  /// In en, this message translates to:
+  /// **'50% Completed'**
+  String get propertyOptionCompleted50;
+
+  /// No description provided for @propertyOptionCompleted80.
+  ///
+  /// In en, this message translates to:
+  /// **'80% Completed'**
+  String get propertyOptionCompleted80;
+
+  /// No description provided for @propertyOptionMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Months'**
+  String get propertyOptionMonths;
+
+  /// No description provided for @propertyOptionYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Years'**
+  String get propertyOptionYears;
+
+  /// No description provided for @keywordRoadAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Road Access'**
+  String get keywordRoadAccess;
+
+  /// No description provided for @keywordCornerLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Corner Land'**
+  String get keywordCornerLand;
+
+  /// No description provided for @keywordNearMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Near Market'**
+  String get keywordNearMarket;
+
+  /// No description provided for @keywordNearSchool.
+  ///
+  /// In en, this message translates to:
+  /// **'Near School'**
+  String get keywordNearSchool;
+
+  /// No description provided for @keywordNearHospital.
+  ///
+  /// In en, this message translates to:
+  /// **'Near Hospital'**
+  String get keywordNearHospital;
+
+  /// No description provided for @keywordRiverLakeNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'River / Lake Nearby'**
+  String get keywordRiverLakeNearby;
+
+  /// No description provided for @keywordElectricityReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity Ready'**
+  String get keywordElectricityReady;
+
+  /// No description provided for @keywordWaterSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Supply'**
+  String get keywordWaterSupply;
+
+  /// No description provided for @keywordResidentialArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Residential Area'**
+  String get keywordResidentialArea;
+
+  /// No description provided for @keywordCommercialArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Area'**
+  String get keywordCommercialArea;
 }
 
 class _AppLocalizationsDelegate

@@ -26,7 +26,9 @@ class LandSizeFieldWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             PropertySectionTitle(
-              title: isLandType ? 'Size' : 'Land Size',
+              title: isLandType
+                  ? context.l10n.propertySizeTitle
+                  : context.l10n.propertyLandSizeTitle,
               required: true,
               hasError:
                   state.hasAttemptedSubmit &&
@@ -70,7 +72,9 @@ class LandSizeFieldWidget extends StatelessWidget {
           inputFormatters: _sizeFormatters,
           decoration: defaultPropertyInputDecoration(
             context,
-            isLandType ? 'Size area (m²)' : 'Enter land size (m²)',
+            isLandType
+                ? context.l10n.propertySizeAreaHint
+                : context.l10n.propertyEnterLandSize,
             hasError:
                 state.hasAttemptedSubmit &&
                 state.landSizeController.text.trim().isEmpty,
@@ -128,7 +132,7 @@ class BuildingSizeFieldWidget extends StatelessWidget {
           inputFormatters: _sizeFormatters,
           decoration: defaultPropertyInputDecoration(
             context,
-            'Enter building size',
+            context.l10n.propertyEnterBuildingSize,
             hasError:
                 state.hasAttemptedSubmit &&
                 state.buildingSizeController.text.trim().isEmpty,
@@ -186,7 +190,7 @@ class UnitSizeFieldWidget extends StatelessWidget {
           inputFormatters: _sizeFormatters,
           decoration: defaultPropertyInputDecoration(
             context,
-            'Enter unit size',
+            context.l10n.propertyEnterUnitSize,
             hasError:
                 state.hasAttemptedSubmit &&
                 state.unitSizeController.text.trim().isEmpty,

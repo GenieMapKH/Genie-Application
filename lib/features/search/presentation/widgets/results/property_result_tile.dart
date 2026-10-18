@@ -7,6 +7,7 @@ import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/features/search/presentation/widgets/results/highlighted_text.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// A listing in a results list: photo, title, price and its main figures.
 /// Used by the search page and by the results panel on the map.
@@ -69,7 +70,7 @@ class PropertyResultTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    PropertyFormat.cardSpecLine(property),
+                    PropertyFormat.cardSpecLine(context.l10n, property),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.inter(

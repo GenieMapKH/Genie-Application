@@ -40,7 +40,7 @@ class ChatKeyChangedBanner extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  "$participantName's security key has changed",
+                  context.l10n.chatKeyChangedTitle(participantName),
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,

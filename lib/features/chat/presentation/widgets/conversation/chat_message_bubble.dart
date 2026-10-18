@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_image_attachment.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// One message in a conversation: the user's own on the right, the other
 /// person's on the left.
@@ -53,12 +54,20 @@ class ChatMessageBubble extends StatelessWidget {
             if (attachment != null && !attachment.isImage)
               _buildText(context, '\u{1F4CE} ${attachment.name}', failed),
             if (message.text.isNotEmpty)
-              _buildText(context, message.text, failed),
+              _buildText(
+                context,
+                message.text == ChatMessage.undecryptableText
+                    ? context.l10n.chatUndecryptable
+                    : message.text,
+                failed,
+              ),
             if (message.status != ChatMessageStatus.sent)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  failed ? 'Not sent. Tap to retry.' : 'Sending…',
+                  failed
+                      ? context.l10n.chatMessageNotSent
+                      : context.l10n.chatMessageSending,
                   style: GoogleFonts.inter(
                     fontSize: 11,
                     color: failed

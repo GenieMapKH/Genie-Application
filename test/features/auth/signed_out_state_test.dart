@@ -75,11 +75,14 @@ void main() {
     container.listen(savedPropertiesProvider, (_, _) {});
   });
 
-  test('a signed-in owner has their profile, listings and favourites', () async {
-    expect((await container.read(userProfileProvider.future))?.id, 'owner-1');
-    expect(await container.read(propertiesProvider.future), [_listing]);
-    expect(await container.read(savedPropertiesProvider.future), [_listing]);
-  });
+  test(
+    'a signed-in owner has their profile, listings and favourites',
+    () async {
+      expect((await container.read(userProfileProvider.future))?.id, 'owner-1');
+      expect(await container.read(propertiesProvider.future), [_listing]);
+      expect(await container.read(savedPropertiesProvider.future), [_listing]);
+    },
+  );
 
   test(
     'after signing out nothing of the owner is left for the guest',

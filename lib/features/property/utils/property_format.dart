@@ -1,5 +1,7 @@
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:intl/intl.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// Shared display formatting for property price, size and spec lines so the
 /// map card, detail sheet and similar-property tiles stay consistent.
@@ -29,15 +31,16 @@ class PropertyFormat {
   static String count(int value) => _compact.format(value);
 
   /// The map card's middle line: `1670 m² | Land for sale` for land, or
-  /// `4 bds | 5 ba | 115.5 m² | House for sale` for built property.
-  static String cardSpecLine(PropertyModel property) {
+  /// `4 bds | 5 ba | 115.5 m² | House for sale` for built property, in the
+  /// user's language.
+  static String cardSpecLine(AppLocalizations l10n, PropertyModel property) {
     final parts = <String>[];
 
     if (property.bedrooms != null && property.bedrooms! > 0) {
-      parts.add('${property.bedrooms} bds');
+      parts.add(l10n.propertySpecBeds(property.bedrooms!));
     }
     if (property.bathrooms != null && property.bathrooms! > 0) {
-      parts.add('${property.bathrooms} ba');
+      parts.add(l10n.propertySpecBaths(property.bathrooms!));
     }
 
     final displaySize = property.displaySize;
@@ -45,21 +48,10 @@ class PropertyFormat {
       parts.add('${size(displaySize)} m²');
     }
 
-    parts.add('${property.propertyType} for sale');
+    parts.add(
+      l10n.propertyTypeForSale(propertyValueLabel(l10n, property.propertyType)),
+    );
     return parts.join(' | ');
-  }
-
-  /// The detail sheet's spec row uses long labels: `2 Beds`, `2 Baths`.
-  static String bedroomLabel(int count) =>
-      '$count ${count == 1 ? 'Bed' : 'Beds'}';
-
-  static String bathroomLabel(int count) =>
-      '$count ${count == 1 ? 'Bath' : 'Baths'}';
-
-  /// `165 days` on the detail sheet's stat row.
-  static String daysListed(PropertyModel property) {
-    final days = property.daysListed;
-    return '$days ${days == 1 ? 'day' : 'days'}';
   }
 
   /// The SVG used for the property-type pill on cards and tiles.

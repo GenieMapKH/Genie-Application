@@ -167,20 +167,23 @@ void main() {
     expect(sessionsEnded, 0);
   });
 
-  test('signing out while the session is renewed keeps it signed out', () async {
-    final request = dio.get('/users/me');
-    // The renewal is on its way when the user taps "Sign out".
-    await Future<void>.delayed(const Duration(milliseconds: 5));
-    await AuthStorage.clearTokens();
+  test(
+    'signing out while the session is renewed keeps it signed out',
+    () async {
+      final request = dio.get('/users/me');
+      // The renewal is on its way when the user taps "Sign out".
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      await AuthStorage.clearTokens();
 
-    await expectLater(request, throwsA(isA<DioException>()));
+      await expectLater(request, throwsA(isA<DioException>()));
 
-    expect(api.calls, contains('/auth/refresh'));
-    expect(await AuthStorage.getAccessToken(), isNull);
-    expect(await AuthStorage.getRefreshToken(), isNull);
-    expect(AuthStorage.signedIn.value, isFalse);
-    expect(sessionsEnded, 0);
-  });
+      expect(api.calls, contains('/auth/refresh'));
+      expect(await AuthStorage.getAccessToken(), isNull);
+      expect(await AuthStorage.getRefreshToken(), isNull);
+      expect(AuthStorage.signedIn.value, isFalse);
+      expect(sessionsEnded, 0);
+    },
+  );
 
   test('a renewal refused after signing out does not end it twice', () async {
     // Signing out revoked the refresh token the renewal is using.

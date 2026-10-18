@@ -5,15 +5,13 @@ import 'package:genie/features/home/presentation/providers/map_properties_provid
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 
+/// How saved listings are ordered. Shown with `sortOptionLabel`.
 enum SortOption {
-  propertyForYou('Property for You'),
-  recentlyPosted('Recently Posted'),
-  newest('Newest'),
-  priceHighToLow('Price: Hight to Low'),
-  priceLowToHigh('Price: Low to Hight');
-
-  final String label;
-  const SortOption(this.label);
+  propertyForYou,
+  recentlyPosted,
+  newest,
+  priceHighToLow,
+  priceLowToHigh,
 }
 
 final savedSortOptionProvider = StateProvider<SortOption>((ref) {

@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 /// a locally drawn polygon with no listing behind it).
 abstract final class PropertyDotsLayer {
   static Future<void> build(
+    String newLabel,
     List<LatLng> allCentroids,
     List<PropertyModel?> allCentroidModels,
     Set<Marker> markers,
@@ -18,6 +19,7 @@ abstract final class PropertyDotsLayer {
     await Future.wait([
       for (var i = 0; i < allCentroids.length; i++)
         _addMarker(
+          newLabel,
           i,
           allCentroids[i],
           allCentroidModels[i],
@@ -31,6 +33,7 @@ abstract final class PropertyDotsLayer {
   }
 
   static Future<void> _addMarker(
+    String newLabel,
     int index,
     LatLng position,
     PropertyModel? property,
@@ -50,6 +53,7 @@ abstract final class PropertyDotsLayer {
         isSelected: isSelected,
         propertyType: property.propertyType,
         isVisited: property.isVisited,
+        newLabel: newLabel,
       );
     } else {
       icon = isSelected

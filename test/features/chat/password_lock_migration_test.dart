@@ -66,17 +66,20 @@ void main() {
       ]);
     });
 
-    test('wrong passwords are counted, and the backup is looked up once', () async {
-      repository.attemptsLeft = 3;
+    test(
+      'wrong passwords are counted, and the backup is looked up once',
+      () async {
+        repository.attemptsLeft = 3;
 
-      final first = await migration.unlock('typo');
-      await migration.unlock('another-typo');
+        final first = await migration.unlock('typo');
+        await migration.unlock('another-typo');
 
-      expect((first as PinRejected).attemptsLeft, 3);
-      expect(repository.unlockTries, hasLength(2));
-      expect(repository.fetches, 1);
-      expect(keys.savedKeyPairs, 0);
-    });
+        expect((first as PinRejected).attemptsLeft, 3);
+        expect(repository.unlockTries, hasLength(2));
+        expect(repository.fetches, 1);
+        expect(keys.savedKeyPairs, 0);
+      },
+    );
 
     test('a locked backup says so', () async {
       repository.unlockError = const BackupRateLimitedException(

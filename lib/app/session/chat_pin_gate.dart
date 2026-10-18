@@ -28,17 +28,17 @@ class ChatPinGate extends ConsumerWidget {
     if (userId == null) return child;
 
     return switch (status) {
-      ChatPinStatus.notSet || ChatPinStatus.lockedWithPassword =>
-        ChatPinSetupPage(
-          key: ValueKey(userId),
-          userId: userId,
-          fromPassword: status == ChatPinStatus.lockedWithPassword,
-          onDone: () => ref.invalidate(chatPinStatusProvider),
-          onSignOut: () async {
-            await ref.read(signOutProvider)();
-            if (context.mounted) context.go('/');
-          },
-        ),
+      ChatPinStatus.notSet ||
+      ChatPinStatus.lockedWithPassword => ChatPinSetupPage(
+        key: ValueKey(userId),
+        userId: userId,
+        fromPassword: status == ChatPinStatus.lockedWithPassword,
+        onDone: () => ref.invalidate(chatPinStatusProvider),
+        onSignOut: () async {
+          await ref.read(signOutProvider)();
+          if (context.mounted) context.go('/');
+        },
+      ),
       ChatPinStatus.set || ChatPinStatus.unknown || null => child,
     };
   }

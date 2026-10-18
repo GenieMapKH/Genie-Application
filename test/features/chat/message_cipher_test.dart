@@ -11,6 +11,7 @@ import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
 const alice = 'alice';
@@ -404,9 +405,9 @@ void main() {
         aliceCipher.encrypt('hello', id: 'm1', peerId: bob),
         throwsA(
           isA<ChatEncryptionException>().having(
-            (e) => e.message,
-            'message',
-            contains('has not set up secure chat'),
+            (e) => e.problem,
+            'problem',
+            ChatSendProblem.peerNotReady,
           ),
         ),
       );
@@ -419,9 +420,9 @@ void main() {
         aliceCipher.encrypt('hello', id: 'm1', peerId: bob),
         throwsA(
           isA<ChatEncryptionException>().having(
-            (e) => e.message,
-            'message',
-            contains('Could not reach the server'),
+            (e) => e.problem,
+            'problem',
+            ChatSendProblem.noConnection,
           ),
         ),
       );

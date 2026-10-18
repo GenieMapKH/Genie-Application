@@ -6,6 +6,9 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/utils/owner_display_name.dart';
 
 /// The card that rises above the bottom nav when a property is selected on the
 /// map. Tapping it — or swiping it up — opens the full detail sheet.
@@ -104,7 +107,7 @@ class _Details extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          PropertyFormat.cardSpecLine(property),
+          PropertyFormat.cardSpecLine(context.l10n, property),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.inter(
@@ -126,7 +129,9 @@ class _Details extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Listing by: ${property.ownerName ?? 'Property Owner'}',
+          context.l10n.propertyListingBy(
+            ownerDisplayName(context.l10n, property.ownerName),
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.inter(
@@ -174,7 +179,7 @@ class _TypePill extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            propertyType,
+            propertyValueLabel(context.l10n, propertyType),
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,

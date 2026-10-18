@@ -6,6 +6,7 @@ import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/shared/widgets/forms/app_text_field.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/auth/presentation/auth_error_message.dart';
 import 'package:genie/l10n/l10n.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
@@ -60,7 +61,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
     setState(() {
       _emailError = _validateEmail(email)
           ? null
-          : 'Please enter a valid email address';
+          : context.l10n.authErrEnterEmail;
     });
 
     if (_emailError != null) return;
@@ -77,7 +78,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
       context.push('/verify-otp?email=${Uri.encodeComponent(email)}');
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(context, e.toString());
+      AppPopup.showError(context, authErrorMessage(context.l10n, e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -154,7 +155,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                             setState(() {
                               _emailError = _validateEmail(val)
                                   ? null
-                                  : 'Please enter a valid email address';
+                                  : context.l10n.authErrEnterEmail;
                             });
                           }
                         },

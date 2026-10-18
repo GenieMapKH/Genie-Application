@@ -9,16 +9,20 @@ import 'package:genie/features/chat/e2ee/keys/key_service.dart';
 import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 
-/// Thrown when a message cannot be encrypted for the other person.
+/// Thrown when a message cannot be encrypted for the other person. The user
+/// is told [problem] in their language.
 class ChatEncryptionException extends AppException {
-  const ChatEncryptionException(super.message);
+  final ChatSendProblem problem;
+
+  const ChatEncryptionException(this.problem, String message) : super(message);
 }
 
 /// Thrown instead of encrypting with a key this device has never trusted.
 class PeerKeyChangedException extends ChatEncryptionException {
   const PeerKeyChangedException()
-    : super('Their security key has changed. Accept the new key to continue.');
+    : super(ChatSendProblem.keyChanged, 'Their security key has changed');
 }
 
 /// How the key the server lists for someone compares with the trusted one.
@@ -115,7 +119,8 @@ class MessageCipher {
     final keyPair = await keyService.getIdentityKeyPair(userId);
     if (keyPair == null) {
       throw const ChatEncryptionException(
-        'Secure chat is not set up on this device.',
+        ChatSendProblem.notSetUp,
+        'Secure chat is not set up on this device',
       );
     }
 
@@ -124,8 +129,8 @@ class MessageCipher {
         throw const PeerKeyChangedException();
       case PeerKeyStatus.missing:
         throw const ChatEncryptionException(
-          'This person has not set up secure chat yet. They can receive '
-          'messages once they open the app again.',
+          ChatSendProblem.peerNotReady,
+          'They have not set up secure chat yet',
         );
       case PeerKeyStatus.trusted:
     }
@@ -224,7 +229,8 @@ class MessageCipher {
       return await checkPeerKey(peerId);
     } on DioException {
       throw const ChatEncryptionException(
-        'Could not reach the server. Check your connection.',
+        ChatSendProblem.noConnection,
+        'Could not check their key',
       );
     }
   }

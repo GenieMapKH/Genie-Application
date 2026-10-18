@@ -145,8 +145,8 @@ class UtmScanSection extends StatelessWidget {
                               child: isScanning
                                   ? Text(
                                       uploadProgress < 1.0
-                                          ? 'Processing...'
-                                          : 'Finished',
+                                          ? context.l10n.homeScanProcessing
+                                          : context.l10n.homeScanFinished,
                                       style: GoogleFonts.inter(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,

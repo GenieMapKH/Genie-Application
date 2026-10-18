@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:genie/l10n/l10n.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
@@ -60,7 +61,13 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     if (!mounted) return;
 
     if (!result.isSuccess) {
-      AppPopup.showError(context, result.error!);
+      final l10n = context.l10n;
+      AppPopup.showError(context, switch (result.error!) {
+        LocationProblem.servicesOff => l10n.homeLocationServicesOff,
+        LocationProblem.denied => l10n.homeLocationDenied,
+        LocationProblem.deniedForever => l10n.homeLocationDeniedForever,
+        LocationProblem.failed => l10n.homeLocationFailed,
+      });
       return;
     }
 

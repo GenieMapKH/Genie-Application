@@ -10,6 +10,7 @@ import 'package:genie/features/property/presentation/widgets/forms/types/propert
 import 'add_property_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
 
 extension AddPropertyPageFormsDynamic on AddPropertyPageState {
   Widget buildMapPreview() {
@@ -204,7 +205,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  kw.label,
+                  propertyKeywordLabel(context.l10n, kw.code),
                   style: GoogleFonts.inter(
                     color: isSelected
                         ? context.colors.accent

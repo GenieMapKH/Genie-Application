@@ -59,7 +59,10 @@ void main() {
     expect(find.text('Incorrect PIN. 3 tries left.'), findsOneWidget);
     expect(find.text('Enter your chat PIN'), findsOneWidget);
     // Typed again from the start.
-    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, '');
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      '',
+    );
 
     await typePin(tester, '482915');
     await tester.pumpAndSettle();
@@ -74,7 +77,10 @@ void main() {
 
     await typePin(tester, '000000');
 
-    expect(find.textContaining('1 try left before your PIN locks'), findsOneWidget);
+    expect(
+      find.textContaining('1 try left before your PIN locks'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('after too many wrong PINs it counts down, then lets the user '
@@ -86,12 +92,18 @@ void main() {
 
     await typePin(tester, '000000');
 
-    expect(find.text('Too many wrong PINs. Try again in 15:00.'), findsOneWidget);
+    expect(
+      find.text('Too many wrong PINs. Try again in 15:00.'),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.lock_clock_outlined), findsOneWidget);
     expect(tester.widget<TextField>(find.byType(TextField)).enabled, isFalse);
 
     await tester.pump(const Duration(minutes: 1));
-    expect(find.text('Too many wrong PINs. Try again in 14:00.'), findsOneWidget);
+    expect(
+      find.text('Too many wrong PINs. Try again in 14:00.'),
+      findsOneWidget,
+    );
 
     await tester.pump(const Duration(minutes: 15));
     expect(find.textContaining('Too many wrong PINs'), findsNothing);
@@ -142,6 +154,9 @@ void main() {
   test('a wait is shown as minutes and seconds, or hours for long ones', () {
     expect(formatWait(const Duration(minutes: 15)), '15:00');
     expect(formatWait(const Duration(seconds: 9)), '0:09');
-    expect(formatWait(const Duration(hours: 2, minutes: 3, seconds: 4)), '2:03:04');
+    expect(
+      formatWait(const Duration(hours: 2, minutes: 3, seconds: 4)),
+      '2:03:04',
+    );
   });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
@@ -113,7 +114,7 @@ void main() {
     tester,
   ) async {
     await openChat(tester);
-    socket.sendError = const ChatSendException('Could not reach the server.');
+    socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
 
     await tester.enterText(find.byType(TextField), 'Hello');
     await tester.tap(find.byIcon(Icons.send_outlined));
@@ -121,7 +122,10 @@ void main() {
     await tester.pump();
 
     expect(find.text('Not sent. Tap to retry.'), findsOneWidget);
-    expect(find.text('Could not reach the server.'), findsOneWidget);
+    expect(
+      find.text('Could not reach the server. Check your connection.'),
+      findsOneWidget,
+    );
 
     socket.sendError = null;
     await tester.tap(find.text('Hello'));

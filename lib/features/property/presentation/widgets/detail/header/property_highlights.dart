@@ -13,16 +13,6 @@ class PropertyHighlights extends StatefulWidget {
 
   const PropertyHighlights({super.key, required this.property});
 
-  /// Fallback copy for listings created before descriptions were required.
-  static const String _fallbackDescription =
-      'This land parcel is accurately mapped with verified boundaries and exact '
-      'recorded coordinates, located in a fast-growing area near main '
-      'infrastructure. It is ideal for residential development, a long-term '
-      'investment, or a business project. The rectangular shape allows '
-      'efficient planning and construction, while utilities such as electricity '
-      'and water are already available nearby. Clear ownership documents and '
-      'precise UTM location make this property easy to verify and trust.';
-
   @override
   State<PropertyHighlights> createState() => _PropertyHighlightsState();
 }
@@ -34,7 +24,9 @@ class _PropertyHighlightsState extends State<PropertyHighlights> {
   Widget build(BuildContext context) {
     final description = widget.property.description?.trim().isNotEmpty == true
         ? widget.property.description!.trim()
-        : PropertyHighlights._fallbackDescription;
+        // Fallback copy for listings created before descriptions were
+        // required.
+        : context.l10n.propertyFallbackDescription;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +63,9 @@ class _PropertyHighlightsState extends State<PropertyHighlights> {
           child: Row(
             children: [
               Text(
-                _expanded ? 'Show less' : 'Show more',
+                _expanded
+                    ? context.l10n.propertyShowLess
+                    : context.l10n.propertyShowMore,
                 style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -103,7 +97,7 @@ class _StatsRow extends StatelessWidget {
     return Row(
       children: [
         _Stat(
-          value: PropertyFormat.daysListed(property),
+          value: context.l10n.propertyDaysCount(property.daysListed),
           label: context.l10n.propertyGenie,
         ),
         const SizedBox(width: 24),

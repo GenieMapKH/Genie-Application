@@ -15,14 +15,16 @@ class MapIcons {
   final BitmapDescriptor? pin;
   final BitmapDescriptor? greenDot;
   final BitmapDescriptor? selectedDot;
-  final BitmapDescriptor? newBadge;
+
+  /// The "New" on price tags of recent listings, in the user's language.
+  final String newLabel;
   final BitmapDescriptor? smallWhiteDot;
 
   const MapIcons({
     this.pin,
     this.greenDot,
     this.selectedDot,
-    this.newBadge,
+    this.newLabel = 'New',
     this.smallWhiteDot,
   });
 }
@@ -157,6 +159,7 @@ class MapOverlayBuilder {
       );
     } else {
       await PropertyDotsLayer.build(
+        icons.newLabel,
         positions,
         models,
         markers,

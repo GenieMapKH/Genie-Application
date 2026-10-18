@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:genie/l10n/l10n.dart';
 import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
@@ -58,8 +59,20 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   @override
   void initState() {
     super.initState();
-    _overlays.loadIcons();
     _loadInitialMapPosition();
+  }
+
+  /// The icons carry the "New" label, so they are loaded again when the
+  /// language changes.
+  String? _iconsLanguage;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = context.l10n;
+    if (_iconsLanguage == l10n.localeName) return;
+    _iconsLanguage = l10n.localeName;
+    _overlays.loadIcons(newLabel: l10n.mapNewListing);
   }
 
   @override

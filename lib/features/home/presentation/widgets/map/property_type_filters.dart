@@ -7,6 +7,8 @@ import 'package:genie/features/property/presentation/view_models/map_property_fi
 
 import 'package:genie/shared/widgets/buttons/tactile_button.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:genie/l10n/l10n.dart';
 
 /// The pills under the map's search bar: one listing type and one property
 /// type at a time, kept in [mapPropertyFilterProvider], which the map obeys.
@@ -27,16 +29,21 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
     ref.read(mapPropertyFilterProvider.notifier).update(change);
   }
 
-  /// Label shown, value stored, icon.
-  static const List<(String, String, String)> _propertyTypes = [
-    ('House', 'House', 'assets/icons/property_house.svg'),
-    ('Land', 'Land', 'assets/icons/property_land.svg'),
-    ('Condo', 'Condo', 'assets/icons/property_condo.svg'),
-    ('Building', 'Building', 'assets/icons/property_building.svg'),
-    ('Borey', 'Borey', 'assets/icons/property_borey.svg'),
-    ('Business', 'Business for Sale', 'assets/icons/property_business.svg'),
-    ('Warehouse', 'Warehouse', 'assets/icons/property_warehouse.svg'),
+  /// Value stored, icon. The pill shows the value in the user's language.
+  static const List<(String, String)> _propertyTypes = [
+    ('House', 'assets/icons/property_house.svg'),
+    ('Land', 'assets/icons/property_land.svg'),
+    ('Condo', 'assets/icons/property_condo.svg'),
+    ('Building', 'assets/icons/property_building.svg'),
+    ('Borey', 'assets/icons/property_borey.svg'),
+    ('Business for Sale', 'assets/icons/property_business.svg'),
+    ('Warehouse', 'assets/icons/property_warehouse.svg'),
   ];
+
+  /// The pill is short: "Business", not "Business for Sale".
+  String _typeLabel(String value) => value == 'Business for Sale'
+      ? context.l10n.propertyTypeBusinessShort
+      : propertyValueLabel(context.l10n, value);
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +74,8 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
               ),
               const SizedBox(width: 8),
               // Property Types
-              for (final (label, value, iconPath) in _propertyTypes)
-                _buildPropertyTypePill(label, value, iconPath),
+              for (final (value, iconPath) in _propertyTypes)
+                _buildPropertyTypePill(_typeLabel(value), value, iconPath),
               const SizedBox(width: 8), // End padding
             ],
           ),
@@ -117,7 +124,9 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
             ),
             const SizedBox(width: 6),
             Text(
-              selectedListingType ?? 'Listing Type',
+              selectedListingType == null
+                  ? context.l10n.listingTypeTitle
+                  : propertyValueLabel(context.l10n, selectedListingType),
               style: GoogleFonts.inter(
                 color: isListingTypeSelected
                     ? context.colors.primaryStrong
@@ -171,7 +180,7 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
           ],
         ),
         child: Text(
-          text,
+          propertyValueLabel(context.l10n, text),
           style: GoogleFonts.inter(
             color: isSelected
                 ? context.colors.primaryStrong

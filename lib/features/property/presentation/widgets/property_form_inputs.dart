@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
 
 class PropertySectionTitle extends StatelessWidget {
   final String title;
@@ -181,12 +183,15 @@ class PropertyDropdown extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0),
           decoration: defaultPropertyInputDecoration(
             context,
-            hintText ?? 'Select',
+            hintText ?? context.l10n.propertySelectHint,
             hasError: hasError,
           ),
           onChanged: onChanged,
           items: items.map((String item) {
-            return DropdownMenuItem<String>(value: item, child: Text(item));
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(propertyValueLabel(context.l10n, item)),
+            );
           }).toList(),
         ),
       ],

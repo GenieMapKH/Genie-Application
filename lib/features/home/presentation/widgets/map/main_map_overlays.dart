@@ -41,13 +41,14 @@ class MainMapOverlays {
        _onChanged = onChanged,
        _onZoomToCluster = onZoomToCluster;
 
-  /// Loads the shared icons, then draws both layers.
-  Future<void> loadIcons() async {
+  /// Loads the shared icons, then draws both layers. [newLabel] is the
+  /// "New" on recent listings' price tags, in the user's language.
+  Future<void> loadIcons({required String newLabel}) async {
     final icons = MapIcons(
       pin: await getSvgMarker('assets/icons/pin.svg'),
       greenDot: await PropertyMarkers.greenDot(),
       selectedDot: await PropertyMarkers.greenDot(isSelected: true),
-      newBadge: await PropertyMarkers.newBadge(),
+      newLabel: newLabel,
       smallWhiteDot: await VertexMarkers.smallWhiteDot(),
     );
     if (_disposed) return;

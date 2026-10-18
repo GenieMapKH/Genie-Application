@@ -1655,4 +1655,682 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get chatPinLockedMessage =>
       'ដើម្បីសុវត្ថិភាពរបស់អ្នក ការបញ្ចូលលេខកូដ PIN ជជែកត្រូវបានផ្អាកមួយរយៈ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get authErrEnterName => 'សូមបញ្ចូលឈ្មោះរបស់អ្នក';
+
+  @override
+  String get authErrEnterEmailOrPhone =>
+      'សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែល ឬលេខទូរស័ព្ទដែលត្រឹមត្រូវ';
+
+  @override
+  String get authErrEnterPassword => 'សូមបញ្ចូលពាក្យសម្ងាត់ដែលត្រឹមត្រូវ';
+
+  @override
+  String get authErrPasswordMin8 => 'ពាក្យសម្ងាត់ត្រូវមានយ៉ាងហោចណាស់ ៨ តួអក្សរ';
+
+  @override
+  String get authErrAgreeTerms => 'សូមយល់ព្រមលើលក្ខខណ្ឌប្រើប្រាស់ ដើម្បីបន្ត។';
+
+  @override
+  String get authErrEnterEmail => 'សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែលដែលត្រឹមត្រូវ';
+
+  @override
+  String get authErrEnterNewPassword => 'សូមបញ្ចូលពាក្យសម្ងាត់ថ្មី';
+
+  @override
+  String get authErrReEnterPassword => 'សូមបញ្ចូលពាក្យសម្ងាត់របស់អ្នកម្តងទៀត';
+
+  @override
+  String get authErrPasswordsDontMatch => 'ពាក្យសម្ងាត់មិនដូចគ្នាទេ';
+
+  @override
+  String get termsScrollToAgree =>
+      'សូមរំកិលទៅខាងក្រោមបំផុតនៃលក្ខខណ្ឌ ដើម្បីយល់ព្រម។';
+
+  @override
+  String get termsTitle => 'លក្ខខណ្ឌប្រើប្រាស់សម្រាប់ Genie Property';
+
+  @override
+  String get termsLastUpdated =>
+      'ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ៖ ថ្ងៃទី ១៤ ខែកុម្ភៈ ឆ្នាំ ២០២៦';
+
+  @override
+  String get termsWelcome =>
+      'សូមស្វាគមន៍មកកាន់ Genie Property។ តាមរយៈការចូលប្រើ ឬការប្រើប្រាស់កម្មវិធី និងសេវាកម្មរបស់ Genie អ្នកយល់ព្រមគោរព និងស្ថិតក្រោមលក្ខខណ្ឌប្រើប្រាស់ខាងក្រោម។';
+
+  @override
+  String get termsDisagree =>
+      'ប្រសិនបើអ្នកមិនយល់ព្រមនឹងលក្ខខណ្ឌទាំងនេះទេ សូមកុំប្រើប្រាស់កម្មវិធីនេះ។';
+
+  @override
+  String get termsAboutTitle => '១. អំពី Genie';
+
+  @override
+  String get termsAboutIntro =>
+      'Genie គឺជាវេទិកាអចលនទ្រព្យផ្អែកលើផែនទី ដែលអនុញ្ញាតឱ្យអ្នកប្រើប្រាស់៖';
+
+  @override
+  String get termsAboutView =>
+      'មើលបញ្ជីអចលនទ្រព្យ ដែលមានទីតាំង និងព្រំដែនត្រឹមត្រូវលើផែនទី';
+
+  @override
+  String get termsAboutManage =>
+      'បន្ថែម គ្រប់គ្រង និងចែករំលែកព័ត៌មានអចលនទ្រព្យ';
+
+  @override
+  String get termsAboutConnect =>
+      'ភ្ជាប់អ្នកទិញ អ្នកលក់ ភ្នាក់ងារ និងអ្នកអភិវឌ្ឍន៍';
+
+  @override
+  String get termsAboutTools =>
+      'ប្រើឧបករណ៍កូអរដោនេ ដូចជាការបញ្ចូល UTM និងការវាស់វែងលើផែនទី';
+
+  @override
+  String get termsAboutPlatformOnly =>
+      'Genie ដើរតួជាវេទិកាតែប៉ុណ្ណោះ ហើយមិនមែនជាម្ចាស់ មិនលក់ ឬមិនធ្វើជាឈ្មួញកណ្តាលលើអចលនទ្រព្យណាមួយឡើយ។';
+
+  @override
+  String get termsAccountsTitle => '២. គណនីអ្នកប្រើប្រាស់';
+
+  @override
+  String get termsAccountsIntro =>
+      'ដើម្បីប្រើមុខងារមួយចំនួន អ្នកប្រើប្រាស់ត្រូវចុះឈ្មោះដោយប្រើលេខទូរស័ព្ទ ឬអាសយដ្ឋានអ៊ីមែលដែលត្រឹមត្រូវ។\nអ្នកយល់ព្រមថា៖';
+
+  @override
+  String get termsAccountsAccurate => 'ព័ត៌មានដែលអ្នកផ្តល់ជូនគឺត្រឹមត្រូវ';
+
+  @override
+  String get termsAccountsConfidential =>
+      'អ្នកទទួលខុសត្រូវក្នុងការរក្សាការសម្ងាត់នៃគណនីរបស់អ្នក';
+
+  @override
+  String get termsAccountsNoImpersonation => 'អ្នកនឹងមិនក្លែងខ្លួនជាអ្នកដទៃឡើយ';
+
+  @override
+  String get termsAccountsSuspend =>
+      'Genie រក្សាសិទ្ធិផ្អាកគណនីដែលផ្តល់ព័ត៌មានមិនពិត។';
+
+  @override
+  String get termsListingsTitle => '៣. ការដាក់បញ្ជីអចលនទ្រព្យ';
+
+  @override
+  String get termsListingsIntro =>
+      'អ្នកប្រើប្រាស់ដែលដាក់ប្រកាសអចលនទ្រព្យ (ម្ចាស់ ភ្នាក់ងារ អ្នកអភិវឌ្ឍន៍) យល់ព្រមថា៖';
+
+  @override
+  String get termsListingsTruthful =>
+      'ព័ត៌មាន ព្រំដែន តម្លៃ និងព័ត៌មានលម្អិតទាំងអស់គឺពិតប្រាកដ';
+
+  @override
+  String get termsListingsRight =>
+      'អ្នកមានសិទ្ធិស្របច្បាប់ក្នុងការចែករំលែក និងផ្សព្វផ្សាយអចលនទ្រព្យនោះ';
+
+  @override
+  String get termsListingsCoordinates =>
+      'ព្រំដែនលើផែនទី ឬកូអរដោនេ UTM ដែលអ្នកផ្តល់ជូន គឺត្រឹមត្រូវតាមការយល់ដឹងល្អបំផុតរបស់អ្នក';
+
+  @override
+  String get termsListingsNotResponsible =>
+      'Genie មិនទទួលខុសត្រូវចំពោះទិន្នន័យអចលនទ្រព្យមិនត្រឹមត្រូវ ដែលអ្នកប្រើប្រាស់បានដាក់ស្នើឡើយ។';
+
+  @override
+  String get termsMapTitle => '៤. ភាពត្រឹមត្រូវនៃផែនទី និងកូអរដោនេ';
+
+  @override
+  String get termsMapIntro =>
+      'Genie ផ្តល់ឧបករណ៍សម្រាប់បង្ហាញផែនទី ការបំប្លែង UTM និងការវាស់ចម្ងាយ។';
+
+  @override
+  String get termsMapGuidanceOnly =>
+      'ព្រំដែនលើផែនទីគឺសម្រាប់ជាការណែនាំដោយមើលឃើញតែប៉ុណ្ណោះ ហើយមិនជំនួសការវាស់វែងសុរិយោដីផ្លូវការ ឬប្លង់ដីឡើយ។';
+
+  @override
+  String get termsMapVerify =>
+      'អ្នកប្រើប្រាស់គួរផ្ទៀងផ្ទាត់ព្រំដីនិងប្លង់ទាំងអស់ជាមួយអាជ្ញាធរពាក់ព័ន្ធ មុនពេលធ្វើប្រតិបត្តិការហិរញ្ញវត្ថុ។';
+
+  @override
+  String get termsAgree => 'យល់ព្រមលើលក្ខខណ្ឌប្រើប្រាស់';
+
+  @override
+  String get termsScrollHint =>
+      'រំកិលទៅខាងក្រោម ដើម្បីយល់ព្រមលើលក្ខខណ្ឌប្រើប្រាស់';
+
+  @override
+  String get authErrEnterValidEmail => 'សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែលដែលត្រឹមត្រូវ';
+
+  @override
+  String get authErrEnterValidPhone => 'សូមបញ្ចូលលេខទូរស័ព្ទដែលត្រឹមត្រូវ';
+
+  @override
+  String get authErrPasswordMin6 => 'ពាក្យសម្ងាត់ត្រូវមានយ៉ាងហោចណាស់ ៦ តួអក្សរ';
+
+  @override
+  String get authErrorWrongCredentials =>
+      'អ៊ីមែល លេខទូរស័ព្ទ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។';
+
+  @override
+  String get authErrorAccountExists =>
+      'មានគណនីដែលប្រើអ៊ីមែល ឬលេខទូរស័ព្ទនេះរួចហើយ។';
+
+  @override
+  String get authErrorCheckDetails =>
+      'សូមពិនិត្យព័ត៌មានដែលអ្នកបានបញ្ចូល ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get authErrorInvalidCode => 'លេខកូដមិនត្រឹមត្រូវ ឬផុតកំណត់ហើយ។';
+
+  @override
+  String get authErrorTooManyTries =>
+      'ព្យាយាមច្រើនដងពេក។ សូមរង់ចាំប៉ុន្មាននាទី ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get authErrorNoConnection =>
+      'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។ សូមពិនិត្យការតភ្ជាប់របស់អ្នក។';
+
+  @override
+  String get authErrorServer =>
+      'មានបញ្ហាពីខាងយើង។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get authErrorGeneric => 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String authResendOtpIn(int seconds) {
+    return 'ផ្ញើលេខកូដ OTP ម្តងទៀតក្នុងរយៈពេល $seconds វិនាទី';
+  }
+
+  @override
+  String get chatPhotoUnavailable =>
+      'មិនអាចបង្ហាញរូបភាពបានទេ។ ចុចដើម្បីព្យាយាមម្តងទៀត។';
+
+  @override
+  String get chatPictureCannotBeShown => 'រូបភាពនេះមិនអាចបង្ហាញបានទេ។';
+
+  @override
+  String get chatMessageNotSent => 'មិនបានផ្ញើទេ។ ចុចដើម្បីព្យាយាមម្តងទៀត។';
+
+  @override
+  String get chatMessageSending => 'កំពុងផ្ញើ…';
+
+  @override
+  String get chatPresenceOnline => 'កំពុងអនឡាញ';
+
+  @override
+  String get chatLastSeenJustNow => 'ឃើញចុងក្រោយ មុននេះបន្តិច';
+
+  @override
+  String chatLastSeenMinutes(int minutes) {
+    return 'ឃើញចុងក្រោយ $minutes នាទីមុន';
+  }
+
+  @override
+  String chatLastSeenToday(String time) {
+    return 'ឃើញចុងក្រោយ ថ្ងៃនេះ ម៉ោង $time';
+  }
+
+  @override
+  String chatLastSeenYesterday(String time) {
+    return 'ឃើញចុងក្រោយ ម្សិលមិញ ម៉ោង $time';
+  }
+
+  @override
+  String chatLastSeenOn(String date) {
+    return 'ឃើញចុងក្រោយ $date';
+  }
+
+  @override
+  String chatKeyChangedTitle(String name) {
+    return 'សោសុវត្ថិភាពរបស់ $name បានផ្លាស់ប្តូរ';
+  }
+
+  @override
+  String get chatEmojiSmileys => 'ទឹកមុខ';
+
+  @override
+  String get chatEmojiGestures => 'កាយវិការ';
+
+  @override
+  String get chatEmojiHearts => 'បេះដូង';
+
+  @override
+  String get chatEmojiPlaces => 'ទីកន្លែង';
+
+  @override
+  String get chatPreviewEncrypted => 'សារដែលបានអ៊ិនគ្រីប';
+
+  @override
+  String get chatPreviewPhoto => '📷 រូបភាព';
+
+  @override
+  String get chatUndecryptable => 'សារនេះមិនអាចអានបាននៅលើឧបករណ៍នេះទេ។';
+
+  @override
+  String get ownerFallbackName => 'ម្ចាស់អចលនទ្រព្យ';
+
+  @override
+  String get chatSendSignedOut => 'អ្នកបានចាកចេញហើយ។';
+
+  @override
+  String get chatSendNoConnection =>
+      'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។ សូមពិនិត្យការតភ្ជាប់របស់អ្នក។';
+
+  @override
+  String get chatSendRejected =>
+      'ម៉ាស៊ីនមេមិនបានទទួលសារនេះទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get chatSendTooFast => 'អ្នកកំពុងផ្ញើសារលឿនពេក។ សូមរង់ចាំបន្តិច។';
+
+  @override
+  String get chatSendPinRequired => 'សូមបង្កើតលេខកូដ PIN ជជែក មុនពេលផ្ញើសារ។';
+
+  @override
+  String get chatSendKeyChanged =>
+      'សោសុវត្ថិភាពរបស់ពួកគេបានផ្លាស់ប្តូរ។ សូមទទួលយកសោថ្មី ដើម្បីបន្ត។';
+
+  @override
+  String get chatSendNotSetUp =>
+      'ការជជែកសុវត្ថិភាពមិនទាន់បានរៀបចំនៅលើឧបករណ៍នេះទេ។';
+
+  @override
+  String get chatSendPeerNotReady =>
+      'អ្នកនេះមិនទាន់បានរៀបចំការជជែកសុវត្ថិភាពនៅឡើយទេ។ ពួកគេអាចទទួលសារបាន នៅពេលពួកគេបើកកម្មវិធីម្តងទៀត។';
+
+  @override
+  String chatSendFileTooLarge(int megabytes) {
+    return 'ឯកសារនេះធំពេក (កំណត់ត្រឹម $megabytes MB)។';
+  }
+
+  @override
+  String get chatSendUploadFailed =>
+      'មិនអាចផ្ទុកឯកសារឡើងបានទេ។ សូមពិនិត្យការតភ្ជាប់របស់អ្នក។';
+
+  @override
+  String get chatSendFailed => 'មិនបានផ្ញើសារទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get mapNewListing => 'ថ្មី';
+
+  @override
+  String homeExtractedCoordinates(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'បានរកឃើញកូអរដោនេ $count។',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeScanFailed => 'មិនអាចអានឯកសារបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get homeInvalidUtm =>
+      'កូអរដោនេ UTM ទាំងនេះមិនត្រឹមត្រូវទេ។ សូមពិនិត្យម្តងទៀត។';
+
+  @override
+  String get homeScanProcessing => 'កំពុងដំណើរការ...';
+
+  @override
+  String get homeScanFinished => 'រួចរាល់';
+
+  @override
+  String get homeLocationServicesOff => 'សេវាទីតាំងត្រូវបានបិទ។ សូមបើកវា។';
+
+  @override
+  String get homeLocationDenied => 'ការអនុញ្ញាតទីតាំងត្រូវបានបដិសេធ។';
+
+  @override
+  String get homeLocationDeniedForever =>
+      'ការអនុញ្ញាតទីតាំងត្រូវបានបដិសេធជាអចិន្ត្រៃយ៍។ អ្នកអាចអនុញ្ញាតវាក្នុងការកំណត់ទូរស័ព្ទ។';
+
+  @override
+  String get homeLocationFailed =>
+      'មិនអាចទទួលបានទីតាំងរបស់អ្នកទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get propertyMaintenanceFeeHint => 'ថ្លៃថែទាំប្រចាំខែ (ដុល្លារ)';
+
+  @override
+  String get propertyDuration => 'រយៈពេល';
+
+  @override
+  String get propertySelectUnit => 'ជ្រើសរើសឯកតា';
+
+  @override
+  String get propertySizeTitle => 'ទំហំ';
+
+  @override
+  String get propertyLandSizeTitle => 'ទំហំដី';
+
+  @override
+  String get propertySizeAreaHint => 'ផ្ទៃក្រឡា (m²)';
+
+  @override
+  String get propertyEnterLandSize => 'បញ្ចូលទំហំដី (m²)';
+
+  @override
+  String get propertyEnterBuildingSize => 'បញ្ចូលទំហំអគារ';
+
+  @override
+  String get propertyEnterUnitSize => 'បញ្ចូលទំហំបន្ទប់';
+
+  @override
+  String get propertyProjectNameInfo => 'ឈ្មោះផ្លូវការនៃគម្រោងអភិវឌ្ឍន៍';
+
+  @override
+  String get propertyProjectAreaInfo => 'ផ្ទៃដីសរុបនៃគម្រោងទាំងមូល';
+
+  @override
+  String get propertyStartingPriceInfo => 'តម្លៃទាបបំផុតនៃបន្ទប់ដែលនៅមាន';
+
+  @override
+  String get propertyMonthlyRentInfo => 'ថ្លៃជួលទាប = សក្តានុពលចំណេញខ្ពស់';
+
+  @override
+  String get propertyEquipmentInfo =>
+      'ពិពណ៌នាទ្រព្យសម្បត្តិដែលរួមបញ្ចូលក្នុងការលក់';
+
+  @override
+  String get propertySelectHint => 'ជ្រើសរើស';
+
+  @override
+  String get propertyPublishedTitle => 'បានផ្សព្វផ្សាយអចលនទ្រព្យ\nដោយជោគជ័យ!';
+
+  @override
+  String get propertyShowLess => 'បង្ហាញតិចជាងនេះ';
+
+  @override
+  String get propertyShowMore => 'បង្ហាញបន្ថែម';
+
+  @override
+  String get propertyNoListingsYet =>
+      'អ្នកមិនទាន់បានដាក់ផ្សាយ\nអចលនទ្រព្យណាមួយនៅឡើយទេ';
+
+  @override
+  String get propertyPublishedToast => 'បានផ្សព្វផ្សាយអចលនទ្រព្យ';
+
+  @override
+  String get propertyMovedToDraft => 'បានប្តូរអចលនទ្រព្យទៅជាព្រាង';
+
+  @override
+  String get propertyPublishProperty => 'ផ្សព្វផ្សាយអចលនទ្រព្យ';
+
+  @override
+  String get propertyPublishing => 'កំពុងផ្សព្វផ្សាយអចលនទ្រព្យរបស់អ្នក...';
+
+  @override
+  String get propertySaveFailed =>
+      'មិនអាចរក្សាទុកអចលនទ្រព្យបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get propertyUpdateFailed =>
+      'មិនអាចធ្វើបច្ចុប្បន្នភាពអចលនទ្រព្យបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get propertyDeleteFailed =>
+      'មិនអាចលុបអចលនទ្រព្យបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get propertyFallbackDescription =>
+      'ដីនេះត្រូវបានគូសផែនទីយ៉ាងត្រឹមត្រូវ ជាមួយព្រំដែនដែលបានផ្ទៀងផ្ទាត់ និងកូអរដោនេច្បាស់លាស់ ស្ថិតនៅក្នុងតំបន់ដែលកំពុងរីកចម្រើនលឿន ជិតហេដ្ឋារចនាសម្ព័ន្ធសំខាន់ៗ។ វាល្អសម្រាប់ការអភិវឌ្ឍលំនៅដ្ឋាន ការវិនិយោគរយៈពេលវែង ឬគម្រោងអាជីវកម្ម។ រាងចតុកោណកែងរបស់វាអនុញ្ញាតឱ្យរៀបចំផែនការ និងសាងសង់បានយ៉ាងមានប្រសិទ្ធភាព ខណៈដែលសេវាសាធារណៈដូចជាអគ្គិសនី និងទឹក មាននៅក្បែរនោះរួចហើយ។ ឯកសារកម្មសិទ្ធិច្បាស់លាស់ និងទីតាំង UTM ត្រឹមត្រូវ ធ្វើឱ្យអចលនទ្រព្យនេះងាយស្រួលផ្ទៀងផ្ទាត់ និងទុកចិត្តបាន។';
+
+  @override
+  String propertyListingBy(String name) {
+    return 'ដាក់ផ្សាយដោយ៖ $name';
+  }
+
+  @override
+  String propertyTabActive(int count) {
+    return 'សកម្ម ($count)';
+  }
+
+  @override
+  String propertyTabPending(int count) {
+    return 'កំពុងរង់ចាំ ($count)';
+  }
+
+  @override
+  String propertyTabDraft(int count) {
+    return 'ព្រាង ($count)';
+  }
+
+  @override
+  String propertyTabSold(int count) {
+    return 'លក់រួច ($count)';
+  }
+
+  @override
+  String get propertyContacts => 'ទំនាក់ទំនង';
+
+  @override
+  String propertySavedCount(int count) {
+    return 'បានរក្សាទុក $count';
+  }
+
+  @override
+  String propertySpecBeds(int count) {
+    return '$count បន្ទប់គេង';
+  }
+
+  @override
+  String propertySpecBaths(int count) {
+    return '$count បន្ទប់ទឹក';
+  }
+
+  @override
+  String propertyTypeForSale(String type) {
+    return '$type សម្រាប់លក់';
+  }
+
+  @override
+  String propertyBedroomCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count បន្ទប់គេង',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String propertyBathroomCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count បន្ទប់ទឹក',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String propertyDaysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ថ្ងៃ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortPropertyForYou => 'អចលនទ្រព្យសម្រាប់អ្នក';
+
+  @override
+  String get sortRecentlyPosted => 'ទើបដាក់ផ្សាយ';
+
+  @override
+  String get sortNewest => 'ថ្មីបំផុត';
+
+  @override
+  String get sortPriceHighToLow => 'តម្លៃ៖ ខ្ពស់ទៅទាប';
+
+  @override
+  String get sortPriceLowToHigh => 'តម្លៃ៖ ទាបទៅខ្ពស់';
+
+  @override
+  String get listingTypeTitle => 'ប្រភេទការផ្សាយ';
+
+  @override
+  String get listingTypeSale => 'លក់';
+
+  @override
+  String get listingTypeRent => 'ជួល';
+
+  @override
+  String get listingTypeToLet => 'ផ្ទេរសិទ្ធិជួល';
+
+  @override
+  String get propertyTypeLand => 'ដី';
+
+  @override
+  String get propertyTypeHouse => 'ផ្ទះ';
+
+  @override
+  String get propertyTypeBuilding => 'អគារ';
+
+  @override
+  String get propertyTypeCondo => 'ខុនដូ';
+
+  @override
+  String get propertyTypeBorey => 'បុរី';
+
+  @override
+  String get propertyTypeBusiness => 'អាជីវកម្មសម្រាប់លក់';
+
+  @override
+  String get propertyTypeBusinessShort => 'អាជីវកម្ម';
+
+  @override
+  String get propertyTypeWarehouse => 'ឃ្លាំង';
+
+  @override
+  String get propertyStatusActive => 'សកម្ម';
+
+  @override
+  String get propertyStatusPending => 'កំពុងរង់ចាំ';
+
+  @override
+  String get propertyStatusDraft => 'ព្រាង';
+
+  @override
+  String get propertyStatusSold => 'លក់រួច';
+
+  @override
+  String get propertyStatusExpired => 'ផុតកំណត់';
+
+  @override
+  String get propertyOptionHardTitle => 'ប្លង់រឹង';
+
+  @override
+  String get propertyOptionSoftTitle => 'ប្លង់ទន់';
+
+  @override
+  String get propertyOptionOther => 'ផ្សេងៗ';
+
+  @override
+  String get propertyOptionStudio => 'ស្ទូឌីយោ';
+
+  @override
+  String get propertyOptionYes => 'មាន';
+
+  @override
+  String get propertyOptionNo => 'គ្មាន';
+
+  @override
+  String get propertyOptionUnfurnished => 'គ្មានគ្រឿងសង្ហារិម';
+
+  @override
+  String get propertyOptionFullyFurnished => 'មានគ្រឿងសង្ហារិមពេញលេញ';
+
+  @override
+  String get propertyOptionElectricalAppliances => 'មានឧបករណ៍អគ្គិសនី';
+
+  @override
+  String get propertyOptionCommercialBuilding => 'អគារពាណិជ្ជកម្ម';
+
+  @override
+  String get propertyOptionOfficeBuilding => 'អគារការិយាល័យ';
+
+  @override
+  String get propertyOptionMixedUse => 'ប្រើប្រាស់ចម្រុះ';
+
+  @override
+  String get propertyOptionRetailBuilding => 'អគារលក់រាយ';
+
+  @override
+  String get propertyOptionOffPlan => 'លក់មុនសាងសង់';
+
+  @override
+  String get propertyOptionUnderConstruction => 'កំពុងសាងសង់';
+
+  @override
+  String get propertyOptionCompleted => 'សាងសង់រួចរាល់';
+
+  @override
+  String get propertyOptionCityView => 'ទេសភាពទីក្រុង';
+
+  @override
+  String get propertyOptionRiverView => 'ទេសភាពទន្លេ';
+
+  @override
+  String get propertyOptionGardenView => 'ទេសភាពសួនច្បារ';
+
+  @override
+  String get propertyOptionPoolView => 'ទេសភាពអាងហែលទឹក';
+
+  @override
+  String get propertyOptionNoView => 'គ្មានទេសភាព';
+
+  @override
+  String get propertyOptionCommercial => 'ពាណិជ្ជកម្ម';
+
+  @override
+  String get propertyOptionLandSubdivision => 'ការបែងចែកដីឡូតិ៍';
+
+  @override
+  String get propertyOptionPreLaunch => 'មុនដាក់លក់';
+
+  @override
+  String get propertyOptionCompleted50 => 'បានបញ្ចប់ ៥០%';
+
+  @override
+  String get propertyOptionCompleted80 => 'បានបញ្ចប់ ៨០%';
+
+  @override
+  String get propertyOptionMonths => 'ខែ';
+
+  @override
+  String get propertyOptionYears => 'ឆ្នាំ';
+
+  @override
+  String get keywordRoadAccess => 'មានផ្លូវចូល';
+
+  @override
+  String get keywordCornerLand => 'ដីជ្រុង';
+
+  @override
+  String get keywordNearMarket => 'ជិតផ្សារ';
+
+  @override
+  String get keywordNearSchool => 'ជិតសាលារៀន';
+
+  @override
+  String get keywordNearHospital => 'ជិតមន្ទីរពេទ្យ';
+
+  @override
+  String get keywordRiverLakeNearby => 'ជិតទន្លេ / បឹង';
+
+  @override
+  String get keywordElectricityReady => 'មានភ្លើងរួចរាល់';
+
+  @override
+  String get keywordWaterSupply => 'មានទឹកស្អាត';
+
+  @override
+  String get keywordResidentialArea => 'តំបន់លំនៅដ្ឋាន';
+
+  @override
+  String get keywordCommercialArea => 'តំបន់ពាណិជ្ជកម្ម';
 }

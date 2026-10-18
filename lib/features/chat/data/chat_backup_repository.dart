@@ -94,7 +94,8 @@ class BackupOwnerProof {
 class WrongPinException extends AppException {
   final int? attemptsLeft;
 
-  const WrongPinException({this.attemptsLeft}) : super('Wrong PIN', code: '403');
+  const WrongPinException({this.attemptsLeft})
+    : super('Wrong PIN', code: '403');
 }
 
 /// The account password typed to open the chat keys is not the account's.

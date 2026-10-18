@@ -53,7 +53,7 @@ class SavedPropertiesPage extends ConsumerWidget {
               trailing: Padding(
                 padding: const EdgeInsets.only(right: 4.0),
                 child: Text(
-                  '$count Saved',
+                  context.l10n.propertySavedCount(count),
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,

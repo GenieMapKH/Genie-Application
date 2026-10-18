@@ -7,6 +7,7 @@ import 'package:genie/features/chat/data/chat_repository.dart';
 import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 
 /// Sends and opens files in a chat. A file is encrypted on this device with
 /// a one-time key before it is uploaded, and decrypted only in memory.
@@ -44,9 +45,7 @@ class ChatAttachmentService {
     required String mimeType,
   }) async {
     if (bytes.length > maxBytes) {
-      throw ChatSendException(
-        'This file is too large (limit ${maxBytes ~/ (1024 * 1024)} MB).',
-      );
+      throw const ChatSendException(ChatSendProblem.fileTooLarge);
     }
 
     final sealed = cryptoService.encryptFile(bytes);
@@ -55,9 +54,7 @@ class ChatAttachmentService {
       path = await repository.uploadEncryptedFile(recipientId, sealed.cipher);
     } on DioException catch (e) {
       AppLogger.error('Attachment upload failed', e);
-      throw const ChatSendException(
-        'Could not upload the file. Check your connection.',
-      );
+      throw const ChatSendException(ChatSendProblem.uploadFailed);
     }
 
     _remember(path, bytes);
@@ -80,8 +77,7 @@ class ChatAttachmentService {
     final inMemory = cached(attachment);
     if (inMemory != null) return inMemory;
 
-    final bytes =
-        await _openStored(attachment) ?? await _download(attachment);
+    final bytes = await _openStored(attachment) ?? await _download(attachment);
     _remember(attachment.path, bytes);
     return bytes;
   }

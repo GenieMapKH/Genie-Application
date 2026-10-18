@@ -5,6 +5,8 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/utils/owner_display_name.dart';
 
 /// A two-column grid of compact listing tiles, used for both the "Similar
 /// Property" and "Property for you" sections of the detail sheet.
@@ -112,7 +114,7 @@ class _PropertyTile extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            PropertyFormat.cardSpecLine(property),
+            PropertyFormat.cardSpecLine(context.l10n, property),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
@@ -134,7 +136,9 @@ class _PropertyTile extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            'Listing by: ${property.ownerName ?? 'Property Owner'}',
+            context.l10n.propertyListingBy(
+              ownerDisplayName(context.l10n, property.ownerName),
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(

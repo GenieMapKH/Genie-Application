@@ -3,7 +3,6 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/data/chat_attachment_service.dart';
 import 'package:genie/features/chat/data/chat_repository.dart';
@@ -12,6 +11,7 @@ import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
 import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
@@ -21,8 +21,7 @@ export 'active_chat_state.dart';
 
 /// Loads, receives and sends the messages of one conversation.
 class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
-  static const undecryptableText =
-      'This message cannot be read on this device.';
+  static const undecryptableText = ChatMessage.undecryptableText;
 
   /// An unreadable live message triggers a key check at most this often.
   static const _keyCheckCooldown = Duration(seconds: 30);
@@ -171,9 +170,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     } catch (e, stackTrace) {
       AppLogger.error('Failed to accept the new key', e, stackTrace);
       if (!mounted) return;
-      state = state.copyWith(
-        sendError: 'Could not reach the server. Check your connection.',
-      );
+      state = state.copyWith(sendError: ChatSendProblem.noConnection);
     }
   }
 
@@ -202,9 +199,11 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       _replace(
         message.copyWith(status: ChatMessageStatus.failed),
         peerKeyChanged: e is PeerKeyChangedException ? true : null,
-        sendError: e is AppException
-            ? e.message
-            : 'Message not sent. Please try again.',
+        sendError: switch (e) {
+          ChatSendException(:final problem) => problem,
+          ChatEncryptionException(:final problem) => problem,
+          _ => ChatSendProblem.failed,
+        },
       );
     }
   }
@@ -346,7 +345,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   void _replace(
     ChatMessage message, {
     bool? peerKeyChanged,
-    String? sendError,
+    ChatSendProblem? sendError,
   }) {
     state = state.copyWith(
       messages: [

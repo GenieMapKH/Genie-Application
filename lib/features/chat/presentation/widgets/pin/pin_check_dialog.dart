@@ -22,8 +22,7 @@ Future<bool> showPinCheckDialog(
   final accepted = await showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (_) =>
-        _PinCheckDialog(title: title, helper: helper, check: check),
+    builder: (_) => _PinCheckDialog(title: title, helper: helper, check: check),
   );
   return accepted ?? false;
 }
@@ -126,7 +125,9 @@ class _PinCheckDialogState extends State<_PinCheckDialog> {
         children: [
           CircleAvatar(
             radius: 26,
-            backgroundColor: _lockedOut ? colors.dangerSoft : colors.primarySoft,
+            backgroundColor: _lockedOut
+                ? colors.dangerSoft
+                : colors.primarySoft,
             child: Icon(
               _lockedOut ? Icons.lock_clock_outlined : Icons.lock_outline,
               color: _lockedOut ? colors.danger : colors.primary,

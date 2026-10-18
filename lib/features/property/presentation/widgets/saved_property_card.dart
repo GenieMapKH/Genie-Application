@@ -6,6 +6,9 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/utils/owner_display_name.dart';
 
 /// Item card for Saved Properties screen matching Screenshot 1.
 /// Explicitly omits the "Edit" button since saved properties may belong to other owners.
@@ -88,7 +91,7 @@ class SavedPropertyCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          PropertyFormat.cardSpecLine(property),
+                          PropertyFormat.cardSpecLine(context.l10n, property),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
@@ -110,7 +113,9 @@ class SavedPropertyCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Listing by: ${property.ownerName ?? 'Property Owner'}',
+                          context.l10n.propertyListingBy(
+                            ownerDisplayName(context.l10n, property.ownerName),
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
@@ -166,7 +171,7 @@ class _TypePill extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            propertyType,
+            propertyValueLabel(context.l10n, propertyType),
             style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w600,

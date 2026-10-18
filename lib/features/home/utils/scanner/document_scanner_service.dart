@@ -7,7 +7,10 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:genie/features/home/utils/scanner/ocr_parser.dart';
 
 class DocumentScannerService {
-  static Future<List<Map<String, dynamic>>?> scanCoordinates() async {
+  /// [cropTitle] titles the crop screen, in the user's language.
+  static Future<List<Map<String, dynamic>>?> scanCoordinates({
+    required String cropTitle,
+  }) async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.camera,
@@ -23,14 +26,14 @@ class DocumentScannerService {
       compressQuality: 100,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Document',
+          toolbarTitle: cropTitle,
           toolbarColor: AppColors.light.primary,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
           hideBottomControls: false,
         ),
-        IOSUiSettings(title: 'Crop Document'),
+        IOSUiSettings(title: cropTitle),
       ],
     );
 

@@ -278,7 +278,7 @@ class BoreyPropertyForm extends StatelessWidget {
           required: false,
           controller: state.projectNameController,
           hintText: context.l10n.propertyProjectName2,
-          infoText: 'Official name of the development project',
+          infoText: context.l10n.propertyProjectNameInfo,
         ),
         _buildSpacing(),
         ProjectTypeFieldWidget(
@@ -292,7 +292,7 @@ class BoreyPropertyForm extends StatelessWidget {
           required: false,
           controller: state.totalProjectAreaController,
           hintText: context.l10n.propertyEnterTotalLandSize,
-          infoText: 'Total land area of entire project',
+          infoText: context.l10n.propertyProjectAreaInfo,
         ),
         _buildSpacing(),
         PropertyTextField(
@@ -313,7 +313,7 @@ class BoreyPropertyForm extends StatelessWidget {
           required: false,
           controller: state.startingPriceController,
           hintText: context.l10n.propertyStartingPriceInUsd,
-          infoText: 'Lowest available unit price',
+          infoText: context.l10n.propertyStartingPriceInfo,
         ),
         _buildSpacing(),
         TitleTypeFieldWidget(
@@ -358,7 +358,7 @@ class BusinessPropertyForm extends StatelessWidget {
           required: false,
           controller: state.monthlyRentController,
           hintText: context.l10n.propertyEnterMonthlyShopRentUsd,
-          infoText: 'Lower rent = higher profit potential',
+          infoText: context.l10n.propertyMonthlyRentInfo,
         ),
         _buildSpacing(),
         LeaseRemainingFieldWidget(
@@ -373,7 +373,7 @@ class BusinessPropertyForm extends StatelessWidget {
           controller: state.equipmentIncludedController,
           hintText:
               context.l10n.propertyListFurnitureKitchenEquipmentMachinesPos,
-          infoText: 'Describe assets included in sale',
+          infoText: context.l10n.propertyEquipmentInfo,
         ),
         _buildSpacing(),
         PropertyTextField(
