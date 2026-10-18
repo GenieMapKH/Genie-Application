@@ -121,6 +121,14 @@ class MapOverlayBuilder {
       return mapState.highlightedLocalPolygon == index;
     }
 
+    /// The tapped listing is shown by its outline alone: its card already
+    /// gives the price, so a marker would only cover the area label. One
+    /// without a boundary keeps its marker, or nothing would mark it.
+    bool isOutlined(int index) =>
+        models[index] != null &&
+        boundaries[index].length >= 3 &&
+        isHighlighted(index, models[index]);
+
     void onViewProperty(int index, PropertyModel? property) {
       if (mapState.isDrawing) return;
       if (property != null) {
@@ -137,6 +145,7 @@ class MapOverlayBuilder {
         points: boundaries[i],
         property: models[i],
         isOwned: isOwned[i],
+        hasCenterMarker: !isOutlined(i),
         zoom: zoom,
         polygons: polygons,
         markers: markers,
@@ -154,6 +163,7 @@ class MapOverlayBuilder {
         dotIcon: icons.greenDot,
         selectedDotIcon: icons.selectedDot,
         isHighlighted: isHighlighted,
+        isOutlined: isOutlined,
         onViewProperty: onViewProperty,
         onZoomToCluster: callbacks.onZoomToCluster,
       );
@@ -166,6 +176,7 @@ class MapOverlayBuilder {
         icons.greenDot,
         icons.selectedDot,
         isHighlighted,
+        isOutlined,
         onViewProperty,
       );
     }

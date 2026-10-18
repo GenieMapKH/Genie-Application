@@ -8,7 +8,7 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// The tapped listing's real shape: its boundary polygon with vertex numbers,
-/// edge lengths and area. Drawn at every zoom level, under its price tag.
+/// edge lengths and area. Drawn at every zoom level.
 abstract final class DetailedPropertyLayer {
   // Gold reads on both the default and the satellite map.
   static final _boundaryColor = AppColors.light.highlight;
@@ -18,6 +18,7 @@ abstract final class DetailedPropertyLayer {
     required List<LatLng> points,
     required PropertyModel? property,
     required bool isOwned,
+    required bool hasCenterMarker,
     required double zoom,
     required Set<Polygon> polygons,
     required Set<Marker> markers,
@@ -37,7 +38,7 @@ abstract final class DetailedPropertyLayer {
       ),
     );
 
-    await _addMeasurements(index, points, zoom, markers);
+    await _addMeasurements(index, points, zoom, hasCenterMarker, markers);
 
     if (isOwned) {
       markers.add(
@@ -57,6 +58,7 @@ abstract final class DetailedPropertyLayer {
     int index,
     List<LatLng> points,
     double currentZoom,
+    bool hasCenterMarker,
     Set<Marker> markers,
   ) async {
     final measurements = calculateMeasurements(points);
@@ -104,8 +106,8 @@ abstract final class DetailedPropertyLayer {
           isArea: true,
           fontSize: labelFontSize(area, currentZoom, isArea: true),
         ),
-        // The price tag sits on the centroid, so the area goes just below it.
-        anchor: const Offset(0.5, -0.9),
+        // Just below a marker on the centroid; on the centroid without one.
+        anchor: Offset(0.5, hasCenterMarker ? -0.9 : 0.5),
         zIndexInt: 1,
       ),
     );

@@ -16,6 +16,7 @@ abstract final class ClusteredLayer {
     required BitmapDescriptor? dotIcon,
     required BitmapDescriptor? selectedDotIcon,
     required bool Function(int index, PropertyModel? property) isHighlighted,
+    required bool Function(int index) isOutlined,
     required void Function(int index, PropertyModel? property) onViewProperty,
     required void Function(List<LatLng> points) onZoomToCluster,
   }) async {
@@ -34,7 +35,7 @@ abstract final class ClusteredLayer {
       for (final i in others) positions[i],
     ], zoom.floorToDouble());
 
-    for (final i in selected) {
+    for (final i in selected.where((i) => !isOutlined(i))) {
       markers.add(
         _dot(
           i,

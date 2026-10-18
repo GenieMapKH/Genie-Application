@@ -14,21 +14,23 @@ abstract final class PropertyDotsLayer {
     BitmapDescriptor? greenDotIcon,
     BitmapDescriptor? selectedDotIcon,
     bool Function(int index, PropertyModel? property) isHighlighted,
+    bool Function(int index) isOutlined,
     void Function(int index, PropertyModel? property) onViewProperty,
   ) async {
     await Future.wait([
       for (var i = 0; i < allCentroids.length; i++)
-        _addMarker(
-          newLabel,
-          i,
-          allCentroids[i],
-          allCentroidModels[i],
-          markers,
-          greenDotIcon,
-          selectedDotIcon,
-          isHighlighted,
-          onViewProperty,
-        ),
+        if (!isOutlined(i))
+          _addMarker(
+            newLabel,
+            i,
+            allCentroids[i],
+            allCentroidModels[i],
+            markers,
+            greenDotIcon,
+            selectedDotIcon,
+            isHighlighted,
+            onViewProperty,
+          ),
     ]);
   }
 
