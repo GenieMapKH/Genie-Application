@@ -74,8 +74,14 @@ class CallScreenPresenter {
 final callScreenPresenterProvider = Provider((ref) => CallScreenPresenter());
 
 /// What the app does when the call on this phone changes.
-void onCallChanged(WidgetRef ref, GoRouter router, CallState call) {
+void onCallChanged(
+  WidgetRef ref,
+  GoRouter router,
+  CallState previous,
+  CallState call,
+) {
   ref.read(callScreenPresenterProvider).update(router, call);
+  ref.read(callTonesProvider).update(previous, call);
   // A voice message playing aloud stops when a call starts.
   if (call.isLive && ref.exists(voicePlaybackProvider)) {
     ref.read(voicePlaybackProvider.notifier).stop();

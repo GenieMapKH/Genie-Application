@@ -126,6 +126,8 @@ flutter:
     - assets/images/homescreen/mapSatellite.png
     - assets/images/brand/
     - assets/icons/
+    # Made by tool/generate_call_tones.py.
+    - assets/sounds/call/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -7,6 +7,7 @@ import 'package:genie/app/session/sign_out.dart';
 import 'package:genie/core/theme/app_theme.dart';
 import 'package:genie/core/theme/scroll_physics.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
+import 'package:genie/features/call/models/call_state.dart';
 import 'package:genie/features/call/providers/call_providers.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/notifications/providers/notification_providers.dart';
@@ -47,8 +48,8 @@ class MyApp extends ConsumerWidget {
     ref.listen(pushNotificationsProvider, (_, _) {});
     ref.listen(pushRegistrationSyncProvider, (_, _) {});
     // A call, placed or received, shows its screen over everything.
-    ref.listen(callControllerProvider, (_, call) {
-      onCallChanged(ref, router, call);
+    ref.listen(callControllerProvider, (previous, call) {
+      onCallChanged(ref, router, previous ?? const CallState(), call);
     });
 
     return MaterialApp.router(
