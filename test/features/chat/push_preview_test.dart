@@ -34,7 +34,7 @@ void main() {
   }
 
   OpenedMessage message(String text, [ChatAttachment? attachment]) =>
-      (id: 'm1', text: text, attachment: attachment);
+      (id: 'm1', text: text, attachment: attachment, replyToId: null);
 
   group('the words of a notification', () {
     test('are what the message says', () async {

@@ -38,8 +38,14 @@ enum PeerKeyStatus {
 }
 
 /// A decrypted message. [id] is the id the sender gave it, or null for a
-/// message from before messages carried one.
-typedef OpenedMessage = ({String? id, String text, ChatAttachment? attachment});
+/// message from before messages carried one. [replyToId] is the message it
+/// replies to, as the sender sealed it.
+typedef OpenedMessage = ({
+  String? id,
+  String text,
+  ChatAttachment? attachment,
+  String? replyToId,
+});
 
 /// Encrypts and decrypts the messages of one signed-in user.
 ///
@@ -109,12 +115,14 @@ class MessageCipher {
   /// Seals [text] for [peerId]. [id] is the message's id; it travels inside
   /// the sealed text so a stored copy cannot be replayed as a new message.
   /// An [attachment]'s key travels the same way, so only the two people in
-  /// the conversation can open the file.
+  /// the conversation can open the file. [replyToId] is sealed in too: the
+  /// server cannot make a reply quote another message.
   Future<({String ciphertext, String nonce})> encrypt(
     String text, {
     required String id,
     required String peerId,
     ChatAttachment? attachment,
+    String? replyToId,
   }) async {
     final keyPair = await keyService.getIdentityKeyPair(userId);
     if (keyPair == null) {
@@ -143,6 +151,7 @@ class MessageCipher {
         'to': peerId,
         'text': text,
         'file': ?attachment?.toJson(),
+        're': ?replyToId,
       }),
       (await _trustedKey(peerId))!,
       keyPair.secretKey,
@@ -201,11 +210,12 @@ class MessageCipher {
     }
     if (envelope is! Map || envelope['v'] != _envelopeVersion) {
       // Sent before messages named their sender: the text is the message.
-      return (id: null, text: opened, attachment: null);
+      return (id: null, text: opened, attachment: null, replyToId: null);
     }
 
     final id = envelope['id'];
     final text = envelope['text'];
+    final replyToId = envelope['re'];
     final labelledHonestly =
         envelope['from'] == message.senderId &&
         envelope['to'] == message.recipientId;
@@ -221,6 +231,7 @@ class MessageCipher {
       id: id,
       text: text,
       attachment: attachmentIsTheirs ? attachment : null,
+      replyToId: replyToId is String ? replyToId : null,
     );
   }
 

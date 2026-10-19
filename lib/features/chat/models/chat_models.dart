@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:genie/features/chat/models/chat_attachment.dart';
+import 'package:genie/features/chat/models/chat_reply.dart';
 import 'package:genie/features/chat/models/chat_voice.dart';
 
 class ChatConversation {
@@ -155,6 +156,13 @@ class EncryptedMessage {
   final String nonce;
   final DateTime createdAt;
 
+  /// When the sender last changed the text, or null.
+  final DateTime? editedAt;
+
+  /// The message this one replies to, as the server has it now. Null when
+  /// it is not a reply, or the quoted message was deleted.
+  final EncryptedMessage? replyTo;
+
   const EncryptedMessage({
     required this.id,
     required this.senderId,
@@ -162,9 +170,13 @@ class EncryptedMessage {
     required this.ciphertext,
     required this.nonce,
     required this.createdAt,
+    this.editedAt,
+    this.replyTo,
   });
 
   factory EncryptedMessage.fromJson(Map<String, dynamic> json) {
+    final editedAt = json['editedAt'];
+    final replyTo = json['replyTo'];
     return EncryptedMessage(
       id: json['id'] as String,
       senderId: json['senderId'] as String,
@@ -172,6 +184,10 @@ class EncryptedMessage {
       ciphertext: json['ciphertext'] as String,
       nonce: json['nonce'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      editedAt: editedAt is String ? DateTime.tryParse(editedAt) : null,
+      replyTo: replyTo is Map
+          ? EncryptedMessage.fromJson(Map<String, dynamic>.from(replyTo))
+          : null,
     );
   }
 
@@ -188,6 +204,9 @@ class ChatMessage {
   /// it in the user's language.
   static const undecryptableText =
       'This message cannot be read on this device.';
+
+  /// A sent message can be edited for this long. The server decides.
+  static const editWindow = Duration(hours: 1);
 
   final String id;
   final String senderId;
@@ -206,6 +225,16 @@ class ChatMessage {
   /// The voice message being sent from this device, kept the same way.
   final RecordedVoiceNote? localVoice;
 
+  /// The id of the message this one replies to, as its sender sealed it.
+  final String? replyToId;
+
+  /// How that message is quoted, or null: not a reply, or the quoted
+  /// message was deleted.
+  final ChatReplyPreview? replyTo;
+
+  /// When the sender last changed the text, or null.
+  final DateTime? editedAt;
+
   ChatMessage({
     required this.id,
     required this.senderId,
@@ -216,7 +245,37 @@ class ChatMessage {
     this.attachment,
     this.localImage,
     this.localVoice,
+    this.replyToId,
+    this.replyTo,
+    this.editedAt,
   });
+
+  bool get isReadable => text != undecryptableText;
+
+  /// Has text that can be copied or edited.
+  bool get hasText => text.isNotEmpty && isReadable;
+
+  /// Only a stored, readable message can be quoted.
+  bool get canReply => status == ChatMessageStatus.sent && isReadable;
+
+  /// [userId]'s own text message, within [editWindow] of sending it.
+  /// Pictures, voice messages and files cannot be edited.
+  bool canBeEditedBy(String userId, DateTime now) =>
+      senderId == userId &&
+      status == ChatMessageStatus.sent &&
+      hasText &&
+      attachment == null &&
+      localImage == null &&
+      localVoice == null &&
+      now.difference(createdAt) < editWindow;
+
+  /// How a reply to this message quotes it.
+  ChatReplyPreview get asReplyPreview => ChatReplyPreview(
+    messageId: id,
+    senderId: senderId,
+    text: isReadable ? text : '',
+    attachment: attachment,
+  );
 
   /// The voice message's length and waveform, whether it is still being
   /// sent from this device or arrived. Null for any other message.
@@ -226,22 +285,31 @@ class ChatMessage {
         (attachment != null && attachment.isVoice ? attachment.voice : null);
   }
 
+  /// [replyTo] is kept unless it is passed again; [withoutReply] drops the
+  /// quote (the quoted message was deleted).
   ChatMessage copyWith({
     String? id,
+    String? text,
     DateTime? createdAt,
     ChatMessageStatus? status,
     ChatAttachment? attachment,
+    ChatReplyPreview? replyTo,
+    bool withoutReply = false,
+    DateTime? editedAt,
   }) {
     return ChatMessage(
       id: id ?? this.id,
       senderId: senderId,
       recipientId: recipientId,
-      text: text,
+      text: text ?? this.text,
       createdAt: createdAt ?? this.createdAt,
       status: status ?? this.status,
       attachment: attachment ?? this.attachment,
       localImage: localImage,
       localVoice: localVoice,
+      replyToId: replyToId,
+      replyTo: withoutReply ? null : replyTo ?? this.replyTo,
+      editedAt: editedAt ?? this.editedAt,
     );
   }
 }

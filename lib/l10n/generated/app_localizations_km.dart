@@ -1854,6 +1854,55 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatMessageSending => 'កំពុងផ្ញើ…';
 
   @override
+  String get chatReply => 'ឆ្លើយតប';
+
+  @override
+  String get chatCopy => 'ចម្លង';
+
+  @override
+  String get chatEdit => 'កែ';
+
+  @override
+  String get chatCopied => 'បានចម្លង';
+
+  @override
+  String get chatYou => 'អ្នក';
+
+  @override
+  String chatReplyingTo(String name) {
+    return 'កំពុងឆ្លើយតប $name';
+  }
+
+  @override
+  String get chatEditingMessage => 'កំពុងកែសារ';
+
+  @override
+  String get chatEdited => 'បានកែ';
+
+  @override
+  String get chatDeleteMessageQuestion => 'លុបសារនេះ?';
+
+  @override
+  String get chatDeleteMessageForEveryone => 'លុបសម្រាប់គ្រប់គ្នា';
+
+  @override
+  String get chatDeleteMessageForMe => 'លុបសម្រាប់ខ្ញុំ';
+
+  @override
+  String chatDeleteOwnMessageExplained(String name) {
+    return 'សម្រាប់គ្រប់គ្នា៖ វាត្រូវបានលុបសម្រាប់អ្នក និង $name ដោយមិនទុកដានអ្វីទេ។ សម្រាប់ខ្ញុំ៖ មានតែអ្នកទេដែលលែងឃើញវា។';
+  }
+
+  @override
+  String chatDeleteMessageForMeExplained(String name) {
+    return 'វាត្រូវបានលុបសម្រាប់តែអ្នកប៉ុណ្ណោះ។ $name នៅតែឃើញវា។';
+  }
+
+  @override
+  String get chatEditTooLate =>
+      'អាចកែសារបានតែក្នុងរយៈពេលមួយម៉ោងបន្ទាប់ពីផ្ញើប៉ុណ្ណោះ។';
+
+  @override
   String get chatPresenceOnline => 'កំពុងអនឡាញ';
 
   @override

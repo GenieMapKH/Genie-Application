@@ -10,12 +10,15 @@ import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:genie/features/chat/presentation/screens/chat_pin_setup_page.dart';
+import 'package:genie/features/chat/models/chat_composer_mode.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_composer_banner.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_image_picker.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_input_bar.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_key_changed_banner.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_message_bubble.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_message_action_problem_text.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_message_tile.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_notice.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_send_problem_text.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
@@ -27,6 +30,7 @@ import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/chat/models/chat_timeline.dart';
 import 'package:genie/features/chat/providers/chat_call_history_provider.dart';
 import 'package:genie/features/chat/providers/chat_call_starter.dart';
+import 'package:genie/features/chat/providers/chat_composer_provider.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/chat/providers/visible_conversation.dart';
 import 'package:genie/features/chat/providers/voice_playback_provider.dart';
@@ -206,6 +210,47 @@ class _ConversationState extends ConsumerState<_Conversation> {
         );
   }
 
+  /// Sends a new message, a reply, or the new text of the message being
+  /// edited, then goes back to writing new messages.
+  Future<void> _send(String text) async {
+    final composer = ref.read(chatComposerProvider(widget.chat).notifier);
+    final mode = composer.state;
+    composer.state = null;
+    final chat = ref.read(activeChatProvider(widget.chat).notifier);
+
+    switch (mode) {
+      case EditingMessage(:final message):
+        final problem = await chat.editMessage(message.id, text);
+        if (problem == null || !mounted) return;
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                chatMessageActionProblemText(context.l10n, problem),
+              ),
+            ),
+          );
+      case ReplyingTo(:final message):
+        await chat.sendMessage(text, replyTo: message);
+      case null:
+        await chat.sendMessage(text);
+    }
+  }
+
+  /// "Replying to Dara" / "Editing message", with a button to stop.
+  Widget? _composerBanner(ChatComposerMode? mode) {
+    if (mode == null) return null;
+    return ChatComposerBanner(
+      mode: mode,
+      authorName: mode.message.senderId == widget.chat.userId
+          ? context.l10n.chatYou
+          : widget.participantName,
+      onCancel: () =>
+          ref.read(chatComposerProvider(widget.chat).notifier).state = null,
+    );
+  }
+
   Future<void> _recordVoice() async {
     // A message playing aloud would be recorded too.
     await ref.read(voicePlaybackProvider.notifier).stop();
@@ -254,6 +299,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
     final chatState = ref.watch(provider);
     final recordingProvider = voiceRecordingProvider(widget.chat);
     final recording = ref.watch(recordingProvider);
+    final composerMode = ref.watch(chatComposerProvider(widget.chat));
     // Voice messages keep playing while their bubbles scroll out of view,
     // and stop when this screen closes.
     ref.watch(voicePlaybackProvider.notifier);
@@ -265,6 +311,13 @@ class _ConversationState extends ConsumerState<_Conversation> {
         ..showSnackBar(
           SnackBar(content: Text(chatSendProblemText(context.l10n, error))),
         );
+    });
+    // The message being replied to or edited was deleted meanwhile.
+    ref.listen(provider.select((state) => state.messages), (_, messages) {
+      final mode = ref.read(chatComposerProvider(widget.chat));
+      if (mode != null && !messages.any((m) => m.id == mode.message.id)) {
+        ref.read(chatComposerProvider(widget.chat).notifier).state = null;
+      }
     });
     ref.listen(recordingProvider, (previous, next) {
       final problem = next.problem;
@@ -299,7 +352,9 @@ class _ConversationState extends ConsumerState<_Conversation> {
             )
           else
             ChatInputBar(
-              onSend: (text) => ref.read(provider.notifier).sendMessage(text),
+              onSend: _send,
+              mode: composerMode,
+              banner: _composerBanner(composerMode),
               onAttach: _sendPicture,
               onRecordVoice: _recordVoice,
               onHoldVoiceStart: _holdVoiceStart,
@@ -373,12 +428,10 @@ class _ConversationState extends ConsumerState<_Conversation> {
           key: ValueKey(item.key),
           padding: const EdgeInsets.only(bottom: 16.0),
           child: switch (item) {
-            ChatMessageItem(:final message) => ChatMessageBubble(
+            ChatMessageItem(:final message) => ChatMessageTile(
+              chat: widget.chat,
               message: message,
-              isMine: message.senderId == widget.chat.userId,
-              onRetry: () => ref
-                  .read(activeChatProvider(widget.chat).notifier)
-                  .retry(message.id),
+              participantName: widget.participantName,
             ),
             ChatCallItem(:final call) => ChatCallEntryTile(
               call: call,

@@ -14,6 +14,7 @@ import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/models/chat_voice.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
+import 'package:genie/features/chat/models/message_deletion.dart';
 
 const me = 'user-me';
 const peer = 'user-peer';
@@ -50,6 +51,9 @@ class FakeCipher extends Fake implements MessageCipher {
   /// Attachments that incoming messages carry, by message id.
   final incomingAttachments = <String, ChatAttachment>{};
 
+  /// The message each message replies to, as sealed inside it, by id.
+  final sealedReplies = <String, String>{};
+
   @override
   String get userId => me;
 
@@ -59,9 +63,11 @@ class FakeCipher extends Fake implements MessageCipher {
     required String id,
     required String peerId,
     ChatAttachment? attachment,
+    String? replyToId,
   }) async {
     if (encryptError != null) throw encryptError!;
     sealedAttachments.add(attachment);
+    if (replyToId != null) sealedReplies[id] = replyToId;
     if (peerKeyStatus == PeerKeyStatus.changed) {
       throw const PeerKeyChangedException();
     }
@@ -78,6 +84,7 @@ class FakeCipher extends Fake implements MessageCipher {
             id: message.id,
             text: message.ciphertext.substring(7),
             attachment: incomingAttachments[message.id],
+            replyToId: sealedReplies[message.id],
           )
         : null;
   }
@@ -299,6 +306,44 @@ class FakeChatRepository extends Fake implements ChatRepository {
     markedRead.add(participantId);
   }
 
+  /// Edits and deletes, e.g. "edit m1 sealed:new" or "delete m1 forEveryone".
+  final messageChanges = <String>[];
+
+  /// When set, editing and deleting a message fail with it.
+  Object? messageChangeError;
+
+  @override
+  Future<EncryptedMessage> editMessage(
+    String messageId, {
+    required String ciphertext,
+    required String nonce,
+  }) async {
+    if (messageChangeError != null) throw messageChangeError!;
+    messageChanges.add('edit $messageId $ciphertext');
+    return EncryptedMessage(
+      id: messageId,
+      senderId: me,
+      recipientId: peer,
+      ciphertext: ciphertext,
+      nonce: nonce,
+      createdAt: DateTime.utc(2026, 1, 1),
+      editedAt: DateTime.utc(2026, 1, 1, 0, 30),
+    );
+  }
+
+  @override
+  Future<void> deleteMessage(
+    String messageId, {
+    required bool forEveryone,
+    String? attachmentPath,
+  }) async {
+    if (messageChangeError != null) throw messageChangeError!;
+    messageChanges.add(
+      'delete $messageId${forEveryone ? ' forEveryone' : ''}'
+      '${attachmentPath != null ? ' $attachmentPath' : ''}',
+    );
+  }
+
   @override
   Future<ChatParticipantProfile> fetchParticipantProfile(String userId) async {
     return participant ??
@@ -312,7 +357,12 @@ class FakeChatSocket extends Fake implements ChatSocketService {
   final presence = StreamController<ChatPresence>.broadcast();
   final conversationChanges = StreamController<ConversationChange>.broadcast();
   final callEvents = StreamController<CallSocketEvent>.broadcast();
+  final editedMessages = StreamController<EncryptedMessage>.broadcast();
+  final deletedMessages = StreamController<MessageDeletion>.broadcast();
   final sent = <EncryptedMessage>[];
+
+  /// The reply each sent message named, by message id.
+  final sentReplyIds = <String, String>{};
   final watching = <String>[];
   Object? sendError;
 
@@ -333,6 +383,12 @@ class FakeChatSocket extends Fake implements ChatSocketService {
   Stream<CallSocketEvent> get onCallEvent => callEvents.stream;
 
   @override
+  Stream<EncryptedMessage> get onMessageEdited => editedMessages.stream;
+
+  @override
+  Stream<MessageDeletion> get onMessageDeleted => deletedMessages.stream;
+
+  @override
   Stream<ConversationChange> get onConversationChanged =>
       conversationChanges.stream;
 
@@ -351,7 +407,9 @@ class FakeChatSocket extends Fake implements ChatSocketService {
     required String recipientId,
     required String ciphertext,
     required String nonce,
+    String? replyToId,
   }) async {
+    if (replyToId != null) sentReplyIds[id] = replyToId;
     final message = EncryptedMessage(
       id: id,
       senderId: me,

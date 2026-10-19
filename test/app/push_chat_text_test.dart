@@ -36,7 +36,12 @@ void main() {
       push: sealed,
       l10n: english,
       showText: true,
-      previewFor: phone((id: 'm1', text: 'see you at 5', attachment: null)),
+      previewFor: phone((
+        id: 'm1',
+        text: 'see you at 5',
+        attachment: null,
+        replyToId: null,
+      )),
     );
 
     expect(text, (title: 'Alice', body: 'see you at 5'));
@@ -50,7 +55,12 @@ void main() {
         push: sealed,
         l10n: english,
         showText: false,
-        previewFor: phone((id: 'm1', text: 'secret', attachment: null)),
+        previewFor: phone((
+          id: 'm1',
+          text: 'secret',
+          attachment: null,
+          replyToId: null,
+        )),
       );
 
       expect(text, (title: 'Alice', body: 'New message'));
@@ -95,7 +105,12 @@ void main() {
       push: plain,
       l10n: english,
       showText: true,
-      previewFor: phone((id: 'm1', text: 'never used', attachment: null)),
+      previewFor: phone((
+        id: 'm1',
+        text: 'never used',
+        attachment: null,
+        replyToId: null,
+      )),
     );
 
     expect(text.body, 'New message');

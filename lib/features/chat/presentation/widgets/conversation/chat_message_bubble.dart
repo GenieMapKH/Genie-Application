@@ -3,12 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_image_attachment.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_reply_quote.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_message.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 
 /// One message in a conversation: the user's own on the right, the other
-/// person's on the left.
+/// person's on the left. A reply shows the message it quotes above it, and
+/// an edited message says so below.
 class ChatMessageBubble extends StatelessWidget {
   static const _corner = Radius.circular(16);
   static const _tail = Radius.circular(4);
@@ -19,11 +21,15 @@ class ChatMessageBubble extends StatelessWidget {
   /// Called when the user taps a message that failed to send.
   final VoidCallback? onRetry;
 
+  /// Who wrote the quoted message: "You" or the other person's name.
+  final String quotedAuthorName;
+
   const ChatMessageBubble({
     super.key,
     required this.message,
     required this.isMine,
     this.onRetry,
+    this.quotedAuthorName = '',
   });
 
   @override
@@ -45,6 +51,14 @@ class ChatMessageBubble extends StatelessWidget {
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
           children: [
+            if (message.replyTo case final quoted?)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: ChatReplyQuote(
+                  quoted: quoted,
+                  authorName: quotedAuthorName,
+                ),
+              ),
             if (hasPicture)
               Padding(
                 padding: EdgeInsets.only(bottom: message.text.isEmpty ? 0 : 6),
@@ -69,6 +83,18 @@ class ChatMessageBubble extends StatelessWidget {
                     ? context.l10n.chatUndecryptable
                     : message.text,
                 failed,
+              ),
+            if (message.editedAt != null &&
+                message.status == ChatMessageStatus.sent)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  context.l10n.chatEdited,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: context.colors.textHint,
+                  ),
+                ),
               ),
             if (message.status != ChatMessageStatus.sent)
               Padding(

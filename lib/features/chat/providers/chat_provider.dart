@@ -43,6 +43,9 @@ class ConversationsNotifier
       ..add(socketService.onMessage.listen(_onMessage))
       // Archived or deleted on another device, or deleted by the other person.
       ..add(socketService.onConversationChanged.listen((_) => refresh()))
+      // The last message may have new text, or be gone.
+      ..add(socketService.onMessageEdited.listen((_) => refresh()))
+      ..add(socketService.onMessageDeleted.listen((_) => refresh()))
       // Messages may have been missed while disconnected.
       ..add(socketService.onConnected.listen((_) => refresh()));
     refresh();

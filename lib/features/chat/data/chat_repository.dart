@@ -70,6 +70,37 @@ class ChatRepository {
     );
   }
 
+  /// Replaces the text of the user's own message with [ciphertext], sealed
+  /// again on this device. Returns the message as stored. The server
+  /// refuses (403) once an hour has passed since it was sent.
+  Future<EncryptedMessage> editMessage(
+    String messageId, {
+    required String ciphertext,
+    required String nonce,
+  }) async {
+    final response = await dio.post(
+      '/chat/messages/$messageId/edit',
+      data: {'ciphertext': ciphertext, 'nonce': nonce},
+    );
+    return EncryptedMessage.fromJson(_asJson(response.data));
+  }
+
+  /// Hides the message from this user, or with [forEveryone] (their own
+  /// message) deletes it and the file at [attachmentPath] for both people.
+  Future<void> deleteMessage(
+    String messageId, {
+    required bool forEveryone,
+    String? attachmentPath,
+  }) async {
+    await dio.post(
+      '/chat/messages/$messageId/delete',
+      data: {
+        'forEveryone': forEveryone,
+        if (forEveryone) 'attachmentPath': ?attachmentPath,
+      },
+    );
+  }
+
   Future<void> markAsRead(String participantId) async {
     await dio.post('/chat/messages/$participantId/read');
   }

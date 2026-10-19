@@ -1859,6 +1859,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatMessageSending => 'Sending…';
 
   @override
+  String get chatReply => 'Reply';
+
+  @override
+  String get chatCopy => 'Copy';
+
+  @override
+  String get chatEdit => 'Edit';
+
+  @override
+  String get chatCopied => 'Copied';
+
+  @override
+  String get chatYou => 'You';
+
+  @override
+  String chatReplyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get chatEditingMessage => 'Editing message';
+
+  @override
+  String get chatEdited => 'Edited';
+
+  @override
+  String get chatDeleteMessageQuestion => 'Delete this message?';
+
+  @override
+  String get chatDeleteMessageForEveryone => 'Delete for everyone';
+
+  @override
+  String get chatDeleteMessageForMe => 'Delete for me';
+
+  @override
+  String chatDeleteOwnMessageExplained(String name) {
+    return 'For everyone: it is removed for you and $name, with nothing left in its place. For me: only you stop seeing it.';
+  }
+
+  @override
+  String chatDeleteMessageForMeExplained(String name) {
+    return 'It is removed for you only. $name still sees it.';
+  }
+
+  @override
+  String get chatEditTooLate =>
+      'A message can only be edited within an hour of sending it.';
+
+  @override
   String get chatPresenceOnline => 'Online';
 
   @override

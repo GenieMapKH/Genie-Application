@@ -8,6 +8,7 @@ import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
+import 'package:genie/features/chat/models/message_deletion.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 /// Thrown when a message could not be handed to the server. [message] is
@@ -59,6 +60,8 @@ class ChatSocketService {
   final _connections = StreamController<void>.broadcast();
   final _presence = StreamController<ChatPresence>.broadcast();
   final _conversationChanges = StreamController<ConversationChange>.broadcast();
+  final _editedMessages = StreamController<EncryptedMessage>.broadcast();
+  final _deletedMessages = StreamController<MessageDeletion>.broadcast();
   final _callEvents = StreamController<CallSocketEvent>.broadcast();
 
   /// What the server sends about calls; the call feature reads them.
@@ -87,6 +90,13 @@ class ChatSocketService {
   /// Conversations archived, restored or deleted elsewhere.
   Stream<ConversationChange> get onConversationChanged =>
       _conversationChanges.stream;
+
+  /// Messages whose sender changed the text, here or on another device.
+  Stream<EncryptedMessage> get onMessageEdited => _editedMessages.stream;
+
+  /// Messages deleted for this user: by them on any device, or by the
+  /// sender for everyone.
+  Stream<MessageDeletion> get onMessageDeleted => _deletedMessages.stream;
 
   /// Call events: someone calling, answering, hanging up, or signalling.
   Stream<CallSocketEvent> get onCallEvent => _callEvents.stream;
@@ -133,17 +143,20 @@ class ChatSocketService {
 
   /// Sends one encrypted message and returns it as the server stored it.
   /// [id] makes a retry safe: the server stores the same id only once.
+  /// [replyToId] is the message it replies to.
   Future<EncryptedMessage> send({
     required String id,
     required String recipientId,
     required String ciphertext,
     required String nonce,
+    String? replyToId,
   }) async {
     final ack = await _request('sendMessage', {
       'id': id,
       'recipientId': recipientId,
       'ciphertext': ciphertext,
       'nonce': nonce,
+      'replyToId': ?replyToId,
     });
     return EncryptedMessage.fromJson(_asJson(ack['message']));
   }
@@ -210,6 +223,8 @@ class ChatSocketService {
     _connections.close();
     _presence.close();
     _conversationChanges.close();
+    _editedMessages.close();
+    _deletedMessages.close();
     _callEvents.close();
   }
 
@@ -234,6 +249,8 @@ class ChatSocketService {
     socket.on('newMessage', _onNewMessage);
     socket.on('presence', _onPresence);
     socket.on('conversationChanged', _onConversationChanged);
+    socket.on('messageEdited', _onMessageEdited);
+    socket.on('messageDeleted', _onMessageDeleted);
     for (final event in callEventNames) {
       socket.on(event, (data) => _onCallEvent(event, data));
     }
@@ -283,6 +300,28 @@ class ChatSocketService {
       if (!_conversationChanges.isClosed) _conversationChanges.add(change);
     } catch (e, stackTrace) {
       AppLogger.error('Ignored a malformed conversation change', e, stackTrace);
+    }
+  }
+
+  void _onMessageEdited(dynamic data) {
+    try {
+      final message = EncryptedMessage.fromJson(
+        Map<String, dynamic>.from(data as Map),
+      );
+      if (!_editedMessages.isClosed) _editedMessages.add(message);
+    } catch (e, stackTrace) {
+      AppLogger.error('Ignored a malformed message edit', e, stackTrace);
+    }
+  }
+
+  void _onMessageDeleted(dynamic data) {
+    try {
+      final deletion = MessageDeletion.fromJson(
+        Map<String, dynamic>.from(data as Map),
+      );
+      if (!_deletedMessages.isClosed) _deletedMessages.add(deletion);
+    } catch (e, stackTrace) {
+      AppLogger.error('Ignored a malformed message deletion', e, stackTrace);
     }
   }
 

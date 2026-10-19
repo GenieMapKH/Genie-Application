@@ -8,6 +8,7 @@ import 'package:genie/features/chat/data/chat_backup_repository.dart';
 import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/e2ee/keys/key_service.dart';
 import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:genie/features/chat/e2ee/message_reader.dart';
 import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
@@ -194,11 +195,13 @@ void main() {
         id: 'm1',
         text: 'hello',
         attachment: null,
+        replyToId: null,
       ));
       expect(await aliceCipher.decrypt(message), (
         id: 'm1',
         text: 'hello',
         attachment: null,
+        replyToId: null,
       ));
     });
 
@@ -218,6 +221,7 @@ void main() {
           id: null,
           text: 'see you at 5',
           attachment: null,
+          replyToId: null,
         ));
       },
     );
@@ -238,6 +242,77 @@ void main() {
         noKeys.encrypt('hello', id: 'm1', peerId: bob),
         throwsA(isA<ChatEncryptionException>()),
       );
+    });
+  });
+
+  group('a reply', () {
+    Future<EncryptedMessage> replyByAlice(
+      String id,
+      String text, {
+      required String replyToId,
+      EncryptedMessage? quotedByServer,
+    }) async {
+      final sealed = await aliceCipher.encrypt(
+        text,
+        id: id,
+        peerId: bob,
+        replyToId: replyToId,
+      );
+      return EncryptedMessage(
+        id: id,
+        senderId: alice,
+        recipientId: bob,
+        ciphertext: sealed.ciphertext,
+        nonce: sealed.nonce,
+        createdAt: now,
+        replyTo: quotedByServer,
+      );
+    }
+
+    test('names the message it replies to inside the sealed text', () async {
+      final reply = await replyByAlice('m2', 'yes', replyToId: 'm1');
+
+      expect((await bobCipher.decrypt(reply))?.replyToId, 'm1');
+    });
+
+    test('shows the quoted message, opened on this device', () async {
+      final quoted = await sentByAlice('m1', 'Is it still available?');
+      final reply = await replyByAlice(
+        'm2',
+        'I mean the house',
+        replyToId: 'm1',
+        quotedByServer: quoted,
+      );
+
+      final read = await ChatMessageReader(bobCipher).read(reply);
+
+      expect(read.replyToId, 'm1');
+      expect(read.replyTo?.messageId, 'm1');
+      expect(read.replyTo?.senderId, alice);
+      expect(read.replyTo?.text, 'Is it still available?');
+    });
+
+    test('cannot be made to quote another message by the server', () async {
+      final other = await sentByAlice('m0', 'something else');
+      final reply = await replyByAlice(
+        'm2',
+        'yes',
+        replyToId: 'm1',
+        quotedByServer: other,
+      );
+
+      expect((await ChatMessageReader(bobCipher).read(reply)).replyTo, isNull);
+    });
+
+    test('quotes nothing once the quoted message is deleted', () async {
+      final reply = await replyByAlice('m2', 'yes', replyToId: 'm1');
+
+      final read = await ChatMessageReader(bobCipher).read(reply);
+
+      expect(read.text, 'yes');
+      expect(read.replyTo, isNull);
+      // Kept, so an edit seals the same reply again.
+      expect(read.replyToId, 'm1');
     });
   });
 
@@ -371,6 +446,7 @@ void main() {
           id: 'm1',
           text: 'hello',
           attachment: null,
+          replyToId: null,
         ));
         expect(server.requests, 0);
       },

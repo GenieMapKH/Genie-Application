@@ -3302,6 +3302,90 @@ abstract class AppLocalizations {
   /// **'Sending…'**
   String get chatMessageSending;
 
+  /// No description provided for @chatReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get chatReply;
+
+  /// No description provided for @chatCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get chatCopy;
+
+  /// No description provided for @chatEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get chatEdit;
+
+  /// No description provided for @chatCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get chatCopied;
+
+  /// No description provided for @chatYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get chatYou;
+
+  /// No description provided for @chatReplyingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to {name}'**
+  String chatReplyingTo(String name);
+
+  /// No description provided for @chatEditingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing message'**
+  String get chatEditingMessage;
+
+  /// No description provided for @chatEdited.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get chatEdited;
+
+  /// No description provided for @chatDeleteMessageQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this message?'**
+  String get chatDeleteMessageQuestion;
+
+  /// No description provided for @chatDeleteMessageForEveryone.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for everyone'**
+  String get chatDeleteMessageForEveryone;
+
+  /// No description provided for @chatDeleteMessageForMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for me'**
+  String get chatDeleteMessageForMe;
+
+  /// No description provided for @chatDeleteOwnMessageExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'For everyone: it is removed for you and {name}, with nothing left in its place. For me: only you stop seeing it.'**
+  String chatDeleteOwnMessageExplained(String name);
+
+  /// No description provided for @chatDeleteMessageForMeExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'It is removed for you only. {name} still sees it.'**
+  String chatDeleteMessageForMeExplained(String name);
+
+  /// No description provided for @chatEditTooLate.
+  ///
+  /// In en, this message translates to:
+  /// **'A message can only be edited within an hour of sending it.'**
+  String get chatEditTooLate;
+
   /// No description provided for @chatPresenceOnline.
   ///
   /// In en, this message translates to:

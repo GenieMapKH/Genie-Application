@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:genie/features/chat/models/chat_composer_mode.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_emoji_panel.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/voice_record_button.dart';
 import 'package:genie/core/theme/app_colors.dart';
@@ -25,6 +26,13 @@ class ChatInputBar extends StatefulWidget {
   /// microphone is held. The microphone itself stays, still held.
   final Widget? recordingPanel;
 
+  /// Replying to or editing a message. Editing puts its text in the field,
+  /// and only text can be sent.
+  final ChatComposerMode? mode;
+
+  /// Shown above the field while [mode] is set.
+  final Widget? banner;
+
   const ChatInputBar({
     super.key,
     this.onSend,
@@ -33,6 +41,8 @@ class ChatInputBar extends StatefulWidget {
     this.onHoldVoiceStart,
     this.onHoldVoiceEnd,
     this.recordingPanel,
+    this.mode,
+    this.banner,
   });
 
   @override
@@ -53,6 +63,24 @@ class _ChatInputBarState extends State<ChatInputBar> {
         setState(() => _showEmojis = false);
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(ChatInputBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final mode = widget.mode;
+    if (identical(mode, oldWidget.mode)) return;
+
+    if (mode is EditingMessage) {
+      _controller.value = TextEditingValue(
+        text: mode.message.text,
+        selection: TextSelection.collapsed(offset: mode.message.text.length),
+      );
+    } else if (oldWidget.mode is EditingMessage) {
+      // Editing was cancelled: the old text is not a new message.
+      _controller.clear();
+    }
+    if (mode != null && !_showEmojis) _focusNode.requestFocus();
   }
 
   void _toggleEmojis() {
@@ -86,6 +114,9 @@ class _ChatInputBarState extends State<ChatInputBar> {
     }
   }
 
+  /// Only the text can change: no picture or voice message is added.
+  bool get _editing => widget.mode is EditingMessage;
+
   @override
   void dispose() {
     _controller.dispose();
@@ -99,6 +130,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        ?widget.banner,
         Container(
           color: context.colors.surface,
           padding: EdgeInsets.only(
@@ -114,29 +146,31 @@ class _ChatInputBarState extends State<ChatInputBar> {
               if (widget.recordingPanel case final panel?)
                 Expanded(child: panel)
               else ...[
-                GestureDetector(
-                  onTap: widget.onAttach,
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: context.colors.surface,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: context.colors.border,
-                        width: 2,
+                if (!_editing) ...[
+                  GestureDetector(
+                    onTap: widget.onAttach,
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: context.colors.surface,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: context.colors.border,
+                          width: 2,
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.attach_file,
-                        color: context.colors.textMuted,
-                        size: 22,
+                      child: Center(
+                        child: Icon(
+                          Icons.attach_file,
+                          color: context.colors.textMuted,
+                          size: 22,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
+                  const SizedBox(width: 12),
+                ],
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
@@ -181,7 +215,7 @@ class _ChatInputBarState extends State<ChatInputBar> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Icon(
-                              Icons.send_outlined,
+                              _editing ? Icons.check : Icons.send_outlined,
                               color: context.colors.textMuted,
                             ),
                           ),
@@ -191,15 +225,17 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   ),
                 ),
               ],
-              const SizedBox(width: 12),
-              VoiceRecordButton(
-                // Keeps the held button the same one while the row changes.
-                key: const ValueKey('voice-record-button'),
-                label: context.l10n.chatRecordVoice,
-                onTap: widget.onRecordVoice,
-                onHoldStart: widget.onHoldVoiceStart,
-                onHoldEnd: widget.onHoldVoiceEnd,
-              ),
+              if (!_editing) ...[
+                const SizedBox(width: 12),
+                VoiceRecordButton(
+                  // Keeps the held button the same one while the row changes.
+                  key: const ValueKey('voice-record-button'),
+                  label: context.l10n.chatRecordVoice,
+                  onTap: widget.onRecordVoice,
+                  onHoldStart: widget.onHoldVoiceStart,
+                  onHoldEnd: widget.onHoldVoiceEnd,
+                ),
+              ],
             ],
           ),
         ),
