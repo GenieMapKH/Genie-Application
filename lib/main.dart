@@ -23,6 +23,7 @@ import 'package:genie/app/navigation/chat_profile_navigation.dart';
 import 'package:genie/app/navigation/call_navigation.dart';
 import 'package:genie/app/navigation/push_navigation.dart';
 import 'package:genie/app/push_background_handler.dart';
+import 'package:genie/app/push_chat_text.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:genie/features/chat/providers/chat_call_starter.dart';
 import 'package:genie/features/chat/providers/chat_profile_opener.dart';
@@ -91,6 +92,7 @@ void main() async {
         foregroundPushFilterProvider.overrideWith(foregroundPushFilter),
         chatCallStarterProvider.overrideWith(callFromChat),
         callPushHandlerProvider.overrideWith(callPushHandler),
+        chatPushTextProvider.overrideWith(chatPushText),
       ],
       child: const MyApp(),
     ),

@@ -354,6 +354,28 @@ void main() {
       expect(server.requests, 0);
     });
 
+    test(
+      'opens a message with no network when it is already trusted',
+      () async {
+        final message = await sentByAlice('m1', 'hello');
+        final afterRestart = cipherFor(bob, {bob: bobKey});
+        // Bob has never met Alice on this phone: nothing is trusted yet.
+        server.requests = 0;
+
+        expect(await afterRestart.decrypt(message, askServer: false), isNull);
+        expect(server.requests, 0);
+
+        await afterRestart.checkPeerKey(alice);
+        server.requests = 0;
+        expect(await afterRestart.decrypt(message, askServer: false), (
+          id: 'm1',
+          text: 'hello',
+          attachment: null,
+        ));
+        expect(server.requests, 0);
+      },
+    );
+
     test('is not silently replaced when the server lists another', () async {
       await sentByAlice('m1', 'hello');
       server.listed[bob] = 66; // an attacker's key, or a real reset

@@ -3377,7 +3377,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatPreviewPhoto.
   ///
   /// In en, this message translates to:
-  /// **'📷 Photo'**
+  /// **'Photo'**
   String get chatPreviewPhoto;
 
   /// No description provided for @chatUndecryptable.
@@ -4121,7 +4121,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatPreviewVoice.
   ///
   /// In en, this message translates to:
-  /// **'🎤 Voice message'**
+  /// **'Voice message'**
   String get chatPreviewVoice;
 
   /// No description provided for @chatVoiceMessage.
@@ -4309,6 +4309,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.'**
   String get notificationsBlockedHelp;
+
+  /// No description provided for @chatPreviewNewMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'New message'**
+  String get chatPreviewNewMessage;
+
+  /// No description provided for @notificationsShowTextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show message text'**
+  String get notificationsShowTextTitle;
+
+  /// No description provided for @notificationsShowTextHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Show what a message says in its notification. Anyone who can see your lock screen can read it.'**
+  String get notificationsShowTextHelp;
 
   /// No description provided for @notificationsLoadFailed.
   ///

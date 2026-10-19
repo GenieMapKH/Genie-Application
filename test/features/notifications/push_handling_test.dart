@@ -24,6 +24,44 @@ void main() {
       expect(push.senderName, 'Alice');
     });
 
+    test('a chat message can carry its sealed text, for Android', () {
+      final sealed = PushMessage.fromData({
+        'type': 'chat_message',
+        'senderId': 'alice',
+        'senderName': 'Alice',
+        'messageId': 'm1',
+        'recipientId': 'bob',
+        'ciphertext': 'sealed',
+        'nonce': 'n',
+      });
+      final generic = PushMessage.fromData({
+        'type': 'chat_message',
+        'senderId': 'alice',
+        'senderName': 'Alice',
+        'messageId': 'm1',
+      });
+      final half = PushMessage.fromData({
+        'type': 'chat_message',
+        'senderId': 'alice',
+        'messageId': 'm1',
+        'recipientId': 'bob',
+        'ciphertext': 'sealed',
+      });
+
+      expect((sealed as ChatMessagePush).isSealed, isTrue);
+      expect(sealed.ciphertext, 'sealed');
+      expect((generic as ChatMessagePush).isSealed, isFalse);
+      expect((half as ChatMessagePush).isSealed, isFalse);
+      expect(
+        ChatMessagePush.withoutSealedText({
+          'senderId': 'alice',
+          'ciphertext': 'sealed',
+          'nonce': 'n',
+        }),
+        {'senderId': 'alice'},
+      );
+    });
+
     test('a promotion opens a listing, or a web page over HTTPS only', () {
       final listing = PushMessage.fromData({
         'type': 'promotion',
@@ -160,19 +198,27 @@ void main() {
     late List<PushMessage> calls;
     late bool Function(PushMessage) filter;
     late PushNotificationsController controller;
+    ChatPushText? chatText;
+    late List<ChatMessagePush> written;
 
     setUp(() async {
       messaging = FakePushMessaging();
       system = FakeSystemNotifications();
       opened = [];
       calls = [];
+      written = [];
       filter = (_) => true;
+      chatText = (message) async {
+        written.add(message);
+        return (title: message.senderName, body: 'see you at 5');
+      };
       controller = PushNotificationsController(
         messaging: messaging,
         system: system,
         open: (message) async => opened.add(message),
         shouldShow: (message) => filter(message),
         onCallPush: calls.add,
+        chatText: (message) => chatText!(message),
       );
     });
 
@@ -197,6 +243,68 @@ void main() {
       expect(system.shown.single.title, 'Alice');
       expect(system.shown.single.channel, NotificationChannel.chatMessages);
       expect(system.shown.single.tag, 'chat:alice');
+    });
+
+    const sealedChat = (
+      data: {
+        'type': 'chat_message',
+        'senderId': 'alice',
+        'senderName': 'Alice',
+        'messageId': 'm1',
+        'recipientId': 'bob',
+        'ciphertext': 'sealed',
+        'nonce': 'n',
+      },
+      title: null,
+      body: null,
+    );
+
+    test('a chat message with its sealed text is written by the app', () async {
+      await controller.start();
+
+      messaging.foreground.add(sealedChat);
+      await _settle();
+      await _settle();
+
+      expect(written.single.ciphertext, 'sealed');
+      expect(system.shown.single.title, 'Alice');
+      expect(system.shown.single.body, 'see you at 5');
+      expect(system.shown.single.channel, NotificationChannel.chatMessages);
+      expect(system.shown.single.tag, 'chat:alice');
+    });
+
+    test('its sealed text is not kept in the notification', () async {
+      await controller.start();
+
+      messaging.foreground.add(sealedChat);
+      await _settle();
+      await _settle();
+
+      expect(system.shownData.single.keys, isNot(contains('ciphertext')));
+      expect(system.shownData.single['senderId'], 'alice');
+    });
+
+    test('and not shown when that conversation is on screen', () async {
+      filter = (message) => message is! ChatMessagePush;
+      await controller.start();
+
+      messaging.foreground.add(sealedChat);
+      await _settle();
+      await _settle();
+
+      expect(written, isEmpty);
+      expect(system.shown, isEmpty);
+    });
+
+    test('a failure writing it shows nothing and does not crash', () async {
+      chatText = (_) async => throw Exception('cannot open');
+      await controller.start();
+
+      messaging.foreground.add(sealedChat);
+      await _settle();
+      await _settle();
+
+      expect(system.shown, isEmpty);
     });
 
     test('not when that conversation is already on screen', () async {

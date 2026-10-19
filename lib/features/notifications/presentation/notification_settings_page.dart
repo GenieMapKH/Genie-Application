@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,6 +6,7 @@ import 'package:genie/core/device/system_settings.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/notifications/models/notification_preferences.dart';
 import 'package:genie/features/notifications/providers/notification_preferences_provider.dart';
+import 'package:genie/features/settings/providers/app_settings_providers.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
@@ -83,6 +85,17 @@ class _Switches extends ConsumerWidget {
           value: preferences.chatMessages,
           onChanged: (on) => _change(context, ref, chatMessages: on),
         ),
+        // Only Android shows what a message says: the other platforms get
+        // the generic notification.
+        if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+          SettingsSwitchRow(
+            icon: Icons.text_snippet_outlined,
+            title: l10n.notificationsShowTextTitle,
+            subtitle: l10n.notificationsShowTextHelp,
+            value: ref.watch(showNotificationTextProvider),
+            onChanged: (on) =>
+                ref.read(showNotificationTextProvider.notifier).select(on),
+          ),
         SettingsSwitchRow(
           icon: Icons.local_offer_outlined,
           title: l10n.notificationsPromotionsTitle,

@@ -30,6 +30,26 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, Locale?>(
   (ref) => LocaleNotifier(ref.watch(appSettingsStorageProvider)),
 );
 
+/// Whether chat notifications show the message text (see
+/// [AppSettingsStorage.readShowNotificationText]).
+final showNotificationTextProvider =
+    StateNotifierProvider<ShowNotificationTextNotifier, bool>(
+      (ref) =>
+          ShowNotificationTextNotifier(ref.watch(appSettingsStorageProvider)),
+    );
+
+class ShowNotificationTextNotifier extends StateNotifier<bool> {
+  final AppSettingsStorage _storage;
+
+  ShowNotificationTextNotifier(this._storage)
+    : super(_storage.readShowNotificationText());
+
+  Future<void> select(bool show) async {
+    state = show;
+    await _storage.writeShowNotificationText(show);
+  }
+}
+
 class LocaleNotifier extends StateNotifier<Locale?> {
   final AppSettingsStorage _storage;
 

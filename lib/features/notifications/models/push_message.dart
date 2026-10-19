@@ -19,6 +19,9 @@ sealed class PushMessage {
           senderId: senderId,
           senderName: text('senderName') ?? '',
           messageId: text('messageId'),
+          recipientId: text('recipientId'),
+          ciphertext: text('ciphertext'),
+          nonce: text('nonce'),
         );
       case 'security_sign_in':
         return const SignInAlertPush();
@@ -64,17 +67,41 @@ sealed class PushMessage {
 }
 
 /// Someone sent a chat message. Its text is end-to-end encrypted: only the
-/// open app can read it.
+/// keys on this phone can read it. Android gets the sealed message with the
+/// push ([ciphertext] and [nonce]) and writes the notification itself;
+/// otherwise the system shows a generic one.
 class ChatMessagePush extends PushMessage {
   final String senderId;
   final String senderName;
   final String? messageId;
 
+  /// Whose keys open it: the account this phone is signed in to.
+  final String? recipientId;
+  final String? ciphertext;
+  final String? nonce;
+
   const ChatMessagePush({
     required this.senderId,
     required this.senderName,
     this.messageId,
+    this.recipientId,
+    this.ciphertext,
+    this.nonce,
   });
+
+  /// Carries everything needed to open it.
+  bool get isSealed =>
+      messageId != null &&
+      recipientId != null &&
+      ciphertext != null &&
+      nonce != null;
+
+  /// A push's data without the sealed message, for a notification to carry
+  /// until it is tapped.
+  static Map<String, dynamic> withoutSealedText(Map<String, dynamic> data) =>
+      Map<String, dynamic>.of(data)
+        ..remove('ciphertext')
+        ..remove('nonce');
 }
 
 /// Another device signed in to this account.

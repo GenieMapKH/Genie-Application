@@ -50,6 +50,10 @@ final foregroundPushFilterProvider = Provider<ForegroundPushFilter>(
 /// the app is open.
 final callPushHandlerProvider = Provider<CallPushHandler?>((ref) => null);
 
+/// Supplied by the app: writes the notification of a chat message that came
+/// with its sealed text. Null (in tests) shows nothing for such a push.
+final chatPushTextProvider = Provider<ChatPushText?>((ref) => null);
+
 /// The language notifications are written in: the app's own, as the server
 /// knows only English and Khmer.
 final pushLocaleProvider = Provider<String>((ref) {
@@ -86,6 +90,7 @@ final pushNotificationsProvider = FutureProvider<void>((ref) async {
     },
     shouldShow: (message) => ref.read(foregroundPushFilterProvider)(message),
     onCallPush: (message) => ref.read(callPushHandlerProvider)?.call(message),
+    chatText: ref.watch(chatPushTextProvider),
   );
   ref.onDispose(controller.dispose);
   try {

@@ -1900,7 +1900,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatPreviewEncrypted => 'សារដែលបានអ៊ិនគ្រីប';
 
   @override
-  String get chatPreviewPhoto => '📷 រូបភាព';
+  String get chatPreviewPhoto => 'រូបភាព';
 
   @override
   String get chatUndecryptable => 'សារនេះមិនអាចអានបាននៅលើឧបករណ៍នេះទេ។';
@@ -2335,7 +2335,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get keywordCommercialArea => 'តំបន់ពាណិជ្ជកម្ម';
 
   @override
-  String get chatPreviewVoice => '🎤 សារជាសំឡេង';
+  String get chatPreviewVoice => 'សារជាសំឡេង';
 
   @override
   String get chatVoiceMessage => 'សារជាសំឡេង';
@@ -2436,6 +2436,16 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get notificationsBlockedHelp =>
       'សូមបើកវានៅក្នុងការកំណត់ទូរសព្ទរបស់អ្នក ដើម្បីទទួលដំណឹងអំពីសារថ្មី ការហៅ និងការចូលគណនី។';
+
+  @override
+  String get chatPreviewNewMessage => 'សារថ្មី';
+
+  @override
+  String get notificationsShowTextTitle => 'បង្ហាញអត្ថបទនៃសារ';
+
+  @override
+  String get notificationsShowTextHelp =>
+      'បង្ហាញអ្វីដែលសារនិយាយនៅក្នុងការជូនដំណឹង។ អ្នកដែលមើលឃើញអេក្រង់ចាក់សោរបស់អ្នកអាចអានវាបាន។';
 
   @override
   String get notificationsLoadFailed =>

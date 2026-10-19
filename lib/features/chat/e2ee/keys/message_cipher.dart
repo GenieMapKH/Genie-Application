@@ -153,13 +153,21 @@ class MessageCipher {
   /// The readable message, or null when this device cannot or must not
   /// show it: its keys are missing, either person has replaced theirs since,
   /// or the message is not from who the server says it is.
-  Future<OpenedMessage?> decrypt(EncryptedMessage message) async {
+  ///
+  /// With [askServer] false the other person's key must already be trusted
+  /// on this device: nothing is fetched, so it works with no network (and
+  /// without a session) while a push is being turned into a notification.
+  Future<OpenedMessage?> decrypt(
+    EncryptedMessage message, {
+    bool askServer = true,
+  }) async {
     final keyPair = await keyService.getIdentityKeyPair(userId);
     if (keyPair == null) return null;
 
     final peerId = message.peerOf(userId);
     var peerKey = await _trustedKey(peerId);
     if (peerKey == null) {
+      if (!askServer) return null;
       try {
         await checkPeerKey(peerId);
       } on DioException {

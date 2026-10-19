@@ -1905,7 +1905,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatPreviewEncrypted => 'Encrypted message';
 
   @override
-  String get chatPreviewPhoto => '📷 Photo';
+  String get chatPreviewPhoto => 'Photo';
 
   @override
   String get chatUndecryptable => 'This message cannot be read on this device.';
@@ -2345,7 +2345,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keywordCommercialArea => 'Commercial Area';
 
   @override
-  String get chatPreviewVoice => '🎤 Voice message';
+  String get chatPreviewVoice => 'Voice message';
 
   @override
   String get chatVoiceMessage => 'Voice message';
@@ -2443,6 +2443,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationsBlockedHelp =>
       'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.';
+
+  @override
+  String get chatPreviewNewMessage => 'New message';
+
+  @override
+  String get notificationsShowTextTitle => 'Show message text';
+
+  @override
+  String get notificationsShowTextHelp =>
+      'Show what a message says in its notification. Anyone who can see your lock screen can read it.';
 
   @override
   String get notificationsLoadFailed =>

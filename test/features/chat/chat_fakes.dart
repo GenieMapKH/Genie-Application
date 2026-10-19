@@ -69,7 +69,10 @@ class FakeCipher extends Fake implements MessageCipher {
   }
 
   @override
-  Future<OpenedMessage?> decrypt(EncryptedMessage message) async {
+  Future<OpenedMessage?> decrypt(
+    EncryptedMessage message, {
+    bool askServer = true,
+  }) async {
     return message.ciphertext.startsWith('sealed:')
         ? (
             id: message.id,

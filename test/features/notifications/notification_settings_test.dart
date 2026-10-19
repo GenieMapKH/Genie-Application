@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genie/features/settings/data/app_settings_storage.dart';
+import 'package:genie/features/settings/providers/app_settings_providers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:genie/features/notifications/models/notification_preferences.dart';
 import 'package:genie/features/notifications/presentation/notification_settings_page.dart';
 import 'package:genie/features/notifications/providers/notification_preferences_provider.dart';
@@ -11,10 +14,13 @@ import 'notification_fakes.dart';
 void main() {
   late FakeNotificationRepository repository;
   late FakePushMessaging messaging;
+  late AppSettingsStorage settings;
 
-  setUp(() {
+  setUp(() async {
     repository = FakeNotificationRepository();
     messaging = FakePushMessaging();
+    SharedPreferences.setMockInitialValues({});
+    settings = AppSettingsStorage(await SharedPreferences.getInstance());
   });
 
   group('the switches', () {
@@ -49,6 +55,7 @@ void main() {
         overrides: [
           notificationRepositoryProvider.overrideWithValue(repository),
           pushMessagingProvider.overrideWithValue(messaging),
+          appSettingsStorageProvider.overrideWithValue(settings),
         ],
         child: const MaterialApp(home: NotificationSettingsPage()),
       ),
@@ -75,6 +82,19 @@ void main() {
     await tester.pump();
 
     expect(repository.preferences.promotions, isFalse);
+  });
+
+  testWidgets('message text in notifications is on, and can be turned off', (
+    tester,
+  ) async {
+    await openPage(tester);
+    expect(find.text('Show message text'), findsOneWidget);
+    expect(settings.readShowNotificationText(), isTrue);
+
+    await tester.tap(find.text('Show message text'));
+    await tester.pump();
+
+    expect(settings.readShowNotificationText(), isFalse);
   });
 
   testWidgets('says when the phone blocks notifications for the app', (

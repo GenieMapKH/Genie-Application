@@ -50,6 +50,9 @@ typedef ShownNotification = ({
 
 class FakeSystemNotifications implements SystemNotifications {
   final shown = <ShownNotification>[];
+
+  /// The data each shown notification carries, for when it is tapped.
+  final shownData = <Map<String, dynamic>>[];
   void Function(Map<String, dynamic> data)? tap;
   Map<String, dynamic>? launch;
 
@@ -65,7 +68,10 @@ class FakeSystemNotifications implements SystemNotifications {
     required NotificationChannel channel,
     required Map<String, dynamic> data,
     String? tag,
-  }) async => shown.add((title: title, body: body, channel: channel, tag: tag));
+  }) async {
+    shown.add((title: title, body: body, channel: channel, tag: tag));
+    shownData.add(data);
+  }
 
   @override
   Future<Map<String, dynamic>?> launchData() async => launch;

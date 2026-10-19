@@ -16,6 +16,12 @@ typedef ForegroundPushFilter = bool Function(PushMessage message);
 /// Receives a call push while the app is open (the call feature rings).
 typedef CallPushHandler = void Function(PushMessage message);
 
+/// Writes the notification of a chat message that came with its sealed text
+/// (Android): the sender's name, and what it says if this phone can read it.
+/// Supplied by the app, which joins chat and notifications.
+typedef ChatPushText =
+    Future<({String title, String body})> Function(ChatMessagePush message);
+
 /// What happens to a push once it reaches the app: shown when it arrives
 /// while the app is open (the system shows only those that arrive while it
 /// is not), and opened when the user taps one.
@@ -25,6 +31,7 @@ class PushNotificationsController {
   final PushOpener open;
   final ForegroundPushFilter shouldShow;
   final CallPushHandler? onCallPush;
+  final ChatPushText? chatText;
 
   final _subscriptions = <StreamSubscription<void>>[];
 
@@ -34,6 +41,7 @@ class PushNotificationsController {
     required this.open,
     required this.shouldShow,
     this.onCallPush,
+    this.chatText,
   });
 
   Future<void> start() async {
@@ -52,6 +60,12 @@ class PushNotificationsController {
     final message = PushMessage.fromData(push.data);
     if (message is IncomingCallPush || message is CallEndedPush) {
       onCallPush?.call(message);
+      return;
+    }
+
+    // Android gets the sealed message and no notification: write it here.
+    if (message is ChatMessagePush && message.isSealed && push.title == null) {
+      unawaited(_showSealedMessage(message, push.data));
       return;
     }
 
@@ -80,6 +94,27 @@ class PushNotificationsController {
         .catchError((Object e, StackTrace stackTrace) {
           AppLogger.error('Notification not shown', e, stackTrace);
         });
+  }
+
+  Future<void> _showSealedMessage(
+    ChatMessagePush message,
+    Map<String, dynamic> data,
+  ) async {
+    final write = chatText;
+    if (write == null || !shouldShow(message)) return;
+    try {
+      final text = await write(message);
+      await system.show(
+        title: text.title,
+        body: text.body,
+        channel: NotificationChannel.chatMessages,
+        // The notification carries no sealed text once shown.
+        data: ChatMessagePush.withoutSealedText(data),
+        tag: 'chat:${message.senderId}',
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error('Notification not shown', e, stackTrace);
+    }
   }
 
   void _openData(Map<String, dynamic> data) {
