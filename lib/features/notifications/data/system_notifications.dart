@@ -95,7 +95,10 @@ class LocalSystemNotifications implements SystemNotifications {
     if (!_supported) return;
     await _plugin.initialize(
       settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        // The logo's house in white (android/.../drawable-*/ic_stat_notification):
+        // Android draws a small icon as a flat shape, so the full-colour
+        // launcher icon would show as a blob.
+        android: AndroidInitializationSettings('ic_stat_notification'),
         // Permission is asked with Firebase, at sign-in, not at launch.
         iOS: DarwinInitializationSettings(
           requestAlertPermission: false,
