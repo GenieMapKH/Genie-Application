@@ -2356,6 +2356,30 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatSlideToCancel => 'អូសដើម្បីបោះបង់';
 
   @override
+  String get chatCallOutgoing => 'ការហៅចេញ';
+
+  @override
+  String get chatCallIncoming => 'ការហៅចូល';
+
+  @override
+  String get chatCallLost => 'ការហៅត្រូវបានដាច់';
+
+  @override
+  String get chatCallNoAnswer => 'គ្មានអ្នកទទួល';
+
+  @override
+  String get chatCallCancelled => 'ការហៅត្រូវបានបោះបង់';
+
+  @override
+  String get chatCallDeclined => 'ការហៅត្រូវបានបដិសេធ';
+
+  @override
+  String get chatCallYouDeclined => 'អ្នកបានបដិសេធការហៅ';
+
+  @override
+  String get chatCallMissed => 'ការហៅដែលខកខាន';
+
+  @override
   String get chatVoiceTooShort => 'សារជាសំឡេងខ្លីពេក។';
 
   @override

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:genie/core/network/api_cache_manager.dart';
+import 'package:genie/features/chat/models/chat_call_entry.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 
@@ -35,6 +36,18 @@ class ChatRepository {
     final response = await dio.get('/chat/messages/$participantId');
     return (response.data as List)
         .map((json) => EncryptedMessage.fromJson(_asJson(json)))
+        .toList();
+  }
+
+  /// The finished calls with [participantId], oldest first. Calls are not
+  /// encrypted: the server only records who called whom and how it ended.
+  Future<List<ChatCallEntry>> fetchCallHistory(String participantId) async {
+    final response = await dio.get(
+      '/chat/calls/history',
+      queryParameters: {'with': participantId},
+    );
+    return (response.data as List)
+        .map((json) => ChatCallEntry.fromJson(_asJson(json)))
         .toList();
   }
 

@@ -4160,6 +4160,54 @@ abstract class AppLocalizations {
   /// **'Slide to cancel'**
   String get chatSlideToCancel;
 
+  /// No description provided for @chatCallOutgoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Outgoing call'**
+  String get chatCallOutgoing;
+
+  /// No description provided for @chatCallIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming call'**
+  String get chatCallIncoming;
+
+  /// No description provided for @chatCallLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Call lost'**
+  String get chatCallLost;
+
+  /// No description provided for @chatCallNoAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer'**
+  String get chatCallNoAnswer;
+
+  /// No description provided for @chatCallCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled call'**
+  String get chatCallCancelled;
+
+  /// No description provided for @chatCallDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Call declined'**
+  String get chatCallDeclined;
+
+  /// No description provided for @chatCallYouDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'You declined the call'**
+  String get chatCallYouDeclined;
+
+  /// No description provided for @chatCallMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed call'**
+  String get chatCallMissed;
+
   /// No description provided for @chatVoiceTooShort.
   ///
   /// In en, this message translates to:

@@ -9,6 +9,7 @@ import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
+import 'package:genie/features/chat/models/chat_call_entry.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/models/chat_voice.dart';
@@ -240,9 +241,19 @@ class FakeChatRepository extends Fake implements ChatRepository {
   /// When set, requests wait here until the test completes it.
   Completer<void>? gate;
 
+  /// The calls the server lists for any conversation.
+  List<ChatCallEntry> callHistory = [];
+  int callHistoryRequests = 0;
+
   int conversationRequests = 0;
   int historyRequests = 0;
   final markedRead = <String>[];
+
+  @override
+  Future<List<ChatCallEntry>> fetchCallHistory(String participantId) async {
+    callHistoryRequests++;
+    return callHistory;
+  }
 
   @override
   Future<List<ChatConversation>> fetchConversations({
@@ -297,6 +308,7 @@ class FakeChatSocket extends Fake implements ChatSocketService {
   final connections = StreamController<void>.broadcast();
   final presence = StreamController<ChatPresence>.broadcast();
   final conversationChanges = StreamController<ConversationChange>.broadcast();
+  final callEvents = StreamController<CallSocketEvent>.broadcast();
   final sent = <EncryptedMessage>[];
   final watching = <String>[];
   Object? sendError;
@@ -313,6 +325,9 @@ class FakeChatSocket extends Fake implements ChatSocketService {
 
   @override
   Stream<ChatPresence> get onPresence => presence.stream;
+
+  @override
+  Stream<CallSocketEvent> get onCallEvent => callEvents.stream;
 
   @override
   Stream<ConversationChange> get onConversationChanged =>

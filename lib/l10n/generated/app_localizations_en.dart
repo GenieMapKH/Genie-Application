@@ -2366,6 +2366,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatSlideToCancel => 'Slide to cancel';
 
   @override
+  String get chatCallOutgoing => 'Outgoing call';
+
+  @override
+  String get chatCallIncoming => 'Incoming call';
+
+  @override
+  String get chatCallLost => 'Call lost';
+
+  @override
+  String get chatCallNoAnswer => 'No answer';
+
+  @override
+  String get chatCallCancelled => 'Cancelled call';
+
+  @override
+  String get chatCallDeclined => 'Call declined';
+
+  @override
+  String get chatCallYouDeclined => 'You declined the call';
+
+  @override
+  String get chatCallMissed => 'Missed call';
+
+  @override
   String get chatVoiceTooShort => 'Voice message too short.';
 
   @override

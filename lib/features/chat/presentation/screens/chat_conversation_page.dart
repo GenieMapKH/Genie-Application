@@ -10,6 +10,7 @@ import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:genie/features/chat/presentation/screens/chat_pin_setup_page.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_image_picker.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_input_bar.dart';
@@ -23,6 +24,8 @@ import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_record
 import 'package:genie/features/chat/presentation/widgets/voice/voice_hold_panel.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/voice_recording_problem_text.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
+import 'package:genie/features/chat/models/chat_timeline.dart';
+import 'package:genie/features/chat/providers/chat_call_history_provider.dart';
 import 'package:genie/features/chat/providers/chat_call_starter.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/chat/providers/visible_conversation.dart';
@@ -353,8 +356,9 @@ class _ConversationState extends ConsumerState<_Conversation> {
   }
 
   Widget _buildMessages(ActiveChatState chatState) {
-    final messages = chatState.messages;
-    if (messages.isEmpty) {
+    final calls = ref.watch(chatCallHistoryProvider(widget.chat));
+    final items = mergeTimeline(chatState.messages, calls);
+    if (items.isEmpty) {
       return ChatNotice(message: context.l10n.chatMessagesAreEndToEndEncrypted);
     }
 
@@ -362,19 +366,25 @@ class _ConversationState extends ConsumerState<_Conversation> {
     return ListView.builder(
       reverse: true,
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-      itemCount: messages.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final message = messages[messages.length - 1 - index];
+        final item = items[items.length - 1 - index];
         return Padding(
-          key: ValueKey(message.id),
+          key: ValueKey(item.key),
           padding: const EdgeInsets.only(bottom: 16.0),
-          child: ChatMessageBubble(
-            message: message,
-            isMine: message.senderId == widget.chat.userId,
-            onRetry: () => ref
-                .read(activeChatProvider(widget.chat).notifier)
-                .retry(message.id),
-          ),
+          child: switch (item) {
+            ChatMessageItem(:final message) => ChatMessageBubble(
+              message: message,
+              isMine: message.senderId == widget.chat.userId,
+              onRetry: () => ref
+                  .read(activeChatProvider(widget.chat).notifier)
+                  .retry(message.id),
+            ),
+            ChatCallItem(:final call) => ChatCallEntryTile(
+              call: call,
+              userId: widget.chat.userId,
+            ),
+          },
         );
       },
     );
