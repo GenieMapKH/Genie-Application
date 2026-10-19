@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/home/utils/map/cluster_layout.dart';
 import 'package:genie/features/home/utils/map/cluster_transition.dart';
+import 'package:genie/features/home/utils/map/markers/property_markers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 const _a = LatLng(11.55, 104.91);
@@ -83,7 +84,7 @@ void main() {
       to: _merged,
       now: _start,
     )!;
-    final halfway = _start.add(ClusterTransition.duration ~/ 2);
+    final halfway = _start.add(ClusterTransition.glideDuration ~/ 2);
 
     final split = ClusterTransition.between(
       from: _merged,
@@ -92,8 +93,7 @@ void main() {
       running: merge,
     )!;
 
-    final t = ClusterTransition.curve.transform(0.5);
-    expect(split.drops['a']!.from, merge.drops['a']!.positionAt(t));
+    expect(split.drops['a']!.from, merge.drops['a']!.positionAt(0.5));
     expect(split.drops['a']!.to, _a);
     // Its labels were mid-fade; they are not restarted.
     expect(split.outgoingLabels, isEmpty);
@@ -135,5 +135,61 @@ void main() {
       ClusterTransition.between(from: many, to: together, now: _start),
       isNull,
     );
+  });
+
+  group('price tags', () {
+    ClusterSpot tagged(String id, LatLng position) => ClusterSpot(
+      markerId: id,
+      position: position,
+      count: 1,
+      radius: 12.5,
+      ring: 1,
+      tag: PropertyMarkers.priceTagLayout(price: r'$1,000'),
+    );
+    final tags = ClusterLayout(
+      zoomLevel: 14,
+      spotOf: {'a': tagged('city_dot_0', _a), 'b': tagged('city_dot_1', _b)},
+    );
+
+    test('a bubble splits, then each drop stretches into its tag', () {
+      final split = ClusterTransition.between(
+        from: _merged,
+        to: tags,
+        now: _start,
+      )!;
+      final a = split.drops['a']!;
+
+      expect(split.duration, ClusterTransition.reshapeDuration);
+      expect(split.hiddenMarkerIds, {'city_dot_0', 'city_dot_1'});
+      // The prices fade in where the tags form.
+      expect(split.incomingLabels.map((s) => s.markerId), hasLength(2));
+      // Round while it travels, a tag once it has arrived.
+      expect(a.tagnessAt(0.5), 0);
+      expect(a.positionAt(0.7), _a);
+      expect(a.tagnessAt(1), 1);
+    });
+
+    test('zooming out, each tag rounds into a drop before it flows', () {
+      final merge = ClusterTransition.between(
+        from: tags,
+        to: _merged,
+        now: _start,
+      )!;
+      final a = merge.drops['a']!;
+
+      expect(merge.outgoingLabels, hasLength(2));
+      expect(a.tagnessAt(0), 1);
+      expect(a.positionAt(0.3), _a);
+      expect(a.tagnessAt(0.45), 0);
+      expect(a.positionAt(1), _middle);
+    });
+
+    test('tags that only change zoom level are not animated', () {
+      final closer = ClusterLayout(zoomLevel: 15, spotOf: tags.spotOf);
+      expect(
+        ClusterTransition.between(from: tags, to: closer, now: _start),
+        isNull,
+      );
+    });
   });
 }

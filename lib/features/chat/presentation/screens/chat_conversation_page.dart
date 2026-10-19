@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:genie/core/device/microphone_permission.dart';
 import 'package:genie/core/media/image_upload_policy.dart';
 import 'package:genie/shared/utils/image_rejection_message.dart';
 import 'package:genie/core/logging/app_logger.dart';
@@ -16,8 +17,14 @@ import 'package:genie/features/chat/presentation/widgets/conversation/chat_notic
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_send_problem_text.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
 import 'package:genie/features/chat/presentation/widgets/pin/pin_check_dialog.dart';
+import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_recorder_bar.dart';
+import 'package:genie/features/chat/presentation/widgets/voice/voice_recording_problem_text.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
+import 'package:genie/features/chat/providers/chat_call_starter.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:genie/features/chat/providers/visible_conversation.dart';
+import 'package:genie/features/chat/providers/voice_playback_provider.dart';
+import 'package:genie/features/chat/providers/voice_recording_provider.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -40,6 +47,8 @@ class ChatConversationPage extends ConsumerWidget {
     final chat = userId == null
         ? null
         : (userId: userId, participantId: participantId);
+    final startCall = ref.watch(chatCallStarterProvider);
+    final canCall = startCall != null && chat != null && userId != participantId;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -59,6 +68,7 @@ class ChatConversationPage extends ConsumerWidget {
           centerTitle: true,
           actions: [
             IconButton(
+              tooltip: context.l10n.callVoice,
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -71,7 +81,9 @@ class ChatConversationPage extends ConsumerWidget {
                   size: 18,
                 ),
               ),
-              onPressed: () {},
+              onPressed: canCall
+                  ? () => startCall(participantId, participantName)
+                  : null,
             ),
             const SizedBox(width: 8),
           ],
@@ -102,10 +114,21 @@ class _Conversation extends ConsumerStatefulWidget {
 }
 
 class _ConversationState extends ConsumerState<_Conversation> {
+  late final VisibleConversation _visible;
+
   @override
   void initState() {
     super.initState();
+    // Its new-message notifications are not shown while it is open.
+    _visible = ref.read(visibleConversationProvider)
+      ..show(widget.chat.participantId);
     WidgetsBinding.instance.addPostFrameCallback((_) => _open());
+  }
+
+  @override
+  void dispose() {
+    _visible.hide(widget.chat.participantId);
+    super.dispose();
   }
 
   void _open() {
@@ -172,10 +195,39 @@ class _ConversationState extends ConsumerState<_Conversation> {
         );
   }
 
+  Future<void> _recordVoice() async {
+    // A message playing aloud would be recorded too.
+    await ref.read(voicePlaybackProvider.notifier).stop();
+    await ref.read(voiceRecordingProvider(widget.chat).notifier).start();
+  }
+
+  void _showRecordingProblem(VoiceRecordingProblem problem) {
+    final l10n = context.l10n;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(voiceRecordingProblemText(l10n, problem)),
+          // Only the phone's settings can turn the microphone back on.
+          action: problem == VoiceRecordingProblem.microphoneBlocked
+              ? SnackBarAction(
+                  label: l10n.openSystemSettings,
+                  onPressed: MicrophonePermission.openSettings,
+                )
+              : null,
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = activeChatProvider(widget.chat);
     final chatState = ref.watch(provider);
+    final recordingProvider = voiceRecordingProvider(widget.chat);
+    final recording = ref.watch(recordingProvider);
+    // Voice messages keep playing while their bubbles scroll out of view,
+    // and stop when this screen closes.
+    ref.watch(voicePlaybackProvider.notifier);
 
     ref.listen(provider.select((state) => state.sendError), (_, error) {
       if (error == null) return;
@@ -184,6 +236,12 @@ class _ConversationState extends ConsumerState<_Conversation> {
         ..showSnackBar(
           SnackBar(content: Text(chatSendProblemText(context.l10n, error))),
         );
+    });
+    ref.listen(recordingProvider, (previous, next) {
+      final problem = next.problem;
+      if (problem != null && !identical(previous, next)) {
+        _showRecordingProblem(problem);
+      }
     });
 
     return switch (chatState.status) {
@@ -204,10 +262,17 @@ class _ConversationState extends ConsumerState<_Conversation> {
                 participantName: widget.participantName,
               ),
             )
+          else if (recording.isActive)
+            ChatVoiceRecorderBar(
+              recording: recording,
+              onDiscard: () => ref.read(recordingProvider.notifier).discard(),
+              onSend: () => ref.read(recordingProvider.notifier).finish(),
+            )
           else
             ChatInputBar(
               onSend: (text) => ref.read(provider.notifier).sendMessage(text),
               onAttach: _sendPicture,
+              onRecordVoice: _recordVoice,
             ),
         ],
       ),

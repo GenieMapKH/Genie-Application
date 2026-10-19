@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_image_attachment.dart';
+import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_message.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 
@@ -31,6 +32,7 @@ class ChatMessageBubble extends StatelessWidget {
     final attachment = message.attachment;
     final hasPicture =
         message.localImage != null || (attachment?.isImage ?? false);
+    final voice = message.voice;
 
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
@@ -51,7 +53,14 @@ class ChatMessageBubble extends StatelessWidget {
                   onTap: failed ? onRetry : null,
                 ),
               ),
-            if (attachment != null && !attachment.isImage)
+            if (voice != null)
+              ChatVoiceMessage(
+                message: message,
+                voice: voice,
+                isMine: isMine,
+                onTap: failed ? onRetry : null,
+              )
+            else if (attachment != null && !attachment.isImage)
               _buildText(context, '\u{1F4CE} ${attachment.name}', failed),
             if (message.text.isNotEmpty)
               _buildText(

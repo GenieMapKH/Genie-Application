@@ -52,7 +52,7 @@ class MapOverlays {
   final Set<Polygon> polygons;
   final Set<Polyline> polylines;
 
-  /// Where the zoomed-out dots and bubbles are; null zoomed in.
+  /// Where the listings' dots, bubbles or price tags are.
   final ClusterLayout? clusters;
 
   const MapOverlays({
@@ -188,7 +188,8 @@ class MapOverlayBuilder {
         onZoomToCluster: callbacks.onZoomToCluster,
       );
     } else {
-      await PropertyDotsLayer.build(
+      clusters = await PropertyDotsLayer.build(
+        zoom,
         icons.newLabel,
         positions,
         models,

@@ -8,6 +8,7 @@ import 'package:genie/features/chat/data/chat_socket_service.dart';
 import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_send_problem.dart';
+import 'package:genie/features/chat/models/chat_voice.dart';
 
 /// Sends and opens files in a chat. A file is encrypted on this device with
 /// a one-time key before it is uploaded, and decrypted only in memory.
@@ -37,12 +38,14 @@ class ChatAttachmentService {
   });
 
   /// Encrypts and uploads [bytes] for [recipientId]. The result goes inside
-  /// the encrypted message; without it the stored file is unreadable.
+  /// the encrypted message; without it the stored file is unreadable. A
+  /// voice message passes its [voice] details, which travel with the key.
   Future<ChatAttachment> send(
     Uint8List bytes, {
     required String recipientId,
     required String name,
     required String mimeType,
+    ChatVoiceDetails? voice,
   }) async {
     if (bytes.length > maxBytes) {
       throw const ChatSendException(ChatSendProblem.fileTooLarge);
@@ -66,6 +69,7 @@ class ChatAttachmentService {
       name: name,
       mimeType: mimeType,
       size: bytes.length,
+      voice: voice,
     );
   }
 

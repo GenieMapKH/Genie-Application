@@ -2333,4 +2333,156 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get keywordCommercialArea => 'តំបន់ពាណិជ្ជកម្ម';
+
+  @override
+  String get chatPreviewVoice => '🎤 សារជាសំឡេង';
+
+  @override
+  String get chatVoiceMessage => 'សារជាសំឡេង';
+
+  @override
+  String get chatRecordVoice => 'ថតសារជាសំឡេង';
+
+  @override
+  String get chatRecordingVoice => 'កំពុងថត';
+
+  @override
+  String get chatSendVoice => 'ផ្ញើសារជាសំឡេង';
+
+  @override
+  String get chatDiscardVoice => 'លុបការថត';
+
+  @override
+  String get chatVoiceTooShort => 'សារជាសំឡេងខ្លីពេក។';
+
+  @override
+  String get chatVoiceRecordFailed => 'មិនអាចថតបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get chatVoiceUnavailable =>
+      'មិនអាចចាក់សារជាសំឡេងបានទេ។ ចុចដើម្បីព្យាយាមម្តងទៀត។';
+
+  @override
+  String get chatPlayVoice => 'ចាក់';
+
+  @override
+  String get chatPauseVoice => 'ផ្អាក';
+
+  @override
+  String get chatVoiceSpeed => 'ល្បឿនចាក់';
+
+  @override
+  String get microphoneDenied =>
+      'សូមអនុញ្ញាតឱ្យប្រើមីក្រូហ្វូន ដើម្បីថតសំឡេងរបស់អ្នក។';
+
+  @override
+  String get microphoneBlocked =>
+      'ការប្រើមីក្រូហ្វូនត្រូវបានបិទ។ សូមបើកវានៅក្នុងការកំណត់។';
+
+  @override
+  String get openSystemSettings => 'ការកំណត់';
+
+  @override
+  String get notificationsTitle => 'ការជូនដំណឹង';
+
+  @override
+  String get notificationsChatTitle => 'សារជជែក';
+
+  @override
+  String get notificationsChatHelp => 'នៅពេលមាននរណាម្នាក់ផ្ញើសារមកអ្នក។';
+
+  @override
+  String get notificationsPromotionsTitle => 'ការផ្តល់ជូន និងព័ត៌មាន';
+
+  @override
+  String get notificationsPromotionsHelp =>
+      'ការបញ្ចុះតម្លៃ និងព័ត៌មានថ្មីៗពីក្រុមការងាររបស់យើង។';
+
+  @override
+  String get notificationsAlwaysOn =>
+      'ការជូនដំណឹងសុវត្ថិភាព និងការហៅតែងតែបើកជានិច្ច ដើម្បីកុំឱ្យអ្នកខកខានការចូលគណនីថ្មី ឬការហៅមកអ្នក។';
+
+  @override
+  String get notificationsBlockedTitle =>
+      'ការជូនដំណឹងត្រូវបានបិទសម្រាប់កម្មវិធីនេះ';
+
+  @override
+  String get notificationsBlockedHelp =>
+      'សូមបើកវានៅក្នុងការកំណត់ទូរសព្ទរបស់អ្នក ដើម្បីទទួលដំណឹងអំពីសារថ្មី ការហៅ និងការចូលគណនី។';
+
+  @override
+  String get notificationsLoadFailed =>
+      'មិនអាចផ្ទុកការកំណត់ការជូនដំណឹងរបស់អ្នកបានទេ។';
+
+  @override
+  String get notificationsSaveFailed =>
+      'មិនអាចរក្សាទុកបានទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get callVoice => 'ហៅជាសំឡេង';
+
+  @override
+  String get callCalling => 'កំពុងហៅ…';
+
+  @override
+  String get callIncoming => 'ការហៅជាសំឡេងចូល';
+
+  @override
+  String get callConnecting => 'កំពុងភ្ជាប់…';
+
+  @override
+  String get callEnded => 'ការហៅបានបញ្ចប់';
+
+  @override
+  String get callDeclined => 'ការហៅត្រូវបានបដិសេធ';
+
+  @override
+  String get callNoAnswer => 'គ្មានអ្នកឆ្លើយ';
+
+  @override
+  String get callBusy => 'កំពុងនិយាយទូរសព្ទផ្សេង';
+
+  @override
+  String get callUnavailable => 'មិនអាចហៅបានពេលនេះទេ';
+
+  @override
+  String get callMicrophoneNeeded =>
+      'ការហៅត្រូវការមីក្រូហ្វូន។ សូមអនុញ្ញាតវានៅក្នុងការកំណត់។';
+
+  @override
+  String get callConnectionLost => 'បាត់ការតភ្ជាប់';
+
+  @override
+  String get callFailed => 'ការហៅបរាជ័យ';
+
+  @override
+  String get callAnsweredElsewhere => 'បានឆ្លើយនៅលើឧបករណ៍ផ្សេង';
+
+  @override
+  String get callAccept => 'ទទួល';
+
+  @override
+  String get callDecline => 'បដិសេធ';
+
+  @override
+  String get callHangUp => 'បញ្ចប់ការហៅ';
+
+  @override
+  String get callMute => 'បិទសំឡេង';
+
+  @override
+  String get callUnmute => 'បើកសំឡេង';
+
+  @override
+  String get callSpeaker => 'បំពងសំឡេង';
+
+  @override
+  String callIncomingFrom(String name) {
+    return '$name កំពុងហៅមក';
+  }
+
+  @override
+  String callMissedFrom(String name) {
+    return 'ការហៅដែលខកខានពី $name';
+  }
 }

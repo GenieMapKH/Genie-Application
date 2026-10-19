@@ -1,3 +1,5 @@
+import 'package:genie/features/chat/models/chat_voice.dart';
+
 /// A file sent in a chat. The file itself is stored encrypted on the server;
 /// this is what travels inside the encrypted message so the other person can
 /// fetch and open it. The server never sees any of these fields.
@@ -15,6 +17,9 @@ class ChatAttachment {
   /// Size of the original file in bytes.
   final int size;
 
+  /// Set when the file is a voice message.
+  final ChatVoiceDetails? voice;
+
   const ChatAttachment({
     required this.path,
     required this.key,
@@ -22,6 +27,7 @@ class ChatAttachment {
     required this.name,
     required this.mimeType,
     required this.size,
+    this.voice,
   });
 
   static final _pathFormat = RegExp(
@@ -30,6 +36,9 @@ class ChatAttachment {
   );
 
   bool get isImage => mimeType.startsWith('image/');
+
+  /// A recorded voice message. Other sound files are shown as files.
+  bool get isVoice => voice != null && mimeType.startsWith('audio/');
 
   /// Whether the file is stored under the conversation between these two
   /// people, which is the only place the server lets them read from.
@@ -61,6 +70,7 @@ class ChatAttachment {
       name: name,
       mimeType: mimeType,
       size: size,
+      voice: ChatVoiceDetails.tryParse(json['voice']),
     );
   }
 
@@ -71,6 +81,7 @@ class ChatAttachment {
     'name': name,
     'mime': mimeType,
     'size': size,
+    'voice': ?voice?.toJson(),
   };
 
   @override

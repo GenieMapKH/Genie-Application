@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'marker_cache.dart';
 import 'marker_renderer.dart';
+import 'price_tag_layout.dart';
 
 /// Markers for listings on the explore map.
 abstract final class PropertyMarkers {
@@ -26,6 +27,7 @@ abstract final class PropertyMarkers {
       count < 10 ? 34.0 : (count < 100 ? 40.0 : 48.0);
   static final _priceCache = MarkerCache();
   static final _clusterCache = MarkerCache();
+  static final _priceLayouts = <String, PriceTagLayout>{};
 
   /// Green dot with a white border. When [isSelected] it grows and gets a
   /// white ring so the listing behind the open card is easy to spot.
@@ -120,97 +122,91 @@ abstract final class PropertyMarkers {
     bool isVisited = false,
     String newLabel = 'New',
   }) {
-    final cacheKey =
-        'price-$price-$isNew-$isSelected-$propertyType-$isVisited-$newLabel';
+    final tag = priceTagLayout(
+      price: price,
+      isNew: isNew,
+      isSelected: isSelected,
+      propertyType: propertyType,
+      isVisited: isVisited,
+      newLabel: newLabel,
+    );
     return _priceCache.get(
-      cacheKey,
-      () => _renderPriceTag(
-        price,
-        isNew,
-        isSelected,
-        propertyType,
-        isVisited,
-        newLabel,
-      ),
+      _priceKey(price, isNew, isSelected, propertyType, isVisited, newLabel),
+      () => _renderPriceTag(tag),
     );
   }
 
-  static Future<BitmapDescriptor> _renderPriceTag(
+  /// How [priceTag] measures and colours the tag, for drawing it elsewhere.
+  static PriceTagLayout priceTagLayout({
+    required String price,
+    bool isNew = false,
+    bool isSelected = false,
+    String propertyType = 'Sell',
+    bool isVisited = false,
+    String newLabel = 'New',
+  }) {
+    final key = _priceKey(
+      price,
+      isNew,
+      isSelected,
+      propertyType,
+      isVisited,
+      newLabel,
+    );
+    return _priceLayouts[key] ??= PriceTagLayout.measure(
+      price: layoutText(
+        price,
+        TextStyle(
+          color: Colors.white,
+          fontSize: isSelected ? 16.0 : 14.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      newLabel: isNew
+          ? layoutText(
+              newLabel,
+              const TextStyle(
+                color: Colors.white,
+                fontSize: 12.0,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          : null,
+      background: isSelected
+          ? _priceColor(propertyType, isVisited).withValues(alpha: 0.8)
+          : _priceColor(propertyType, isVisited),
+      borderWidth: isSelected ? 2.5 : 1.5,
+    );
+  }
+
+  static String _priceKey(
     String price,
     bool isNew,
     bool isSelected,
     String propertyType,
     bool isVisited,
-    String newText,
-  ) {
-    final priceLabel = layoutText(
-      price,
-      TextStyle(
-        color: Colors.white,
-        fontSize: isSelected ? 16.0 : 14.0,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-    final newLabel = isNew
-        ? layoutText(
-            newText,
-            const TextStyle(
-              color: Colors.white,
-              fontSize: 12.0,
-              fontWeight: FontWeight.bold,
-            ),
-          )
-        : null;
+    String newLabel,
+  ) => 'price-$price-$isNew-$isSelected-$propertyType-$isVisited-$newLabel';
 
-    const labelGap = 2.0;
-    final paddingX = isNew ? 12.0 : 10.0;
-    final paddingY = isNew ? 8.0 : 6.0;
-
-    var contentWidth = priceLabel.width;
-    var contentHeight = priceLabel.height;
-    if (newLabel != null) {
-      contentWidth = contentWidth > newLabel.width
-          ? contentWidth
-          : newLabel.width;
-      contentHeight += newLabel.height + labelGap;
-    }
-
-    final width = contentWidth + paddingX * 2;
-    final height = contentHeight + paddingY * 2;
-    final radius = Radius.circular(isNew ? 10.0 : height / 2);
-
-    final baseColor = _priceColor(propertyType, isVisited);
-    final background = isSelected
-        ? baseColor.withValues(alpha: 0.8)
-        : baseColor;
-
-    final borderWidth = isSelected ? 2.5 : 1.5;
+  static Future<BitmapDescriptor> _renderPriceTag(PriceTagLayout tag) {
     // Half the border is drawn outside the body; this room on every side
     // keeps it from being cut off at the bitmap's edges.
-    final inset = borderWidth / 2;
+    final inset = tag.borderWidth / 2;
 
     return renderMarker(
-      width: (width + inset * 2).ceilToDouble(),
-      height: (height + inset * 2).ceilToDouble(),
+      width: (tag.size.width + inset * 2).ceilToDouble(),
+      height: (tag.size.height + inset * 2).ceilToDouble(),
       draw: (canvas) {
         canvas.translate(inset, inset);
-
-        final body = RRect.fromLTRBR(0, 0, width, height, radius);
-        canvas.drawRRect(body, Paint()..color = background);
+        canvas.drawRRect(tag.body, Paint()..color = tag.background);
         canvas.drawRRect(
-          body,
+          tag.body,
           Paint()
             ..color = Colors.white
             ..style = PaintingStyle.stroke
-            ..strokeWidth = borderWidth,
+            ..strokeWidth = tag.borderWidth,
         );
-
-        var y = paddingY;
-        if (newLabel != null) {
-          newLabel.paint(canvas, Offset((width - newLabel.width) / 2, y));
-          y += newLabel.height + labelGap;
-        }
-        priceLabel.paint(canvas, Offset((width - priceLabel.width) / 2, y));
+        tag.paintLabels(canvas, Offset.zero);
       },
     );
   }

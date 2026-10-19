@@ -11,6 +11,7 @@ import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
+import 'package:genie/features/chat/models/chat_voice.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
 
 const me = 'user-me';
@@ -106,10 +107,16 @@ class FakeAttachmentService extends Fake implements ChatAttachmentService {
     required String recipientId,
     required String name,
     required String mimeType,
+    ChatVoiceDetails? voice,
   }) async {
     if (uploadError != null) throw uploadError!;
     uploads.add(bytes);
-    return fakeAttachment(uploads.length, name: name, mimeType: mimeType);
+    return fakeAttachment(
+      uploads.length,
+      name: name,
+      mimeType: mimeType,
+      voice: voice,
+    );
   }
 
   /// Nothing is ready without waiting: pictures go through loading.
@@ -128,6 +135,7 @@ ChatAttachment fakeAttachment(
   int n, {
   String name = 'photo.png',
   String mimeType = 'image/png',
+  ChatVoiceDetails? voice,
 }) {
   final id = n.toString().padLeft(12, '0');
   return ChatAttachment(
@@ -140,6 +148,7 @@ ChatAttachment fakeAttachment(
     name: name,
     mimeType: mimeType,
     size: 68,
+    voice: voice,
   );
 }
 

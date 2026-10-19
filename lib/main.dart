@@ -20,7 +20,13 @@ import 'package:genie/app/missing_config_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:genie/firebase_options.dart';
 import 'package:genie/app/navigation/chat_profile_navigation.dart';
+import 'package:genie/app/navigation/call_navigation.dart';
+import 'package:genie/app/navigation/push_navigation.dart';
+import 'package:genie/app/push_background_handler.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:genie/features/chat/providers/chat_call_starter.dart';
 import 'package:genie/features/chat/providers/chat_profile_opener.dart';
+import 'package:genie/features/notifications/providers/notification_providers.dart';
 
 /// Android only: asks for the newest Google Maps renderer and for the
 /// display's highest refresh rate. Without the latter many devices keep a
@@ -59,6 +65,8 @@ void main() async {
   AppLogger.debug('API server: ${AppConfig.apiBaseUrl}');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // A browser handles background pushes in web/firebase-messaging-sw.js.
+  if (!kIsWeb) FirebaseMessaging.onBackgroundMessage(handleBackgroundPush);
 
   if (defaultTargetPlatform == TargetPlatform.android) {
     await _configureAndroidGraphics();
@@ -79,6 +87,10 @@ void main() async {
         cryptoServiceProvider.overrideWithValue(cryptoService),
         appSettingsStorageProvider.overrideWithValue(settingsStorage),
         chatProfileOpenerProvider.overrideWith(profileFromChatOpener),
+        pushOpenerProvider.overrideWith(pushOpener),
+        foregroundPushFilterProvider.overrideWith(foregroundPushFilter),
+        chatCallStarterProvider.overrideWith(callFromChat),
+        callPushHandlerProvider.overrideWith(callPushHandler),
       ],
       child: const MyApp(),
     ),

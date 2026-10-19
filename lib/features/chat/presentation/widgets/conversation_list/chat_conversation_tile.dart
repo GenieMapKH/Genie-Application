@@ -21,12 +21,13 @@ class ChatConversationTile extends StatelessWidget {
     required this.onLongPress,
   });
 
-  /// The last message, with the stand-ins for one not decrypted yet and for
-  /// a picture in the user's language.
+  /// The last message, with the stand-ins for one not decrypted yet, for a
+  /// picture and for a voice message in the user's language.
   String _preview(BuildContext context) {
     return switch (chat.lastMessage) {
       ChatConversation.encryptedPreview => context.l10n.chatPreviewEncrypted,
       ChatConversation.photoPreview => context.l10n.chatPreviewPhoto,
+      ChatConversation.voicePreview => context.l10n.chatPreviewVoice,
       final text => text,
     };
   }

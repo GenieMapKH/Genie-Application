@@ -4117,6 +4117,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Commercial Area'**
   String get keywordCommercialArea;
+
+  /// No description provided for @chatPreviewVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'🎤 Voice message'**
+  String get chatPreviewVoice;
+
+  /// No description provided for @chatVoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message'**
+  String get chatVoiceMessage;
+
+  /// No description provided for @chatRecordVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a voice message'**
+  String get chatRecordVoice;
+
+  /// No description provided for @chatRecordingVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get chatRecordingVoice;
+
+  /// No description provided for @chatSendVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Send voice message'**
+  String get chatSendVoice;
+
+  /// No description provided for @chatDiscardVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete recording'**
+  String get chatDiscardVoice;
+
+  /// No description provided for @chatVoiceTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message too short.'**
+  String get chatVoiceTooShort;
+
+  /// No description provided for @chatVoiceRecordFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not record. Try again.'**
+  String get chatVoiceRecordFailed;
+
+  /// No description provided for @chatVoiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message unavailable. Tap to retry.'**
+  String get chatVoiceUnavailable;
+
+  /// No description provided for @chatPlayVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get chatPlayVoice;
+
+  /// No description provided for @chatPauseVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get chatPauseVoice;
+
+  /// No description provided for @chatVoiceSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback speed'**
+  String get chatVoiceSpeed;
+
+  /// No description provided for @microphoneDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow microphone access to record your voice.'**
+  String get microphoneDenied;
+
+  /// No description provided for @microphoneBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access is turned off. Turn it on in Settings.'**
+  String get microphoneBlocked;
+
+  /// No description provided for @openSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get openSystemSettings;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat messages'**
+  String get notificationsChatTitle;
+
+  /// No description provided for @notificationsChatHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'When someone sends you a message.'**
+  String get notificationsChatHelp;
+
+  /// No description provided for @notificationsPromotionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers and news'**
+  String get notificationsPromotionsTitle;
+
+  /// No description provided for @notificationsPromotionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Deals and updates from our team.'**
+  String get notificationsPromotionsHelp;
+
+  /// No description provided for @notificationsAlwaysOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.'**
+  String get notificationsAlwaysOn;
+
+  /// No description provided for @notificationsBlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for this app'**
+  String get notificationsBlockedTitle;
+
+  /// No description provided for @notificationsBlockedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.'**
+  String get notificationsBlockedHelp;
+
+  /// No description provided for @notificationsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your notification settings.'**
+  String get notificationsLoadFailed;
+
+  /// No description provided for @notificationsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Check your connection and try again.'**
+  String get notificationsSaveFailed;
+
+  /// No description provided for @callVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice call'**
+  String get callVoice;
+
+  /// No description provided for @callCalling.
+  ///
+  /// In en, this message translates to:
+  /// **'Calling…'**
+  String get callCalling;
+
+  /// No description provided for @callIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming voice call'**
+  String get callIncoming;
+
+  /// No description provided for @callConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get callConnecting;
+
+  /// No description provided for @callEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Call ended'**
+  String get callEnded;
+
+  /// No description provided for @callDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Call declined'**
+  String get callDeclined;
+
+  /// No description provided for @callNoAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer'**
+  String get callNoAnswer;
+
+  /// No description provided for @callBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'On another call'**
+  String get callBusy;
+
+  /// No description provided for @callUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t be called right now'**
+  String get callUnavailable;
+
+  /// No description provided for @callMicrophoneNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Calls need the microphone. Allow it in Settings.'**
+  String get callMicrophoneNeeded;
+
+  /// No description provided for @callConnectionLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost'**
+  String get callConnectionLost;
+
+  /// No description provided for @callFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Call failed'**
+  String get callFailed;
+
+  /// No description provided for @callAnsweredElsewhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered on another device'**
+  String get callAnsweredElsewhere;
+
+  /// No description provided for @callAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get callAccept;
+
+  /// No description provided for @callDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get callDecline;
+
+  /// No description provided for @callHangUp.
+  ///
+  /// In en, this message translates to:
+  /// **'End call'**
+  String get callHangUp;
+
+  /// No description provided for @callMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get callMute;
+
+  /// No description provided for @callUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get callUnmute;
+
+  /// No description provided for @callSpeaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaker'**
+  String get callSpeaker;
+
+  /// No description provided for @callIncomingFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is calling'**
+  String callIncomingFrom(String name);
+
+  /// No description provided for @callMissedFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed call from {name}'**
+  String callMissedFrom(String name);
 }
 
 class _AppLocalizationsDelegate

@@ -4,10 +4,14 @@ import 'package:flutter/animation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/features/home/utils/map/cluster_layout.dart';
+import 'package:genie/features/home/utils/map/markers/price_tag_layout.dart';
 
 /// One listing gliding from the spot that showed it to the one that will.
 /// Drops heading for the same spot meet and fuse; drops leaving one spot
-/// pull apart.
+/// pull apart. Zooming in to price tags, a drop that has arrived stretches
+/// into its [tag]; zooming out, the tag first rounds into a drop.
+///
+/// Every `...At` method takes the transition's linear progress, 0 to 1.
 class LiquidDrop {
   final LatLng from;
   final LatLng to;
@@ -18,6 +22,12 @@ class LiquidDrop {
   final double fromLift;
   final double toLift;
 
+  /// How much the drop looks like its [tag], at the start and at the end:
+  /// 0 is a round drop, 1 the tag.
+  final double fromTagness;
+  final double toTagness;
+  final PriceTagLayout? tag;
+
   const LiquidDrop({
     required this.from,
     required this.to,
@@ -27,6 +37,9 @@ class LiquidDrop {
     required this.toRing,
     this.fromLift = 0,
     this.toLift = 0,
+    this.fromTagness = 0,
+    this.toTagness = 0,
+    this.tag,
   });
 
   LiquidDrop.between(ClusterSpot from, ClusterSpot to)
@@ -39,41 +52,81 @@ class LiquidDrop {
         toRing: to.ring,
         fromLift: from.lift,
         toLift: to.lift,
+        fromTagness: from.tag == null ? 0 : 1,
+        toTagness: to.tag == null ? 0 : 1,
+        tag: to.tag ?? from.tag,
       );
 
-  bool get moves => from != to || fromRadius != toRadius || fromRing != toRing;
+  bool get moves =>
+      from != to ||
+      fromRadius != toRadius ||
+      fromRing != toRing ||
+      fromTagness != toTagness;
 
-  /// Where the drop is at eased progress [t] (0 = start, 1 = end).
-  LatLng positionAt(double t) => LatLng(
-    lerpDouble(from.latitude, to.latitude, t)!,
-    lerpDouble(from.longitude, to.longitude, t)!,
-  );
+  bool get _becomesTag => toTagness > fromTagness;
+  bool get _becomesDrop => toTagness < fromTagness;
 
-  double radiusAt(double t) => lerpDouble(fromRadius, toRadius, t)!;
+  /// Becoming a tag, the drop travels first and then takes shape; becoming
+  /// a drop, it first rounds and then travels.
+  Interval get _travel => _becomesTag
+      ? const Interval(0, 0.7)
+      : _becomesDrop
+      ? const Interval(0.3, 1)
+      : const Interval(0, 1);
 
-  double ringAt(double t) => lerpDouble(fromRing, toRing, t)!;
+  Interval get _reshape =>
+      _becomesTag ? const Interval(0.55, 1) : const Interval(0, 0.45);
 
-  double liftAt(double t) => lerpDouble(fromLift, toLift, t)!;
+  double _travelled(double p) =>
+      ClusterTransition.curve.transform(_travel.transform(p));
 
-  /// From where this drop is at [t] to [spot].
-  LiquidDrop redirectedAt(double t, ClusterSpot spot) => LiquidDrop(
-    from: positionAt(t),
+  LatLng positionAt(double p) {
+    final t = _travelled(p);
+    return LatLng(
+      lerpDouble(from.latitude, to.latitude, t)!,
+      lerpDouble(from.longitude, to.longitude, t)!,
+    );
+  }
+
+  double radiusAt(double p) => lerpDouble(fromRadius, toRadius, _travelled(p))!;
+
+  double ringAt(double p) => lerpDouble(fromRing, toRing, _travelled(p))!;
+
+  double liftAt(double p) => lerpDouble(fromLift, toLift, _travelled(p))!;
+
+  double tagnessAt(double p) => lerpDouble(
+    fromTagness,
+    toTagness,
+    Curves.easeInOut.transform(_reshape.transform(p)),
+  )!;
+
+  /// From where and how this drop is at [p] to [spot].
+  LiquidDrop redirectedAt(double p, ClusterSpot spot) => LiquidDrop(
+    from: positionAt(p),
     to: spot.position,
-    fromRadius: radiusAt(t),
+    fromRadius: radiusAt(p),
     toRadius: spot.radius,
-    fromRing: ringAt(t),
+    fromRing: ringAt(p),
     toRing: spot.ring,
-    fromLift: liftAt(t),
+    fromLift: liftAt(p),
     toLift: spot.lift,
+    fromTagness: tagnessAt(p),
+    toTagness: spot.tag == null ? 0 : 1,
+    tag: spot.tag ?? tag,
   );
 }
 
-/// The zoomed-out dots merging or splitting after the zoom level changed.
+/// The listing markers merging or splitting after the zoom level changed:
+/// dots into bubbles and back, and bubbles into price tags and back.
 ///
-/// While it runs, the map's own dot and bubble markers ([hiddenMarkerIds])
-/// are hidden and the drops are painted in their place.
+/// While it runs, the map's own markers of the new layout
+/// ([hiddenMarkerIds]) are hidden and the drops are painted in their place.
 class ClusterTransition {
-  static const duration = Duration(milliseconds: 450);
+  /// Among dots and bubbles.
+  static const glideDuration = Duration(milliseconds: 450);
+
+  /// To or from price tags, which also change shape.
+  static const reshapeDuration = Duration(milliseconds: 600);
 
   /// How the drops speed up and settle.
   static const curve = Curves.easeInOutCubic;
@@ -84,14 +137,15 @@ class ClusterTransition {
   /// By listing key.
   final Map<String, LiquidDrop> drops;
 
-  /// Counts on the bubbles being left (fading out) and being formed (fading
-  /// in).
+  /// Counts and prices on the markers being left (fading out) and being
+  /// formed (fading in).
   final List<ClusterSpot> outgoingLabels;
   final List<ClusterSpot> incomingLabels;
 
   /// The new layout's markers, shown again when the drops have arrived.
   final Set<String> hiddenMarkerIds;
   final DateTime startedAt;
+  final Duration duration;
 
   const ClusterTransition({
     required this.drops,
@@ -99,6 +153,7 @@ class ClusterTransition {
     required this.incomingLabels,
     required this.hiddenMarkerIds,
     required this.startedAt,
+    this.duration = glideDuration,
   });
 
   /// Linear progress at [now], from 0 to 1.
@@ -117,15 +172,15 @@ class ClusterTransition {
     required DateTime now,
     ClusterTransition? running,
   }) {
-    final t = running == null ? 1.0 : curve.transform(running.progressAt(now));
-    final interrupted = running != null && t < 1.0;
+    final p = running == null ? 1.0 : running.progressAt(now);
+    final interrupted = running != null && p < 1.0;
 
     final drops = <String, LiquidDrop>{};
     for (final MapEntry(key: key, value: target) in to.spotOf.entries) {
       final inFlight = interrupted ? running.drops[key] : null;
       final start = from.spotOf[key];
       if (inFlight != null) {
-        drops[key] = inFlight.redirectedAt(t, target);
+        drops[key] = inFlight.redirectedAt(p, target);
       } else if (start != null) {
         drops[key] = LiquidDrop.between(start, target);
       }
@@ -134,22 +189,18 @@ class ClusterTransition {
     if (drops.isEmpty || drops.length > maxDrops) return null;
     if (!drops.values.any((drop) => drop.moves)) return null;
 
+    bool hasLabel(ClusterSpot spot) => spot.count > 1 || spot.tag != null;
     return ClusterTransition(
       drops: drops,
       // An interrupted animation's labels are mid-fade; dropping them is
       // less jarring than restarting their fade.
-      outgoingLabels: interrupted
-          ? const []
-          : [
-              for (final spot in from.spots)
-                if (spot.count > 1) spot,
-            ],
-      incomingLabels: [
-        for (final spot in to.spots)
-          if (spot.count > 1) spot,
-      ],
+      outgoingLabels: interrupted ? const [] : [...from.spots.where(hasLabel)],
+      incomingLabels: [...to.spots.where(hasLabel)],
       hiddenMarkerIds: {for (final spot in to.spots) spot.markerId},
       startedAt: now,
+      duration: drops.values.any((d) => d.fromTagness != d.toTagness)
+          ? reshapeDuration
+          : glideDuration,
     );
   }
 }

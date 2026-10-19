@@ -2,11 +2,22 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+: asked at sign-in, for chat, security and call notifications. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Voice messages and calls. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- Calls: the audio connection follows the network it is on. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <!-- Calls: an incoming call rings as a full-screen notification. The app
+         itself is never shown over the lock screen: Accept asks to unlock. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     
     <application
         android:label="Tilomnov"
         android:allowBackup="false"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         

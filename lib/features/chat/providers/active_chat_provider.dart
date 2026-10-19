@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,10 +11,12 @@ import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_send_problem.dart';
+import 'package:genie/features/chat/models/chat_voice.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
 import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:genie/shared/utils/random_uuid.dart';
 
 export 'active_chat_state.dart';
 
@@ -35,8 +36,8 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   final ChatAttachmentService attachments;
   final ConversationsNotifier conversations;
 
-  /// Name and type of pictures still being sent, by message id.
-  final _outgoingFiles = <String, ({String name, String mimeType})>{};
+  /// Files (pictures, voice messages) still being sent, by message id.
+  final _outgoingFiles = <String, _OutgoingFile>{};
 
   final _subscriptions = <StreamSubscription<void>>[];
 
@@ -126,6 +127,33 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     required String name,
     required String mimeType,
   }) async {
+    await _sendFile(
+      (bytes: bytes, name: name, mimeType: mimeType, voice: null),
+      localImage: bytes,
+    );
+  }
+
+  /// Sends a voice message recorded on this device, the same way as a
+  /// picture: shown at once, then encrypted, uploaded and announced.
+  Future<void> sendVoice(RecordedVoiceNote note) async {
+    await _sendFile(
+      (
+        bytes: note.bytes,
+        name: note.fileName,
+        mimeType: note.mimeType,
+        voice: note.details,
+      ),
+      localVoice: note,
+    );
+  }
+
+  /// Shows a message carrying [file] at once (as its local copy), then
+  /// uploads the file and sends the message.
+  Future<void> _sendFile(
+    _OutgoingFile file, {
+    Uint8List? localImage,
+    RecordedVoiceNote? localVoice,
+  }) async {
     if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
 
     final message = ChatMessage(
@@ -135,9 +163,10 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       text: '',
       createdAt: DateTime.now(),
       status: ChatMessageStatus.sending,
-      localImage: bytes,
+      localImage: localImage,
+      localVoice: localVoice,
     );
-    _outgoingFiles[message.id] = (name: name, mimeType: mimeType);
+    _outgoingFiles[message.id] = file;
     state = state.copyWith(messages: [...state.messages, message]);
     await _deliver(message);
   }
@@ -208,20 +237,18 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     }
   }
 
-  /// Uploads the picture of a message that has one and is not stored yet.
+  /// Uploads the file of a message that has one and is not stored yet.
   /// A retry after a later failure does not upload it a second time.
   Future<ChatMessage> _uploadPendingFile(ChatMessage message) async {
-    final bytes = message.localImage;
     final file = _outgoingFiles[message.id];
-    if (message.attachment != null || bytes == null || file == null) {
-      return message;
-    }
+    if (message.attachment != null || file == null) return message;
 
     final attachment = await attachments.send(
-      bytes,
+      file.bytes,
       recipientId: participantId,
       name: file.name,
       mimeType: file.mimeType,
+      voice: file.voice,
     );
     final uploaded = message.copyWith(attachment: attachment);
     if (mounted) _replace(uploaded);
@@ -366,16 +393,16 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   }
 }
 
-/// A random (version 4) UUID, which the server accepts as a message id.
-String _newMessageId() {
-  final random = Random.secure();
-  final bytes = List<int>.generate(16, (_) => random.nextInt(256));
-  bytes[6] = (bytes[6] & 0x0f) | 0x40;
-  bytes[8] = (bytes[8] & 0x3f) | 0x80;
-  final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-  return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
-      '${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}';
-}
+/// A file waiting to be uploaded with its message.
+typedef _OutgoingFile = ({
+  Uint8List bytes,
+  String name,
+  String mimeType,
+  ChatVoiceDetails? voice,
+});
+
+/// The id of a new message: the server stores one id once.
+String _newMessageId() => randomUuid();
 
 /// One notifier per open conversation, disposed when its screen closes.
 final activeChatProvider = StateNotifierProvider.autoDispose

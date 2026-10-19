@@ -2343,4 +2343,153 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get keywordCommercialArea => 'Commercial Area';
+
+  @override
+  String get chatPreviewVoice => '🎤 Voice message';
+
+  @override
+  String get chatVoiceMessage => 'Voice message';
+
+  @override
+  String get chatRecordVoice => 'Record a voice message';
+
+  @override
+  String get chatRecordingVoice => 'Recording';
+
+  @override
+  String get chatSendVoice => 'Send voice message';
+
+  @override
+  String get chatDiscardVoice => 'Delete recording';
+
+  @override
+  String get chatVoiceTooShort => 'Voice message too short.';
+
+  @override
+  String get chatVoiceRecordFailed => 'Could not record. Try again.';
+
+  @override
+  String get chatVoiceUnavailable => 'Voice message unavailable. Tap to retry.';
+
+  @override
+  String get chatPlayVoice => 'Play';
+
+  @override
+  String get chatPauseVoice => 'Pause';
+
+  @override
+  String get chatVoiceSpeed => 'Playback speed';
+
+  @override
+  String get microphoneDenied =>
+      'Allow microphone access to record your voice.';
+
+  @override
+  String get microphoneBlocked =>
+      'Microphone access is turned off. Turn it on in Settings.';
+
+  @override
+  String get openSystemSettings => 'Settings';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsChatTitle => 'Chat messages';
+
+  @override
+  String get notificationsChatHelp => 'When someone sends you a message.';
+
+  @override
+  String get notificationsPromotionsTitle => 'Offers and news';
+
+  @override
+  String get notificationsPromotionsHelp => 'Deals and updates from our team.';
+
+  @override
+  String get notificationsAlwaysOn =>
+      'Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.';
+
+  @override
+  String get notificationsBlockedTitle => 'Notifications are off for this app';
+
+  @override
+  String get notificationsBlockedHelp =>
+      'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.';
+
+  @override
+  String get notificationsLoadFailed =>
+      'Could not load your notification settings.';
+
+  @override
+  String get notificationsSaveFailed =>
+      'Could not save. Check your connection and try again.';
+
+  @override
+  String get callVoice => 'Voice call';
+
+  @override
+  String get callCalling => 'Calling…';
+
+  @override
+  String get callIncoming => 'Incoming voice call';
+
+  @override
+  String get callConnecting => 'Connecting…';
+
+  @override
+  String get callEnded => 'Call ended';
+
+  @override
+  String get callDeclined => 'Call declined';
+
+  @override
+  String get callNoAnswer => 'No answer';
+
+  @override
+  String get callBusy => 'On another call';
+
+  @override
+  String get callUnavailable => 'Can\'t be called right now';
+
+  @override
+  String get callMicrophoneNeeded =>
+      'Calls need the microphone. Allow it in Settings.';
+
+  @override
+  String get callConnectionLost => 'Connection lost';
+
+  @override
+  String get callFailed => 'Call failed';
+
+  @override
+  String get callAnsweredElsewhere => 'Answered on another device';
+
+  @override
+  String get callAccept => 'Accept';
+
+  @override
+  String get callDecline => 'Decline';
+
+  @override
+  String get callHangUp => 'End call';
+
+  @override
+  String get callMute => 'Mute';
+
+  @override
+  String get callUnmute => 'Unmute';
+
+  @override
+  String get callSpeaker => 'Speaker';
+
+  @override
+  String callIncomingFrom(String name) {
+    return '$name is calling';
+  }
+
+  @override
+  String callMissedFrom(String name) {
+    return 'Missed call from $name';
+  }
 }

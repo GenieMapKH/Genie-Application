@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:genie/features/chat/models/chat_attachment.dart';
+import 'package:genie/features/chat/models/chat_voice.dart';
 
 class ChatConversation {
   /// Shown until the last message has been decrypted on this device.
@@ -8,6 +9,9 @@ class ChatConversation {
 
   /// Shown for a last message that is a picture without a caption.
   static const photoPreview = '\u{1F4F7} Photo';
+
+  /// Shown for a last message that is a voice message.
+  static const voicePreview = '\u{1F3A4} Voice message';
 
   final String id;
   final String participantName;
@@ -199,6 +203,9 @@ class ChatMessage {
   /// and kept so a failed send can be retried.
   final Uint8List? localImage;
 
+  /// The voice message being sent from this device, kept the same way.
+  final RecordedVoiceNote? localVoice;
+
   ChatMessage({
     required this.id,
     required this.senderId,
@@ -208,7 +215,16 @@ class ChatMessage {
     this.status = ChatMessageStatus.sent,
     this.attachment,
     this.localImage,
+    this.localVoice,
   });
+
+  /// The voice message's length and waveform, whether it is still being
+  /// sent from this device or arrived. Null for any other message.
+  ChatVoiceDetails? get voice {
+    final attachment = this.attachment;
+    return localVoice?.details ??
+        (attachment != null && attachment.isVoice ? attachment.voice : null);
+  }
 
   ChatMessage copyWith({
     String? id,
@@ -225,6 +241,7 @@ class ChatMessage {
       status: status ?? this.status,
       attachment: attachment ?? this.attachment,
       localImage: localImage,
+      localVoice: localVoice,
     );
   }
 }

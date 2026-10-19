@@ -22,4 +22,11 @@ abstract final class AppConfig {
 
   /// Base URL of the API gateway, without a trailing slash.
   static const apiBaseUrl = hasApiBaseUrl ? _apiBaseUrl : _defaultApiBaseUrl;
+
+  /// The public half of the Firebase "Web Push certificates" key pair
+  /// (`FCM_WEB_VAPID_KEY`). Only a browser needs it to receive pushes; it is
+  /// public by design, so it may be compiled in.
+  static const webPushKey = String.fromEnvironment('FCM_WEB_VAPID_KEY');
+
+  static const hasWebPushKey = webPushKey != '';
 }

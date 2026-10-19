@@ -132,10 +132,13 @@ class ConversationsNotifier
 
     final opened = await cipher!.decrypt(lastMessage);
     if (opened == null) return conversation;
+    final attachment = opened.attachment;
     return conversation.copyWith(
-      lastMessage: opened.text.isEmpty && opened.attachment != null
-          ? ChatConversation.photoPreview
-          : opened.text,
+      lastMessage: opened.text.isNotEmpty || attachment == null
+          ? opened.text
+          : attachment.isVoice
+          ? ChatConversation.voicePreview
+          : ChatConversation.photoPreview,
     );
   }
 

@@ -117,8 +117,9 @@ class MainMapOverlays {
     _onChanged();
   }
 
-  /// Animates only a change of zoom level among dots, on a flat north-up
-  /// map (the overlay cannot follow a rotated or tilted one).
+  /// Animates only a change of zoom level among dots, bubbles and price
+  /// tags, on a flat north-up map (the overlay cannot follow a rotated or
+  /// tilted one).
   ClusterTransition? _transitionBetween(
     ClusterLayout? from,
     ClusterLayout? to,

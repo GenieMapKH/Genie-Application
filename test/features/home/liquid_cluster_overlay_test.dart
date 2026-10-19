@@ -48,14 +48,49 @@ void main() {
       ),
     );
 
-    await tester.pump(ClusterTransition.duration ~/ 2);
+    await tester.pump(ClusterTransition.glideDuration ~/ 2);
     expect(events, isEmpty);
 
-    await tester.pump(ClusterTransition.duration);
+    await tester.pump(ClusterTransition.glideDuration);
     expect(events, ['landed']);
+    double opacity() => tester.widget<Opacity>(find.byType(Opacity)).opacity;
+    expect(opacity(), 1);
 
-    await tester.pump(LiquidClusterOverlay.handover);
+    // Fades into the map's own markers rather than cutting to them.
+    await tester.pump(
+      LiquidClusterOverlay.hold + LiquidClusterOverlay.fadeOut ~/ 2,
+    );
+    expect(events, ['landed']);
+    expect(opacity(), inExclusiveRange(0, 1));
+
+    await tester.pump(LiquidClusterOverlay.fadeOut);
     expect(events, ['landed', 'done']);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('leaves at once when the map moves after landing', (
+    tester,
+  ) async {
+    final events = <String>[];
+    var camera = const MapCamera(center: _center, zoom: 12.5);
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: LiquidClusterOverlay(
+          transition: _merge(),
+          readCamera: () => camera,
+          onLanded: () => events.add('landed'),
+          onDone: () => events.add('done'),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(ClusterTransition.glideDuration);
+    expect(events, ['landed']);
+
+    camera = const MapCamera(center: LatLng(11.56, 104.93), zoom: 12.5);
+    await tester.pump(const Duration(milliseconds: 16));
+    expect(events, ['landed', 'done']);
   });
 }

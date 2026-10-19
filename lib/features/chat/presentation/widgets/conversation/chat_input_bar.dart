@@ -12,7 +12,15 @@ class ChatInputBar extends StatefulWidget {
   /// Called when the user wants to attach a picture.
   final VoidCallback? onAttach;
 
-  const ChatInputBar({super.key, this.onSend, this.onAttach});
+  /// Called when the user wants to record a voice message.
+  final VoidCallback? onRecordVoice;
+
+  const ChatInputBar({
+    super.key,
+    this.onSend,
+    this.onAttach,
+    this.onRecordVoice,
+  });
 
   @override
   State<ChatInputBar> createState() => _ChatInputBarState();
@@ -164,21 +172,15 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 ),
               ),
               const SizedBox(width: 12),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      'assets/icons/chat_voice.svg',
-                      width: 44,
-                      height: 44,
-                    ),
+              Semantics(
+                button: true,
+                label: context.l10n.chatRecordVoice,
+                child: GestureDetector(
+                  onTap: widget.onRecordVoice,
+                  child: SvgPicture.asset(
+                    'assets/icons/chat_voice.svg',
+                    width: 44,
+                    height: 44,
                   ),
                 ),
               ),

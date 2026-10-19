@@ -65,7 +65,20 @@ void main() {
     expect(layout.spotOf.keys, ['b']);
   });
 
-  testWidgets('zoomed in to price tags there is no layout', (tester) async {
-    expect(await _layout(tester, 16), isNull);
+  testWidgets('zoomed in, each listing is its own price tag', (tester) async {
+    final layout = (await _layout(tester, 16))!;
+
+    expect(layout.zoomLevel, 16);
+    expect(layout.spotOf['a']!.markerId, 'city_dot_0');
+    expect(layout.spotOf['a']!.tag, isNotNull);
+    expect(layout.spotOf['b']!.tag, isNotNull);
+  });
+
+  testWidgets('zoomed in, the selected listing never takes part', (
+    tester,
+  ) async {
+    final layout = (await _layout(tester, 16, selected: _listing('a', 0)))!;
+
+    expect(layout.spotOf.keys, ['b']);
   });
 }

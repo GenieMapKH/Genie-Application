@@ -10,6 +10,7 @@ import 'package:genie/features/profile/presentation/screens/personal_info_page.d
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:genie/features/security/presentation/screens/security_page.dart';
+import 'package:genie/features/notifications/presentation/notification_settings_page.dart';
 import 'package:genie/features/settings/presentation/widgets/preference_rows.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
@@ -139,7 +140,17 @@ class _AccountMenu extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
         SettingsSectionTitle(l10n.accountSectionPreferences),
-        const SettingsSection(children: [AppearanceRow(), LanguageRow()]),
+        SettingsSection(
+          children: [
+            const AppearanceRow(),
+            const LanguageRow(),
+            SettingsRow(
+              icon: Icons.notifications_none_outlined,
+              title: l10n.notificationsTitle,
+              onTap: () => context.pushPage(const NotificationSettingsPage()),
+            ),
+          ],
+        ),
         const SizedBox(height: 24),
         SettingsSectionTitle(l10n.accountSectionMore),
         SettingsSection(

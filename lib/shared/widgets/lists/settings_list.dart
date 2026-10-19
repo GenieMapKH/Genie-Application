@@ -130,3 +130,66 @@ class SettingsRow extends StatelessWidget {
     );
   }
 }
+
+/// A settings row with an on/off switch, and a line saying what it does.
+class SettingsSwitchRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final bool value;
+
+  /// Null disables the switch, e.g. while a change is being saved.
+  final ValueChanged<bool>? onChanged;
+
+  const SettingsSwitchRow({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    required this.value,
+    this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final subtitle = this.subtitle;
+    return MergeSemantics(
+      child: InkWell(
+        onTap: onChanged == null ? null : () => onChanged!(!value),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+          child: Row(
+            children: [
+              Icon(icon, size: 22, color: colors.textMuted),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(fontSize: 13, color: colors.textMuted),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Switch.adaptive(value: value, onChanged: onChanged),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

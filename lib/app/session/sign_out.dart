@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:genie/features/notifications/providers/notification_providers.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 
@@ -14,6 +15,9 @@ import 'package:genie/features/property/presentation/view_models/property_provid
 /// deleted); telling the server again is then harmless.
 final signOutProvider = Provider<Future<void> Function()>((ref) {
   return () async {
+    // First, while the session still lets this device tell the server: its
+    // notifications must stop with the session.
+    await ref.read(pushRegistrationProvider).stop();
     await ref.read(authServiceProvider).logout();
 
     // Back to the Explore tab, and drop everything cached for this user.

@@ -30,8 +30,12 @@ class ChatSendException extends AppException {
   }
 }
 
+/// A call event the server sent: its name and payload.
+typedef CallSocketEvent = ({String event, Map<String, dynamic> data});
+
 /// The real-time connection of one signed-in user. It carries ciphertext
-/// both ways and never sees a readable message.
+/// both ways and never sees a readable message. Voice calls are signalled
+/// over it too (see [onCallEvent]).
 class ChatSocketService {
   static const _ackTimeout = Duration(seconds: 10);
   static const _maxRetryDelay = Duration(seconds: 60);
@@ -55,6 +59,16 @@ class ChatSocketService {
   final _connections = StreamController<void>.broadcast();
   final _presence = StreamController<ChatPresence>.broadcast();
   final _conversationChanges = StreamController<ConversationChange>.broadcast();
+  final _callEvents = StreamController<CallSocketEvent>.broadcast();
+
+  /// What the server sends about calls; the call feature reads them.
+  static const callEventNames = [
+    'call:incoming',
+    'call:accepted',
+    'call:answered-elsewhere',
+    'call:ended',
+    'call:signal',
+  ];
 
   ChatSocketService({required this.readAccessToken, String? baseUrl})
     : _url = '${baseUrl ?? AppConfig.apiBaseUrl}/chat';
@@ -73,6 +87,31 @@ class ChatSocketService {
   /// Conversations archived, restored or deleted elsewhere.
   Stream<ConversationChange> get onConversationChanged =>
       _conversationChanges.stream;
+
+  /// Call events: someone calling, answering, hanging up, or signalling.
+  Stream<CallSocketEvent> get onCallEvent => _callEvents.stream;
+
+  /// Sends a call event and returns the server's answer as it is, refusals
+  /// included: the call feature reads why. Throws a [ChatSendException]
+  /// only when there is no connection or no answer.
+  Future<Map<String, dynamic>> sendCallEvent(
+    String event,
+    Map<String, dynamic> payload,
+  ) async {
+    final socket = await connect() ? _socket : null;
+    if (socket == null) {
+      throw const ChatSendException(ChatSendProblem.signedOut);
+    }
+    try {
+      final ack = await socket
+          .timeout(_ackTimeout.inMilliseconds)
+          .emitWithAckAsync(event, payload);
+      return ack is Map ? Map<String, dynamic>.from(ack) : const {};
+    } catch (e) {
+      AppLogger.error('$event was not acknowledged', e);
+      throw const ChatSendException(ChatSendProblem.noConnection);
+    }
+  }
 
   /// Opens the connection, or re-opens it when the session token changed.
   /// Returns false when there is no session to connect with.
@@ -171,6 +210,7 @@ class ChatSocketService {
     _connections.close();
     _presence.close();
     _conversationChanges.close();
+    _callEvents.close();
   }
 
   io.Socket _createSocket() {
@@ -194,6 +234,9 @@ class ChatSocketService {
     socket.on('newMessage', _onNewMessage);
     socket.on('presence', _onPresence);
     socket.on('conversationChanged', _onConversationChanged);
+    for (final event in callEventNames) {
+      socket.on(event, (data) => _onCallEvent(event, data));
+    }
 
     // A refused handshake. Network failures are retried by the socket itself.
     socket.onConnectError((error) {
@@ -241,6 +284,11 @@ class ChatSocketService {
     } catch (e, stackTrace) {
       AppLogger.error('Ignored a malformed conversation change', e, stackTrace);
     }
+  }
+
+  void _onCallEvent(String event, dynamic data) {
+    if (data is! Map || _callEvents.isClosed) return;
+    _callEvents.add((event: event, data: Map<String, dynamic>.from(data)));
   }
 
   /// The server turned this connection away, usually because the token
