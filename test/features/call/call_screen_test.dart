@@ -81,6 +81,21 @@ void main() {
     await tester.pump(CallController.endedShownFor);
   });
 
+  testWidgets('"Call ended" stays centred once the buttons are gone', (
+    tester,
+  ) async {
+    await showScreen(tester);
+    await controller.call('bob', 'Bob');
+    await tester.pump();
+    await controller.hangUp();
+    await tester.pump();
+
+    final screen = tester.getRect(find.byType(Scaffold));
+    final status = tester.getRect(find.text('Call ended'));
+    expect(status.center.dx, closeTo(screen.center.dx, 1));
+    await tester.pump(CallController.endedShownFor);
+  });
+
   testWidgets('says why a call could not happen', (tester) async {
     await showScreen(tester);
     signaling.inviteRefusal = 'busy';

@@ -28,42 +28,47 @@ class CallScreen extends ConsumerWidget {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: Column(
-              children: [
-                const Spacer(),
-                UserAvatar(name: name, avatarUrl: null, radius: 56),
-                const SizedBox(height: 24),
-                Text(
-                  name,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textPrimary,
+            // Full width, so the centred name and status stay centred once
+            // the action buttons are gone.
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  const Spacer(),
+                  UserAvatar(name: name, avatarUrl: null, radius: 56),
+                  const SizedBox(height: 24),
+                  Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                _CallStatus(call: call),
-                const Spacer(flex: 2),
-                switch (call.phase) {
-                  CallPhase.incoming => _IncomingActions(
-                    onAccept: controller.accept,
-                    onDecline: controller.decline,
-                  ),
-                  CallPhase.outgoing ||
-                  CallPhase.connecting ||
-                  CallPhase.active => _LiveActions(
-                    call: call,
-                    onMute: controller.toggleMute,
-                    onSpeaker: controller.toggleSpeaker,
-                    onHangUp: controller.hangUp,
-                  ),
-                  CallPhase.idle ||
-                  CallPhase.ended => const SizedBox(height: 88),
-                },
-              ],
+                  const SizedBox(height: 8),
+                  _CallStatus(call: call),
+                  const Spacer(flex: 2),
+                  switch (call.phase) {
+                    CallPhase.incoming => _IncomingActions(
+                      onAccept: controller.accept,
+                      onDecline: controller.decline,
+                    ),
+                    CallPhase.outgoing ||
+                    CallPhase.connecting ||
+                    CallPhase.active => _LiveActions(
+                      call: call,
+                      onMute: controller.toggleMute,
+                      onSpeaker: controller.toggleSpeaker,
+                      onHangUp: controller.hangUp,
+                    ),
+                    CallPhase.idle ||
+                    CallPhase.ended => const SizedBox(height: 88),
+                  },
+                ],
+              ),
             ),
           ),
         ),
