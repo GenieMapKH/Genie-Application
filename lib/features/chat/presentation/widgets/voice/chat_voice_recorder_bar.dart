@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_duration_text.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_waveform.dart';
+import 'package:genie/features/chat/presentation/widgets/voice/voice_recording_progress.dart';
 import 'package:genie/features/chat/providers/voice_recording_provider.dart';
 import 'package:genie/l10n/l10n.dart';
 
@@ -40,42 +38,7 @@ class ChatVoiceRecorderBar extends StatelessWidget {
             onPressed: recordingNow ? onDiscard : null,
           ),
           const SizedBox(width: 4),
-          Expanded(
-            child: Container(
-              height: 44,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: context.colors.iconSubtle),
-              ),
-              child: Row(
-                children: [
-                  _RecordingDot(color: context.colors.danger),
-                  const SizedBox(width: 8),
-                  Semantics(
-                    liveRegion: true,
-                    label: context.l10n.chatRecordingVoice,
-                    child: Text(
-                      voiceDurationText(recording.elapsed),
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                        color: context.colors.textPrimary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: VoiceWaveform(
-                      levels: recording.recentLevels,
-                      color: context.colors.accent,
-                      height: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          Expanded(child: VoiceRecordingProgress(recording: recording)),
           const SizedBox(width: 12),
           SizedBox(
             width: 44,
@@ -100,42 +63,6 @@ class ChatVoiceRecorderBar extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Fades in and out while recording, as a microphone light would.
-class _RecordingDot extends StatefulWidget {
-  final Color color;
-
-  const _RecordingDot({required this.color});
-
-  @override
-  State<_RecordingDot> createState() => _RecordingDotState();
-}
-
-class _RecordingDotState extends State<_RecordingDot>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pulse = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 800),
-  )..repeat(reverse: true);
-
-  @override
-  void dispose() {
-    _pulse.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: Tween(begin: 0.3, end: 1.0).animate(_pulse),
-      child: Container(
-        width: 10,
-        height: 10,
-        decoration: BoxDecoration(color: widget.color, shape: BoxShape.circle),
       ),
     );
   }

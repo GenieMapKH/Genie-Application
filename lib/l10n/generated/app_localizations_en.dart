@@ -2363,6 +2363,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatDiscardVoice => 'Delete recording';
 
   @override
+  String get chatSlideToCancel => 'Slide to cancel';
+
+  @override
   String get chatVoiceTooShort => 'Voice message too short.';
 
   @override

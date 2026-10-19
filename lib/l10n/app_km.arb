@@ -687,6 +687,7 @@
   "chatRecordingVoice": "កំពុងថត",
   "chatSendVoice": "ផ្ញើសារជាសំឡេង",
   "chatDiscardVoice": "លុបការថត",
+  "chatSlideToCancel": "អូសដើម្បីបោះបង់",
   "chatVoiceTooShort": "សារជាសំឡេងខ្លីពេក។",
   "chatVoiceRecordFailed": "មិនអាចថតបានទេ។ សូមព្យាយាមម្តងទៀត។",
   "chatVoiceUnavailable": "មិនអាចចាក់សារជាសំឡេងបានទេ។ ចុចដើម្បីព្យាយាមម្តងទៀត។",

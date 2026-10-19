@@ -2353,6 +2353,9 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatDiscardVoice => 'លុបការថត';
 
   @override
+  String get chatSlideToCancel => 'អូសដើម្បីបោះបង់';
+
+  @override
   String get chatVoiceTooShort => 'សារជាសំឡេងខ្លីពេក។';
 
   @override

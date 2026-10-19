@@ -4154,6 +4154,12 @@ abstract class AppLocalizations {
   /// **'Delete recording'**
   String get chatDiscardVoice;
 
+  /// No description provided for @chatSlideToCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Slide to cancel'**
+  String get chatSlideToCancel;
+
   /// No description provided for @chatVoiceTooShort.
   ///
   /// In en, this message translates to:

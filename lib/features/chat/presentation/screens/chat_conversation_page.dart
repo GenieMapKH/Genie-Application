@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,6 +20,7 @@ import 'package:genie/features/chat/presentation/widgets/conversation/chat_send_
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
 import 'package:genie/features/chat/presentation/widgets/pin/pin_check_dialog.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_recorder_bar.dart';
+import 'package:genie/features/chat/presentation/widgets/voice/voice_hold_panel.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/voice_recording_problem_text.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_call_starter.dart';
@@ -48,7 +51,8 @@ class ChatConversationPage extends ConsumerWidget {
         ? null
         : (userId: userId, participantId: participantId);
     final startCall = ref.watch(chatCallStarterProvider);
-    final canCall = startCall != null && chat != null && userId != participantId;
+    final canCall =
+        startCall != null && chat != null && userId != participantId;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -115,6 +119,10 @@ class _Conversation extends ConsumerStatefulWidget {
 
 class _ConversationState extends ConsumerState<_Conversation> {
   late final VisibleConversation _visible;
+
+  /// The microphone is held down: the message bar stays (the finger is on
+  /// its button) and shows the recording in place of the field.
+  bool _holdingVoice = false;
 
   @override
   void initState() {
@@ -201,6 +209,24 @@ class _ConversationState extends ConsumerState<_Conversation> {
     await ref.read(voiceRecordingProvider(widget.chat).notifier).start();
   }
 
+  /// Records while the microphone is held down.
+  Future<void> _holdVoiceStart() async {
+    setState(() => _holdingVoice = true);
+    await _recordVoice();
+    // Let go (or interrupted, as by the permission question) before the
+    // microphone was ready: nothing worth sending was said.
+    if (mounted && !_holdingVoice) {
+      await ref.read(voiceRecordingProvider(widget.chat).notifier).discard();
+    }
+  }
+
+  /// The microphone was let go: send, unless the finger slid away.
+  void _holdVoiceEnd({required bool cancelled}) {
+    setState(() => _holdingVoice = false);
+    final recording = ref.read(voiceRecordingProvider(widget.chat).notifier);
+    unawaited(cancelled ? recording.discard() : recording.finish());
+  }
+
   void _showRecordingProblem(VoiceRecordingProblem problem) {
     final l10n = context.l10n;
     ScaffoldMessenger.of(context)
@@ -262,7 +288,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
                 participantName: widget.participantName,
               ),
             )
-          else if (recording.isActive)
+          else if (recording.isActive && !_holdingVoice)
             ChatVoiceRecorderBar(
               recording: recording,
               onDiscard: () => ref.read(recordingProvider.notifier).discard(),
@@ -273,6 +299,11 @@ class _ConversationState extends ConsumerState<_Conversation> {
               onSend: (text) => ref.read(provider.notifier).sendMessage(text),
               onAttach: _sendPicture,
               onRecordVoice: _recordVoice,
+              onHoldVoiceStart: _holdVoiceStart,
+              onHoldVoiceEnd: _holdVoiceEnd,
+              recordingPanel: _holdingVoice
+                  ? VoiceHoldPanel(recording: recording)
+                  : null,
             ),
         ],
       ),

@@ -738,6 +738,7 @@
   "chatRecordingVoice": "Recording",
   "chatSendVoice": "Send voice message",
   "chatDiscardVoice": "Delete recording",
+  "chatSlideToCancel": "Slide to cancel",
   "chatVoiceTooShort": "Voice message too short.",
   "chatVoiceRecordFailed": "Could not record. Try again.",
   "chatVoiceUnavailable": "Voice message unavailable. Tap to retry.",

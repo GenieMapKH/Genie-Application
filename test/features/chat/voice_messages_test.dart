@@ -12,6 +12,8 @@ import 'package:genie/features/chat/models/chat_voice.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_message.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_recorder_bar.dart';
+import 'package:genie/features/chat/presentation/widgets/voice/voice_hold_panel.dart';
+import 'package:genie/features/chat/presentation/widgets/voice/voice_record_button.dart';
 import 'package:genie/features/chat/providers/active_chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
@@ -250,6 +252,79 @@ void main() {
       expect(find.byType(ChatVoiceMessage), findsOneWidget);
       expect(attachments.uploads.single, [7, 7, 7]);
       expect(socket.sent, hasLength(1));
+    });
+
+    Future<TestGesture> holdMicrophone(WidgetTester tester) async {
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.bySemanticsLabel('Record a voice message')),
+      );
+      await tester.pump(VoiceRecordButton.holdDelay);
+      await tester.pump();
+      await tester.pump();
+      return gesture;
+    }
+
+    testWidgets('held down, the microphone records and sends on release', (
+      tester,
+    ) async {
+      await openChat(tester);
+
+      final gesture = await holdMicrophone(tester);
+      expect(find.byType(VoiceHoldPanel), findsOneWidget);
+      expect(find.text('Slide to cancel'), findsOneWidget);
+      expect(find.byType(TextField), findsNothing);
+      expect(find.byType(ChatVoiceRecorderBar), findsNothing);
+
+      clock.now = clock.now.add(const Duration(seconds: 2));
+      await tester.pump(const Duration(milliseconds: 100));
+      await gesture.up();
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      expect(find.byType(VoiceHoldPanel), findsNothing);
+      expect(find.byType(ChatVoiceMessage), findsOneWidget);
+      expect(socket.sent, hasLength(1));
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('sliding the held finger left throws the recording away', (
+      tester,
+    ) async {
+      await openChat(tester);
+
+      final gesture = await holdMicrophone(tester);
+      clock.now = clock.now.add(const Duration(seconds: 2));
+      await gesture.moveBy(
+        const Offset(-(VoiceRecordButton.cancelDistance + 10), 0),
+      );
+      await tester.pump();
+      expect(recorder.cancelled, isTrue);
+      expect(find.byType(VoiceHoldPanel), findsNothing);
+
+      await gesture.up();
+      await tester.pump();
+      expect(socket.sent, isEmpty);
+      expect(find.byType(ChatVoiceMessage), findsNothing);
+    });
+
+    testWidgets('a quick press is a tap: it opens the recording bar', (
+      tester,
+    ) async {
+      await openChat(tester);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.bySemanticsLabel('Record a voice message')),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      await gesture.up();
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byType(ChatVoiceRecorderBar), findsOneWidget);
+      expect(find.byType(VoiceHoldPanel), findsNothing);
+      await tester.tap(find.byTooltip('Delete recording'));
+      await tester.pump();
     });
 
     testWidgets('a received voice message shows its length and plays', (
