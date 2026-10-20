@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/layout/app_header_bar.dart';
 import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:genie/features/property/presentation/view_models/own_listings.dart';
+import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
 
 import 'package:genie/features/property/presentation/widgets/my_properties/property_card.dart';
 import 'package:genie/features/property/presentation/widgets/my_properties/empty_properties_state.dart';
@@ -14,6 +14,8 @@ import 'package:genie/features/property/presentation/widgets/my_properties/prope
 import 'package:genie/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:genie/shared/widgets/lists/loading_more_indicator.dart';
 
 class MyPropertiesPage extends ConsumerWidget {
   final bool isEmbedded;
@@ -52,12 +54,12 @@ class MyPropertiesPage extends ConsumerWidget {
                 child: propertiesAsync.when(
                   skipLoadingOnReload: true,
                   skipError: true,
-                  data: (properties) => Column(
+                  data: (listings) => Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      PropertyTabs(properties: properties),
+                      PropertyTabs(countByStatus: listings.countByStatus),
                       const SizedBox(height: 24),
-                      Expanded(child: _buildBody(context, ref, properties)),
+                      Expanded(child: _buildBody(context, ref, listings)),
                     ],
                   ),
                   loading: () => Center(
@@ -80,17 +82,13 @@ class MyPropertiesPage extends ConsumerWidget {
           width: 140,
           height: 44,
           child: ElevatedButton(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AddPropertyPage(
-                    boundaryPoints: [],
-                    propertyArea: 0,
-                  ),
-                ),
-              );
-              ref.read(propertiesProvider.notifier).refresh();
-            },
+            // Saving it reloads the list (see `ownListingsChanged`).
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const AddPropertyPage(boundaryPoints: [], propertyArea: 0),
+              ),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.colors.accent,
               shape: RoundedRectangleBorder(
@@ -112,11 +110,8 @@ class MyPropertiesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    WidgetRef ref,
-    List<PropertyModel> properties,
-  ) {
+  Widget _buildBody(BuildContext context, WidgetRef ref, OwnListings listings) {
+    final properties = listings.items;
     if (properties.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -124,26 +119,29 @@ class MyPropertiesPage extends ConsumerWidget {
       );
     }
 
-    return ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      itemCount: properties.length,
-      itemBuilder: (context, index) {
-        final property = properties[index];
-        return PropertyCard(
-          property: property,
-          onTap: () async {
-            await Navigator.of(context).push(
+    final page = listings.page;
+    return LoadMoreOnScroll(
+      enabled: page.hasMore && !page.loadingMore,
+      onLoadMore: () => ref.read(propertiesProvider.notifier).loadMore(),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        itemCount: properties.length + (page.loadingMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == properties.length) return const LoadingMoreIndicator();
+          final property = properties[index];
+          return PropertyCard(
+            property: property,
+            onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => AddPropertyPage.edit(property),
               ),
-            );
-            ref.read(propertiesProvider.notifier).refresh();
-          },
-          onOptionsTapped: () =>
-              PropertyOptionsSheet.show(context, ref, property),
-        );
-      },
+            ),
+            onOptionsTapped: () =>
+                PropertyOptionsSheet.show(context, ref, property),
+          );
+        },
+      ),
     );
   }
 

@@ -16,7 +16,6 @@ import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog
 import 'package:genie/features/home/utils/map/map_measurements.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 
@@ -213,6 +212,5 @@ class MainMapControls extends ConsumerWidget {
 
     ref.invalidate(propertyDetailProvider(property.id));
     ref.read(mapStateProvider.notifier).finalizeDrawing();
-    await ref.read(propertiesProvider.notifier).refreshQuietly();
   }
 }

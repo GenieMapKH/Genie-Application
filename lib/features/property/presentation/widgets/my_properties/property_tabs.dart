@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 
 class PropertyTabs extends StatelessWidget {
-  final List<PropertyModel> properties;
+  /// How many of the user's listings are in each status, loaded or not.
+  final Map<String, int> countByStatus;
 
-  const PropertyTabs({super.key, required this.properties});
+  const PropertyTabs({super.key, required this.countByStatus});
 
   String _getTabTitle(BuildContext context, int index) {
     final l10n = context.l10n;
-    int count(String status) =>
-        properties.where((p) => p.status == status).length;
+    int count(String status) => countByStatus[status] ?? 0;
     switch (index) {
       case 0:
         return l10n.propertyTabActive(count('Active'));

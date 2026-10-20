@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
@@ -107,9 +107,9 @@ class _StatsRowState extends ConsumerState<_StatsRow> {
 
   int _saveCount() {
     final property = widget.property;
-    final saved = ref.watch(savedPropertiesProvider).valueOrNull;
+    final saved = ref.watch(savedPropertyIdsProvider).valueOrNull;
     if (saved == null) return property.saveCount;
-    final savedNow = saved.any((p) => p.id == property.id);
+    final savedNow = saved.contains(property.id);
     _savedAtLoad ??= savedNow;
     final change = (savedNow ? 1 : 0) - (_savedAtLoad! ? 1 : 0);
     return (property.saveCount + change).clamp(0, 1 << 31);

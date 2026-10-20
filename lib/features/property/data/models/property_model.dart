@@ -46,6 +46,7 @@ class PropertyModel {
   final String? ownerAvatarUrl;
   final String? ownerEmail;
   final String? ownerPhone;
+
   /// People who saved the listing.
   final int saveCount;
 
@@ -131,6 +132,12 @@ class PropertyModel {
     if (buildingSize != null && buildingSize! > 0) return buildingSize;
     return null;
   }
+
+  /// A list of listings as the server sends it. Static, so a large list can
+  /// be parsed off the UI thread with `compute`.
+  static List<PropertyModel> listFromJson(List<dynamic> data) => [
+    for (final json in data) PropertyModel.fromJson(json),
+  ];
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
     List<LatLng> points = [];

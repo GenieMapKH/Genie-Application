@@ -6,8 +6,8 @@ import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_visibility.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_visibility_sheet.dart';
@@ -53,7 +53,6 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
           );
       if (saved == null) return;
       ref.invalidate(propertyDetailProvider(widget.property.id));
-      await ref.read(propertiesProvider.notifier).refreshQuietly();
       widget.onEdited();
     } catch (e, stack) {
       AppLogger.error('Opening the listing editor failed', e, stack);
@@ -73,7 +72,7 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
     setState(() => _busy = true);
     try {
       await ref
-          .read(propertiesProvider.notifier)
+          .read(ownListingActionsProvider)
           .changeVisibility(widget.property.id, _status, target);
       if (!mounted) return;
       setState(() => _status = _statusOf(target));

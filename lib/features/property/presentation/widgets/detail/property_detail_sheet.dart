@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_recommendations_provider.dart';
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_detail_actions.dart';
 import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_gallery.dart';
@@ -200,22 +200,19 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                     ),
                                   ),
                                   PropertyDetailActions(
-                                    isFavorite:
-                                        ref
-                                            .watch(savedPropertiesProvider)
-                                            .valueOrNull
-                                            ?.any(
-                                              (p) => p.id == widget.property.id,
-                                            ) ??
-                                        false,
+                                    isFavorite: ref.watch(
+                                      isPropertySavedProvider(
+                                        widget.property.id,
+                                      ),
+                                    ),
                                     onClose: _dismiss,
                                     onFavoriteToggled: () {
                                       if (!requireSignIn(context, ref)) return;
                                       ref
                                           .read(
-                                            savedPropertiesProvider.notifier,
+                                            savedPropertyIdsProvider.notifier,
                                           )
-                                          .toggleFavorite(widget.property);
+                                          .toggle(widget.property.id);
                                     },
                                   ),
                                 ],

@@ -5,9 +5,13 @@ import 'package:genie/core/logging/app_logger.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/property_model.dart';
 
-List<PropertyModel> _parseProperties(List<dynamic> data) {
-  return data.map((json) => PropertyModel.fromJson(json)).toList();
-}
+/// One page of the user's own listings, where the next one starts (null
+/// after the last), and how many listings they have in each status.
+typedef OwnListingsPage = ({
+  List<PropertyModel> items,
+  int? nextOffset,
+  Map<String, int> countByStatus,
+});
 
 class PropertyRepository {
   final Dio dio;
@@ -25,28 +29,63 @@ class PropertyRepository {
     extra: CacheInterceptor.freshFor(const Duration(seconds: 30)),
   );
 
-  // Cache for client-side filtering
-  List<PropertyModel> _cachedProperties = [];
+  /// The signed-in user's own listings per page of the My Properties screen.
+  static const ownPageSize = 20;
 
-  Future<List<PropertyModel>> fetchAll({bool forceRefresh = false}) async {
-    if (_cachedProperties.isNotEmpty && !forceRefresh) {
-      return _cachedProperties;
-    }
-
-    // In guest mode (no token), fetching /properties will return 401.
-    // We catch it and return empty list.
+  /// [limit] of the user's own listings, newest first, from [offset] on,
+  /// with how many of them there are in each status. Empty for a session the
+  /// server no longer accepts.
+  Future<OwnListingsPage> fetchOwnPage({
+    required int offset,
+    int limit = ownPageSize,
+  }) async {
     try {
-      final response = await dio.get('/properties');
-      final List<dynamic> data = response.data;
-      _cachedProperties = await compute(_parseProperties, data);
-      return _cachedProperties;
+      final response = await dio.get(
+        '/properties',
+        queryParameters: {'limit': limit, 'offset': offset},
+      );
+      final data = response.data as Map<String, dynamic>;
+      return (
+        items: await compute(
+          PropertyModel.listFromJson,
+          data['items'] as List<dynamic>,
+        ),
+        nextOffset: data['nextOffset'] as int?,
+        countByStatus: (data['countByStatus'] as Map<String, dynamic>? ?? {})
+            .map((status, count) => MapEntry(status, count as int)),
+      );
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        _cachedProperties = [];
-        return [];
+        return (
+          items: <PropertyModel>[],
+          nextOffset: null,
+          countByStatus: <String, int>{},
+        );
       }
       rethrow;
     }
+  }
+
+  /// The user's own listings (drafts too) inside a map area, so the map can
+  /// mark them for editing: at most the newest 500.
+  Future<List<PropertyModel>> fetchOwnInArea({
+    required double minLat,
+    required double maxLat,
+    required double minLng,
+    required double maxLng,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get(
+      '/properties/my/in-area',
+      queryParameters: {
+        'minLat': minLat,
+        'maxLat': maxLat,
+        'minLng': minLng,
+        'maxLng': maxLng,
+      },
+      cancelToken: cancelToken,
+    );
+    return compute(PropertyModel.listFromJson, response.data as List<dynamic>);
   }
 
   /// Published listings inside the given map area, of [propertyType] and
@@ -76,7 +115,7 @@ class PropertyRepository {
       cancelToken: cancelToken,
     );
     final List<dynamic> data = response.data;
-    return compute(_parseProperties, data);
+    return compute(PropertyModel.listFromJson, data);
   }
 
   Future<PropertyModel> fetchPropertyDetail(String id) async {
@@ -95,25 +134,16 @@ class PropertyRepository {
     }
   }
 
-  List<PropertyModel> getPropertiesByStatus(String status) {
-    return _cachedProperties.where((p) => p.status == status).toList();
-  }
-
   Future<PropertyModel> create(Map<String, dynamic> data) async {
     final response = await dio.post('/properties', data: data);
-    final property = PropertyModel.fromJson(response.data);
-    _cachedProperties.insert(0, property);
-    return property;
+    return PropertyModel.fromJson(response.data);
   }
 
   /// Changes the listing's details (any field of the create body, keywords
   /// included). Returns it as saved.
   Future<PropertyModel> update(String id, Map<String, dynamic> data) async {
     final response = await dio.patch('/properties/$id', data: data);
-    final property = PropertyModel.fromJson(response.data);
-    final index = _cachedProperties.indexWhere((p) => p.id == id);
-    if (index != -1) _cachedProperties[index] = property;
-    return property;
+    return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> updatePin(String id, double lat, double lng) async {
@@ -132,7 +162,6 @@ class PropertyRepository {
       '/properties/$id/boundary',
       data: {'boundaryPoints': points},
     );
-    _refreshCache();
     return PropertyModel.fromJson(response.data);
   }
 
@@ -143,7 +172,6 @@ class PropertyRepository {
       '/properties/$id/images/remove',
       data: {'urls': urls},
     );
-    _refreshCache();
     return PropertyModel.fromJson(response.data);
   }
 
@@ -183,37 +211,31 @@ class PropertyRepository {
       },
     );
 
-    _refreshCache();
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> publish(String id) async {
     final response = await dio.patch('/properties/$id/publish');
-    _refreshCache();
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> unpublish(String id) async {
     final response = await dio.patch('/properties/$id/unpublish');
-    _refreshCache();
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> markSold(String id) async {
     final response = await dio.patch('/properties/$id/mark-sold');
-    _refreshCache();
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> relist(String id) async {
     final response = await dio.patch('/properties/$id/relist');
-    _refreshCache();
     return PropertyModel.fromJson(response.data);
   }
 
   Future<void> remove(String id) async {
     await dio.delete('/properties/$id');
-    _cachedProperties.removeWhere((p) => p.id == id);
   }
 
   /// Counts the signed-in user as one viewer of listing [id]. A failure only
@@ -224,34 +246,5 @@ class PropertyRepository {
     } catch (e) {
       AppLogger.error('Recording a listing view failed', e);
     }
-  }
-
-  Future<List<PropertyModel>> fetchFavorites() async {
-    try {
-      final response = await dio.get('/properties/my/favorites');
-      final List<dynamic> data = response.data;
-      return await compute(_parseProperties, data);
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        return [];
-      }
-      rethrow;
-    }
-  }
-
-  Future<void> favorite(String id) async {
-    await dio.post('/properties/$id/favorite');
-  }
-
-  Future<void> unfavorite(String id) async {
-    await dio.delete('/properties/$id/favorite');
-  }
-
-  void invalidateCache() {
-    _cachedProperties = [];
-  }
-
-  Future<void> _refreshCache() async {
-    await fetchAll(forceRefresh: true);
   }
 }

@@ -5,6 +5,7 @@ import 'package:genie/features/home/presentation/providers/map_properties_provid
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/data/repositories/property_repository.dart';
 import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:genie/features/property/presentation/view_models/own_map_properties_provider.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,8 +29,24 @@ class _OwnListings extends PropertyRepository {
   _OwnListings(this.mine) : super(Dio());
 
   @override
-  Future<List<PropertyModel>> fetchAll({bool forceRefresh = false}) async =>
-      mine;
+  Future<List<PropertyModel>> fetchOwnInArea({
+    required double minLat,
+    required double maxLat,
+    required double minLng,
+    required double maxLng,
+    CancelToken? cancelToken,
+  }) async => mine;
+
+  @override
+  Future<List<PropertyModel>> fetchPublicMapProperties({
+    required double minLat,
+    required double maxLat,
+    required double minLng,
+    required double maxLng,
+    String? propertyType,
+    String? listingType,
+    CancelToken? cancelToken,
+  }) async => const [];
 }
 
 void main() {
@@ -78,7 +95,13 @@ void main() {
       ],
     );
     addTearDown(container.dispose);
-    await container.read(propertiesProvider.future);
+    container.read(mapBoundsProvider.notifier).state = const MapBounds(
+      minLat: 11,
+      maxLat: 12,
+      minLng: 104,
+      maxLng: 105,
+    );
+    await container.read(ownMapPropertiesProvider.future);
 
     List<String> shown() => [
       for (final p in container.read(mapPropertiesProvider).properties) p.id,

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 
@@ -198,12 +199,16 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
     for (final p in points) {'lat': p.latitude, 'lng': p.longitude},
   ];
 
+  /// Runs [work], a save of the user's listing, then tells whatever shows
+  /// their listings to read them again: even a save that failed half way
+  /// (created, but a photo upload failed) changed them.
   Future<T> _whileLoading<T>(Future<T> Function() work) async {
     state = state.copyWith(isLoading: true);
     try {
       return await work();
     } finally {
       state = state.copyWith(isLoading: false);
+      ownListingsChanged(ref);
     }
   }
 }

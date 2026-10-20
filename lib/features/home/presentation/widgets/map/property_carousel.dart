@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:genie/features/property/presentation/widgets/property_item_card.dart';
 
 /// Horizontally swipeable strip of property cards that slides in above the
@@ -124,13 +124,8 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
                         final property = _items[index];
                         return Consumer(
                           builder: (context, ref, _) {
-                            final savedList =
-                                ref
-                                    .watch(savedPropertiesProvider)
-                                    .valueOrNull ??
-                                [];
-                            final isSaved = savedList.any(
-                              (p) => p.id == property.id,
+                            final isSaved = ref.watch(
+                              isPropertySavedProvider(property.id),
                             );
 
                             return PropertyItemCard(
@@ -139,8 +134,8 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
                               onFavoriteToggled: () {
                                 if (!requireSignIn(context, ref)) return;
                                 ref
-                                    .read(savedPropertiesProvider.notifier)
-                                    .toggleFavorite(property);
+                                    .read(savedPropertyIdsProvider.notifier)
+                                    .toggle(property.id);
                               },
                               onTap: () => widget.onOpenDetail(property),
                             );
