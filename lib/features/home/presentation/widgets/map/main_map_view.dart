@@ -46,6 +46,10 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     onZoomToCluster: _zoomToCluster,
   );
 
+  /// The listings changed while a full-screen tab page covered the map:
+  /// their markers are drawn again once it is uncovered, not while hidden.
+  bool _listingsStale = false;
+
   /// The map frame extends this many logical pixels past the bottom of the
   /// screen (see the `GoogleMap`'s `bottom: -40` below), which shifts its
   /// natural camera-target position south of true screen center by half this
@@ -244,7 +248,18 @@ class MainMapViewState extends ConsumerState<MainMapView> {
     );
     final navIndex = ref.watch(mainNavProvider.select((s) => s.currentIndex));
 
-    ref.listen(mapPropertiesProvider, (_, _) => _overlays.rebuildListings());
+    ref.listen(mapPropertiesProvider, (_, _) {
+      if (ref.read(mainNavProvider).currentIndex != 0) {
+        _listingsStale = true;
+      } else {
+        _overlays.rebuildListings();
+      }
+    });
+    ref.listen(mainNavProvider.select((s) => s.currentIndex == 0), (_, shown) {
+      if (!shown || !_listingsStale) return;
+      _listingsStale = false;
+      _overlays.rebuildListings();
+    });
     ref.listen(mapStateProvider, _overlays.onMapStateChanged);
     ref.listen(propertyCarouselProvider, (previous, next) {
       if (previous?.selected?.id == next.selected?.id) return;

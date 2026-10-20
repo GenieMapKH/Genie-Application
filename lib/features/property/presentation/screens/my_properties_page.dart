@@ -14,6 +14,7 @@ import 'package:genie/features/property/presentation/widgets/my_properties/prope
 import 'package:genie/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/layout/paused_while_hidden.dart';
 import 'package:genie/shared/widgets/lists/load_more_on_scroll.dart';
 import 'package:genie/shared/widgets/lists/loading_more_indicator.dart';
 
@@ -27,8 +28,13 @@ class MyPropertiesPage extends ConsumerWidget {
     this.onBackPressed,
   });
 
+  /// Kept while another tab is shown: changes to the listings redraw it
+  /// only once it is shown again.
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      PausedWhileHidden(builder: _buildShown);
+
+  Widget _buildShown(BuildContext context, WidgetRef ref) {
     final propertiesAsync = ref.watch(propertiesProvider);
 
     return Scaffold(

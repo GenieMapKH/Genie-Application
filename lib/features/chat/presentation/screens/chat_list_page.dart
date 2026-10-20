@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/layout/paused_while_hidden.dart';
 
 class ChatListPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -40,22 +41,27 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
               trailing: _buildMoreMenu(),
             ),
             Expanded(
-              child: ref
-                  .watch(conversationsProvider)
-                  .when(
-                    data: (list) {
-                      if (list.items.isEmpty) return _buildEmptyState();
-                      return ChatConversationListView(
-                        page: list.page,
-                        isArchived: false,
-                        onLoadMore: () =>
-                            ref.read(conversationsProvider.notifier).loadMore(),
-                      );
-                    },
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (err, stack) => _buildErrorState(),
-                  ),
+              // Kept while another tab is shown: new messages redraw the
+              // list only once it is shown again.
+              child: PausedWhileHidden(
+                builder: (context, ref) => ref
+                    .watch(conversationsProvider)
+                    .when(
+                      data: (list) {
+                        if (list.items.isEmpty) return _buildEmptyState();
+                        return ChatConversationListView(
+                          page: list.page,
+                          isArchived: false,
+                          onLoadMore: () => ref
+                              .read(conversationsProvider.notifier)
+                              .loadMore(),
+                        );
+                      },
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (err, stack) => _buildErrorState(),
+                    ),
+              ),
             ),
           ],
         ),

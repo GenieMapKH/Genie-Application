@@ -11,6 +11,7 @@ import 'package:genie/features/property/presentation/widgets/detail/property_det
 import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/layout/paused_while_hidden.dart';
 import 'package:genie/shared/utils/paged_list.dart';
 import 'package:genie/shared/widgets/lists/load_more_on_scroll.dart';
 import 'package:genie/shared/widgets/lists/loading_more_indicator.dart';
@@ -39,8 +40,13 @@ class SavedPropertiesPage extends ConsumerWidget {
     );
   }
 
+  /// Kept while another tab is shown: changes to the listings redraw it
+  /// only once it is shown again.
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      PausedWhileHidden(builder: _buildShown);
+
+  Widget _buildShown(BuildContext context, WidgetRef ref) {
     final savedAsync = ref.watch(savedPropertiesProvider);
     final count = ref.watch(savedPropertyIdsProvider).valueOrNull?.length ?? 0;
 
