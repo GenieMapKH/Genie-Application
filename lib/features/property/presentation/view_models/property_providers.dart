@@ -182,6 +182,8 @@ class VisitedPropertyIdsNotifier extends Notifier<Set<String>> {
   }
 
   void add(String id) {
+    // Already known: nothing to show differently, nor to write again.
+    if (state.contains(id)) return;
     final newState = {...state, id};
     state = newState;
     _save(newState);
