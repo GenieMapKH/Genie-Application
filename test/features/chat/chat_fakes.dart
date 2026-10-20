@@ -269,14 +269,29 @@ class FakeChatRepository extends Fake implements ChatRepository {
     return callHistory;
   }
 
+  /// The cursor of each page asked for (null for the first).
+  final conversationCursors = <String?>[];
+
+  /// Serves [conversations] (or [archivedConversations]) a page at a time,
+  /// in their order; the cursor is the index the next page starts at.
   @override
-  Future<List<ChatConversation>> fetchConversations({
+  Future<ConversationPage> fetchConversationPage({
     bool archived = false,
+    int limit = ChatRepository.conversationPageSize,
+    String? cursor,
   }) async {
     conversationRequests++;
+    conversationCursors.add(cursor);
     await gate?.future;
     if (conversationsError != null) throw conversationsError!;
-    return archived ? archivedConversations : conversations;
+    final all = archived ? archivedConversations : conversations;
+    final start = cursor == null ? 0 : int.parse(cursor);
+    final end = (start + limit).clamp(0, all.length);
+    return (
+      items: all.sublist(start.clamp(0, end), end),
+      nextCursor: end < all.length ? '$end' : null,
+      unreadTotal: all.fold(0, (sum, c) => sum + c.unreadCount),
+    );
   }
 
   Future<void> _change(String change) async {

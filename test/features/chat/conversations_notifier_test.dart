@@ -55,7 +55,7 @@ void main() {
     final notifier = build();
     await settle();
 
-    final conversation = notifier.state.value!.single;
+    final conversation = notifier.state.value!.items.single;
     expect(conversation.lastMessage, 'See you at 5');
     expect(conversation.unreadCount, 2);
   });
@@ -69,7 +69,7 @@ void main() {
     await settle();
 
     expect(
-      notifier.state.value!.single.lastMessage,
+      notifier.state.value!.items.single.lastMessage,
       ChatConversation.encryptedPreview,
     );
   });
@@ -78,7 +78,7 @@ void main() {
     final notifier = build(signedIn: false);
     await settle();
 
-    expect(notifier.state.value, isEmpty);
+    expect(notifier.state.value!.items, isEmpty);
     expect(repository.conversationRequests, 0);
   });
 
@@ -133,7 +133,7 @@ void main() {
     await notifier.refresh();
 
     expect(notifier.state.hasError, isFalse);
-    expect(notifier.state.value, hasLength(1));
+    expect(notifier.state.value!.items, hasLength(1));
   });
 
   test('a failed first load reports the error', () async {
@@ -156,7 +156,7 @@ void main() {
     await notifier.markAsRead(peer);
 
     expect(repository.markedRead, [peer]);
-    expect(notifier.state.value!.map((c) => c.unreadCount), [0, 1]);
+    expect(notifier.state.value!.items.map((c) => c.unreadCount), [0, 1]);
   });
 
   group('a new message', () {
@@ -177,7 +177,7 @@ void main() {
         await settle();
 
         expect(repository.conversationRequests, 0);
-        final top = notifier.state.value!.first;
+        final top = notifier.state.value!.items.first;
         expect(top.participantId, peer, reason: 'moved to the top');
         expect(top.lastMessage, 'Is it still for sale?');
         expect(top.unreadCount, 2);
@@ -196,7 +196,7 @@ void main() {
       unawaited(notifier.markAsRead(peer));
       await settle();
 
-      expect(notifier.state.value!.single.unreadCount, 0);
+      expect(notifier.state.value!.items.single.unreadCount, 0);
     });
 
     test('sent from my other device is not unread', () async {
@@ -207,7 +207,7 @@ void main() {
       socket.messages.add(encrypted('m2', 'On my way', from: me));
       await settle();
 
-      final conversation = notifier.state.value!.single;
+      final conversation = notifier.state.value!.items.single;
       expect(conversation.lastMessage, 'On my way');
       expect(conversation.unreadCount, 0);
     });
@@ -223,7 +223,7 @@ void main() {
       await settle();
 
       expect(repository.conversationRequests, 1);
-      expect(notifier.state.value, hasLength(1));
+      expect(notifier.state.value!.items, hasLength(1));
     });
   });
 
@@ -240,7 +240,7 @@ void main() {
       notifier.recordSent(encrypted('m2', 'Deal', from: me), preview: 'Deal');
 
       expect(repository.conversationRequests, 0);
-      final top = notifier.state.value!.first;
+      final top = notifier.state.value!.items.first;
       expect(top.participantId, peer);
       expect(top.lastMessage, 'Deal');
       expect(top.lastMessageId, 'm2');
@@ -257,7 +257,7 @@ void main() {
       await settle();
 
       expect(repository.conversationRequests, 1);
-      expect(notifier.state.value, hasLength(1));
+      expect(notifier.state.value!.items, hasLength(1));
     });
   });
 
@@ -283,7 +283,7 @@ void main() {
         await settle();
 
         expect(repository.conversationRequests, 0);
-        expect(notifier.state.value!.single.lastMessage, 'See you at 6');
+        expect(notifier.state.value!.items.single.lastMessage, 'See you at 6');
       },
     );
 
@@ -297,7 +297,7 @@ void main() {
       await settle();
 
       expect(repository.conversationRequests, 0);
-      expect(notifier.state.value!.single.lastMessage, 'See you at 5');
+      expect(notifier.state.value!.items.single.lastMessage, 'See you at 5');
     });
   });
 
@@ -366,7 +366,7 @@ void main() {
     await notifier.refresh();
 
     expect(cipher.decrypts, 2);
-    expect(notifier.state.value!.map((c) => c.lastMessage), [
+    expect(notifier.state.value!.items.map((c) => c.lastMessage), [
       'See you at 5',
       'See you at 5',
     ]);

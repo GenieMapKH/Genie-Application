@@ -6,6 +6,14 @@ import 'package:genie/features/chat/models/chat_call_entry.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_participant.dart';
 
+/// One page of a conversation list, where the next one starts (null after
+/// the last), and the unread messages in the whole list.
+typedef ConversationPage = ({
+  List<ChatConversation> items,
+  String? nextCursor,
+  int unreadTotal,
+});
+
 /// API access to conversations and message history. Everything it returns
 /// is still encrypted.
 class ChatRepository {
@@ -18,17 +26,35 @@ class ChatRepository {
   ChatRepository({required this.dio, Dio? storageDio})
     : storageDio = storageDio ?? Dio();
 
-  /// The main list, or with [archived] the archive.
-  Future<List<ChatConversation>> fetchConversations({
+  /// Conversations per page of the chat list.
+  static const conversationPageSize = 30;
+
+  /// The most conversations one page holds (the server's limit).
+  static const maxConversationPage = 100;
+
+  /// [limit] conversations of the main list (or with [archived] the
+  /// archive), most recent first, after [cursor] (from the start without).
+  Future<ConversationPage> fetchConversationPage({
     bool archived = false,
+    int limit = conversationPageSize,
+    String? cursor,
   }) async {
     final response = await dio.get(
       '/chat/conversations',
-      queryParameters: {if (archived) 'list': 'archived'},
+      queryParameters: {
+        if (archived) 'list': 'archived',
+        'limit': limit,
+        'cursor': ?cursor,
+      },
     );
-    return (response.data as List)
-        .map((json) => ChatConversation.fromJson(_asJson(json)))
-        .toList();
+    final data = _asJson(response.data);
+    return (
+      items: (data['items'] as List)
+          .map((json) => ChatConversation.fromJson(_asJson(json)))
+          .toList(),
+      nextCursor: data['nextCursor'] as String?,
+      unreadTotal: data['unreadTotal'] as int? ?? 0,
+    );
   }
 
   /// The newest messages exchanged with [participantId], oldest first.

@@ -42,7 +42,7 @@ void main() {
   }
 
   List<String> ids(ConversationsNotifier notifier) =>
-      notifier.state.value!.map((c) => c.participantId).toList();
+      notifier.state.value!.items.map((c) => c.participantId).toList();
 
   setUp(() {
     repository = FakeChatRepository();

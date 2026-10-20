@@ -224,13 +224,16 @@ void main() {
       // Lets the reload that opening the chat started finish first.
       await conversations.refresh();
       await settle();
-      expect(conversations.state.value!.single.lastMessage, 'Still for sale?');
+      expect(
+        conversations.state.value!.items.single.lastMessage,
+        'Still for sale?',
+      );
       repository.conversationRequests = 0;
 
       await chat.sendMessage('Yes, come by at 5');
 
       expect(repository.conversationRequests, 0);
-      final listed = conversations.state.value!.single;
+      final listed = conversations.state.value!.items.single;
       expect(listed.lastMessage, 'Yes, come by at 5');
       expect(listed.lastMessageId, chat.state.messages.last.id);
     });

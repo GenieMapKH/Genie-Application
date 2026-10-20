@@ -43,11 +43,13 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
               child: ref
                   .watch(conversationsProvider)
                   .when(
-                    data: (conversations) {
-                      if (conversations.isEmpty) return _buildEmptyState();
+                    data: (list) {
+                      if (list.items.isEmpty) return _buildEmptyState();
                       return ChatConversationListView(
-                        conversations: conversations,
+                        page: list.page,
                         isArchived: false,
+                        onLoadMore: () =>
+                            ref.read(conversationsProvider.notifier).loadMore(),
                       );
                     },
                     loading: () =>

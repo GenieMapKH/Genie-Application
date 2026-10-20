@@ -170,7 +170,7 @@ void main() {
       }
 
       expect(
-        conversations.state.value!.single.lastMessage,
+        conversations.state.value!.items.single.lastMessage,
         ChatConversation.voicePreview,
       );
     });

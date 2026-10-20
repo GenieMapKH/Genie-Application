@@ -38,7 +38,7 @@ class ArchivedChatsPage extends ConsumerWidget {
               child: ref
                   .watch(archivedConversationsProvider)
                   .when(
-                    data: (conversations) => conversations.isEmpty
+                    data: (list) => list.items.isEmpty
                         ? Center(
                             child: Text(
                               context.l10n.chatNoArchivedChats,
@@ -49,8 +49,11 @@ class ArchivedChatsPage extends ConsumerWidget {
                             ),
                           )
                         : ChatConversationListView(
-                            conversations: conversations,
+                            page: list.page,
                             isArchived: true,
+                            onLoadMore: () => ref
+                                .read(archivedConversationsProvider.notifier)
+                                .loadMore(),
                           ),
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
