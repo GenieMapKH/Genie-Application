@@ -100,6 +100,30 @@ class ChatConversation {
     return '${dt.month}/${dt.day}';
   }
 
+  /// What the list shows of a last message reading [text] with [attachment].
+  static String previewOf(String text, ChatAttachment? attachment) {
+    if (text.isNotEmpty || attachment == null) return text;
+    return attachment.isVoice ? voicePreview : photoPreview;
+  }
+
+  /// This conversation once its last message was changed to [message]
+  /// (shown as [encryptedPreview] until it is decrypted).
+  ChatConversation withEditedLastMessage(EncryptedMessage message) {
+    return ChatConversation(
+      id: id,
+      participantName: participantName,
+      participantId: participantId,
+      participantAvatar: participantAvatar,
+      lastMessage: encryptedPreview,
+      lastMessageTime: lastMessageTime,
+      unreadCount: unreadCount,
+      lastMessageId: lastMessageId,
+      lastSenderId: lastSenderId,
+      lastCiphertext: message.ciphertext,
+      lastNonce: message.nonce,
+    );
+  }
+
   /// This conversation once [message] arrived in it: it becomes the last
   /// message (shown as [encryptedPreview] until it is decrypted), and one
   /// more is unread when the other person sent it.

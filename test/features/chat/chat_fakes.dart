@@ -74,11 +74,15 @@ class FakeCipher extends Fake implements MessageCipher {
     return (ciphertext: 'sealed:$text', nonce: 'nonce');
   }
 
+  /// How many messages were opened.
+  int decrypts = 0;
+
   @override
   Future<OpenedMessage?> decrypt(
     EncryptedMessage message, {
     bool askServer = true,
   }) async {
+    decrypts++;
     return message.ciphertext.startsWith('sealed:')
         ? (
             id: message.id,

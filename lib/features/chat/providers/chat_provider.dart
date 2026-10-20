@@ -26,6 +26,11 @@ class ConversationsNotifier
   bool _refreshing = false;
   bool _refreshAgain = false;
 
+  /// Previews already decrypted, by message id and nonce (an edit is sealed
+  /// with a new nonce), so reloading the list opens only what is new.
+  final _previews = <String, String>{};
+  static const _maxPreviews = 500;
+
   /// [signInPending] keeps the list loading while it is not yet known who,
   /// if anyone, is signed in.
   ConversationsNotifier({
@@ -44,8 +49,13 @@ class ConversationsNotifier
       // Archived or deleted on another device, or deleted by the other person.
       ..add(socketService.onConversationChanged.listen((_) => refresh()))
       // The last message may have new text, or be gone.
-      ..add(socketService.onMessageEdited.listen((_) => refresh()))
-      ..add(socketService.onMessageDeleted.listen((_) => refresh()))
+      ..add(socketService.onMessageEdited.listen(_onMessageEdited))
+      ..add(
+        socketService.onMessageDeleted.listen(
+          (deletion) =>
+              _onMessageDeleted(deletion.participantId, deletion.messageId),
+        ),
+      )
       // Messages may have been missed while disconnected.
       ..add(socketService.onConnected.listen((_) => refresh()));
     refresh();
@@ -80,8 +90,68 @@ class ConversationsNotifier
     unawaited(_showPreview(updated));
   }
 
+  /// The user sent [message], reading [preview], from this device: its
+  /// conversation moves to the top with it, without loading the list again.
+  /// One not on this list yet (a first message, or one archived until now)
+  /// needs the server's answer.
+  void recordSent(EncryptedMessage message, {required String preview}) {
+    final conversations = state.valueOrNull;
+    if (cipher == null || archived || conversations == null) return;
+
+    final peerId = message.peerOf(cipher!.userId);
+    final index = conversations.indexWhere((c) => c.participantId == peerId);
+    if (index < 0) {
+      refresh();
+      return;
+    }
+    _remember(message.id, message.nonce, preview);
+    state = AsyncValue.data([
+      conversations[index]
+          .withNewMessage(message)
+          .copyWith(lastMessage: preview),
+      for (final (i, conversation) in conversations.indexed)
+        if (i != index) conversation,
+    ]);
+  }
+
+  /// A message was edited, on any device: only the list's preview of it
+  /// can change.
+  void _onMessageEdited(EncryptedMessage message) {
+    final conversations = state.valueOrNull;
+    if (conversations == null) return;
+    final peerId = message.peerOf(cipher!.userId);
+    final current = conversations
+        .where(
+          (c) => c.participantId == peerId && c.lastMessageId == message.id,
+        )
+        .firstOrNull;
+    if (current == null) return;
+
+    final edited = current.withEditedLastMessage(message);
+    state = AsyncValue.data([
+      for (final conversation in conversations)
+        identical(conversation, current) ? edited : conversation,
+    ]);
+    unawaited(_showPreview(edited));
+  }
+
+  /// A message was deleted, on any device. Only the server knows what comes
+  /// before a deleted last message, and how many unread messages are left.
+  void _onMessageDeleted(String participantId, String messageId) {
+    final conversations = state.valueOrNull;
+    if (conversations == null) return;
+    final conversation = conversations
+        .where((c) => c.participantId == participantId)
+        .firstOrNull;
+    if (conversation == null ||
+        conversation.lastMessageId == messageId ||
+        conversation.unreadCount > 0) {
+      refresh();
+    }
+  }
+
   /// Replaces the "encrypted" placeholder of [conversation]'s last message
-  /// with its text, unless a newer message arrived meanwhile.
+  /// with its text, unless a newer message (or edit) arrived meanwhile.
   Future<void> _showPreview(ChatConversation conversation) async {
     final withPreview = await _withPreview(conversation);
     final conversations = state.valueOrNull;
@@ -89,7 +159,8 @@ class ConversationsNotifier
     state = AsyncValue.data([
       for (final current in conversations)
         current.participantId == conversation.participantId &&
-                current.lastMessageId == conversation.lastMessageId
+                current.lastMessageId == conversation.lastMessageId &&
+                current.lastNonce == conversation.lastNonce
             ? current.copyWith(lastMessage: withPreview.lastMessage)
             : current,
     ]);
@@ -133,16 +204,25 @@ class ConversationsNotifier
     final lastMessage = conversation.lastMessageFor(cipher!.userId);
     if (lastMessage == null) return conversation;
 
+    final known = _previews[_previewKey(lastMessage.id, lastMessage.nonce)];
+    if (known != null) return conversation.copyWith(lastMessage: known);
+
     final opened = await cipher!.decrypt(lastMessage);
     if (opened == null) return conversation;
-    final attachment = opened.attachment;
-    return conversation.copyWith(
-      lastMessage: opened.text.isNotEmpty || attachment == null
-          ? opened.text
-          : attachment.isVoice
-          ? ChatConversation.voicePreview
-          : ChatConversation.photoPreview,
-    );
+    final preview = ChatConversation.previewOf(opened.text, opened.attachment);
+    _remember(lastMessage.id, lastMessage.nonce, preview);
+    return conversation.copyWith(lastMessage: preview);
+  }
+
+  static String _previewKey(String messageId, String nonce) =>
+      '$messageId:$nonce';
+
+  /// Only what decrypted is kept: a failure may succeed later.
+  void _remember(String messageId, String nonce, String preview) {
+    final key = _previewKey(messageId, nonce);
+    _previews.remove(key);
+    _previews[key] = preview;
+    if (_previews.length > _maxPreviews) _previews.remove(_previews.keys.first);
   }
 
   /// Takes [participantId]'s conversation off this list at once, before the

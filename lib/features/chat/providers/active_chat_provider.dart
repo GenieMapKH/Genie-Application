@@ -236,7 +236,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       if (!mounted) return;
       _outgoingFiles.remove(message.id);
       _replace(message.copyWith(status: ChatMessageStatus.sent));
-      unawaited(conversations.refresh());
+      _showInConversationList(message, sealed);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to send message', e, stackTrace);
       if (!mounted) return;
@@ -252,8 +252,34 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     }
   }
 
+  /// Makes the message just sent the conversation's last one in the list,
+  /// unless a newer one is already stored there (sent or received since).
+  void _showInConversationList(
+    ChatMessage message,
+    ({String ciphertext, String nonce}) sealed,
+  ) {
+    final newestStored = state.messages.lastWhere(
+      (m) => m.status == ChatMessageStatus.sent,
+      orElse: () => message,
+    );
+    if (newestStored.id != message.id) return;
+    conversations.recordSent(
+      EncryptedMessage(
+        id: message.id,
+        senderId: userId,
+        recipientId: participantId,
+        ciphertext: sealed.ciphertext,
+        nonce: sealed.nonce,
+        createdAt: message.createdAt,
+      ),
+      preview: ChatConversation.previewOf(message.text, message.attachment),
+    );
+  }
+
   /// Replaces the text of the user's own message, sealed again for the
-  /// other person. Null when done, otherwise why not.
+  /// other person. Null when done, otherwise why not. The conversation list
+  /// follows the server's `messageEdited` event, which every device of the
+  /// user receives.
   Future<ChatMessageActionProblem?> editMessage(
     String messageId,
     String text,
@@ -270,13 +296,13 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     state = state.copyWith(
       messages: state.messages.withEdit(message.id, text, editedAt),
     );
-    unawaited(conversations.refresh());
     return null;
   }
 
   /// Deletes a message for this user, or with [forEveryone] (their own
   /// message) for both people. Nothing is left in its place. A message that
-  /// was never sent is only taken off this screen.
+  /// was never sent is only taken off this screen. The conversation list
+  /// follows the server's `messageDeleted` event, as for an edit.
   Future<ChatMessageActionProblem?> deleteMessage(
     String messageId, {
     required bool forEveryone,
@@ -297,7 +323,6 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     );
     if (problem != null || !mounted) return problem;
     state = state.copyWith(messages: state.messages.without(messageId));
-    unawaited(conversations.refresh());
     return null;
   }
 
