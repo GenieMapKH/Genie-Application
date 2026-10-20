@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/core/config/app_config.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/core/media/app_image_cache.dart';
+import 'package:genie/core/theme/font_licenses.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
@@ -64,6 +65,8 @@ void main() async {
   // Which server this build talks to: chat only works between devices on
   // the same one.
   AppLogger.debug('API server: ${AppConfig.apiBaseUrl}');
+
+  registerFontLicenses();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // A browser handles background pushes in web/firebase-messaging-sw.js.

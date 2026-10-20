@@ -128,6 +128,10 @@ flutter:
     - assets/icons/
     # Made by tool/generate_call_tones.py.
     - assets/sounds/call/
+    # The Inter and Roboto Mono weights the app uses, exactly the files
+    # google_fonts would otherwise download on first use. It finds them by
+    # name, so text never waits for the network.
+    - assets/google_fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
