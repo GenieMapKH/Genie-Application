@@ -10,6 +10,7 @@ import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/models/chat_voice.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_message_tile.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_message.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_recorder_bar.dart';
 import 'package:genie/features/chat/presentation/widgets/voice/voice_hold_panel.dart';
@@ -252,6 +253,37 @@ void main() {
       expect(find.byType(ChatVoiceMessage), findsOneWidget);
       expect(attachments.uploads.single, [7, 7, 7]);
       expect(socket.sent, hasLength(1));
+    });
+
+    testWidgets('a recording updates its bar without rebuilding the messages', (
+      tester,
+    ) async {
+      repository.history = [
+        encrypted('m1', 'Is it still for sale?', from: peer),
+      ];
+      await openChat(tester);
+      await tester.tap(find.bySemanticsLabel('Record a voice message'));
+      await tester.pump();
+      await tester.pump();
+      final tile = tester.widget(find.byType(ChatMessageTile));
+      final barBefore = tester.widget<ChatVoiceRecorderBar>(
+        find.byType(ChatVoiceRecorderBar),
+      );
+
+      recorder.levelStream.add(0.8);
+      clock.now = clock.now.add(const Duration(seconds: 1));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final barAfter = tester.widget<ChatVoiceRecorderBar>(
+        find.byType(ChatVoiceRecorderBar),
+      );
+      expect(barAfter.recording.elapsed, isNot(barBefore.recording.elapsed));
+      expect(barAfter.recording.recentLevels, isNotEmpty);
+      expect(
+        identical(tester.widget(find.byType(ChatMessageTile)), tile),
+        isTrue,
+        reason: 'the conversation itself was not built again',
+      );
     });
 
     Future<TestGesture> holdMicrophone(WidgetTester tester) async {

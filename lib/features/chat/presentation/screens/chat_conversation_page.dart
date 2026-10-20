@@ -298,7 +298,11 @@ class _ConversationState extends ConsumerState<_Conversation> {
     final provider = activeChatProvider(widget.chat);
     final chatState = ref.watch(provider);
     final recordingProvider = voiceRecordingProvider(widget.chat);
-    final recording = ref.watch(recordingProvider);
+    // Only whether a recording is on: its level and time change many times
+    // a second, and only the recording bar shows them.
+    final isRecording = ref.watch(
+      recordingProvider.select((recording) => recording.isActive),
+    );
     final composerMode = ref.watch(chatComposerProvider(widget.chat));
     // Voice messages keep playing while their bubbles scroll out of view,
     // and stop when this screen closes.
@@ -344,11 +348,13 @@ class _ConversationState extends ConsumerState<_Conversation> {
                 participantName: widget.participantName,
               ),
             )
-          else if (recording.isActive && !_holdingVoice)
-            ChatVoiceRecorderBar(
-              recording: recording,
-              onDiscard: () => ref.read(recordingProvider.notifier).discard(),
-              onSend: () => ref.read(recordingProvider.notifier).finish(),
+          else if (isRecording && !_holdingVoice)
+            Consumer(
+              builder: (context, ref, _) => ChatVoiceRecorderBar(
+                recording: ref.watch(recordingProvider),
+                onDiscard: () => ref.read(recordingProvider.notifier).discard(),
+                onSend: () => ref.read(recordingProvider.notifier).finish(),
+              ),
             )
           else
             ChatInputBar(
@@ -360,7 +366,11 @@ class _ConversationState extends ConsumerState<_Conversation> {
               onHoldVoiceStart: _holdVoiceStart,
               onHoldVoiceEnd: _holdVoiceEnd,
               recordingPanel: _holdingVoice
-                  ? VoiceHoldPanel(recording: recording)
+                  ? Consumer(
+                      builder: (context, ref, _) => VoiceHoldPanel(
+                        recording: ref.watch(recordingProvider),
+                      ),
+                    )
                   : null,
             ),
         ],
