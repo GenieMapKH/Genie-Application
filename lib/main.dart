@@ -68,22 +68,27 @@ void main() async {
 
   registerFontLicenses();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // A browser handles background pushes in web/firebase-messaging-sw.js.
-  if (!kIsWeb) FirebaseMessaging.onBackgroundMessage(handleBackgroundPush);
-
-  if (defaultTargetPlatform == TargetPlatform.android) {
-    await _configureAndroidGraphics();
-  }
-
-  final cryptoService = await CryptoService.init();
-  // Read before the first frame, so no screen starts out treating a
-  // signed-in user as a guest, or a guest as signed in.
-  await AuthStorage.load();
-  // Read before the first frame, so the app opens in the saved theme and language.
-  final settingsStorage = AppSettingsStorage(
-    await SharedPreferences.getInstance(),
-  );
+  // Independent of each other, so they run at the same time: the first
+  // frame waits for the slowest, not for all of them in turn.
+  final (_, _, cryptoService, _, preferences) = await (
+    Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).then((_) {
+      // A browser handles background pushes in web/firebase-messaging-sw.js.
+      if (!kIsWeb) FirebaseMessaging.onBackgroundMessage(handleBackgroundPush);
+    }),
+    defaultTargetPlatform == TargetPlatform.android
+        ? _configureAndroidGraphics()
+        : Future<void>.value(),
+    CryptoService.init(),
+    // Read before the first frame, so no screen starts out treating a
+    // signed-in user as a guest, or a guest as signed in.
+    AuthStorage.load(),
+    // Read before the first frame, so the app opens in the saved theme and
+    // language.
+    SharedPreferences.getInstance(),
+  ).wait;
+  final settingsStorage = AppSettingsStorage(preferences);
 
   runApp(
     ProviderScope(
