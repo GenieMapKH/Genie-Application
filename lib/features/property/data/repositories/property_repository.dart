@@ -58,6 +58,7 @@ class PropertyRepository {
     required double maxLng,
     String? propertyType,
     String? listingType,
+    CancelToken? cancelToken,
   }) async {
     final response = await dio.get(
       '/public/properties/map',
@@ -72,6 +73,7 @@ class PropertyRepository {
       // The server keeps this list for 30 s too: going back to an area just
       // seen shows it at once.
       options: _publicListings,
+      cancelToken: cancelToken,
     );
     final List<dynamic> data = response.data;
     return compute(_parseProperties, data);

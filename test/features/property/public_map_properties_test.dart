@@ -14,9 +14,11 @@ class _MapRepository extends PropertyRepository {
       <
         ({
           double minLat,
+          double maxLat,
           String? propertyType,
           String? listingType,
           Completer<List<PropertyModel>> answer,
+          CancelToken? cancelToken,
         })
       >[];
 
@@ -30,13 +32,16 @@ class _MapRepository extends PropertyRepository {
     required double maxLng,
     String? propertyType,
     String? listingType,
+    CancelToken? cancelToken,
   }) {
     final answer = Completer<List<PropertyModel>>();
     searches.add((
       minLat: minLat,
+      maxLat: maxLat,
       propertyType: propertyType,
       listingType: listingType,
       answer: answer,
+      cancelToken: cancelToken,
     ));
     return answer.future;
   }
@@ -134,5 +139,68 @@ void main() {
     expect(filtered.minLat, 11.5);
     expect(filtered.propertyType, 'House');
     expect(filtered.listingType, 'Rent');
+  });
+
+  test('a newer search gives up the one still on its way', () async {
+    container.read(mapBoundsProvider.notifier).state = _area(11.5);
+    container.read(mapBoundsProvider.notifier).state = _area(12.5);
+    final [slow, fast] = repo.searches;
+
+    expect(slow.cancelToken!.isCancelled, isTrue);
+    expect(fast.cancelToken!.isCancelled, isFalse);
+
+    // Being given up is not a failure: what the newer search finds is shown.
+    slow.answer.completeError(
+      DioException.requestCancelled(
+        requestOptions: RequestOptions(),
+        reason: 'newer search',
+      ),
+    );
+    fast.answer.complete([_listing('where-the-map-is')]);
+    await pumpEventQueue();
+    expect(shownIds(), ['where-the-map-is']);
+  });
+
+  test("asks for the area widened to the server's grid", () async {
+    container.read(mapBoundsProvider.notifier).state = const MapBounds(
+      minLat: 11.5512,
+      maxLat: 11.5688,
+      minLng: 104.9101,
+      maxLng: 104.9299,
+    );
+
+    expect(repo.searches.single.minLat, 11.55);
+    expect(repo.searches.single.maxLat, 11.57);
+  });
+
+  group('widened to the grid', () {
+    test('a box already on the grid stays exactly as it is', () {
+      for (var step = -9000; step <= 9000; step++) {
+        final degrees = step / 100;
+        final box = MapBounds(
+          minLat: degrees,
+          maxLat: degrees,
+          minLng: degrees * 2,
+          maxLng: degrees * 2,
+        ).widenedToGrid();
+        expect([box.minLat, box.maxLat], [degrees, degrees]);
+        expect([box.minLng, box.maxLng], [degrees * 2, degrees * 2]);
+      }
+    });
+
+    test('never smaller than the view, and never past the poles', () {
+      const view = MapBounds(
+        minLat: -89.999,
+        maxLat: 89.999,
+        minLng: -179.9991,
+        maxLng: 179.9991,
+      );
+      final box = view.widenedToGrid();
+
+      expect(box.minLat, -90);
+      expect(box.maxLat, 90);
+      expect(box.minLng, -180);
+      expect(box.maxLng, 180);
+    });
   });
 }
