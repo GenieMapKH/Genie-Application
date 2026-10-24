@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:genie/features/follow/presentation/follow_actions.dart';
+import 'package:genie/features/follow/presentation/view_models/follow_providers.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
@@ -21,6 +24,7 @@ import 'package:genie/features/search/presentation/widgets/search_message_view.d
 import 'package:genie/features/search/presentation/widgets/search_skeleton_list.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/transitions/app_page_route.dart';
+import 'package:genie/shared/transitions/circular_reveal_route.dart';
 
 /// A person's or agency's public profile, opened from search or from a
 /// chat: who they are, then every listing they have published. Closes with
@@ -35,13 +39,19 @@ class PublisherProfilePage extends ConsumerStatefulWidget {
 
   const PublisherProfilePage({super.key, required this.person, this.onChat});
 
+  /// Given [origin], the on-screen rectangle of the avatar tapped, the page
+  /// opens out of it in a circle and closes back into it; otherwise it
+  /// slides in.
   static Route<SearchSelection> route(
     PublisherSummary person, {
     VoidCallback? onChat,
+    Rect? origin,
   }) {
-    return AppPageRoute<SearchSelection>(
-      page: PublisherProfilePage(person: person, onChat: onChat),
-    );
+    final page = PublisherProfilePage(person: person, onChat: onChat);
+    if (origin != null) {
+      return CircularRevealRoute<SearchSelection>(page: page, origin: origin);
+    }
+    return AppPageRoute<SearchSelection>(page: page);
   }
 
   @override
@@ -53,6 +63,18 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
   var _tab = PublisherProfileTab.listings;
 
   PublisherSummary get person => widget.person;
+
+  @override
+  void initState() {
+    super.initState();
+    // Seen before: show what was known at once, and check it behind.
+    final provider = followSummaryProvider(widget.person.id);
+    if (ref.exists(provider)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) ref.read(provider.notifier).refresh();
+      });
+    }
+  }
 
   void _openChat(BuildContext context, PublisherSummary shown) {
     if (!requireSignIn(context, ref)) return;
@@ -67,19 +89,30 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
     );
   }
 
-  /// Widest the page grows; wider screens centre it.
-  static const double _maxWidth = 960;
-
   void _openDetail(BuildContext context, PropertyModel property) {
     Navigator.of(context).push(
-      PropertyDetailSheet.route(
+      _detailRoute(
+        context,
         property,
-        heroTag: 'saved_property_hero_${property.id}',
-        onOpenProperty: (next) {
-          Navigator.of(context).pop();
-          _openDetail(context, next);
-        },
+        heroTag: PublisherListingsGrid.heroTagOf(property),
       ),
+    );
+  }
+
+  /// A recommendation was tapped: its sheet takes the place of this one.
+  Route<void> _detailRoute(
+    BuildContext context,
+    PropertyModel property, {
+    String? heroTag,
+    Rect? origin,
+  }) {
+    return PropertyDetailSheet.route(
+      property,
+      heroTag: heroTag,
+      origin: origin,
+      onOpenProperty: (next, tileRect) => Navigator.of(
+        context,
+      ).pushReplacement(_detailRoute(context, next, origin: tileRect)),
     );
   }
 
@@ -92,54 +125,60 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
     );
     final gutter = SearchLayout.gutter(MediaQuery.sizeOf(context).width);
     final isMe = ref.watch(userProfileProvider).valueOrNull?.id == person.id;
+    // Counts need a signed-in viewer; a guest sees the button only.
+    final signedIn = ref.watch(isSignedInProvider);
+    final followState = signedIn
+        ? ref.watch(followSummaryProvider(person.id))
+        : null;
+    final follow = followState?.valueOrNull;
 
     return Scaffold(
       backgroundColor: context.colors.background,
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: _maxWidth),
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: PublisherProfileHeader(
-                  person: shown,
-                  // TODO(follow): following comes in a later feature.
-                  onFollow: () {},
-                  onChat: isMe
-                      ? null
-                      : widget.onChat ?? () => _openChat(context, shown),
-                  onViewOnMap: hasListings
-                      ? () => Navigator.of(
-                          context,
-                        ).pop(AreaSelection(PersonTarget(shown)))
-                      : null,
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.only(top: 20),
-                sliver: SliverToBoxAdapter(
-                  child: PublisherProfileTabBar(
-                    selected: _tab,
-                    onSelected: (tab) => setState(() => _tab = tab),
-                  ),
-                ),
-              ),
-              switch (_tab) {
-                PublisherProfileTab.listings => _listings(
-                  context,
-                  profile,
-                  gutter,
-                ),
-                PublisherProfileTab.about => _about(context, profile, gutter),
-              },
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.paddingOf(context).bottom + 24,
-                ),
-              ),
-            ],
+      // Fills the screen on tablets too: the grid adds columns as it widens.
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: PublisherProfileHeader(
+              person: shown,
+              follow: follow,
+              // Only while it loads: when it could not be read, a
+              // "Follow" that asks again.
+              followPending:
+                  followState != null &&
+                  followState.isLoading &&
+                  follow == null,
+              onFollow: isMe
+                  ? null
+                  : () => toggleFollow(context, ref, person.id),
+              onChat: isMe
+                  ? null
+                  : widget.onChat ?? () => _openChat(context, shown),
+              onViewOnMap: hasListings
+                  ? () => Navigator.of(
+                      context,
+                    ).pop(AreaSelection(PersonTarget(shown)))
+                  : null,
+            ),
           ),
-        ),
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 20),
+            sliver: SliverToBoxAdapter(
+              child: PublisherProfileTabBar(
+                selected: _tab,
+                onSelected: (tab) => setState(() => _tab = tab),
+              ),
+            ),
+          ),
+          switch (_tab) {
+            PublisherProfileTab.listings => _listings(context, profile, gutter),
+            PublisherProfileTab.about => _about(context, profile, gutter),
+          },
+          SliverPadding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom + 24,
+            ),
+          ),
+        ],
       ),
     );
   }

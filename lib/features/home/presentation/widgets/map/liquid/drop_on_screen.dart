@@ -5,13 +5,15 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
 import 'package:genie/features/home/utils/map/cluster_transition.dart';
+import 'package:genie/features/home/utils/map/markers/price_tag_pin.dart';
 import 'package:genie/features/home/utils/map/markers/property_markers.dart';
 
 /// One drop as drawn this frame.
 ///
 /// [center], [radius], [ring] and [cohesion] are the round drop the necks
 /// join. [outline] is its shape on screen (a circle, a price tag, or between
-/// the two) and [border] the white band inside that outline.
+/// the two) and [border] the white band inside that outline. [tail] is how
+/// far its [PriceTagPin] point reaches below the outline.
 typedef DropOnScreen = ({
   Offset center,
   double radius,
@@ -20,7 +22,7 @@ typedef DropOnScreen = ({
   RRect outline,
   double border,
   Color color,
-  double shadow,
+  double tail,
   double tagness,
 });
 
@@ -71,8 +73,9 @@ DropOnScreen dropOnScreen(LiquidDrop drop, double p, Offset point) {
     ),
     border: border,
     color: color,
-    // Price tags have no shadow.
-    shadow: 1 - tagness,
+    // The point grows once the drop is drawn on its own, apart from the
+    // liquid.
+    tail: PriceTagPin.tail * const Interval(0.5, 1).transform(tagness),
     tagness: tagness,
   );
 }

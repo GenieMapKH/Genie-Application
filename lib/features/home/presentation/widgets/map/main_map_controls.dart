@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:genie/shared/widgets/buttons/tactile_button.dart';
 import 'package:genie/features/home/presentation/widgets/map/map_top_controls.dart';
 import 'package:genie/features/home/presentation/widgets/map/map_floating_menu.dart';
+import 'package:genie/features/home/presentation/widgets/map/map_button_icon.dart';
 import 'package:genie/features/home/presentation/widgets/map/drawing_controls_panel.dart';
 import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
 import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
@@ -102,8 +102,8 @@ class MainMapControls extends ConsumerWidget {
             bottom: sideButtonBottom,
             child: TactileButton(
               onPressed: onGoToCurrentPosition,
-              child: SvgPicture.asset(
-                'assets/icons/current_position.svg',
+              child: MapButtonIcon(
+                asset: 'assets/icons/current_position.svg',
                 width: buttonSize,
                 height: buttonSize,
               ),

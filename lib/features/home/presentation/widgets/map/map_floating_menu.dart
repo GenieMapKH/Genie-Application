@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:genie/shared/widgets/buttons/tactile_button.dart';
+import 'package:genie/features/home/presentation/widgets/map/map_button_icon.dart';
 import 'package:genie/features/home/presentation/widgets/utm/utm_locate_bottom_sheet.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 class MapFloatingMenu extends StatefulWidget {
   final VoidCallback onDrawPressed;
@@ -96,7 +97,12 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
                     ],
                   ),
                   child: Center(
-                    child: SvgPicture.asset(iconPath, width: 24, height: 24),
+                    child: TintedSvg(
+                      iconPath,
+                      width: 24,
+                      height: 24,
+                      color: context.colors.textMuted,
+                    ),
                   ),
                 ),
               ),
@@ -180,8 +186,8 @@ class _MapFloatingMenuState extends State<MapFloatingMenu>
                 turns: _isMenuOpen ? 0.125 : 0, // 45 degree rotation
                 duration: const Duration(milliseconds: 320),
                 curve: const Cubic(0.16, 1.0, 0.3, 1.0),
-                child: SvgPicture.asset(
-                  'assets/icons/plus.svg',
+                child: MapButtonIcon(
+                  asset: 'assets/icons/plus.svg',
                   width: 76,
                   height: 76,
                 ),

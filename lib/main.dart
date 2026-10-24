@@ -20,6 +20,8 @@ import 'package:genie/app/app.dart';
 import 'package:genie/app/missing_config_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:genie/firebase_options.dart';
+import 'package:genie/app/navigation/property_publisher_navigation.dart';
+import 'package:genie/features/property/presentation/view_models/property_publisher_opener.dart';
 import 'package:genie/app/navigation/chat_profile_navigation.dart';
 import 'package:genie/app/navigation/call_navigation.dart';
 import 'package:genie/app/navigation/push_navigation.dart';
@@ -96,6 +98,9 @@ void main() async {
         cryptoServiceProvider.overrideWithValue(cryptoService),
         appSettingsStorageProvider.overrideWithValue(settingsStorage),
         chatProfileOpenerProvider.overrideWith(profileFromChatOpener),
+        propertyPublisherOpenerProvider.overrideWith(
+          publisherFromListingOpener,
+        ),
         pushOpenerProvider.overrideWith(pushOpener),
         foregroundPushFilterProvider.overrideWith(foregroundPushFilter),
         chatCallStarterProvider.overrideWith(callFromChat),

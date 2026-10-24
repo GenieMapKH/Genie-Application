@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 class PropertyBottomBar extends StatelessWidget {
   const PropertyBottomBar({super.key});
@@ -68,12 +68,9 @@ class PropertyBottomBar extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            SvgPicture.asset(
+            TintedSvg(
               iconPath,
-              colorFilter: ColorFilter.mode(
-                isActive ? context.colors.accent : context.colors.textHint,
-                BlendMode.srcIn,
-              ),
+              color: isActive ? context.colors.accent : context.colors.textHint,
               width: 24,
               height: 24,
             ),

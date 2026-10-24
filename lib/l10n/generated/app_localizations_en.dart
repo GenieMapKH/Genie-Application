@@ -48,6 +48,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navMyProperties => 'My Properties';
 
   @override
+  String get navListings => 'Listings';
+
+  @override
   String get navUser => 'User';
 
   @override
@@ -812,6 +815,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyMapPreview => 'Map Preview';
 
   @override
+  String get propertyViewOnMap => 'View on map';
+
+  @override
   String get propertyAddProperty => 'Add Property';
 
   @override
@@ -1383,6 +1389,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileFollow => 'Follow';
 
   @override
+  String get profileFollowing => 'Following';
+
+  @override
+  String get profileFollowersStat => 'Followers';
+
+  @override
+  String get profileFollowingStat => 'Following';
+
+  @override
+  String profileFollowLimit(int count) {
+    return 'You can follow up to $count people. Unfollow someone to follow more.';
+  }
+
+  @override
+  String get profileFollowFailed =>
+      'Following could not be changed. Please try again.';
+
+  @override
+  String get navFeed => 'Feed';
+
+  @override
+  String get feedTitle => 'Feed';
+
+  @override
+  String get feedEmptyTitle => 'Your feed is empty';
+
+  @override
+  String get feedEmptyHint =>
+      'Follow people from their profile to see their new listings here.';
+
+  @override
+  String get feedExplore => 'Explore listings';
+
+  @override
+  String get feedLoadFailed => 'Your feed could not be loaded.';
+
+  @override
+  String feedListedOn(String date) {
+    return 'Listed $date';
+  }
+
+  @override
   String get profileContactTitle => 'Contact';
 
   @override
@@ -1479,17 +1527,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String propertyDriveMinutes(int minutes) {
-    return '$minutes min drive';
-  }
-
-  @override
   String propertyStraightLine(String distance) {
     return '$distance straight line';
   }
 
   @override
   String get propertyNearbyCouldNotLoad => 'Couldn\'t load nearby places.';
+
+  @override
+  String get propertyNearbyRouteCouldNotLoad =>
+      'Couldn\'t load the road to this place.';
 
   @override
   String get propertyDiscount => 'Discount (optional)';
@@ -2129,10 +2176,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not delete the property. Please try again.';
 
   @override
-  String get propertyFallbackDescription =>
-      'This land parcel is accurately mapped with verified boundaries and exact recorded coordinates, located in a fast-growing area near main infrastructure. It is ideal for residential development, a long-term investment, or a business project. The rectangular shape allows efficient planning and construction, while utilities such as electricity and water are already available nearby. Clear ownership documents and precise UTM location make this property easy to verify and trust.';
-
-  @override
   String propertyListingBy(String name) {
     return 'Listing by: $name';
   }
@@ -2178,6 +2221,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String propertyTypeForSale(String type) {
     return '$type for sale';
+  }
+
+  @override
+  String propertyTypeForRent(String type) {
+    return '$type for rent';
+  }
+
+  @override
+  String propertyPriceFrom(String price) {
+    return 'From $price';
   }
 
   @override
@@ -2578,4 +2631,120 @@ class AppLocalizationsEn extends AppLocalizations {
   String callMissedFrom(String name) {
     return 'Missed call from $name';
   }
+
+  @override
+  String get filterTitle => 'Filters';
+
+  @override
+  String get filterForSale => 'For sale';
+
+  @override
+  String get filterForRent => 'For rent';
+
+  @override
+  String get filterPriceRange => 'Price range';
+
+  @override
+  String filterPriceLabel(String range) {
+    return 'Price: $range';
+  }
+
+  @override
+  String get filterPriceAny => 'Any';
+
+  @override
+  String filterPerMonth(String price) {
+    return '$price/month';
+  }
+
+  @override
+  String get filterMinPrice => 'Min Price';
+
+  @override
+  String get filterMaxPrice => 'Max Price';
+
+  @override
+  String get filterNoMin => 'No min';
+
+  @override
+  String get filterNoMax => 'No max';
+
+  @override
+  String get filterDownPayment => 'Down payment';
+
+  @override
+  String get filterNoDownPayment => 'No down payment';
+
+  @override
+  String get filterLandSize => 'Land size';
+
+  @override
+  String get filterPropertySize => 'Property size';
+
+  @override
+  String get filterMinArea => 'Min m²';
+
+  @override
+  String get filterMaxArea => 'Max m²';
+
+  @override
+  String get filterMinAboveMax => 'The minimum is above the maximum';
+
+  @override
+  String get filterPropertyType => 'Property Type';
+
+  @override
+  String get filterKeywords => 'Keywords / Features';
+
+  @override
+  String get filterReset => 'Reset';
+
+  @override
+  String get filterSeeResults => 'See results';
+
+  @override
+  String get propertyFactsTitle => 'Property Details';
+
+  @override
+  String get propertyFactsOverview => 'Overview';
+
+  @override
+  String get propertyFactsSize => 'Size';
+
+  @override
+  String get propertyFactsBuilding => 'Rooms & Building';
+
+  @override
+  String get propertyFactsProject => 'Project';
+
+  @override
+  String get propertyFactsCosts => 'Costs & Business';
+
+  @override
+  String get propertyFactsFeatures => 'Features';
+
+  @override
+  String get propertyFactPricePerSquareMetre => 'Price per m²';
+
+  @override
+  String propertyFactPerMonth(String amount) {
+    return '$amount / month';
+  }
+
+  @override
+  String propertyFactMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get propertyPublisherTitle => 'Listed by';
+
+  @override
+  String get propertyPublisherViewProfile => 'View Profile';
 }

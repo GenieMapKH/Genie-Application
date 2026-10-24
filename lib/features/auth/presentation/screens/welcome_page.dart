@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/features/auth/data/repositories/auth_repository.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:genie/features/auth/presentation/widgets/welcome_preference_bar.dart';
 import 'package:genie/shared/widgets/buttons/app_button.dart';
 import 'package:genie/shared/widgets/media/app_logo.dart';
 import 'package:go_router/go_router.dart';
@@ -178,6 +179,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
+              const WelcomePreferenceBar(),
               const Spacer(flex: 2),
 
               // Hardware-isolated Logo & Headline Section

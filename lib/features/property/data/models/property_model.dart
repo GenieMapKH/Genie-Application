@@ -19,7 +19,15 @@ class PropertyModel {
   final double? discountValue;
   final String status; // 'Active', 'Draft', 'Pending', 'Sold'
   final DateTime createdAt;
+
+  /// When it last went live; null if never (or sent by an older server).
+  final DateTime? publishedAt;
   final List<String> imageUrls;
+
+  /// Small copies of [imageUrls], in the same order, for cards and lists.
+  /// A photo without one (uploaded before thumbnails existed) has its full
+  /// URL here instead. Use [cardImageUrls] to read them.
+  final List<String> thumbnailUrls;
   final List<LatLng> boundaryPoints;
   final String? description;
   final int? bedrooms;
@@ -44,6 +52,10 @@ class PropertyModel {
   final String? ownerId;
   final String? ownerName;
   final String? ownerAvatarUrl;
+  final String? ownerUsername;
+
+  /// When the owner joined; only a full listing carries it.
+  final DateTime? ownerMemberSince;
   final String? ownerEmail;
   final String? ownerPhone;
 
@@ -65,7 +77,9 @@ class PropertyModel {
     this.discountValue,
     required this.status,
     required this.createdAt,
+    this.publishedAt,
     this.imageUrls = const [],
+    this.thumbnailUrls = const [],
     this.boundaryPoints = const [],
     this.description,
     this.bedrooms,
@@ -82,6 +96,8 @@ class PropertyModel {
     this.ownerId,
     this.ownerName,
     this.ownerAvatarUrl,
+    this.ownerUsername,
+    this.ownerMemberSince,
     this.ownerEmail,
     this.ownerPhone,
     this.saveCount = 0,
@@ -98,6 +114,11 @@ class PropertyModel {
 
   /// Listings younger than 12 hours get the "New" badge on the map.
   bool get isNew => hoursListed <= 12;
+
+  /// What a card, list tile or map card shows: the thumbnails, or the full
+  /// photos when the server sent none (an older server).
+  List<String> get cardImageUrls =>
+      thumbnailUrls.length == imageUrls.length ? thumbnailUrls : imageUrls;
 
   bool get hasDiscount => discountType != null && discountValue != null;
 
@@ -124,14 +145,25 @@ class PropertyModel {
     return val.toStringAsFixed(0);
   }
 
-  /// The size shown on cards: land properties report land size, built
-  /// properties report the unit or building footprint.
+  /// The one size cards show and the map's size filter reads: the land of a
+  /// plot or business, the floor area of a house, building or warehouse, the
+  /// unit of a condo, the whole project of a Borey. The server's size filter
+  /// picks the same one.
   double? get displaySize {
-    if (landSize != null && landSize! > 0) return landSize;
-    if (unitSize != null && unitSize! > 0) return unitSize;
-    if (buildingSize != null && buildingSize! > 0) return buildingSize;
-    return null;
+    final size = switch (propertyType) {
+      'House' || 'Building' || 'Warehouse' => buildingSize,
+      'Condo' => unitSize,
+      'Borey' => details.totalProjectArea,
+      _ => landSize,
+    };
+    return size != null && size > 0 ? size : null;
   }
+
+  /// Whether the type's form asks for bedrooms and bathrooms.
+  bool get hasRooms => propertyType == 'House' || propertyType == 'Condo';
+
+  /// Rent and To Let are priced per month.
+  bool get isRental => listingType == 'Rent' || listingType == 'To Let';
 
   /// A list of listings as the server sends it. Static, so a large list can
   /// be parsed off the UI thread with `compute`.
@@ -163,23 +195,20 @@ class PropertyModel {
     }
 
     List<String> images = [];
+    List<String> thumbnails = [];
     if (json['images'] != null && json['images'] is List) {
-      images = (json['images'] as List)
-          .map((img) {
-            if (img is Map) {
-              return (img['url'] ??
-                      img['path'] ??
-                      img['imageUrl'] ??
-                      img['src'] ??
-                      '')
-                  .toString();
-            } else if (img != null) {
-              return img.toString();
-            }
-            return '';
-          })
-          .where((url) => url.isNotEmpty)
-          .toList();
+      for (final img in json['images'] as List) {
+        final url = img is Map
+            ? (img['url'] ?? img['path'] ?? img['imageUrl'] ?? img['src'] ?? '')
+                  .toString()
+            : img?.toString() ?? '';
+        if (url.isEmpty) continue;
+        final thumbnail = img is Map ? img['thumbnailUrl'] : null;
+        images.add(url);
+        thumbnails.add(
+          thumbnail is String && thumbnail.isNotEmpty ? thumbnail : url,
+        );
+      }
     } else if (json['imageUrls'] != null && json['imageUrls'] is List) {
       images = (json['imageUrls'] as List)
           .map((e) => e?.toString() ?? '')
@@ -215,7 +244,9 @@ class PropertyModel {
           : double.tryParse(json['discountValue'].toString()),
       status: json['status'] ?? 'Draft',
       createdAt: DateTime.parse(json['createdAt']),
+      publishedAt: DateTime.tryParse(json['publishedAt'] as String? ?? ''),
       imageUrls: images,
+      thumbnailUrls: thumbnails,
       boundaryPoints: points,
       description: json['description'],
       bedrooms: json['bedrooms'],
@@ -249,6 +280,10 @@ class PropertyModel {
                 owner['phone'] as String?)
           : null,
       ownerAvatarUrl: owner is Map ? owner['avatarUrl'] as String? : null,
+      ownerUsername: owner is Map ? owner['username'] as String? : null,
+      ownerMemberSince: owner is Map
+          ? DateTime.tryParse(owner['createdAt'] as String? ?? '')
+          : null,
       ownerEmail: owner is Map ? owner['email'] as String? : null,
       ownerPhone: owner is Map ? owner['phone'] as String? : null,
       saveCount: counts is Map ? (counts['favorites'] as int? ?? 0) : 0,
@@ -293,7 +328,9 @@ class PropertyModel {
     double? discountValue,
     String? status,
     DateTime? createdAt,
+    DateTime? publishedAt,
     List<String>? imageUrls,
+    List<String>? thumbnailUrls,
     List<LatLng>? boundaryPoints,
     String? description,
     int? bedrooms,
@@ -310,6 +347,8 @@ class PropertyModel {
     String? ownerId,
     String? ownerName,
     String? ownerAvatarUrl,
+    String? ownerUsername,
+    DateTime? ownerMemberSince,
     String? ownerEmail,
     String? ownerPhone,
     int? saveCount,
@@ -327,7 +366,9 @@ class PropertyModel {
       discountValue: discountValue ?? this.discountValue,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
+      publishedAt: publishedAt ?? this.publishedAt,
       imageUrls: imageUrls ?? this.imageUrls,
+      thumbnailUrls: thumbnailUrls ?? this.thumbnailUrls,
       boundaryPoints: boundaryPoints ?? this.boundaryPoints,
       description: description ?? this.description,
       bedrooms: bedrooms ?? this.bedrooms,
@@ -344,6 +385,8 @@ class PropertyModel {
       ownerId: ownerId ?? this.ownerId,
       ownerName: ownerName ?? this.ownerName,
       ownerAvatarUrl: ownerAvatarUrl ?? this.ownerAvatarUrl,
+      ownerUsername: ownerUsername ?? this.ownerUsername,
+      ownerMemberSince: ownerMemberSince ?? this.ownerMemberSince,
       ownerEmail: ownerEmail ?? this.ownerEmail,
       ownerPhone: ownerPhone ?? this.ownerPhone,
       saveCount: saveCount ?? this.saveCount,

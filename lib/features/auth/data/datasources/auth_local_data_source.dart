@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -39,6 +41,28 @@ class AuthStorage {
       await _storage.read(key: _refreshTokenKey);
   static Future<String?> getGuestSessionId() async =>
       await _storage.read(key: _guestSessionKey);
+
+  /// The signed-in account's id: the `sub` of the stored access token. Null
+  /// when signed out. Only for keeping data apart per account on this
+  /// device; the server checks the token itself.
+  static Future<String?> signedInUserId() async =>
+      userIdOfToken(await getAccessToken());
+
+  /// The `sub` of the JWT [token], or null when it is not a readable JWT.
+  @visibleForTesting
+  static String? userIdOfToken(String? token) {
+    final parts = token?.split('.');
+    if (parts == null || parts.length != 3) return null;
+    try {
+      final payload = jsonDecode(
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+      );
+      final sub = payload is Map ? payload['sub'] : null;
+      return sub is String && sub.isNotEmpty ? sub : null;
+    } on FormatException {
+      return null;
+    }
+  }
 
   static Future<void> clearTokens() async {
     // Said first: screens must stop acting for the user at once, not after

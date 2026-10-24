@@ -3,23 +3,32 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/follow/data/models/follow_summary.dart';
 import 'package:genie/features/search/data/models/publisher_summary.dart';
+import 'package:genie/features/follow/presentation/widgets/follow_button.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/widgets/layout/cover_banner_header.dart';
 import 'package:genie/shared/widgets/media/user_avatar.dart';
 
 /// Top of a publisher's profile: a cover with their picture and the follow
-/// button, their name and handle, how many listings they have and since
-/// when they are a member, then the chat and "view on map" buttons.
+/// button, their name and handle, how many listings and followers they have
+/// and since when they are a member, then the chat and "view on map" buttons.
 class PublisherProfileHeader extends StatelessWidget {
   final PublisherSummary person;
 
   /// Null hides the button: nothing to show on the map.
   final VoidCallback? onViewOnMap;
 
-  /// The follow button. Following is not built yet: the page passes a
-  /// handler that does nothing.
-  final VoidCallback onFollow;
+  /// Their follow counts, and whether you follow them. Null while not known
+  /// (loading, or nobody signed in): the counts are left out.
+  final FollowSummary? follow;
+
+  /// Whether you follow them is still loading: the button says neither
+  /// "Follow" nor "Following" yet.
+  final bool followPending;
+
+  /// Null hides the follow button: your own profile.
+  final VoidCallback? onFollow;
 
   /// Null hides the button: your own profile.
   final VoidCallback? onChat;
@@ -28,7 +37,9 @@ class PublisherProfileHeader extends StatelessWidget {
     super.key,
     required this.person,
     this.onViewOnMap,
-    required this.onFollow,
+    this.follow,
+    this.followPending = false,
+    this.onFollow,
     this.onChat,
   });
 
@@ -44,56 +55,46 @@ class PublisherProfileHeader extends StatelessWidget {
             avatarUrl: person.avatarUrl,
             radius: 44,
           ),
-          trailing: _FollowButton(onPressed: onFollow),
+          trailing: onFollow == null
+              ? null
+              : PublisherFollowButton(
+                  following: followPending
+                      ? null
+                      : follow?.isFollowing ?? false,
+                  onPressed: onFollow!,
+                ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-          child: _PublisherIdentity(person: person),
+          child: _PublisherIdentity(person: person, follow: follow),
         ),
         if (onChat != null || onViewOnMap != null)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: _PublisherActions(onChat: onChat, onViewOnMap: onViewOnMap),
+            // Buttons stop growing on tablets, where the page is wide.
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: _PublisherActions(
+                  onChat: onChat,
+                  onViewOnMap: onViewOnMap,
+                ),
+              ),
+            ),
           ),
       ],
     );
   }
 }
 
-class _FollowButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const _FollowButton({required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    // Inverted from the page (light on dark, dark on light) so it stands
-    // out from both the cover and the blue "Chat".
-    return FilledButton.icon(
-      onPressed: onPressed,
-      icon: const Icon(Icons.add_rounded, size: 20),
-      label: Text(
-        context.l10n.profileFollow,
-        style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700),
-      ),
-      style: FilledButton.styleFrom(
-        backgroundColor: colors.textPrimary,
-        foregroundColor: colors.background,
-        minimumSize: const Size(0, 40),
-        padding: const EdgeInsets.symmetric(horizontal: 18),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
-  }
-}
-
-/// Name, handle, and a line each for their listings and membership.
+/// Name, handle, and a line each for their listings, followers and
+/// membership.
 class _PublisherIdentity extends StatelessWidget {
   final PublisherSummary person;
+  final FollowSummary? follow;
 
-  const _PublisherIdentity({required this.person});
+  const _PublisherIdentity({required this.person, this.follow});
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +102,7 @@ class _PublisherIdentity extends StatelessWidget {
     final l10n = context.l10n;
     final handle = person.username;
     final since = person.memberSince;
+    final follow = this.follow;
     final factStyle = GoogleFonts.inter(
       fontSize: 14,
       color: colors.textSecondary,
@@ -149,6 +151,19 @@ class _PublisherIdentity extends StatelessWidget {
             ],
           ),
         ),
+        if (follow != null) ...[
+          const SizedBox(height: 8),
+          _Fact(
+            icon: Icons.people_outline_rounded,
+            child: Row(
+              children: [
+                _Count(follow.followerCount, l10n.profileFollowersStat),
+                const SizedBox(width: 16),
+                _Count(follow.followingCount, l10n.profileFollowingStat),
+              ],
+            ),
+          ),
+        ],
         if (since != null) ...[
           const SizedBox(height: 8),
           _Fact(
@@ -165,6 +180,39 @@ class _PublisherIdentity extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// A number in bold, then what it counts.
+class _Count extends StatelessWidget {
+  final int value;
+  final String label;
+
+  const _Count(this.value, this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final style = GoogleFonts.inter(fontSize: 14, color: colors.textSecondary);
+    return Flexible(
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: NumberFormat.decimalPattern().format(value),
+              style: style.copyWith(
+                fontWeight: FontWeight.w700,
+                color: colors.textPrimary,
+              ),
+            ),
+            TextSpan(text: ' $label'),
+          ],
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: style,
+      ),
     );
   }
 }

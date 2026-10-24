@@ -169,8 +169,7 @@ class PublicPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
           maxLat: box.maxLat,
           minLng: box.minLng,
           maxLng: box.maxLng,
-          propertyType: filter.propertyType,
-          listingType: filter.listingType,
+          filter: filter,
           cancelToken: cancelToken,
         );
   }

@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genie/features/property/data/models/nearby_route.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/screens/nearby_route_page.dart';
+import 'package:genie/features/property/presentation/view_models/nearby_route_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
 import 'package:genie/l10n/generated/app_localizations.dart';
@@ -21,6 +26,8 @@ PropertyModel _listing({
   'keywords': [
     for (final k in keywords) {'keyword': k},
   ],
+  'lat': 11.55,
+  'lng': 104.91,
   'nearbyPlaces': nearby,
   'nearbySearchedAt': searchedAt,
 });
@@ -31,7 +38,6 @@ Map<String, dynamic> _place(
   String name, {
   int straight = 700,
   int? road,
-  int? seconds,
 }) => {
   'category': category,
   'rank': rank,
@@ -40,7 +46,6 @@ Map<String, dynamic> _place(
   'lng': 104.92,
   'straightMeters': straight,
   'roadMeters': road,
-  'driveSeconds': seconds,
 };
 
 void main() {
@@ -75,6 +80,9 @@ void main() {
         ProviderScope(
           overrides: [
             propertyDetailProvider.overrideWith((ref, id) async => property),
+            nearbyRouteProvider.overrideWith(
+              (ref, key) => Completer<NearbyRoute>().future,
+            ),
           ],
           child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -86,33 +94,49 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('shows road distance and drive time, or why there is none', (
+    testWidgets(
+      'shows the road distance, or the straight line when there is no road',
+      (tester) async {
+        await show(
+          tester,
+          _listing(
+            keywords: ['near_market', 'near_hospital', 'near_school'],
+            nearby: [
+              _place('market', 0, 'Phsar Toul Tom Poung', road: 1640),
+              _place('school', 0, 'Bak Touk High School', straight: 850),
+            ],
+          ),
+        );
+
+        expect(find.text("What's nearby"), findsOneWidget);
+        expect(find.text('Phsar Toul Tom Poung'), findsOneWidget);
+        expect(find.text('1.6 km'), findsOneWidget);
+        expect(find.textContaining('min drive'), findsNothing);
+        // No road found: the straight-line distance, said as such.
+        expect(find.text('850 m straight line'), findsOneWidget);
+        expect(find.text('None found within 5 km'), findsOneWidget);
+      },
+    );
+
+    testWidgets('tapping a place opens its route, with or without a road', (
       tester,
     ) async {
       await show(
         tester,
         _listing(
-          keywords: ['near_market', 'near_hospital', 'near_school'],
+          keywords: ['near_market', 'near_school'],
           nearby: [
-            _place(
-              'market',
-              0,
-              'Phsar Toul Tom Poung',
-              road: 1640,
-              seconds: 361,
-            ),
+            _place('market', 0, 'Phsar Toul Tom Poung', road: 1640),
             _place('school', 0, 'Bak Touk High School', straight: 850),
           ],
         ),
       );
 
-      expect(find.text("What's nearby"), findsOneWidget);
-      expect(find.text('Phsar Toul Tom Poung'), findsOneWidget);
-      expect(find.text('1.6 km'), findsOneWidget);
-      expect(find.text('7 min drive'), findsOneWidget);
-      // No road found: the straight-line distance, said as such.
-      expect(find.text('850 m straight line'), findsOneWidget);
-      expect(find.text('None found within 5 km'), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(2));
+      await tester.tap(find.text('Bak Touk High School'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.byType(NearbyRoutePage), findsOneWidget);
     });
 
     testWidgets('stays hidden for a listing without those tags', (

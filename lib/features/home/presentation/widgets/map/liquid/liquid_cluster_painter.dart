@@ -10,6 +10,7 @@ import 'package:genie/features/home/presentation/widgets/map/liquid/liquid_necks
 import 'package:genie/features/home/utils/map/cluster_layout.dart';
 import 'package:genie/features/home/utils/map/cluster_transition.dart';
 import 'package:genie/features/home/utils/map/map_camera_focus.dart';
+import 'package:genie/features/home/utils/map/markers/price_tag_pin.dart';
 import 'package:genie/features/home/utils/map/markers/property_markers.dart';
 
 /// Paints a [ClusterTransition] at [progress] over a flat, north-up map
@@ -63,8 +64,7 @@ class LiquidClusterPainter extends CustomPainter {
     canvas.drawPath(necks.core, Paint()..color = PropertyMarkers.green);
     for (final d in drops) {
       if (d.tagness < _tagFrom) continue;
-      _paintOutlines(canvas, [d], Colors.white);
-      _paintInsides(canvas, [d]);
+      PriceTagPin.paint(canvas, d.outline, d.tail, d.border, d.color);
     }
 
     Offset centerOf(ClusterSpot spot) =>
@@ -103,12 +103,9 @@ class LiquidClusterPainter extends CustomPainter {
           ),
       )
       ..translate(_shadowOffset.dx, _shadowOffset.dy);
+    final paint = Paint()..color = Colors.black;
     for (final d in drops) {
-      if (d.shadow <= 0) continue;
-      canvas.drawRRect(
-        d.outline,
-        Paint()..color = Colors.black.withValues(alpha: d.shadow),
-      );
+      PriceTagPin.paintShape(canvas, d.outline, d.tail, paint);
     }
     canvas
       ..drawPath(necks, Paint()..color = Colors.black)

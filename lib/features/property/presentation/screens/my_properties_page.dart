@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/layout/app_header_bar.dart';
+import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/property_list_layout.dart';
 import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
 import 'package:genie/features/property/presentation/view_models/own_listings.dart';
 import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
@@ -126,28 +128,71 @@ class MyPropertiesPage extends ConsumerWidget {
     }
 
     final page = listings.page;
-    return LoadMoreOnScroll(
-      enabled: page.hasMore && !page.loadingMore,
-      onLoadMore: () => ref.read(propertiesProvider.notifier).loadMore(),
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: properties.length + (page.loadingMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == properties.length) return const LoadingMoreIndicator();
-          final property = properties[index];
-          return PropertyCard(
-            property: property,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => AddPropertyPage.edit(property),
-              ),
-            ),
-            onOptionsTapped: () =>
-                PropertyOptionsSheet.show(context, ref, property),
-          );
-        },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Phones keep one card per row; tablets fit as many as they can.
+        final columns = PropertyListLayout.isTablet(context)
+            ? PropertyListLayout.columnCount(
+                constraints.maxWidth - 32,
+                PropertyListLayout.ownCardMaxWidth,
+              )
+            : 1;
+        final rowCount = (properties.length / columns).ceil();
+        return LoadMoreOnScroll(
+          enabled: page.hasMore && !page.loadingMore,
+          onLoadMore: () => ref.read(propertiesProvider.notifier).loadMore(),
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            itemCount: rowCount + (page.loadingMore ? 1 : 0),
+            itemBuilder: (context, row) {
+              if (row == rowCount) return const LoadingMoreIndicator();
+              return _buildCardRow(context, ref, properties, row, columns);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  /// One row of [columns] cards; the last row keeps empty slots so its cards
+  /// are as wide as the ones above.
+  Widget _buildCardRow(
+    BuildContext context,
+    WidgetRef ref,
+    List<PropertyModel> properties,
+    int row,
+    int columns,
+  ) {
+    if (columns == 1) return _buildCard(context, ref, properties[row]);
+    final start = row * columns;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var column = 0; column < columns; column++) ...[
+          if (column > 0)
+            const SizedBox(width: PropertyListLayout.columnSpacing),
+          Expanded(
+            child: start + column < properties.length
+                ? _buildCard(context, ref, properties[start + column])
+                : const SizedBox.shrink(),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCard(
+    BuildContext context,
+    WidgetRef ref,
+    PropertyModel property,
+  ) {
+    return PropertyCard(
+      property: property,
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => AddPropertyPage.edit(property)),
       ),
+      onOptionsTapped: () => PropertyOptionsSheet.show(context, ref, property),
     );
   }
 

@@ -214,10 +214,9 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   /// in, only the measurement label sizes change, at 15, 18 and 19.
   static int _zoomBand(double zoom) {
     if (zoom <= MapOverlayBuilder.clusterZoomThreshold) return zoom.floor();
-    if (zoom <= 15.0) return 100;
-    if (zoom < 18.0) return 101;
-    if (zoom < 19.0) return 102;
-    return 103;
+    // Every whole level too: a tapped plot's side lengths and corner
+    // numbers come back as zooming in gives them room.
+    return 100 + zoom.floor();
   }
 
   /// Runs on every frame of a pan or zoom, so it must stay trivial: record the
@@ -255,11 +254,14 @@ class MainMapViewState extends ConsumerState<MainMapView> {
         _overlays.rebuildListings();
       }
     });
-    ref.listen(mainNavProvider.select((s) => s.currentIndex == 0), (_, shown) {
-      if (!shown || !_listingsStale) return;
-      _listingsStale = false;
-      _overlays.rebuildListings();
-    });
+    ref.listen(
+      mainNavProvider.select((s) => s.currentIndex == MainTab.explore),
+      (_, shown) {
+        if (!shown || !_listingsStale) return;
+        _listingsStale = false;
+        _overlays.rebuildListings();
+      },
+    );
     ref.listen(mapStateProvider, _overlays.onMapStateChanged);
     ref.listen(propertyCarouselProvider, (previous, next) {
       if (previous?.selected?.id == next.selected?.id) return;

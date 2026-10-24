@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:genie/features/home/presentation/widgets/map/filter/map_filter_button.dart';
+import 'package:genie/features/home/presentation/widgets/map/map_button_icon.dart';
 import 'package:genie/features/home/presentation/widgets/search/home_search_bar.dart';
 import 'package:genie/features/home/presentation/widgets/utm/utm_locate_bottom_sheet.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -56,25 +57,18 @@ class MapTopControls extends StatelessWidget {
                         Expanded(
                           child: HomeSearchBar(onOpenProperty: onOpenProperty),
                         ),
-                        // Filter button
-                        TactileButton(
-                          onPressed: () {},
-                          child: Align(
-                            widthFactor: 0.8,
-                            child: SvgPicture.asset(
-                              'assets/icons/filter.svg',
-                              width: 76,
-                              height: 68,
-                            ),
-                          ),
-                        ),
+                        // Each button's picture has 8.4 of space beside its
+                        // disc; this makes the search bar's gap the same as
+                        // the 16.8 between the two buttons.
+                        const SizedBox(width: 8.4),
+                        const MapFilterButton(),
                         // Scan button
                         TactileButton(
                           onPressed: () => _handleScanClick(context),
                           child: Align(
                             widthFactor: 0.8,
-                            child: SvgPicture.asset(
-                              'assets/icons/scan.svg',
+                            child: MapButtonIcon(
+                              asset: 'assets/icons/scan.svg',
                               width: 76,
                               height: 68,
                             ),

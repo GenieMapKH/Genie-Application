@@ -13,7 +13,10 @@ import 'package:genie/shared/utils/owner_display_name.dart';
 class PropertyGridSection extends StatelessWidget {
   final String title;
   final List<PropertyModel> properties;
-  final void Function(PropertyModel property) onPropertyTapped;
+
+  /// Called with the tapped listing and where its tile is on screen, which
+  /// the sheet that opens for it grows out of.
+  final void Function(PropertyModel property, Rect tileRect) onPropertyTapped;
 
   const PropertyGridSection({
     super.key,
@@ -53,7 +56,7 @@ class PropertyGridSection extends StatelessWidget {
             final property = properties[index];
             return _PropertyTile(
               property: property,
-              onTap: () => onPropertyTapped(property),
+              onTap: (tileRect) => onPropertyTapped(property, tileRect),
             );
           },
         ),
@@ -64,14 +67,17 @@ class PropertyGridSection extends StatelessWidget {
 
 class _PropertyTile extends StatelessWidget {
   final PropertyModel property;
-  final VoidCallback onTap;
+  final void Function(Rect tileRect) onTap;
 
   const _PropertyTile({required this.property, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        final box = context.findRenderObject()! as RenderBox;
+        onTap(box.localToGlobal(Offset.zero) & box.size);
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -80,7 +86,7 @@ class _PropertyTile extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 PropertyImageGallery(
-                  imageUrls: property.imageUrls,
+                  imageUrls: property.cardImageUrls,
                   borderRadius: BorderRadius.circular(10),
                   showIndicator: false,
                 ),
@@ -105,7 +111,7 @@ class _PropertyTile extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            PropertyFormat.money(property.finalPrice),
+            PropertyFormat.cardPrice(context.l10n, property),
             style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w700,

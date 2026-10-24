@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
@@ -9,6 +8,7 @@ import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/presentation/property_labels.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/owner_display_name.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 /// The card that rises above the bottom nav when a property is selected on the
 /// map. Tapping it — or swiping it up — opens the full detail sheet.
@@ -56,7 +56,7 @@ class PropertyItemCard extends StatelessWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        PropertyImageGallery(imageUrls: property.imageUrls),
+                        PropertyImageGallery(imageUrls: property.cardImageUrls),
                         Positioned(
                           top: 12,
                           left: 12,
@@ -98,7 +98,7 @@ class _Details extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          PropertyFormat.money(property.finalPrice),
+          PropertyFormat.cardPrice(context.l10n, property),
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w800,
@@ -168,14 +168,11 @@ class _TypePill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
+          TintedSvg(
             PropertyFormat.typeIconPath(propertyType),
             width: 14,
             height: 14,
-            colorFilter: ColorFilter.mode(
-              context.colors.textSecondary,
-              BlendMode.srcIn,
-            ),
+            color: context.colors.textSecondary,
           ),
           const SizedBox(width: 6),
           Text(

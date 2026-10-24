@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/buttons/tactile_button.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 class DrawingControlsPanel extends StatelessWidget {
   final bool isEditingPolygon;
@@ -45,14 +45,11 @@ class DrawingControlsPanel extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: SvgPicture.asset(
+          child: TintedSvg(
             iconPath,
             width: 24,
             height: 24,
-            colorFilter: ColorFilter.mode(
-              context.colors.textSecondary,
-              BlendMode.srcIn,
-            ),
+            color: context.colors.textSecondary,
           ),
         ),
       ),

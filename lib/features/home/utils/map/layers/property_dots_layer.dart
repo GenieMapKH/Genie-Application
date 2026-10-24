@@ -43,21 +43,23 @@ abstract final class PropertyDotsLayer {
     for (var i = 0; i < allCentroids.length; i++) {
       final property = allCentroidModels[i];
       if (isOutlined(i) || isHighlighted(i, property)) continue;
+      final tag = property == null
+          ? null
+          : PropertyMarkers.priceTagLayout(
+              price: property.formattedPrice,
+              isNew: property.isNew,
+              propertyType: property.propertyType,
+              isVisited: property.isVisited,
+              newLabel: newLabel,
+            );
       spotOf[ClusteredLayer.listingKey(i, property)] = ClusterSpot(
         markerId: _markerId(i),
         position: allCentroids[i],
         count: 1,
         radius: PropertyMarkers.dotRadius,
-        ring: 1,
-        tag: property == null
-            ? null
-            : PropertyMarkers.priceTagLayout(
-                price: property.formattedPrice,
-                isNew: property.isNew,
-                propertyType: property.propertyType,
-                isVisited: property.isVisited,
-                newLabel: newLabel,
-              ),
+        ring: PropertyMarkers.dotRing,
+        lift: tag?.lift ?? 0,
+        tag: tag,
       );
     }
     return ClusterLayout(zoomLevel: zoom.floor(), spotOf: spotOf);
@@ -79,6 +81,7 @@ abstract final class PropertyDotsLayer {
     final isSelected = isHighlighted(index, property);
 
     final BitmapDescriptor icon;
+    var anchor = const Offset(0.5, 0.5);
     if (property != null) {
       icon = await PropertyMarkers.priceTag(
         price: property.formattedPrice,
@@ -87,6 +90,16 @@ abstract final class PropertyDotsLayer {
         propertyType: property.propertyType,
         isVisited: property.isVisited,
         newLabel: newLabel,
+      );
+      anchor = PropertyMarkers.priceTagAnchor(
+        PropertyMarkers.priceTagLayout(
+          price: property.formattedPrice,
+          isNew: property.isNew,
+          isSelected: isSelected,
+          propertyType: property.propertyType,
+          isVisited: property.isVisited,
+          newLabel: newLabel,
+        ),
       );
     } else {
       icon = isSelected
@@ -99,7 +112,7 @@ abstract final class PropertyDotsLayer {
         markerId: MarkerId(_markerId(index)),
         position: position,
         icon: icon,
-        anchor: const Offset(0.5, 0.5),
+        anchor: anchor,
         consumeTapEvents: true,
         zIndexInt: isSelected ? 4 : 1,
         onTap: () => onViewProperty(index, property),

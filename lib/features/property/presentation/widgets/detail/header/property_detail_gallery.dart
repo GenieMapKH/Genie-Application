@@ -5,10 +5,21 @@ import 'package:genie/features/property/presentation/widgets/property_image_gall
 
 /// The detail sheet's photo strip: full-width images stacked vertically so
 /// scrolling walks through the listing's photos.
+///
+/// Each photo shows its thumbnail (usually already on the device from the
+/// card that was tapped) until the full photo arrives, so a slow connection
+/// shows a picture at once instead of an empty box.
 class PropertyDetailGallery extends StatelessWidget {
   final List<String> imageUrls;
 
-  const PropertyDetailGallery({super.key, required this.imageUrls});
+  /// Same order and length as [imageUrls] (see `PropertyModel.cardImageUrls`).
+  final List<String> thumbnailUrls;
+
+  const PropertyDetailGallery({
+    super.key,
+    required this.imageUrls,
+    required this.thumbnailUrls,
+  });
 
   /// Height of each photo in the strip.
   static const double photoHeight = 240.0;
@@ -39,7 +50,9 @@ class PropertyDetailGallery extends StatelessWidget {
               )
             : AppNetworkImage(
                 url: url,
-                errorWidget: const PropertyImagePlaceholder(),
+                placeholder: _thumbnailOf(index),
+                errorWidget:
+                    _thumbnailOf(index) ?? const PropertyImagePlaceholder(),
               );
 
         return SizedBox(
@@ -48,6 +61,17 @@ class PropertyDetailGallery extends StatelessWidget {
           child: child,
         );
       },
+    );
+  }
+
+  /// The small copy of photo [index], or null when it has none of its own.
+  Widget? _thumbnailOf(int index) {
+    if (index >= thumbnailUrls.length) return null;
+    final thumbnail = thumbnailUrls[index];
+    if (thumbnail == imageUrls[index]) return null;
+    return AppNetworkImage(
+      url: thumbnail,
+      errorWidget: const PropertyImagePlaceholder(),
     );
   }
 }

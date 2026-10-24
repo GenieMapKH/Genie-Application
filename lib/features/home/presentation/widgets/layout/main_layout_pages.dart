@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/core/theme/app_colors.dart';
 
+import 'package:genie/features/feed/presentation/screens/feed_page.dart';
 import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:genie/features/home/presentation/widgets/layout/kept_tab_pages.dart';
 import 'package:genie/features/profile/presentation/screens/user_profile_page.dart';
@@ -10,20 +11,15 @@ import 'package:genie/features/chat/presentation/screens/chat_list_page.dart';
 import 'package:genie/features/property/presentation/screens/my_properties_page.dart';
 import 'package:genie/features/property/presentation/screens/saved_properties_page.dart';
 
-/// The full-screen pages that slide in over the map for the "Saved", "Chat",
-/// "My Properties" and "User" tabs. Each is kept once opened ([KeptTabPages]).
+/// The full-screen pages that slide in over the map for every tab but
+/// Explore. Each is kept once opened ([KeptTabPages]).
 class MainLayoutPages extends ConsumerWidget {
   final MainNavState navState;
 
   const MainLayoutPages({super.key, required this.navState});
 
-  static const int _savedPropertiesIndex = 1;
-  static const int _chatIndex = 2;
-  static const int _myPropertiesIndex = 3;
-  static const int _userProfileIndex = 4;
-
   static bool _isPage(int index) =>
-      index >= _savedPropertiesIndex && index <= _userProfileIndex;
+      index >= MainTab.feed && index <= MainTab.user;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,12 +42,16 @@ class MainLayoutPages extends ConsumerWidget {
           previous: navState.previousIndex,
           hasPage: _isPage,
           pageBuilder: (context, index) => switch (index) {
-            _savedPropertiesIndex => SavedPropertiesPage(
+            MainTab.feed => FeedPage(isEmbedded: true, onBackPressed: onBack),
+            MainTab.saved => SavedPropertiesPage(
               isEmbedded: true,
               onBackPressed: onBack,
             ),
-            _chatIndex => ChatListPage(isEmbedded: true, onBackPressed: onBack),
-            _myPropertiesIndex => MyPropertiesPage(
+            MainTab.chat => ChatListPage(
+              isEmbedded: true,
+              onBackPressed: onBack,
+            ),
+            MainTab.myProperties => MyPropertiesPage(
               isEmbedded: true,
               onBackPressed: onBack,
             ),

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:genie/core/network/api_cache_manager.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:image_picker/image_picker.dart';
+import '../models/map_property_filter.dart';
 import '../models/property_model.dart';
 
 /// One page of the user's own listings, where the next one starts (null
@@ -88,15 +89,14 @@ class PropertyRepository {
     return compute(PropertyModel.listFromJson, response.data as List<dynamic>);
   }
 
-  /// Published listings inside the given map area, of [propertyType] and
-  /// [listingType] when given: at most the newest 500, however large the area.
+  /// Published listings inside the given map area that pass [filter]: at
+  /// most the newest 500, however large the area.
   Future<List<PropertyModel>> fetchPublicMapProperties({
     required double minLat,
     required double maxLat,
     required double minLng,
     required double maxLng,
-    String? propertyType,
-    String? listingType,
+    MapPropertyFilter filter = const MapPropertyFilter(),
     CancelToken? cancelToken,
   }) async {
     final response = await dio.get(
@@ -106,8 +106,7 @@ class PropertyRepository {
         'maxLat': maxLat,
         'minLng': minLng,
         'maxLng': maxLng,
-        'propertyType': ?propertyType,
-        'listingType': ?listingType,
+        ...filter.toQueryParameters(),
       },
       // The server keeps this list for 30 s too: going back to an area just
       // seen shows it at once.
@@ -116,6 +115,33 @@ class PropertyRepository {
     );
     final List<dynamic> data = response.data;
     return compute(PropertyModel.listFromJson, data);
+  }
+
+  /// How the asking prices of the listings [fetchPublicMapProperties] would
+  /// find spread over equal bars from 0 to [upTo] (the last bar also holds
+  /// everything above), ignoring the price range of [filter].
+  Future<List<int>> fetchMapPriceHistogram({
+    required double minLat,
+    required double maxLat,
+    required double minLng,
+    required double maxLng,
+    required MapPropertyFilter filter,
+    required double upTo,
+  }) async {
+    final response = await dio.get(
+      '/public/properties/map/prices',
+      queryParameters: {
+        'minLat': minLat,
+        'maxLat': maxLat,
+        'minLng': minLng,
+        'maxLng': maxLng,
+        ...filter.withPrice(null, null).toQueryParameters(),
+        'upTo': upTo,
+      },
+      options: _publicListings,
+    );
+    final counts = (response.data as Map<String, dynamic>)['counts'] as List;
+    return [for (final count in counts) (count as num).toInt()];
   }
 
   Future<PropertyModel> fetchPropertyDetail(String id) async {
@@ -203,6 +229,8 @@ class PropertyRepository {
 
     final response = await dio.post(
       '/properties/$id/images/confirm',
+      // The server makes a thumbnail of every photo before it answers.
+      options: Options(receiveTimeout: const Duration(seconds: 90)),
       data: {
         'fileNames': [
           for (var i = 0; i < images.length && i < uploads.length; i++)

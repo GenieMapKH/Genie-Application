@@ -46,11 +46,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   Future<void> _checkAuthNavState() async {
     final token = await AuthStorage.getAccessToken();
     if ((token == null || token.isEmpty) && mounted) {
-      final currentIdx = ref.read(mainNavProvider).currentIndex;
-      if (currentIdx == 1 ||
-          currentIdx == 2 ||
-          currentIdx == 3 ||
-          currentIdx == 4) {
+      // Every tab but Explore shows the user's own data.
+      if (ref.read(mainNavProvider).currentIndex != MainTab.explore) {
         ref.read(mainNavProvider.notifier).resetToHome();
       }
     }
@@ -116,14 +113,21 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   /// and the card underneath always describe the same property.
   void _openPropertyDetail(PropertyModel property) {
     ref.read(propertyCarouselProvider.notifier).select(property);
-    Navigator.of(context).push(
-      PropertyDetailSheet.route(
-        property,
-        onOpenProperty: (next) {
-          Navigator.of(context).pop();
-          _openPropertyDetail(next);
-        },
-      ),
+    Navigator.of(context).push(_detailRoute(property));
+  }
+
+  /// A recommendation was tapped: its sheet takes the place of this one, and
+  /// grows out of the tapped tile.
+  Route<void> _detailRoute(PropertyModel property, {Rect? origin}) {
+    return PropertyDetailSheet.route(
+      property,
+      origin: origin,
+      onOpenProperty: (next, tileRect) {
+        ref.read(propertyCarouselProvider.notifier).select(next);
+        Navigator.of(
+          context,
+        ).pushReplacement(_detailRoute(next, origin: tileRect));
+      },
     );
   }
 
@@ -164,7 +168,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   @override
   Widget build(BuildContext context) {
     final navState = ref.watch(mainNavProvider);
-    final isHome = navState.currentIndex == 0;
+    final isHome = navState.currentIndex == MainTab.explore;
     final isCardVisible = ref.watch(propertyCarouselProvider).isVisible;
     final hasSearch = ref.watch(
       searchAreaControllerProvider.select((state) => state != null),
@@ -182,11 +186,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       searchAreaControllerProvider,
       _onSearchAreaChanged,
     );
-    final bool overlayPage =
-        navState.currentIndex == 1 ||
-        navState.currentIndex == 2 ||
-        navState.currentIndex == 3 ||
-        navState.currentIndex == 4;
+    final bool overlayPage = !isHome;
 
     return PopScope(
       canPop: isHome && !isCardVisible && !hasSearch,
@@ -221,7 +221,9 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 onAnimateToCoordinates: _animateToCoordinates,
                 onAddPinToCenter: _addPinToCenter,
                 onSavePropertySuccess: () {
-                  ref.read(mainNavProvider.notifier).setIndex(3);
+                  ref
+                      .read(mainNavProvider.notifier)
+                      .setIndex(MainTab.myProperties);
                 },
                 onOpenProperty: _openPropertyDetail,
                 searchSheetHeight: searchSheetHeight,

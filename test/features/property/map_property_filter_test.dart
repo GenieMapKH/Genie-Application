@@ -43,8 +43,7 @@ class _OwnListings extends PropertyRepository {
     required double maxLat,
     required double minLng,
     required double maxLng,
-    String? propertyType,
-    String? listingType,
+    MapPropertyFilter filter = const MapPropertyFilter(),
     CancelToken? cancelToken,
   }) async => const [];
 }
@@ -64,7 +63,7 @@ void main() {
     test('needs both the type and the listing type to match', () {
       const filter = MapPropertyFilter(
         propertyType: 'House',
-        listingType: 'Sale',
+        listingTypes: ['Sale'],
       );
       expect(filter.matches(house), isFalse);
       expect(filter.toggleListing('Rent').matches(house), isTrue);
@@ -75,8 +74,8 @@ void main() {
       expect(filter.toggleType('Land').propertyType, isNull);
       expect(filter.toggleType('Condo').propertyType, 'Condo');
       expect(
-        filter.toggleListing('Sale').toggleListing('Sale').listingType,
-        isNull,
+        filter.toggleListing('Sale').toggleListing('Sale').listingTypes,
+        isEmpty,
       );
     });
   });
@@ -114,7 +113,7 @@ void main() {
     expect(shown(), ['land-sale', 'old-land']);
 
     container.read(mapPropertyFilterProvider.notifier).state =
-        const MapPropertyFilter(propertyType: 'Land', listingType: 'Sale');
+        const MapPropertyFilter(propertyType: 'Land', listingTypes: ['Sale']);
     expect(shown(), ['land-sale']);
   });
 }

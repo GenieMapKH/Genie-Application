@@ -1,9 +1,12 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'marker_cache.dart';
 import 'marker_renderer.dart';
 import 'price_tag_layout.dart';
+import 'price_tag_pin.dart';
 
 /// Markers for listings on the explore map.
 abstract final class PropertyMarkers {
@@ -15,6 +18,9 @@ abstract final class PropertyMarkers {
   /// Radius of an unselected [greenDot], in logical pixels.
   static const dotRadius = 12.5;
 
+  /// The white ring around an unselected [greenDot].
+  static const dotRing = 2.0;
+
   /// The white ring around a [clusterBubble].
   static const clusterRing = 2.5;
 
@@ -25,12 +31,17 @@ abstract final class PropertyMarkers {
   /// How wide a [clusterBubble] holding [count] listings is drawn.
   static double clusterDiameter(int count) =>
       count < 10 ? 34.0 : (count < 100 ? 40.0 : 48.0);
+
+  /// Room around a [priceTag] for its shadow, which falls downwards.
+  static const _tagShadowRoom = EdgeInsets.fromLTRB(8, 5, 8, 11);
+  static const _tagShadowOffset = 3.0;
+
   static final _priceCache = MarkerCache();
   static final _clusterCache = MarkerCache();
   static final _priceLayouts = <String, PriceTagLayout>{};
 
-  /// Green dot with a white border. When [isSelected] it grows and gets a
-  /// white ring so the listing behind the open card is easy to spot.
+  /// Green dot with a white ring. When [isSelected] it grows and its ring
+  /// thickens so the listing behind the open card is easy to spot.
   static Future<BitmapDescriptor> greenDot({bool isSelected = false}) {
     const size = 57.0;
     const center = Offset(size / 2, size / 2);
@@ -46,23 +57,11 @@ abstract final class PropertyMarkers {
           markerShadowPaint(alpha: 0.16, blur: 8.0),
         );
 
-        if (isSelected) {
-          canvas.drawCircle(center, radius, Paint()..color = Colors.white);
-        }
-
+        canvas.drawCircle(center, radius, Paint()..color = Colors.white);
         canvas.drawCircle(
           center,
-          isSelected ? radius - 3.5 : radius,
+          radius - (isSelected ? 3.5 : dotRing),
           Paint()..color = _green,
-        );
-
-        canvas.drawCircle(
-          center,
-          isSelected ? radius - 1.75 : 12.0,
-          Paint()
-            ..color = isSelected ? Colors.white : const Color(0xFFE5E7EB)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = isSelected ? 3.0 : 1.0,
         );
       },
     );
@@ -112,8 +111,9 @@ abstract final class PropertyMarkers {
     );
   }
 
-  /// Price tag coloured by listing type; dimmed once the user has visited it.
-  /// A "New" label is stacked above the price for recent listings.
+  /// Price tag pin coloured by listing type; dimmed once the user has visited
+  /// it. A "New" label is stacked above the price for recent listings. Place
+  /// it with [priceTagAnchor] so its point sits on the listing.
   static Future<BitmapDescriptor> priceTag({
     required String price,
     bool isNew = false,
@@ -188,25 +188,64 @@ abstract final class PropertyMarkers {
     String newLabel,
   ) => 'price-$price-$isNew-$isSelected-$propertyType-$isVisited-$newLabel';
 
+  /// Where a [priceTag]'s point is on its bitmap, as a marker anchor.
+  static Offset priceTagAnchor(PriceTagLayout tag) {
+    final bitmap = _priceTagBitmap(tag);
+    return Offset(0.5, 1 - _tagShadowRoom.bottom / bitmap.height);
+  }
+
+  static Size _priceTagBitmap(PriceTagLayout tag) => Size(
+    (tag.outerSize.width + _tagShadowRoom.horizontal).ceilToDouble(),
+    (tag.outerSize.height + PriceTagPin.tail + _tagShadowRoom.vertical)
+        .ceilToDouble(),
+  );
+
+  /// The tag's outer top-left corner on a bitmap of [bitmap] size, its
+  /// point centred above the shadow room.
+  static Offset _priceTagOrigin(PriceTagLayout tag, Size bitmap) => Offset(
+    (bitmap.width - tag.outerSize.width) / 2,
+    bitmap.height -
+        _tagShadowRoom.bottom -
+        PriceTagPin.tail -
+        tag.outerSize.height,
+  );
+
   static Future<BitmapDescriptor> _renderPriceTag(PriceTagLayout tag) {
-    // Half the border is drawn outside the body; this room on every side
-    // keeps it from being cut off at the bitmap's edges.
-    final inset = tag.borderWidth / 2;
+    final bitmap = _priceTagBitmap(tag);
+    final outline = tag.outline(_priceTagOrigin(tag, bitmap));
 
     return renderMarker(
-      width: (tag.size.width + inset * 2).ceilToDouble(),
-      height: (tag.size.height + inset * 2).ceilToDouble(),
+      width: bitmap.width,
+      height: bitmap.height,
       draw: (canvas) {
-        canvas.translate(inset, inset);
-        canvas.drawRRect(tag.body, Paint()..color = tag.background);
-        canvas.drawRRect(
-          tag.body,
-          Paint()
-            ..color = Colors.white
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = tag.borderWidth,
+        canvas
+          // One layer blurs the tag and its point as one shape.
+          ..saveLayer(
+            null,
+            Paint()
+              ..color = Colors.black.withValues(alpha: 0.17)
+              ..imageFilter = ui.ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+          )
+          ..translate(0, _tagShadowOffset);
+        PriceTagPin.paintShape(
+          canvas,
+          outline,
+          PriceTagPin.tail,
+          Paint()..color = Colors.black,
         );
-        tag.paintLabels(canvas, Offset.zero);
+        canvas.restore();
+
+        PriceTagPin.paint(
+          canvas,
+          outline,
+          PriceTagPin.tail,
+          tag.borderWidth,
+          tag.background,
+        );
+        tag.paintLabels(
+          canvas,
+          outline.outerRect.topLeft + Offset(1, 1) * (tag.borderWidth / 2),
+        );
       },
     );
   }

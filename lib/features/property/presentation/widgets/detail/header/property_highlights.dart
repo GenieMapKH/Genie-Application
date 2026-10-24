@@ -24,11 +24,8 @@ class _PropertyHighlightsState extends State<PropertyHighlights> {
 
   @override
   Widget build(BuildContext context) {
-    final description = widget.property.description?.trim().isNotEmpty == true
-        ? widget.property.description!.trim()
-        // Fallback copy for listings created before descriptions were
-        // required.
-        : context.l10n.propertyFallbackDescription;
+    final description = widget.property.description?.trim() ?? '';
+    final hasDescription = description.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,51 +38,60 @@ class _PropertyHighlightsState extends State<PropertyHighlights> {
             color: context.colors.textPrimary,
           ),
         ),
-        const SizedBox(height: 10),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          alignment: Alignment.topCenter,
-          child: Text(
-            description,
-            maxLines: _expanded ? null : 5,
-            overflow: _expanded ? null : TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              height: 1.6,
-              fontWeight: FontWeight.w400,
-              color: context.colors.textSecondary,
-            ),
-          ),
-        ),
-        const SizedBox(height: 6),
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          behavior: HitTestBehavior.opaque,
-          child: Row(
-            children: [
-              Text(
-                _expanded
-                    ? context.l10n.propertyShowLess
-                    : context.l10n.propertyShowMore,
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-              Icon(
-                _expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                size: 18,
-                color: context.colors.textPrimary,
-              ),
-            ],
-          ),
-        ),
+        if (hasDescription) ..._descriptionWithToggle(context, description),
         const SizedBox(height: 16),
         _StatsRow(property: widget.property),
       ],
     );
+  }
+
+  List<Widget> _descriptionWithToggle(
+    BuildContext context,
+    String description,
+  ) {
+    return [
+      const SizedBox(height: 10),
+      AnimatedSize(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        alignment: Alignment.topCenter,
+        child: Text(
+          description,
+          maxLines: _expanded ? null : 5,
+          overflow: _expanded ? null : TextOverflow.ellipsis,
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            height: 1.6,
+            fontWeight: FontWeight.w400,
+            color: context.colors.textSecondary,
+          ),
+        ),
+      ),
+      const SizedBox(height: 6),
+      GestureDetector(
+        onTap: () => setState(() => _expanded = !_expanded),
+        behavior: HitTestBehavior.opaque,
+        child: Row(
+          children: [
+            Text(
+              _expanded
+                  ? context.l10n.propertyShowLess
+                  : context.l10n.propertyShowMore,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: context.colors.textPrimary,
+              ),
+            ),
+            Icon(
+              _expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              size: 18,
+              color: context.colors.textPrimary,
+            ),
+          ],
+        ),
+      ),
+    ];
   }
 }
 

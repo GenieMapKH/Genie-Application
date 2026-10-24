@@ -62,7 +62,7 @@ abstract final class ClusteredLayer {
           position: positions[i],
           count: 1,
           radius: PropertyMarkers.dotRadius,
-          ring: 1,
+          ring: PropertyMarkers.dotRing,
         );
         markers.add(
           _dot(

@@ -3,14 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:genie/features/property/data/models/property_keyword.dart';
 import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:genie/features/property/presentation/widgets/forms/types/property_type_forms.dart';
+import 'package:genie/features/property/presentation/widgets/forms/types/warehouse_property_form.dart';
 import 'add_property_page.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 extension AddPropertyPageFormsDynamic on AddPropertyPageState {
   Widget buildMapPreview() {
@@ -125,14 +126,11 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: () {},
-                icon: SvgPicture.asset(
+                icon: TintedSvg(
                   'assets/icons/draw_property.svg',
                   width: 18,
                   height: 18,
-                  colorFilter: ColorFilter.mode(
-                    context.colors.onPrimary,
-                    BlendMode.srcIn,
-                  ),
+                  color: context.colors.onPrimary,
                 ),
                 label: Text(
                   context.l10n.propertyDrawingProperty,
@@ -192,16 +190,13 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SvgPicture.asset(
+                TintedSvg(
                   kw.iconPath,
                   width: 16,
                   height: 16,
-                  colorFilter: ColorFilter.mode(
-                    isSelected
-                        ? context.colors.accent
-                        : context.colors.textMuted,
-                    BlendMode.srcIn,
-                  ),
+                  color: isSelected
+                      ? context.colors.accent
+                      : context.colors.textMuted,
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -290,12 +285,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 24,
-            height: 24,
-            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-          ),
+          TintedSvg(iconPath, width: 24, height: 24, color: color),
           const SizedBox(height: 4),
           Text(
             label,
@@ -318,9 +308,10 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
 
     if (selectedPropertyType == 'Land' || selectedPropertyType.isEmpty) {
       return LandPropertyForm(state: this, updateState: updateState);
-    } else if (selectedPropertyType == 'House' ||
-        selectedPropertyType == 'Warehouse') {
+    } else if (selectedPropertyType == 'House') {
       return HousePropertyForm(state: this, updateState: updateState);
+    } else if (selectedPropertyType == 'Warehouse') {
+      return WarehousePropertyForm(state: this, updateState: updateState);
     } else if (selectedPropertyType == 'Building') {
       return BuildingPropertyForm(state: this, updateState: updateState);
     } else if (selectedPropertyType == 'Condo') {

@@ -5,7 +5,6 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
 
 /// Price, spec row and location — the block that sits directly under the photo
 /// gallery in the detail sheet and stays visible as the sheet expands.
@@ -36,7 +35,7 @@ class PropertyDetailSummary extends StatelessWidget {
           const SizedBox(height: 2),
         ],
         Text(
-          PropertyFormat.money(property.finalPrice),
+          PropertyFormat.cardPrice(context.l10n, property),
           style: GoogleFonts.inter(
             fontSize: 24,
             fontWeight: FontWeight.w800,
@@ -99,13 +98,20 @@ class _SpecRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final specs = <(IconData, String)>[];
 
-    if (property.bedrooms != null && property.bedrooms! > 0) {
-      specs.add((
-        Icons.bed_outlined,
-        context.l10n.propertyBedroomCount(property.bedrooms!),
-      ));
+    final bedrooms = property.bedrooms;
+    if (property.hasRooms && bedrooms != null) {
+      if (bedrooms > 0) {
+        specs.add((
+          Icons.bed_outlined,
+          context.l10n.propertyBedroomCount(bedrooms),
+        ));
+      } else if (property.propertyType == 'Condo') {
+        specs.add((Icons.bed_outlined, context.l10n.propertyOptionStudio));
+      }
     }
-    if (property.bathrooms != null && property.bathrooms! > 0) {
+    if (property.hasRooms &&
+        property.bathrooms != null &&
+        property.bathrooms! > 0) {
       specs.add((
         Icons.bathtub_outlined,
         context.l10n.propertyBathroomCount(property.bathrooms!),
@@ -119,9 +125,7 @@ class _SpecRow extends StatelessWidget {
 
     if (specs.isEmpty) {
       return Text(
-        context.l10n.propertyTypeForSale(
-          propertyValueLabel(context.l10n, property.propertyType),
-        ),
+        PropertyFormat.typeAndListing(context.l10n, property),
         style: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w600,

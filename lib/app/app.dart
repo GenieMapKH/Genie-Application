@@ -14,6 +14,7 @@ import 'package:genie/features/notifications/providers/notification_providers.da
 import 'package:genie/features/settings/providers/app_settings_providers.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
+import 'package:genie/shared/widgets/feedback/offline_banner.dart';
 
 class AppScrollBehavior extends ScrollBehavior {
   @override
@@ -64,6 +65,8 @@ class MyApp extends ConsumerWidget {
       supportedLocales: AppLanguages.all,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       routerConfig: router,
+      builder: (context, child) =>
+          OfflineBanner(child: child ?? const SizedBox.shrink()),
     );
   }
 }

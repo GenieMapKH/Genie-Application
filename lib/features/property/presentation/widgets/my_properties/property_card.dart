@@ -77,9 +77,9 @@ class PropertyCard extends StatelessWidget {
                     color: context.colors.divider,
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: property.imageUrls.isNotEmpty
+                  child: property.cardImageUrls.isNotEmpty
                       ? AppNetworkImage(
-                          url: property.imageUrls.first,
+                          url: property.cardImageUrls.first,
                           errorWidget: const PropertyImagePlaceholder(),
                         )
                       : Center(
@@ -179,7 +179,7 @@ class PropertyCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$ ${property.price}',
+                        PropertyFormat.cardPrice(context.l10n, property),
                         style: GoogleFonts.inter(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,

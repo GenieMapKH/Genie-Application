@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
 import 'package:genie/shared/widgets/buttons/app_button.dart';
@@ -26,11 +27,13 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify logo
-    final imageFinder = find.byType(Image);
-    expect(imageFinder, findsOneWidget);
-    final imageWidget = tester.widget<Image>(imageFinder);
-    expect(imageWidget.width, equals(220.0));
-    expect(imageWidget.height, equals(150.0));
+    final logoFinder = find.byWidgetPredicate(
+      (widget) => widget is SvgPicture && widget.width == 220.0,
+    );
+    expect(logoFinder, findsOneWidget);
+    final logo = tester.widget<SvgPicture>(logoFinder);
+    expect(logo.width, equals(220.0));
+    expect(logo.height, equals(150.0));
 
     // Verify headline and subtitle
     expect(find.text('Welcome to the app'), findsOneWidget);

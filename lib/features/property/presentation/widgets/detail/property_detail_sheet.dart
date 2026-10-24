@@ -2,19 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_recommendations_provider.dart';
 import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_detail_actions.dart';
 import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_gallery.dart';
+import 'package:genie/features/property/presentation/widgets/detail/property_detail_route.dart';
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_owner_actions.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
+import 'package:genie/features/property/presentation/widgets/detail/sections/property_facts_section.dart';
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_grid_section.dart';
 import 'package:genie/features/property/presentation/widgets/detail/header/property_highlights.dart';
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_map_preview.dart';
+import 'package:genie/features/property/presentation/widgets/detail/sections/property_publisher_card.dart';
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_share_section.dart';
 import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
@@ -33,8 +37,10 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
   final PropertyModel property;
   final String? heroTag;
 
-  /// Opens another property from the recommendation grids.
-  final void Function(PropertyModel property)? onOpenProperty;
+  /// Opens another property from the recommendation grids. [tileRect] is the
+  /// tapped tile: replace this sheet (`pushReplacement`) with one that grows
+  /// out of it.
+  final void Function(PropertyModel property, Rect tileRect)? onOpenProperty;
 
   const PropertyDetailSheet({
     super.key,
@@ -50,26 +56,19 @@ class PropertyDetailSheet extends ConsumerStatefulWidget {
   static Route<void> route(
     PropertyModel property, {
     String? heroTag,
-    void Function(PropertyModel property)? onOpenProperty,
+
+    /// Where the sheet grows out of when it replaces another sheet, instead
+    /// of out of a hero card.
+    Rect? origin,
+    void Function(PropertyModel property, Rect tileRect)? onOpenProperty,
   }) {
-    return PageRouteBuilder<void>(
-      opaque: false,
-      barrierColor: Colors.black.withValues(alpha: 0.25),
-      transitionDuration: const Duration(milliseconds: 350),
-      reverseTransitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (_, _, _) => PropertyDetailSheet(
+    return PropertyDetailRoute(
+      origin: origin,
+      page: PropertyDetailSheet(
         property: property,
         heroTag: heroTag,
         onOpenProperty: onOpenProperty,
       ),
-      transitionsBuilder: (_, animation, _, child) {
-        final curveAnimation = CurvedAnimation(
-          parent: animation,
-          curve: const Cubic(0.16, 1.0, 0.3, 1.0),
-          reverseCurve: const Cubic(0.16, 1.0, 0.3, 1.0),
-        );
-        return FadeTransition(opacity: curveAnimation, child: child);
-      },
     );
   }
 
@@ -115,12 +114,18 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
       propertyRecommendationsProvider(widget.property.id),
     );
 
+    // Opened with what a list had (a feed card has no boundary or counts):
+    // the full listing takes its place once read.
+    final property =
+        ref.watch(propertyDetailProvider(widget.property.id)).valueOrNull ??
+        widget.property;
+
     final heroTag =
         widget.heroTag ?? 'property_card_hero_${widget.property.id}';
 
     // The owner manages the listing instead of contacting themselves.
     final viewerId = ref.watch(userProfileProvider).valueOrNull?.id;
-    final isOwner = viewerId != null && viewerId == widget.property.ownerId;
+    final isOwner = viewerId != null && viewerId == property.ownerId;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -136,7 +141,7 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
           Align(
             alignment: Alignment.bottomCenter,
             child: FractionallySizedBox(
-              heightFactor: 0.9,
+              heightFactor: PropertyDetailRoute.sheetHeightFactor,
               child: Hero(
                 tag: heroTag,
                 child: Material(
@@ -184,16 +189,18 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       ),
                                       slivers: [
                                         PropertyDetailGallery(
-                                          imageUrls: widget.property.imageUrls,
+                                          imageUrls: property.imageUrls,
+                                          thumbnailUrls: property.cardImageUrls,
                                         ),
                                         SliverToBoxAdapter(
                                           child: _Body(
-                                            property: widget.property,
+                                            property: property,
                                             recommendations: recommendations,
                                             onOpenProperty:
                                                 widget.onOpenProperty,
                                             onDismiss: _dismiss,
                                             isReady: _isReady,
+                                            isOwner: isOwner,
                                           ),
                                         ),
                                       ],
@@ -220,14 +227,14 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                             ),
                             if (isOwner)
                               PropertyOwnerActions(
-                                property: widget.property,
+                                property: property,
                                 onEdited: _dismiss,
                               )
                             else
                               PropertyContactBar(
                                 onChat: () {
                                   if (!requireSignIn(context, ref)) return;
-                                  if (widget.property.ownerId != null) {
+                                  if (property.ownerId != null) {
                                     // Use root navigator so chat opens as a full-screen page
                                     Navigator.of(
                                       context,
@@ -236,11 +243,10 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             ChatConversationPage(
-                                              participantId:
-                                                  widget.property.ownerId!,
+                                              participantId: property.ownerId!,
                                               participantName: ownerDisplayName(
                                                 context.l10n,
-                                                widget.property.ownerName,
+                                                property.ownerName,
                                               ),
                                             ),
                                       ),
@@ -278,9 +284,10 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
 class _Body extends StatelessWidget {
   final PropertyModel property;
   final PropertyRecommendations recommendations;
-  final void Function(PropertyModel property)? onOpenProperty;
+  final void Function(PropertyModel property, Rect tileRect)? onOpenProperty;
   final VoidCallback? onDismiss;
   final bool isReady;
+  final bool isOwner;
 
   const _Body({
     required this.property,
@@ -288,6 +295,7 @@ class _Body extends StatelessWidget {
     this.onOpenProperty,
     this.onDismiss,
     this.isReady = false,
+    this.isOwner = false,
   });
 
   @override
@@ -310,6 +318,8 @@ class _Body extends StatelessWidget {
             const _SectionGap(),
             PropertyHighlights(property: property),
             const _SectionGap(),
+            PropertyFactsSection(property: property),
+            const _SectionGap(),
             PropertyMapPreview(
               property: property,
               onTap: () => Navigator.of(context).maybePop(),
@@ -318,12 +328,18 @@ class _Body extends StatelessWidget {
             PropertyNearbySection(propertyId: property.id),
             const _SectionGap(),
             PropertyShareSection(property: property),
+            // Last of the listing itself: who posted it, before other
+            // listings.
+            if (property.ownerId != null) ...[
+              const _SectionGap(),
+              PropertyPublisherCard(property: property, isOwner: isOwner),
+            ],
             if (recommendations.similar.isNotEmpty) ...[
               const _SectionGap(),
               PropertyGridSection(
                 title: context.l10n.propertySimilarProperty,
                 properties: recommendations.similar,
-                onPropertyTapped: (p) => onOpenProperty?.call(p),
+                onPropertyTapped: (p, rect) => onOpenProperty?.call(p, rect),
               ),
             ],
             if (recommendations.forYou.isNotEmpty) ...[
@@ -331,7 +347,7 @@ class _Body extends StatelessWidget {
               PropertyGridSection(
                 title: context.l10n.propertyPropertyForYou,
                 properties: recommendations.forYou,
-                onPropertyTapped: (p) => onOpenProperty?.call(p),
+                onPropertyTapped: (p, rect) => onOpenProperty?.call(p, rect),
               ),
             ],
           ] else ...[

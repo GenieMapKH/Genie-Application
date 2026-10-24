@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/features/home/utils/map/layers/boundary_label_layout.dart';
 import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
 import 'package:genie/features/home/utils/map/map_measurements.dart';
 import 'package:genie/features/home/utils/map/markers/label_markers.dart';
@@ -8,7 +9,8 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// The tapped listing's real shape: its boundary polygon with vertex numbers,
-/// edge lengths and area. Drawn at every zoom level.
+/// edge lengths and area. Drawn at every zoom level; numbers and lengths
+/// with no room on screen are left out (see [BoundaryLabelLayout]).
 abstract final class DetailedPropertyLayer {
   // Gold reads on both the default and the satellite map.
   static final _boundaryColor = AppColors.light.highlight;
@@ -65,8 +67,45 @@ abstract final class DetailedPropertyLayer {
     if (measurements == null) return;
 
     final area = measurements.area;
+    // The map redraws these once per whole zoom level, so lay them out for
+    // the furthest-out view of that level: zooming in only spreads them.
+    final layoutZoom = currentZoom.floorToDouble();
 
-    for (var i = 0; i < points.length; i++) {
+    // Screen boxes already used, in order of importance: the area, then
+    // corner numbers, then side lengths.
+    final taken = <Rect>[];
+    final areaLabel = formatArea(area);
+    final areaFontSize = labelFontSize(area, currentZoom, isArea: true);
+    final areaPosition = centroidOf(points);
+    // Just below a marker on the centroid; on the centroid without one.
+    final areaAnchor = Offset(0.5, hasCenterMarker ? -0.9 : 0.5);
+    taken.add(
+      BoundaryLabelLayout.markerRect(
+        areaPosition,
+        LabelMarkers.sizeOf(areaLabel, isArea: true, fontSize: areaFontSize),
+        areaAnchor,
+        layoutZoom,
+      ),
+    );
+    markers.add(
+      Marker(
+        markerId: MarkerId('area_marker_$index'),
+        position: areaPosition,
+        icon: await LabelMarkers.text(
+          areaLabel,
+          isArea: true,
+          fontSize: areaFontSize,
+        ),
+        anchor: areaAnchor,
+        zIndexInt: 1,
+      ),
+    );
+
+    for (final i in BoundaryLabelLayout.placeCorners(
+      points,
+      layoutZoom,
+      taken,
+    )) {
       markers.add(
         Marker(
           markerId: MarkerId('vertex_${index}_$i'),
@@ -79,37 +118,43 @@ abstract final class DetailedPropertyLayer {
     }
 
     if (measurements.sides.isEmpty) return;
+    await _addSideLabels(
+      index,
+      points,
+      measurements.sides,
+      currentZoom,
+      layoutZoom,
+      taken,
+      markers,
+    );
+  }
 
-    final edgeFontSize = labelFontSize(area, currentZoom, isArea: false);
-    for (var i = 0; i < points.length; i++) {
-      final next = points[(i + 1) % points.length];
+  static Future<void> _addSideLabels(
+    int index,
+    List<LatLng> points,
+    List<double> sides,
+    double currentZoom,
+    double layoutZoom,
+    List<Rect> taken,
+    Set<Marker> markers,
+  ) async {
+    final fontSize = labelFontSize(0, currentZoom, isArea: false);
+    final labels = [for (final side in sides) '${side.toStringAsFixed(0)} m'];
+    final placed = BoundaryLabelLayout.placeSides(points, layoutZoom, [
+      for (final label in labels)
+        LabelMarkers.sizeOf(label, fontSize: fontSize),
+    ], taken);
+
+    for (final MapEntry(key: i, value: position) in placed.entries) {
       markers.add(
         Marker(
           markerId: MarkerId('length_${index}_$i'),
-          position: midpointOf(points[i], next),
-          icon: await LabelMarkers.text(
-            '${measurements.sides[i].toStringAsFixed(0)} m',
-            fontSize: edgeFontSize,
-          ),
+          position: position,
+          icon: await LabelMarkers.text(labels[i], fontSize: fontSize),
           anchor: const Offset(0.5, 0.5),
           zIndexInt: 2,
         ),
       );
     }
-
-    markers.add(
-      Marker(
-        markerId: MarkerId('area_marker_$index'),
-        position: centroidOf(points),
-        icon: await LabelMarkers.text(
-          formatArea(area),
-          isArea: true,
-          fontSize: labelFontSize(area, currentZoom, isArea: true),
-        ),
-        // Just below a marker on the centroid; on the centroid without one.
-        anchor: Offset(0.5, hasCenterMarker ? -0.9 : 0.5),
-        zIndexInt: 1,
-      ),
-    );
   }
 }

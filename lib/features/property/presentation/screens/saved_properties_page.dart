@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/shared/widgets/layout/app_header_bar.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/property_list_layout.dart';
 import 'package:genie/features/property/presentation/screens/sort_order_page.dart';
 import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
@@ -29,14 +30,28 @@ class SavedPropertiesPage extends ConsumerWidget {
 
   void _openDetail(BuildContext context, PropertyModel property) {
     Navigator.of(context).push(
-      PropertyDetailSheet.route(
+      _detailRoute(
+        context,
         property,
         heroTag: 'saved_property_hero_${property.id}',
-        onOpenProperty: (next) {
-          Navigator.of(context).pop();
-          _openDetail(context, next);
-        },
       ),
+    );
+  }
+
+  /// A recommendation was tapped: its sheet takes the place of this one.
+  Route<void> _detailRoute(
+    BuildContext context,
+    PropertyModel property, {
+    String? heroTag,
+    Rect? origin,
+  }) {
+    return PropertyDetailSheet.route(
+      property,
+      heroTag: heroTag,
+      origin: origin,
+      onOpenProperty: (next, tileRect) => Navigator.of(
+        context,
+      ).pushReplacement(_detailRoute(context, next, origin: tileRect)),
     );
   }
 
@@ -240,12 +255,19 @@ class SavedPropertiesPage extends ConsumerWidget {
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverGrid.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.68,
-              ),
+              gridDelegate: PropertyListLayout.isTablet(context)
+                  ? const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: PropertyListLayout.savedCardMaxWidth,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: PropertyListLayout.columnSpacing,
+                      childAspectRatio: 0.68,
+                    )
+                  : const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.68,
+                    ),
               itemCount: properties.length,
               itemBuilder: (context, index) {
                 final property = properties[index];

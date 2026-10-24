@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,8 +10,9 @@ import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
 
-/// Satellite thumbnail of the property's boundary, with the measured area
-/// overlaid. Non-interactive: tapping it returns the user to the full map.
+/// Satellite map of the property's boundary, with the measured area
+/// overlaid. It can be panned, zoomed and turned to look the plot over; its
+/// "View on map" button ([onTap]) returns the user to the full map.
 class PropertyMapPreview extends StatelessWidget {
   final PropertyModel property;
   final VoidCallback? onTap;
@@ -17,6 +20,10 @@ class PropertyMapPreview extends StatelessWidget {
   const PropertyMapPreview({super.key, required this.property, this.onTap});
 
   static const double _height = 190.0;
+
+  static final Set<Factory<OneSequenceGestureRecognizer>> _mapGestures = {
+    Factory<OneSequenceGestureRecognizer>(EagerGestureRecognizer.new),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -55,18 +62,19 @@ class PropertyMapPreview extends StatelessWidget {
             height: _height,
             child: Stack(
               children: [
-                // Lite mode keeps this cheap: a static snapshot, no gestures.
                 GoogleMap(
                   initialCameraPosition: CameraPosition(
                     target: center,
                     zoom: zoom,
                   ),
-                  liteModeEnabled: true,
+                  // Every drag on the map moves it, not the sheet around it.
+                  gestureRecognizers: _mapGestures,
                   mapType: MapType.hybrid,
                   zoomControlsEnabled: false,
                   myLocationButtonEnabled: false,
                   compassEnabled: false,
                   mapToolbarEnabled: false,
+                  tiltGesturesEnabled: false,
                   polygons: points.length >= 3
                       ? {
                           Polygon(
@@ -89,15 +97,20 @@ class PropertyMapPreview extends StatelessWidget {
                           ),
                         },
                 ),
+                // In a corner, so the plot is not hidden while it is moved.
                 if (measurements != null)
-                  Center(child: _AreaChip(area: measurements.area)),
-                // Transparent tap target above the lite map.
-                if (onTap != null)
-                  Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: onTap,
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: IgnorePointer(
+                      child: _AreaChip(area: measurements.area),
                     ),
+                  ),
+                if (onTap != null)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: _ViewOnMapButton(onPressed: onTap!),
                   ),
               ],
             ),
@@ -160,6 +173,31 @@ class _AreaChip extends StatelessWidget {
           fontWeight: FontWeight.w700,
           color: context.colors.textSecondary,
         ),
+      ),
+    );
+  }
+}
+
+class _ViewOnMapButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _ViewOnMapButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.surface,
+      shape: const CircleBorder(),
+      elevation: 2,
+      child: IconButton(
+        onPressed: onPressed,
+        tooltip: context.l10n.propertyViewOnMap,
+        icon: Icon(
+          Icons.open_in_full_rounded,
+          size: 18,
+          color: context.colors.textSecondary,
+        ),
+        visualDensity: VisualDensity.compact,
       ),
     );
   }

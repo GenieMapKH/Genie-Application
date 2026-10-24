@@ -58,13 +58,18 @@ void main() {
         tester,
         listings: [tapped, other],
         selected: tapped,
-        zoom: 18,
+        // Close enough for this 44 m square's sides to fit their lengths
+        // beside the area label.
+        zoom: 19,
       );
 
       expect(ids, isNot(contains('city_dot_0')));
       expect(ids, contains('city_dot_1'));
       expect(ids, contains('area_marker_0'));
-      expect(ids, containsAll(['length_0_0', 'length_0_1']));
+      expect(
+        ids,
+        containsAll(['length_0_0', 'length_0_1', 'length_0_2', 'length_0_3']),
+      );
     },
   );
 

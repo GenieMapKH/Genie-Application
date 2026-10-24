@@ -170,6 +170,12 @@ abstract class AppLocalizations {
   /// **'My Properties'**
   String get navMyProperties;
 
+  /// No description provided for @navListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get navListings;
+
   /// No description provided for @navUser.
   ///
   /// In en, this message translates to:
@@ -1526,6 +1532,12 @@ abstract class AppLocalizations {
   /// **'Map Preview'**
   String get propertyMapPreview;
 
+  /// No description provided for @propertyViewOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'View on map'**
+  String get propertyViewOnMap;
+
   /// No description provided for @propertyAddProperty.
   ///
   /// In en, this message translates to:
@@ -2504,6 +2516,78 @@ abstract class AppLocalizations {
   /// **'Follow'**
   String get profileFollow;
 
+  /// No description provided for @profileFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get profileFollowing;
+
+  /// No description provided for @profileFollowersStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get profileFollowersStat;
+
+  /// No description provided for @profileFollowingStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get profileFollowingStat;
+
+  /// No description provided for @profileFollowLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can follow up to {count} people. Unfollow someone to follow more.'**
+  String profileFollowLimit(int count);
+
+  /// No description provided for @profileFollowFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Following could not be changed. Please try again.'**
+  String get profileFollowFailed;
+
+  /// No description provided for @navFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed'**
+  String get navFeed;
+
+  /// No description provided for @feedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed'**
+  String get feedTitle;
+
+  /// No description provided for @feedEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your feed is empty'**
+  String get feedEmptyTitle;
+
+  /// No description provided for @feedEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow people from their profile to see their new listings here.'**
+  String get feedEmptyHint;
+
+  /// No description provided for @feedExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore listings'**
+  String get feedExplore;
+
+  /// No description provided for @feedLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your feed could not be loaded.'**
+  String get feedLoadFailed;
+
+  /// No description provided for @feedListedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Listed {date}'**
+  String feedListedOn(String date);
+
   /// No description provided for @profileContactTitle.
   ///
   /// In en, this message translates to:
@@ -2666,12 +2750,6 @@ abstract class AppLocalizations {
   /// **'{distance} m'**
   String propertyDistanceM(int distance);
 
-  /// No description provided for @propertyDriveMinutes.
-  ///
-  /// In en, this message translates to:
-  /// **'{minutes} min drive'**
-  String propertyDriveMinutes(int minutes);
-
   /// No description provided for @propertyStraightLine.
   ///
   /// In en, this message translates to:
@@ -2683,6 +2761,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load nearby places.'**
   String get propertyNearbyCouldNotLoad;
+
+  /// No description provided for @propertyNearbyRouteCouldNotLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the road to this place.'**
+  String get propertyNearbyRouteCouldNotLoad;
 
   /// No description provided for @propertyDiscount.
   ///
@@ -3758,12 +3842,6 @@ abstract class AppLocalizations {
   /// **'Could not delete the property. Please try again.'**
   String get propertyDeleteFailed;
 
-  /// No description provided for @propertyFallbackDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'This land parcel is accurately mapped with verified boundaries and exact recorded coordinates, located in a fast-growing area near main infrastructure. It is ideal for residential development, a long-term investment, or a business project. The rectangular shape allows efficient planning and construction, while utilities such as electricity and water are already available nearby. Clear ownership documents and precise UTM location make this property easy to verify and trust.'**
-  String get propertyFallbackDescription;
-
   /// No description provided for @propertyListingBy.
   ///
   /// In en, this message translates to:
@@ -3823,6 +3901,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{type} for sale'**
   String propertyTypeForSale(String type);
+
+  /// No description provided for @propertyTypeForRent.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} for rent'**
+  String propertyTypeForRent(String type);
+
+  /// No description provided for @propertyPriceFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {price}'**
+  String propertyPriceFrom(String price);
 
   /// No description provided for @propertyBedroomCount.
   ///
@@ -4549,6 +4639,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Missed call from {name}'**
   String callMissedFrom(String name);
+
+  /// No description provided for @filterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filterTitle;
+
+  /// No description provided for @filterForSale.
+  ///
+  /// In en, this message translates to:
+  /// **'For sale'**
+  String get filterForSale;
+
+  /// No description provided for @filterForRent.
+  ///
+  /// In en, this message translates to:
+  /// **'For rent'**
+  String get filterForRent;
+
+  /// No description provided for @filterPriceRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Price range'**
+  String get filterPriceRange;
+
+  /// No description provided for @filterPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: {range}'**
+  String filterPriceLabel(String range);
+
+  /// No description provided for @filterPriceAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get filterPriceAny;
+
+  /// No description provided for @filterPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/month'**
+  String filterPerMonth(String price);
+
+  /// No description provided for @filterMinPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Price'**
+  String get filterMinPrice;
+
+  /// No description provided for @filterMaxPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Price'**
+  String get filterMaxPrice;
+
+  /// No description provided for @filterNoMin.
+  ///
+  /// In en, this message translates to:
+  /// **'No min'**
+  String get filterNoMin;
+
+  /// No description provided for @filterNoMax.
+  ///
+  /// In en, this message translates to:
+  /// **'No max'**
+  String get filterNoMax;
+
+  /// No description provided for @filterDownPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Down payment'**
+  String get filterDownPayment;
+
+  /// No description provided for @filterNoDownPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'No down payment'**
+  String get filterNoDownPayment;
+
+  /// No description provided for @filterLandSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Land size'**
+  String get filterLandSize;
+
+  /// No description provided for @filterPropertySize.
+  ///
+  /// In en, this message translates to:
+  /// **'Property size'**
+  String get filterPropertySize;
+
+  /// No description provided for @filterMinArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Min m²'**
+  String get filterMinArea;
+
+  /// No description provided for @filterMaxArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Max m²'**
+  String get filterMaxArea;
+
+  /// No description provided for @filterMinAboveMax.
+  ///
+  /// In en, this message translates to:
+  /// **'The minimum is above the maximum'**
+  String get filterMinAboveMax;
+
+  /// No description provided for @filterPropertyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Type'**
+  String get filterPropertyType;
+
+  /// No description provided for @filterKeywords.
+  ///
+  /// In en, this message translates to:
+  /// **'Keywords / Features'**
+  String get filterKeywords;
+
+  /// No description provided for @filterReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get filterReset;
+
+  /// No description provided for @filterSeeResults.
+  ///
+  /// In en, this message translates to:
+  /// **'See results'**
+  String get filterSeeResults;
+
+  /// No description provided for @propertyFactsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Details'**
+  String get propertyFactsTitle;
+
+  /// No description provided for @propertyFactsOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get propertyFactsOverview;
+
+  /// No description provided for @propertyFactsSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get propertyFactsSize;
+
+  /// No description provided for @propertyFactsBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms & Building'**
+  String get propertyFactsBuilding;
+
+  /// No description provided for @propertyFactsProject.
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get propertyFactsProject;
+
+  /// No description provided for @propertyFactsCosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Costs & Business'**
+  String get propertyFactsCosts;
+
+  /// No description provided for @propertyFactsFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get propertyFactsFeatures;
+
+  /// No description provided for @propertyFactPricePerSquareMetre.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per m²'**
+  String get propertyFactPricePerSquareMetre;
+
+  /// No description provided for @propertyFactPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} / month'**
+  String propertyFactPerMonth(String amount);
+
+  /// No description provided for @propertyFactMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String propertyFactMonths(int count);
+
+  /// No description provided for @propertyPublisherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Listed by'**
+  String get propertyPublisherTitle;
+
+  /// No description provided for @propertyPublisherViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get propertyPublisherViewProfile;
 }
 
 class _AppLocalizationsDelegate

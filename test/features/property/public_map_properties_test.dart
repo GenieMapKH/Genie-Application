@@ -15,8 +15,7 @@ class _MapRepository extends PropertyRepository {
         ({
           double minLat,
           double maxLat,
-          String? propertyType,
-          String? listingType,
+          MapPropertyFilter filter,
           Completer<List<PropertyModel>> answer,
           CancelToken? cancelToken,
         })
@@ -30,16 +29,14 @@ class _MapRepository extends PropertyRepository {
     required double maxLat,
     required double minLng,
     required double maxLng,
-    String? propertyType,
-    String? listingType,
+    MapPropertyFilter filter = const MapPropertyFilter(),
     CancelToken? cancelToken,
   }) {
     final answer = Completer<List<PropertyModel>>();
     searches.add((
       minLat: minLat,
       maxLat: maxLat,
-      propertyType: propertyType,
-      listingType: listingType,
+      filter: filter,
       answer: answer,
       cancelToken: cancelToken,
     ));
@@ -130,15 +127,21 @@ void main() {
     repo.searches.last.answer.complete([_listing('any')]);
     await pumpEventQueue();
 
-    container.read(mapPropertyFilterProvider.notifier).state =
-        const MapPropertyFilter(propertyType: 'House', listingType: 'Rent');
+    container
+        .read(mapPropertyFilterProvider.notifier)
+        .state = const MapPropertyFilter(
+      propertyType: 'House',
+      listingTypes: ['Rent'],
+      minPrice: 100,
+    );
     await pumpEventQueue();
 
     final filtered = repo.searches.last;
     expect(repo.searches, hasLength(2));
     expect(filtered.minLat, 11.5);
-    expect(filtered.propertyType, 'House');
-    expect(filtered.listingType, 'Rent');
+    expect(filtered.filter.propertyType, 'House');
+    expect(filtered.filter.listingTypes, ['Rent']);
+    expect(filtered.filter.minPrice, 100);
   });
 
   test('a newer search gives up the one still on its way', () async {

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// The brand logo in the version drawn for the current theme: the navy
-/// wordmark on light backgrounds, the off-white stacked one on dark.
+/// one on light backgrounds, the off-white one on dark. Vector, so it stays
+/// sharp at any size.
 class AppLogo extends StatelessWidget {
-  static const String lightAssetPath = 'assets/images/brand/logo_on_light.png';
-  static const String darkAssetPath = 'assets/images/brand/logo_on_dark.png';
+  static const String lightAssetPath = 'assets/images/brand/logo_on_light.svg';
+  static const String darkAssetPath = 'assets/images/brand/logo_on_dark.svg';
 
-  /// The box the logo is fitted into; the two versions have different
-  /// shapes, so each keeps its own aspect ratio inside it.
+  /// The box the logo is fitted into, keeping its aspect ratio.
   final double width;
   final double height;
 
@@ -16,12 +17,11 @@ class AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Image.asset(
+    return SvgPicture.asset(
       isDark ? darkAssetPath : lightAssetPath,
       width: width,
       height: height,
       fit: BoxFit.contain,
-      filterQuality: FilterQuality.high,
     );
   }
 }

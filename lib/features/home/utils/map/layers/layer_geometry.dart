@@ -30,7 +30,9 @@ bool shouldShowDetailedView(double area, double currentZoom) {
   return currentZoom > 20.0;
 }
 
-/// Font size of the length/area labels for the current zoom and plot size.
+/// Font size of the length/area labels for the current zoom. The same for
+/// any plot size: a big plot is seen from further out, where its sides are
+/// short on screen, so bigger labels only crowd it.
 double labelFontSize(double area, double currentZoom, {required bool isArea}) {
   var size = isArea ? 13.5 : 11.0;
 
@@ -45,12 +47,6 @@ double labelFontSize(double area, double currentZoom, {required bool isArea}) {
     size *= 0.8;
   } else if (currentZoom <= 13.0) {
     size *= 0.6;
-  }
-
-  if (area > 100000) {
-    size *= 1.5;
-  } else if (area > 10000) {
-    size *= 1.3;
   }
 
   return size.clamp(10.0, 20.0);

@@ -1,5 +1,7 @@
 import 'package:flutter/painting.dart';
 
+import 'price_tag_pin.dart';
+
 /// A listing's price tag measured and coloured, ready to paint.
 ///
 /// Shared by the map marker and the merge animation, so both draw the very
@@ -53,15 +55,26 @@ class PriceTagLayout {
       price: price,
       newLabel: newLabel,
       size: Size(contentWidth + paddingX * 2, height),
-      radius: Radius.circular(isNew ? 10.0 : height / 2),
+      radius: Radius.circular(isNew ? 10.0 : 8.0),
       background: background,
       borderWidth: borderWidth,
       paddingY: paddingY,
     );
   }
 
-  /// The body with its top-left corner at the origin.
-  RRect get body => RRect.fromRectAndRadius(Offset.zero & size, radius);
+  /// The body and its white border together.
+  Size get outerSize =>
+      Size(size.width + borderWidth, size.height + borderWidth);
+
+  /// How far above the listing the tag's centre is, its [PriceTagPin] point
+  /// on the listing.
+  double get lift => outerSize.height / 2 + PriceTagPin.tail;
+
+  /// The tag's outer edge, with its top-left corner at [origin].
+  RRect outline(Offset origin) => RRect.fromRectAndRadius(
+    origin & outerSize,
+    radius + Radius.circular(borderWidth / 2),
+  );
 
   /// Paints the labels inside a body whose top-left corner is at [origin].
   void paintLabels(Canvas canvas, Offset origin) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/presentation/property_labels.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 class PropertyTypeSelector extends StatelessWidget {
   final String selectedPropertyType;
@@ -57,14 +57,11 @@ class PropertyTypeSelector extends StatelessWidget {
             ),
             child: Column(
               children: [
-                SvgPicture.asset(
+                TintedSvg(
                   type['iconPath'],
-                  colorFilter: ColorFilter.mode(
-                    isSelected
-                        ? context.colors.accent
-                        : context.colors.textMuted,
-                    BlendMode.srcIn,
-                  ),
+                  color: isSelected
+                      ? context.colors.accent
+                      : context.colors.textMuted,
                   width: 24,
                   height: 24,
                 ),

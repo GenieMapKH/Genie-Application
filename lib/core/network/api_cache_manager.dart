@@ -5,22 +5,18 @@ class CacheEntry {
   final dynamic data;
   final String? etag;
   final DateTime timestamp;
-  final Duration ttl;
 
-  CacheEntry({
-    required this.data,
-    this.etag,
-    required this.timestamp,
-    required this.ttl,
-  });
+  CacheEntry({required this.data, this.etag, required this.timestamp});
 
   Duration get age => DateTime.now().difference(timestamp);
-
-  bool get isExpired => age > ttl;
 }
 
 /// In-memory store of API answers for this session, least recently used
 /// first. Cleared on sign-out ([clearAll]).
+///
+/// An answer is kept until newer ones push it out, however old it is: it is
+/// never shown as current without the server confirming it (see
+/// [CacheInterceptor]), but an old answer beats an error when offline.
 class ApiCacheManager {
   static final ApiCacheManager _instance = ApiCacheManager._internal();
   factory ApiCacheManager() => _instance;
@@ -41,32 +37,22 @@ class ApiCacheManager {
     return '$path?$queryString';
   }
 
-  /// Get cached response if valid
+  /// The kept answer for [key], of any age.
   CacheEntry? get(String key) {
     final entry = _cache.remove(key);
-    if (entry == null || entry.isExpired) return null;
+    if (entry == null) return null;
     // Back to the end: the most recently used entry is removed last.
     _cache[key] = entry;
     return entry;
   }
 
   /// Put response into cache
-  void set(
-    String key,
-    dynamic data, {
-    String? etag,
-    Duration ttl = const Duration(minutes: 5),
-  }) {
+  void set(String key, dynamic data, {String? etag}) {
     _cache.remove(key);
     while (_cache.length >= _maxCacheEntries) {
       _cache.remove(_cache.keys.first);
     }
-    _cache[key] = CacheEntry(
-      data: data,
-      etag: etag,
-      timestamp: DateTime.now(),
-      ttl: ttl,
-    );
+    _cache[key] = CacheEntry(data: data, etag: etag, timestamp: DateTime.now());
   }
 
   /// Drops every answer about the same resource as [path]: a change under
@@ -93,9 +79,10 @@ class ApiCacheManager {
 
 /// Keeps answers to GET requests (see [ApiCacheManager]):
 ///
-/// * Every answer is kept for a few minutes. Asking again sends its ETag, so
-///   an unchanged answer costs the server no body (304), and the kept answer
-///   is used when the network is down.
+/// * Every answer is kept. Asking again sends its ETag, so an unchanged
+///   answer costs no body (304), and the kept answer is used when the server
+///   cannot be reached, so a weak connection shows the last listings rather
+///   than an error.
 /// * A request marked with [freshFor] is answered from memory, without
 ///   asking the server, while the kept answer is younger than that. Only for
 ///   data that may be a few seconds old (public listings, public profiles).

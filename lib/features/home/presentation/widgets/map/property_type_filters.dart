@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
@@ -9,6 +8,7 @@ import 'package:genie/shared/widgets/buttons/tactile_button.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/presentation/property_labels.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 /// The pills under the map's search bar: one listing type and one property
 /// type at a time, kept in [mapPropertyFilterProvider], which the map obeys.
@@ -48,45 +48,59 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20.0),
+      // The parent leaves 16 on the left and 4 on the right; the last pill's
+      // own 8 margin plus this 4 makes the end gap 16 as well.
+      padding: const EdgeInsets.only(right: 4.0),
       child: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          clipBehavior: Clip.hardEdge,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Listing Type Column
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildListingTypeSelector(),
-                  if (_isListingTypeOpen) ...[
-                    const SizedBox(height: 8),
-                    _buildDropdownPill('Sale'),
-                    const SizedBox(height: 8),
-                    _buildDropdownPill('Rent'),
-                    const SizedBox(height: 8),
-                    _buildDropdownPill('To Let'),
+        // A horizontal scroll view is only as wide as its content when that
+        // fits, which clipped the pills short of the screen edge on a tablet.
+        child: SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.hardEdge,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Listing Type Column
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildListingTypeSelector(),
+                    if (_isListingTypeOpen) ...[
+                      const SizedBox(height: 8),
+                      _buildDropdownPill('Sale'),
+                      const SizedBox(height: 8),
+                      _buildDropdownPill('Rent'),
+                      const SizedBox(height: 8),
+                      _buildDropdownPill('To Let'),
+                    ],
                   ],
-                ],
-              ),
-              const SizedBox(width: 8),
-              // Property Types
-              for (final (value, iconPath) in _propertyTypes)
-                _buildPropertyTypePill(_typeLabel(value), value, iconPath),
-              const SizedBox(width: 8), // End padding
-            ],
+                ),
+                const SizedBox(width: 8),
+                // Property Types
+                for (final (value, iconPath) in _propertyTypes)
+                  _buildPropertyTypePill(_typeLabel(value), value, iconPath),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  /// One listing type by name; the filter page's "For rent" (Rent and To Let)
+  /// as that.
+  String? _listingLabel(List<String> types) {
+    if (types.isEmpty) return null;
+    if (types.length == 1) return propertyValueLabel(context.l10n, types.first);
+    return _filter.isForRent ? context.l10n.filterForRent : null;
+  }
+
   Widget _buildListingTypeSelector() {
-    final selectedListingType = _filter.listingType;
-    final bool isListingTypeSelected = selectedListingType != null;
+    final selectedLabel = _listingLabel(_filter.listingTypes);
+    final bool isListingTypeSelected = _filter.listingTypes.isNotEmpty;
     return TactileButton(
       onPressed: () {
         setState(() {
@@ -124,9 +138,7 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
             ),
             const SizedBox(width: 6),
             Text(
-              selectedListingType == null
-                  ? context.l10n.listingTypeTitle
-                  : propertyValueLabel(context.l10n, selectedListingType),
+              selectedLabel ?? context.l10n.listingTypeTitle,
               style: GoogleFonts.inter(
                 color: isListingTypeSelected
                     ? context.colors.primaryStrong
@@ -154,7 +166,9 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
   }
 
   Widget _buildDropdownPill(String text) {
-    final isSelected = _filter.listingType == text;
+    final isSelected = MapPropertyFilter.listingEquals(_filter.listingTypes, [
+      text,
+    ]);
     return TactileButton(
       onPressed: () {
         _update((filter) => filter.toggleListing(text));
@@ -220,16 +234,13 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
+            TintedSvg(
               iconPath,
               width: 16,
               height: 16,
-              colorFilter: ColorFilter.mode(
-                isSelected
-                    ? context.colors.primaryStrong
-                    : context.colors.textMuted,
-                BlendMode.srcIn,
-              ),
+              color: isSelected
+                  ? context.colors.primaryStrong
+                  : context.colors.textMuted,
             ),
             const SizedBox(width: 6),
             Text(

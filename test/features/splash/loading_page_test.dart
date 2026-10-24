@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genie/features/splash/presentation/screens/loading_page.dart';
 import 'package:genie/shared/widgets/media/app_logo.dart';
@@ -11,16 +12,12 @@ void main() {
       const MaterialApp(home: LoadingPage(displayDuration: Duration.zero)),
     );
 
-    // Locate the Image widget
-    final imageFinder = find.byType(Image);
-    expect(imageFinder, findsOneWidget);
-
-    final imageWidget = tester.widget<Image>(imageFinder);
-    expect(imageWidget.image, isA<AssetImage>());
-    final assetImage = imageWidget.image as AssetImage;
-    expect(assetImage.assetName, equals(AppLogo.lightAssetPath));
-    expect(imageWidget.width, equals(220.0));
-    expect(imageWidget.height, equals(150.0));
+    final picture = tester.widget<SvgPicture>(find.byType(SvgPicture));
+    expect(picture.bytesLoader, isA<SvgAssetLoader>());
+    final loader = picture.bytesLoader as SvgAssetLoader;
+    expect(loader.assetName, equals(AppLogo.lightAssetPath));
+    expect(picture.width, equals(220.0));
+    expect(picture.height, equals(150.0));
   });
 
   testWidgets('LoadingPage shows the dark logo in the dark theme', (
@@ -33,9 +30,9 @@ void main() {
       ),
     );
 
-    final imageWidget = tester.widget<Image>(find.byType(Image));
-    final assetImage = imageWidget.image as AssetImage;
-    expect(assetImage.assetName, equals(AppLogo.darkAssetPath));
+    final picture = tester.widget<SvgPicture>(find.byType(SvgPicture));
+    final loader = picture.bytesLoader as SvgAssetLoader;
+    expect(loader.assetName, equals(AppLogo.darkAssetPath));
   });
 
   testWidgets('LoadingPage invokes onFinished when timer expires', (

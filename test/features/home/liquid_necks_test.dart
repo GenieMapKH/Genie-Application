@@ -15,7 +15,7 @@ DropOnScreen _drop(double x, {double cohesion = 1}) => (
   ),
   border: 1,
   color: const Color(0xFF028752),
-  shadow: 1,
+  tail: 0,
   tagness: 0,
 );
 

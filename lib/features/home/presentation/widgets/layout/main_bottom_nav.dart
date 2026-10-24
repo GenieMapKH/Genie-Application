@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:genie/shared/widgets/buttons/tactile_button.dart';
 import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
@@ -9,6 +8,7 @@ import 'package:genie/features/home/presentation/providers/main_nav_provider.dar
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/core/theme/app_colors.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 class MainBottomNav extends ConsumerWidget {
   const MainBottomNav({super.key});
@@ -32,13 +32,12 @@ class MainBottomNav extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 16.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildNavItem(
               context,
               ref,
-              0,
+              MainTab.explore,
               'assets/icons/explore.svg',
               l10n.navExplore,
               currentIndex,
@@ -46,7 +45,15 @@ class MainBottomNav extends ConsumerWidget {
             _buildNavItem(
               context,
               ref,
-              1,
+              MainTab.feed,
+              'assets/icons/feed.svg',
+              l10n.navFeed,
+              currentIndex,
+            ),
+            _buildNavItem(
+              context,
+              ref,
+              MainTab.saved,
               'assets/icons/saved.svg',
               l10n.navSaved,
               currentIndex,
@@ -54,7 +61,7 @@ class MainBottomNav extends ConsumerWidget {
             _buildNavItem(
               context,
               ref,
-              2,
+              MainTab.chat,
               'assets/icons/chat.svg',
               l10n.navChat,
               currentIndex,
@@ -62,15 +69,15 @@ class MainBottomNav extends ConsumerWidget {
             _buildNavItem(
               context,
               ref,
-              3,
+              MainTab.myProperties,
               'assets/icons/property.svg',
-              l10n.navMyProperties,
+              l10n.navListings,
               currentIndex,
             ),
             _buildNavItem(
               context,
               ref,
-              4,
+              MainTab.user,
               'assets/icons/user.svg',
               l10n.navUser,
               currentIndex,
@@ -105,16 +112,18 @@ class MainBottomNav extends ConsumerWidget {
         ? context.colors.primaryStrong
         : context.colors.textMuted;
 
-    final unreadCount = index == 2 ? ref.watch(unreadCountProvider) : 0;
+    final unreadCount = index == MainTab.chat
+        ? ref.watch(unreadCountProvider)
+        : 0;
 
-    Widget iconWidget = SvgPicture.asset(
+    Widget iconWidget = TintedSvg(
       iconPath,
       width: 24,
       height: 24,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+      color: color,
     );
 
-    if (index == 2 && unreadCount > 0) {
+    if (index == MainTab.chat && unreadCount > 0) {
       iconWidget = Stack(
         clipBehavior: Clip.none,
         children: [
@@ -144,29 +153,32 @@ class MainBottomNav extends ConsumerWidget {
       );
     }
 
-    return TactileButton(
-      onPressed: () {
-        // Every tab but Explore shows the user's own data.
-        if (index != 0 && !requireSignIn(context, ref)) return;
-        ref.read(mainNavProvider.notifier).setIndex(index);
-      },
-      child: SizedBox(
-        width: 70,
+    // The six tabs share the width: fixed widths overflow narrow phones.
+    return Expanded(
+      child: TactileButton(
+        onPressed: () {
+          // Every tab but Explore shows the user's own data.
+          if (index != MainTab.explore && !requireSignIn(context, ref)) return;
+          ref.read(mainNavProvider.notifier).setIndex(index);
+        },
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             iconWidget,
             const SizedBox(height: 4),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: color,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: color,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
             ),
           ],
         ),

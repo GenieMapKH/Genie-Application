@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/widgets/property_card_hero_flight.dart';
 import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/presentation/property_labels.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/owner_display_name.dart';
+import 'package:genie/shared/widgets/media/tinted_svg.dart';
 
 /// Item card for Saved Properties screen matching Screenshot 1.
 /// Explicitly omits the "Edit" button since saved properties may belong to other owners.
@@ -18,12 +19,18 @@ class SavedPropertyCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback? onFavoriteToggled;
 
+  /// The [Hero] tag its detail sheet grows out of. Cards of one listing on
+  /// two pages need different tags, or opening the second page flies the
+  /// first page's card into it.
+  final String? heroTag;
+
   const SavedPropertyCard({
     super.key,
     required this.property,
     required this.onTap,
     this.isFavorite = true,
     this.onFavoriteToggled,
+    this.heroTag,
   });
 
   @override
@@ -31,7 +38,8 @@ class SavedPropertyCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Hero(
-        tag: 'saved_property_hero_${property.id}',
+        tag: heroTag ?? 'saved_property_hero_${property.id}',
+        flightShuttleBuilder: propertyCardFlightShuttle,
         child: Material(
           type: MaterialType.transparency,
           child: Container(
@@ -57,7 +65,7 @@ class SavedPropertyCard extends StatelessWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        PropertyImageGallery(imageUrls: property.imageUrls),
+                        PropertyImageGallery(imageUrls: property.cardImageUrls),
                         Positioned(
                           top: 10,
                           left: 10,
@@ -82,7 +90,7 @@ class SavedPropertyCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          PropertyFormat.money(property.finalPrice),
+                          PropertyFormat.cardPrice(context.l10n, property),
                           style: GoogleFonts.inter(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
@@ -160,14 +168,11 @@ class _TypePill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
+          TintedSvg(
             PropertyFormat.typeIconPath(propertyType),
             width: 12,
             height: 12,
-            colorFilter: ColorFilter.mode(
-              context.colors.textSecondary,
-              BlendMode.srcIn,
-            ),
+            color: context.colors.textSecondary,
           ),
           const SizedBox(width: 4),
           Text(

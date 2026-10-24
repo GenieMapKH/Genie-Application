@@ -47,6 +47,9 @@ class AppLocalizationsKm extends AppLocalizations {
   String get navMyProperties => 'អចលនទ្រព្យខ្ញុំ';
 
   @override
+  String get navListings => 'អចលនទ្រព្យ';
+
+  @override
   String get navUser => 'អ្នកប្រើ';
 
   @override
@@ -807,6 +810,9 @@ class AppLocalizationsKm extends AppLocalizations {
   String get propertyMapPreview => 'មើលផែនទីជាមុន';
 
   @override
+  String get propertyViewOnMap => 'មើលលើផែនទី';
+
+  @override
   String get propertyAddProperty => 'បន្ថែមអចលនទ្រព្យ';
 
   @override
@@ -1373,6 +1379,48 @@ class AppLocalizationsKm extends AppLocalizations {
   String get profileFollow => 'តាមដាន';
 
   @override
+  String get profileFollowing => 'កំពុងតាមដាន';
+
+  @override
+  String get profileFollowersStat => 'អ្នកតាមដាន';
+
+  @override
+  String get profileFollowingStat => 'កំពុងតាមដាន';
+
+  @override
+  String profileFollowLimit(int count) {
+    return 'អ្នកអាចតាមដានបានច្រើនបំផុត $count នាក់។ សូមឈប់តាមដាននរណាម្នាក់ ដើម្បីតាមដានបន្ថែម។';
+  }
+
+  @override
+  String get profileFollowFailed =>
+      'មិនអាចផ្លាស់ប្តូរការតាមដានបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get navFeed => 'ថ្មីៗ';
+
+  @override
+  String get feedTitle => 'ថ្មីៗ';
+
+  @override
+  String get feedEmptyTitle => 'មិនទាន់មានអ្វីនៅទីនេះទេ';
+
+  @override
+  String get feedEmptyHint =>
+      'តាមដានអ្នកដទៃពីប្រវត្តិរូបរបស់ពួកគេ ដើម្បីមើលអចលនទ្រព្យថ្មីៗរបស់ពួកគេនៅទីនេះ។';
+
+  @override
+  String get feedExplore => 'ស្វែងរកអចលនទ្រព្យ';
+
+  @override
+  String get feedLoadFailed => 'មិនអាចផ្ទុកព័ត៌មានថ្មីៗបានទេ។';
+
+  @override
+  String feedListedOn(String date) {
+    return 'បានដាក់ $date';
+  }
+
+  @override
   String get profileContactTitle => 'ទំនាក់ទំនង';
 
   @override
@@ -1469,17 +1517,16 @@ class AppLocalizationsKm extends AppLocalizations {
   }
 
   @override
-  String propertyDriveMinutes(int minutes) {
-    return 'បើកបរ $minutes នាទី';
-  }
-
-  @override
   String propertyStraightLine(String distance) {
     return '$distance ជាបន្ទាត់ត្រង់';
   }
 
   @override
   String get propertyNearbyCouldNotLoad => 'មិនអាចផ្ទុកទីតាំងនៅជិតបានទេ។';
+
+  @override
+  String get propertyNearbyRouteCouldNotLoad =>
+      'មិនអាចផ្ទុកផ្លូវទៅកាន់ទីតាំងនេះបានទេ។';
 
   @override
   String get propertyDiscount => 'បញ្ចុះតម្លៃ (ស្រេចចិត្ត)';
@@ -2122,10 +2169,6 @@ class AppLocalizationsKm extends AppLocalizations {
       'មិនអាចលុបអចលនទ្រព្យបានទេ។ សូមព្យាយាមម្តងទៀត។';
 
   @override
-  String get propertyFallbackDescription =>
-      'ដីនេះត្រូវបានគូសផែនទីយ៉ាងត្រឹមត្រូវ ជាមួយព្រំដែនដែលបានផ្ទៀងផ្ទាត់ និងកូអរដោនេច្បាស់លាស់ ស្ថិតនៅក្នុងតំបន់ដែលកំពុងរីកចម្រើនលឿន ជិតហេដ្ឋារចនាសម្ព័ន្ធសំខាន់ៗ។ វាល្អសម្រាប់ការអភិវឌ្ឍលំនៅដ្ឋាន ការវិនិយោគរយៈពេលវែង ឬគម្រោងអាជីវកម្ម។ រាងចតុកោណកែងរបស់វាអនុញ្ញាតឱ្យរៀបចំផែនការ និងសាងសង់បានយ៉ាងមានប្រសិទ្ធភាព ខណៈដែលសេវាសាធារណៈដូចជាអគ្គិសនី និងទឹក មាននៅក្បែរនោះរួចហើយ។ ឯកសារកម្មសិទ្ធិច្បាស់លាស់ និងទីតាំង UTM ត្រឹមត្រូវ ធ្វើឱ្យអចលនទ្រព្យនេះងាយស្រួលផ្ទៀងផ្ទាត់ និងទុកចិត្តបាន។';
-
-  @override
   String propertyListingBy(String name) {
     return 'ដាក់ផ្សាយដោយ៖ $name';
   }
@@ -2171,6 +2214,16 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String propertyTypeForSale(String type) {
     return '$type សម្រាប់លក់';
+  }
+
+  @override
+  String propertyTypeForRent(String type) {
+    return '$type សម្រាប់ជួល';
+  }
+
+  @override
+  String propertyPriceFrom(String price) {
+    return 'ចាប់ពី $price';
   }
 
   @override
@@ -2571,4 +2624,114 @@ class AppLocalizationsKm extends AppLocalizations {
   String callMissedFrom(String name) {
     return 'ការហៅដែលខកខានពី $name';
   }
+
+  @override
+  String get filterTitle => 'តម្រង';
+
+  @override
+  String get filterForSale => 'សម្រាប់លក់';
+
+  @override
+  String get filterForRent => 'សម្រាប់ជួល';
+
+  @override
+  String get filterPriceRange => 'ចន្លោះតម្លៃ';
+
+  @override
+  String filterPriceLabel(String range) {
+    return 'តម្លៃ៖ $range';
+  }
+
+  @override
+  String get filterPriceAny => 'ណាមួយ';
+
+  @override
+  String filterPerMonth(String price) {
+    return '$price/ខែ';
+  }
+
+  @override
+  String get filterMinPrice => 'តម្លៃទាបបំផុត';
+
+  @override
+  String get filterMaxPrice => 'តម្លៃខ្ពស់បំផុត';
+
+  @override
+  String get filterNoMin => 'គ្មានកម្រិតទាប';
+
+  @override
+  String get filterNoMax => 'គ្មានកម្រិតខ្ពស់';
+
+  @override
+  String get filterDownPayment => 'ប្រាក់បង់មុន';
+
+  @override
+  String get filterNoDownPayment => 'គ្មានប្រាក់បង់មុន';
+
+  @override
+  String get filterLandSize => 'ទំហំដី';
+
+  @override
+  String get filterPropertySize => 'ទំហំអចលនទ្រព្យ';
+
+  @override
+  String get filterMinArea => 'ទាបបំផុត m²';
+
+  @override
+  String get filterMaxArea => 'ខ្ពស់បំផុត m²';
+
+  @override
+  String get filterMinAboveMax => 'កម្រិតទាបលើសកម្រិតខ្ពស់';
+
+  @override
+  String get filterPropertyType => 'ប្រភេទអចលនទ្រព្យ';
+
+  @override
+  String get filterKeywords => 'ពាក្យគន្លឹះ / លក្ខណៈពិសេស';
+
+  @override
+  String get filterReset => 'កំណត់ឡើងវិញ';
+
+  @override
+  String get filterSeeResults => 'មើលលទ្ធផល';
+
+  @override
+  String get propertyFactsTitle => 'ព័ត៌មានលម្អិតអចលនទ្រព្យ';
+
+  @override
+  String get propertyFactsOverview => 'ទិដ្ឋភាពទូទៅ';
+
+  @override
+  String get propertyFactsSize => 'ទំហំ';
+
+  @override
+  String get propertyFactsBuilding => 'បន្ទប់ និងអគារ';
+
+  @override
+  String get propertyFactsProject => 'គម្រោង';
+
+  @override
+  String get propertyFactsCosts => 'ថ្លៃចំណាយ និងអាជីវកម្ម';
+
+  @override
+  String get propertyFactsFeatures => 'លក្ខណៈពិសេស';
+
+  @override
+  String get propertyFactPricePerSquareMetre => 'តម្លៃក្នុងមួយ m²';
+
+  @override
+  String propertyFactPerMonth(String amount) {
+    return '$amount / ខែ';
+  }
+
+  @override
+  String propertyFactMonths(int count) {
+    return '$count ខែ';
+  }
+
+  @override
+  String get propertyPublisherTitle => 'ដាក់លក់ដោយ';
+
+  @override
+  String get propertyPublisherViewProfile => 'មើលប្រវត្តិរូប';
 }
