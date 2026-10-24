@@ -33,6 +33,7 @@ import 'package:genie/features/chat/providers/chat_call_starter.dart';
 import 'package:genie/features/chat/providers/chat_profile_opener.dart';
 import 'package:genie/features/notifications/providers/notification_providers.dart';
 import 'package:genie/features/chat/providers/chat_listing_opener.dart';
+import 'package:genie/core/observability/error_reporting.dart';
 
 /// Android only: asks for the newest Google Maps renderer and for the
 /// display's highest refresh rate. Without the latter many devices keep a
@@ -94,23 +95,26 @@ void main() async {
   ).wait;
   final settingsStorage = AppSettingsStorage(preferences);
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        cryptoServiceProvider.overrideWithValue(cryptoService),
-        appSettingsStorageProvider.overrideWithValue(settingsStorage),
-        chatProfileOpenerProvider.overrideWith(profileFromChatOpener),
-        chatListingOpenerProvider.overrideWith(listingFromChatOpener),
-        propertyPublisherOpenerProvider.overrideWith(
-          publisherFromListingOpener,
-        ),
-        pushOpenerProvider.overrideWith(pushOpener),
-        foregroundPushFilterProvider.overrideWith(foregroundPushFilter),
-        chatCallStarterProvider.overrideWith(callFromChat),
-        callPushHandlerProvider.overrideWith(callPushHandler),
-        chatPushTextProvider.overrideWith(chatPushText),
-      ],
-      child: const MyApp(),
+  // Crashes and uncaught errors are reported from here on, when configured.
+  await ErrorReporting.run(
+    () => runApp(
+      ProviderScope(
+        overrides: [
+          cryptoServiceProvider.overrideWithValue(cryptoService),
+          appSettingsStorageProvider.overrideWithValue(settingsStorage),
+          chatProfileOpenerProvider.overrideWith(profileFromChatOpener),
+          chatListingOpenerProvider.overrideWith(listingFromChatOpener),
+          propertyPublisherOpenerProvider.overrideWith(
+            publisherFromListingOpener,
+          ),
+          pushOpenerProvider.overrideWith(pushOpener),
+          foregroundPushFilterProvider.overrideWith(foregroundPushFilter),
+          chatCallStarterProvider.overrideWith(callFromChat),
+          callPushHandlerProvider.overrideWith(callPushHandler),
+          chatPushTextProvider.overrideWith(chatPushText),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }

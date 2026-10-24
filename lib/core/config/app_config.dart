@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Build-time configuration. The values are compiled into the app from an
 /// env file that is NOT shipped with it:
 ///
@@ -29,4 +31,15 @@ abstract final class AppConfig {
   static const webPushKey = String.fromEnvironment('FCM_WEB_VAPID_KEY');
 
   static const hasWebPushKey = webPushKey != '';
+
+  /// Where crash and error reports go (`SENTRY_DSN`); empty sends none. A
+  /// DSN only lets reports be written, never read, so it may be compiled in.
+  static const sentryDsn = String.fromEnvironment('SENTRY_DSN');
+
+  /// Which build reports come from: `SENTRY_ENVIRONMENT`, else production for
+  /// a release build and development otherwise.
+  static const sentryEnvironment = String.fromEnvironment(
+    'SENTRY_ENVIRONMENT',
+    defaultValue: kReleaseMode ? 'production' : 'development',
+  );
 }

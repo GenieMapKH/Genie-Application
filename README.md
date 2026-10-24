@@ -24,6 +24,17 @@ The env files are git-ignored and **not shipped in the app**: their values are c
 (`lib/core/config/app_config.dart`). That keeps them out of the APK's files, but a compiled-in
 value can still be extracted, so they must never contain secrets.
 
+## Error reporting (Sentry)
+
+Errors the app does not catch (Flutter's own and uncaught async errors) go to Sentry when the env file has `SENTRY_DSN` (the
+Flutter project's DSN in Sentry; a DSN can only write reports, so it may be compiled in) and,
+optionally, `SENTRY_ENVIRONMENT` (default `production` for a release build, `development`
+otherwise). Without `SENTRY_DSN` nothing is sent. Reports carry no IP address or request details, and only
+the user's id (`lib/core/observability/error_reporting.dart`). It uses Sentry's Dart client, not
+`sentry_flutter`: that one needs Android 8 (minSdk 26) and did not build with this Flutter version,
+so crashes in native code are not reported.
+Errors the app handles itself (offline, a refused request) are shown to the user, not reported.
+
 ## Quality gates
 
 ```bash
