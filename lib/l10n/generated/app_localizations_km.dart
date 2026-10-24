@@ -897,6 +897,17 @@ class AppLocalizationsKm extends AppLocalizations {
   String get propertyCallNow => 'ហៅទូរសព្ទឥឡូវនេះ';
 
   @override
+  String get propertyNoPhoneNumber =>
+      'មិនមានលេខទូរសព្ទសម្រាប់អចលនទ្រព្យនេះទេ។ សូមជជែកជាមួយម្ចាស់ជំនួសវិញ។';
+
+  @override
+  String get propertyCallFailed => 'មិនអាចបើកកម្មវិធីទូរសព្ទបានទេ។';
+
+  @override
+  String get profileSignInForContact =>
+      'សូមចូលគណនី ដើម្បីមើលលេខទូរសព្ទ និងអ៊ីមែលរបស់ពួកគេ។';
+
+  @override
   String get propertyCannotChatOwnerInformationMissing =>
       'មិនអាចជជែកបានទេ៖ ខ្វះព័ត៌មានម្ចាស់។';
 
@@ -917,6 +928,76 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get propertySaves => 'ចំនួនរក្សាទុក';
+
+  @override
+  String get insightsTitle => 'ស្ថិតិ';
+
+  @override
+  String get insightsLoadFailed =>
+      'មិនអាចផ្ទុកស្ថិតិបានទេ។ សូមពិនិត្យការតភ្ជាប់។';
+
+  @override
+  String get insightsTotalViews => 'អ្នកបានមើល';
+
+  @override
+  String get insightsTotalSaves => 'បានរក្សាទុក';
+
+  @override
+  String get insightsTotalCalls => 'បានចុចហៅទូរសព្ទ';
+
+  @override
+  String get insightsTotalChats => 'បានចាប់ផ្តើមជជែក';
+
+  @override
+  String get insightsLast14Days => '១៤ ថ្ងៃចុងក្រោយ';
+
+  @override
+  String get insightsMeasureViews => 'អ្នកមើល';
+
+  @override
+  String get insightsMeasureSaves => 'ការរក្សាទុក';
+
+  @override
+  String get insightsMeasureLeads => 'អតិថិជនសក្តានុពល';
+
+  @override
+  String insightsViewers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អ្នកមើលថ្មី $count នាក់',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsSaves(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ការរក្សាទុកថ្មី $count',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsLeads(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'អតិថិជនសក្តានុពលថ្មី $count នាក់',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsThisWeek(String thisWeek, int lastWeek) {
+    return 'សប្តាហ៍នេះ៖ $thisWeek។ សប្តាហ៍មុន៖ $lastWeek។';
+  }
+
+  @override
+  String get insightsEmptyHint =>
+      'មិនទាន់មាននរណាម្នាក់បើកមើលអចលនទ្រព្យនេះនៅឡើយទេ។ ការផ្សព្វផ្សាយ រូបថតល្អ និងការចែករំលែកតំណ នឹងនាំអ្នកមើលដំបូងមក។';
 
   @override
   String get propertyShareThisProperty => 'ចែករំលែកអចលនទ្រព្យនេះ';
@@ -1927,6 +2008,21 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatEdited => 'បានកែ';
 
   @override
+  String get chatAskAboutListing => 'សួរអំពីអចលនទ្រព្យនេះ?';
+
+  @override
+  String get chatSendListing => 'ផ្ញើ';
+
+  @override
+  String get chatDismissListing => 'ពេលក្រោយ';
+
+  @override
+  String get chatViewListing => 'មើលអចលនទ្រព្យ';
+
+  @override
+  String get chatListingUnavailable => 'អចលនទ្រព្យនេះលែងមានទៀតហើយ។';
+
+  @override
   String get chatDeleteMessageQuestion => 'លុបសារនេះ?';
 
   @override
@@ -2020,6 +2116,130 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get chatSendPinRequired => 'សូមបង្កើតលេខកូដ PIN ជជែក មុនពេលផ្ញើសារ។';
+
+  @override
+  String get chatSendBlocked => 'អ្នកមិនអាចផ្ញើសារទៅមនុស្សនេះបានទេ។';
+
+  @override
+  String chatYouBlocked(String name) {
+    return 'អ្នកបានបិទ $name។ ពួកគេមិនអាចផ្ញើសារ ឬហៅទូរសព្ទមកអ្នកបានទេ។';
+  }
+
+  @override
+  String get chatCannotReply => 'អ្នកមិនអាចឆ្លើយតបក្នុងការសន្ទនានេះបានទេ។';
+
+  @override
+  String get safetyMore => 'ច្រើនទៀត';
+
+  @override
+  String get blockAction => 'បិទ';
+
+  @override
+  String get unblockAction => 'បើកវិញ';
+
+  @override
+  String blockConfirmTitle(String name) {
+    return 'បិទ $name?';
+  }
+
+  @override
+  String get blockConfirmMessage =>
+      'ពួកគេនឹងមិនអាចផ្ញើសារ ឬហៅទូរសព្ទមកអ្នកបានទេ ហើយអ្នកទាំងពីរនឹងឈប់តាមដានគ្នា។ ពួកគេនឹងមិនត្រូវបានជូនដំណឹងទេ។';
+
+  @override
+  String unblockConfirmTitle(String name) {
+    return 'បើក $name វិញ?';
+  }
+
+  @override
+  String get unblockConfirmMessage =>
+      'អ្នកទាំងពីរនឹងអាចផ្ញើសារទៅគ្នាបានម្តងទៀត។ ការតាមដានដែលបានដកចេញ នឹងមិនត្រលប់មកវិញទេ។';
+
+  @override
+  String blockDone(String name) {
+    return '$name ត្រូវបានបិទ។';
+  }
+
+  @override
+  String unblockDone(String name) {
+    return '$name ត្រូវបានបើកវិញ។';
+  }
+
+  @override
+  String get blockFailed =>
+      'មិនដំណើរការទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get blockedAccountsTitle => 'គណនីដែលបានបិទ';
+
+  @override
+  String get blockedAccountsEmpty => 'អ្នកមិនទាន់បានបិទនរណាម្នាក់ទេ។';
+
+  @override
+  String get blockedAccountsLoadFailed => 'មិនអាចផ្ទុកគណនីដែលអ្នកបានបិទបានទេ។';
+
+  @override
+  String get reportListingAction => 'រាយការណ៍អចលនទ្រព្យ';
+
+  @override
+  String get reportUserAction => 'រាយការណ៍គណនី';
+
+  @override
+  String get reportListingTitle => 'រាយការណ៍អចលនទ្រព្យនេះ';
+
+  @override
+  String get reportUserTitle => 'រាយការណ៍គណនីនេះ';
+
+  @override
+  String get reportHelp =>
+      'ប្រាប់យើងពីបញ្ហា។ ម្ចាស់នឹងមិនដឹងថានរណាជាអ្នករាយការណ៍ទេ។';
+
+  @override
+  String get reportReasonScam => 'ការបោកប្រាស់';
+
+  @override
+  String get reportReasonMisleading => 'តម្លៃ រូបថត ឬព័ត៌មានមិនត្រឹមត្រូវ';
+
+  @override
+  String get reportReasonUnavailable => 'បានលក់ ឬជួលរួចហើយ';
+
+  @override
+  String get reportReasonDuplicate => 'បានបង្ហោះច្រើនដង';
+
+  @override
+  String get reportReasonHarassment => 'ការយាយី ឬការគំរាមកំហែង';
+
+  @override
+  String get reportReasonImpersonation => 'ក្លែងខ្លួនជាអ្នកផ្សេង';
+
+  @override
+  String get reportReasonInappropriate => 'ប្រមាថ ឬមិនសមរម្យ';
+
+  @override
+  String get reportReasonSpam => 'សារឥតបានការ';
+
+  @override
+  String get reportReasonOther => 'ផ្សេងទៀត';
+
+  @override
+  String get reportDetailsHint => 'ព័ត៌មានបន្ថែមដែលយើងគួរដឹង (ស្រេចចិត្ត)';
+
+  @override
+  String get reportSend => 'ផ្ញើរបាយការណ៍';
+
+  @override
+  String get reportSent => 'សូមអរគុណ។ យើងនឹងពិនិត្យរបាយការណ៍របស់អ្នក។';
+
+  @override
+  String get reportTooMany =>
+      'អ្នកបានផ្ញើរបាយការណ៍ច្រើនពេក។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get reportTargetGone => 'វាត្រូវបានដកចេញរួចហើយ។';
+
+  @override
+  String get reportFailed =>
+      'របាយការណ៍មិនត្រូវបានផ្ញើទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
 
   @override
   String get chatSendKeyChanged =>
@@ -2526,6 +2746,94 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get notificationsPromotionsHelp =>
       'ការបញ្ចុះតម្លៃ និងព័ត៌មានថ្មីៗពីក្រុមការងាររបស់យើង។';
+
+  @override
+  String get notificationsSavedSearchTitle =>
+      'ការជូនដំណឹងការស្វែងរកដែលបានរក្សាទុក';
+
+  @override
+  String get notificationsSavedSearchHelp =>
+      'អចលនទ្រព្យថ្មីដែលត្រូវនឹងការស្វែងរកដែលអ្នកបានរក្សាទុក។';
+
+  @override
+  String get notificationsFollowedTitle => 'អ្នកដែលអ្នកតាមដាន';
+
+  @override
+  String get notificationsFollowedHelp =>
+      'នៅពេលអ្នកដែលអ្នកតាមដាន បង្ហោះអចលនទ្រព្យថ្មី។';
+
+  @override
+  String get notificationsSavedUpdatesTitle => 'អចលនទ្រព្យដែលបានរក្សាទុក';
+
+  @override
+  String get notificationsSavedUpdatesHelp =>
+      'ការធ្លាក់ថ្លៃ និងនៅពេលអចលនទ្រព្យដែលអ្នកបានរក្សាទុកត្រូវបានលក់។';
+
+  @override
+  String get feedPriceDropped => 'តម្លៃបានធ្លាក់';
+
+  @override
+  String get savedSearchesTitle => 'ការស្វែងរកដែលបានរក្សាទុក';
+
+  @override
+  String get savedSearchesEmpty =>
+      'មិនទាន់មានការស្វែងរកដែលបានរក្សាទុកទេ។ កំណត់តម្រងលើផែនទី ហើយចុចសញ្ញាចំណាំ ដើម្បីរក្សាទុក។';
+
+  @override
+  String get savedSearchesLoadFailed =>
+      'មិនអាចផ្ទុកការស្វែងរកដែលបានរក្សាទុកបានទេ។';
+
+  @override
+  String get savedSearchSaveTitle => 'រក្សាទុកការស្វែងរកនេះ';
+
+  @override
+  String get savedSearchSaveHelp =>
+      'យើងនឹងប្រាប់អ្នក នៅពេលមានអចលនទ្រព្យថ្មីក្នុងតំបន់ផែនទីនេះ ដែលត្រូវនឹងតម្រងរបស់អ្នក។';
+
+  @override
+  String get savedSearchName => 'ឈ្មោះ';
+
+  @override
+  String get savedSearchSaved =>
+      'បានរក្សាទុកការស្វែងរក។ យើងនឹងប្រាប់អ្នកពីអចលនទ្រព្យថ្មីៗ។';
+
+  @override
+  String savedSearchLimit(int count) {
+    return 'អ្នកអាចរក្សាទុកការស្វែងរកបានរហូតដល់ $count។ សូមលុបមួយជាមុនសិន។';
+  }
+
+  @override
+  String get savedSearchFailed =>
+      'មិនដំណើរការទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get savedSearchNoArea =>
+      'ផែនទីកំពុងផ្ទុក។ សូមព្យាយាមម្តងទៀតក្នុងពេលបន្តិចទៀត។';
+
+  @override
+  String get savedSearchAnyListing => 'អចលនទ្រព្យណាមួយក្នុងតំបន់នេះ';
+
+  @override
+  String savedSearchKeywords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ពាក្យគន្លឹះ $count',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get savedSearchAlerts => 'ការជូនដំណឹង';
+
+  @override
+  String get savedSearchRename => 'ប្តូរឈ្មោះ';
+
+  @override
+  String get savedSearchDelete => 'លុប';
+
+  @override
+  String get savedSearchDeleted => 'បានលុបការស្វែងរកដែលបានរក្សាទុក។';
 
   @override
   String get notificationsAlwaysOn =>

@@ -11,6 +11,7 @@ import 'package:genie/features/home/presentation/widgets/map/filter/listing_scop
 import 'package:genie/features/home/presentation/widgets/map/filter/price_range_section.dart';
 import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
 import 'package:genie/features/property/presentation/widgets/property_type_selector.dart';
+import 'package:genie/features/search/presentation/widgets/saved/save_search_flow.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 
@@ -33,6 +34,17 @@ class _MapFilterPageState extends ConsumerState<MapFilterPage> {
   void _reset() {
     _draft.reset();
     setState(() => _resets++);
+  }
+
+  /// Saves the map's area with this filter; the map then shows it too.
+  Future<void> _saveSearch() async {
+    final filter = ref.read(mapFilterDraftProvider);
+    if (!MapFilterDraftNotifier.isValid(filter)) {
+      AppPopup.showError(context, context.l10n.filterMinAboveMax);
+      return;
+    }
+    final saved = await saveMapSearch(context, ref, filter: filter);
+    if (saved && mounted) _seeResults();
   }
 
   void _seeResults() {
@@ -68,6 +80,13 @@ class _MapFilterPageState extends ConsumerState<MapFilterPage> {
             color: colors.textPrimary,
           ),
         ),
+        actions: [
+          IconButton(
+            tooltip: l10n.savedSearchSaveTitle,
+            icon: Icon(Icons.bookmark_add_outlined, color: colors.textPrimary),
+            onPressed: _saveSearch,
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),

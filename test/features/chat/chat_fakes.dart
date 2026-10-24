@@ -15,6 +15,7 @@ import 'package:genie/features/chat/models/chat_participant.dart';
 import 'package:genie/features/chat/models/chat_voice.dart';
 import 'package:genie/features/chat/models/conversation_change.dart';
 import 'package:genie/features/chat/models/message_deletion.dart';
+import 'package:genie/features/chat/models/chat_listing.dart';
 
 const me = 'user-me';
 const peer = 'user-peer';
@@ -54,6 +55,9 @@ class FakeCipher extends Fake implements MessageCipher {
   /// The message each message replies to, as sealed inside it, by id.
   final sealedReplies = <String, String>{};
 
+  /// The listing card sealed into each message, by message id.
+  final sealedListings = <String, ChatListing?>{};
+
   @override
   String get userId => me;
 
@@ -64,9 +68,11 @@ class FakeCipher extends Fake implements MessageCipher {
     required String peerId,
     ChatAttachment? attachment,
     String? replyToId,
+    ChatListing? listing,
   }) async {
     if (encryptError != null) throw encryptError!;
     sealedAttachments.add(attachment);
+    sealedListings[id] = listing;
     if (replyToId != null) sealedReplies[id] = replyToId;
     if (peerKeyStatus == PeerKeyStatus.changed) {
       throw const PeerKeyChangedException();
@@ -89,6 +95,7 @@ class FakeCipher extends Fake implements MessageCipher {
             text: message.ciphertext.substring(7),
             attachment: incomingAttachments[message.id],
             replyToId: sealedReplies[message.id],
+            listing: sealedListings[message.id],
           )
         : null;
   }

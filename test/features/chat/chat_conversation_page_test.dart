@@ -10,6 +10,13 @@ import 'package:genie/features/chat/presentation/screens/chat_conversation_page.
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:genie/features/safety/data/models/block_status.dart';
+import 'package:genie/features/safety/presentation/view_models/block_providers.dart';
+
+import 'package:genie/features/chat/models/chat_listing.dart';
+
+import '../../support/test_app.dart';
+import '../safety/fake_block_repository.dart';
 
 import 'chat_fakes.dart';
 
@@ -19,6 +26,7 @@ void main() {
   late FakeSetupService setup;
   late FakeCipher cipher;
   late FakeAttachmentService attachments;
+  late FakeBlockRepository blocks;
 
   setUp(() {
     repository = FakeChatRepository();
@@ -26,11 +34,13 @@ void main() {
     setup = FakeSetupService();
     cipher = FakeCipher();
     attachments = FakeAttachmentService();
+    blocks = FakeBlockRepository();
   });
 
   Future<void> openChat(
     WidgetTester tester, {
     String participantId = peer,
+    ChatListing? listingToOffer,
   }) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -47,11 +57,14 @@ void main() {
           e2eeSetupServiceProvider.overrideWithValue(setup),
           messageCipherProvider.overrideWith((ref, userId) => cipher),
           chatAttachmentServiceProvider.overrideWithValue(attachments),
+          blockRepositoryProvider.overrideWithValue(blocks),
+          signedInOverride(),
         ],
         child: MaterialApp(
           home: ChatConversationPage(
             participantId: participantId,
             participantName: 'Dara',
+            listingToOffer: listingToOffer,
           ),
         ),
       ),
@@ -261,5 +274,122 @@ void main() {
     expect(find.text('This is your own account.'), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
     expect(setup.runs, 0);
+  });
+
+  group('blocked', () {
+    testWidgets('the blocker sees why the bar is gone, and can unblock', (
+      tester,
+    ) async {
+      blocks.status = const BlockStatus(isBlocked: true, canMessage: false);
+
+      await openChat(tester);
+
+      expect(
+        find.text("You blocked Dara. They can't message or call you."),
+        findsOneWidget,
+      );
+      expect(find.byType(TextField), findsNothing);
+
+      await tester.tap(find.widgetWithText(TextButton, 'Unblock'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Unblock').last);
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      expect(blocks.calls, contains('unblock $peer'));
+      expect(find.byType(TextField), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('the person blocked is only told they cannot reply', (
+      tester,
+    ) async {
+      blocks.status = const BlockStatus(isBlocked: false, canMessage: false);
+
+      await openChat(tester);
+
+      expect(
+        find.text("You can't reply to this conversation."),
+        findsOneWidget,
+      );
+      expect(find.widgetWithText(TextButton, 'Unblock'), findsNothing);
+      expect(find.byType(TextField), findsNothing);
+    });
+
+    testWidgets('a message refused for a block asks again and hides the bar', (
+      tester,
+    ) async {
+      await openChat(tester);
+      blocks.status = const BlockStatus(isBlocked: false, canMessage: false);
+      socket.sendError = const ChatSendException(ChatSendProblem.blocked);
+
+      await tester.enterText(find.byType(TextField), 'Hello');
+      await tester.tap(find.byIcon(Icons.send_outlined));
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      expect(find.text("You can't message this person."), findsOneWidget);
+      expect(
+        find.text("You can't reply to this conversation."),
+        findsOneWidget,
+      );
+      expect(blocks.calls.where((c) => c == 'status $peer'), hasLength(2));
+      await tester.pump(const Duration(seconds: 5));
+    });
+  });
+
+  group('opened from a listing', () {
+    const listing = ChatListing(
+      id: 'p-1',
+      title: 'Villa near Riverside',
+      price: r'$ 120,000',
+    );
+
+    testWidgets('offers the listing, and sends it as a card', (tester) async {
+      await openChat(tester, listingToOffer: listing);
+
+      expect(find.text('Asking about this listing?'), findsOneWidget);
+      expect(find.text('Villa near Riverside'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Send'));
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      // Sealed with the card, and a text for apps without cards.
+      final sentId = cipher.sealedListings.keys.single;
+      expect(cipher.sealedListings[sentId]?.id, 'p-1');
+      expect(find.text('Asking about this listing?'), findsNothing);
+      expect(find.text('View listing'), findsOneWidget);
+      expect(
+        find.text('\u{1F3E0} Villa near Riverside · \$ 120,000'),
+        findsNothing,
+      );
+      expect(sideOf(tester, 'Villa near Riverside'), Alignment.centerRight);
+    });
+
+    testWidgets('can be closed without sending', (tester) async {
+      await openChat(tester, listingToOffer: listing);
+
+      await tester.tap(find.byTooltip('Not now'));
+      await tester.pump();
+
+      expect(find.text('Asking about this listing?'), findsNothing);
+      expect(cipher.sealedListings, isEmpty);
+    });
+
+    testWidgets('a card the other person sent is shown as a card', (
+      tester,
+    ) async {
+      repository.history = [encrypted('m1', listing.fallbackText, from: peer)];
+      cipher.sealedListings['m1'] = listing;
+
+      await openChat(tester);
+
+      expect(find.text('View listing'), findsOneWidget);
+      expect(sideOf(tester, 'Villa near Riverside'), Alignment.centerLeft);
+    });
   });
 }

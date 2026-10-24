@@ -19,6 +19,7 @@ class ChatMessageReader {
       text: opened?.text ?? ChatMessage.undecryptableText,
       createdAt: encrypted.createdAt,
       attachment: opened?.attachment,
+      listing: opened?.listing,
       editedAt: encrypted.editedAt,
       replyToId: opened?.replyToId,
       replyTo: await _quoted(encrypted.replyTo, sealedId: opened?.replyToId),

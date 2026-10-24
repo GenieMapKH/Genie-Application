@@ -27,7 +27,16 @@ class AuthInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final token = await AuthStorage.getAccessToken();
+    var token = await AuthStorage.getAccessToken();
+    if (token != null &&
+        options.extra[_noRenewal] != true &&
+        AuthStorage.isTokenExpired(token)) {
+      // Renewed before sending: a public read (the map, a listing) answers
+      // an expired token as it answers a guest, without the owner's phone,
+      // instead of refusing it, so the renewal on a 401 would never come.
+      await _renew();
+      token = await AuthStorage.getAccessToken();
+    }
     if (token != null) {
       // Automatically attach token to ALL requests if user is logged in
       options.headers['Authorization'] = 'Bearer $token';
@@ -71,7 +80,12 @@ class AuthInterceptor extends Interceptor {
         refused.headers['Authorization'] != 'Bearer $current') {
       return current;
     }
+    return _renew();
+  }
 
+  /// The renewal in progress, else a new one. Null when there is no session
+  /// to renew or it could not be renewed.
+  Future<String?> _renew() async {
     final pending = _renewal;
     if (pending != null) return pending;
 

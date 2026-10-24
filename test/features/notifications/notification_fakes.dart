@@ -113,11 +113,17 @@ class FakeNotificationRepository extends Fake
   Future<NotificationPreferences> updatePreferences({
     bool? chatMessages,
     bool? promotions,
+    bool? savedSearchAlerts,
+    bool? followedListings,
+    bool? savedListingUpdates,
   }) async {
     if (error != null) throw error!;
     return preferences = preferences.copyWith(
       chatMessages: chatMessages,
       promotions: promotions,
+      savedSearchAlerts: savedSearchAlerts,
+      followedListings: followedListings,
+      savedListingUpdates: savedListingUpdates,
     );
   }
 }

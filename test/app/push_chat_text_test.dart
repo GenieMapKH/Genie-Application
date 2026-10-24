@@ -41,6 +41,7 @@ void main() {
         text: 'see you at 5',
         attachment: null,
         replyToId: null,
+        listing: null,
       )),
     );
 
@@ -60,6 +61,7 @@ void main() {
           text: 'secret',
           attachment: null,
           replyToId: null,
+          listing: null,
         )),
       );
 
@@ -110,6 +112,7 @@ void main() {
         text: 'never used',
         attachment: null,
         replyToId: null,
+        listing: null,
       )),
     );
 

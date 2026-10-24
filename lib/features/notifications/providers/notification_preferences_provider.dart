@@ -31,18 +31,33 @@ class NotificationPreferencesNotifier
 
   /// Flips the switch at once and saves it. False (and the switch back as
   /// it was) when it could not be saved.
-  Future<bool> change({bool? chatMessages, bool? promotions}) async {
+  Future<bool> change({
+    bool? chatMessages,
+    bool? promotions,
+    bool? savedSearchAlerts,
+    bool? followedListings,
+    bool? savedListingUpdates,
+  }) async {
     final previous = state.valueOrNull;
     if (previous == null || saving) return false;
 
     saving = true;
     state = AsyncValue.data(
-      previous.copyWith(chatMessages: chatMessages, promotions: promotions),
+      previous.copyWith(
+        chatMessages: chatMessages,
+        promotions: promotions,
+        savedSearchAlerts: savedSearchAlerts,
+        followedListings: followedListings,
+        savedListingUpdates: savedListingUpdates,
+      ),
     );
     try {
       final saved = await repository.updatePreferences(
         chatMessages: chatMessages,
         promotions: promotions,
+        savedSearchAlerts: savedSearchAlerts,
+        followedListings: followedListings,
+        savedListingUpdates: savedListingUpdates,
       );
       if (mounted) state = AsyncValue.data(saved);
       return true;

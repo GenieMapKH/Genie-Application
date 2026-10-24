@@ -8,6 +8,7 @@ import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
 import 'package:genie/features/chat/e2ee/keys/key_service.dart';
 import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
+import 'package:genie/features/chat/models/chat_listing.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
 import 'package:genie/features/chat/models/chat_send_problem.dart';
 
@@ -45,6 +46,7 @@ typedef OpenedMessage = ({
   String text,
   ChatAttachment? attachment,
   String? replyToId,
+  ChatListing? listing,
 });
 
 /// Encrypts and decrypts the messages of one signed-in user.
@@ -116,13 +118,15 @@ class MessageCipher {
   /// the sealed text so a stored copy cannot be replayed as a new message.
   /// An [attachment]'s key travels the same way, so only the two people in
   /// the conversation can open the file. [replyToId] is sealed in too: the
-  /// server cannot make a reply quote another message.
+  /// server cannot make a reply quote another message. A [listing] card is
+  /// sealed in as well; [text] then says what it is for apps without cards.
   Future<({String ciphertext, String nonce})> encrypt(
     String text, {
     required String id,
     required String peerId,
     ChatAttachment? attachment,
     String? replyToId,
+    ChatListing? listing,
   }) async {
     final keyPair = await keyService.getIdentityKeyPair(userId);
     if (keyPair == null) {
@@ -152,6 +156,7 @@ class MessageCipher {
         'text': text,
         'file': ?attachment?.toJson(),
         're': ?replyToId,
+        'listing': ?listing?.toJson(),
       }),
       (await _trustedKey(peerId))!,
       keyPair.secretKey,
@@ -210,7 +215,13 @@ class MessageCipher {
     }
     if (envelope is! Map || envelope['v'] != _envelopeVersion) {
       // Sent before messages named their sender: the text is the message.
-      return (id: null, text: opened, attachment: null, replyToId: null);
+      return (
+        id: null,
+        text: opened,
+        attachment: null,
+        replyToId: null,
+        listing: null,
+      );
     }
 
     final id = envelope['id'];
@@ -232,6 +243,7 @@ class MessageCipher {
       text: text,
       attachment: attachmentIsTheirs ? attachment : null,
       replyToId: replyToId is String ? replyToId : null,
+      listing: ChatListing.tryParse(envelope['listing']),
     );
   }
 

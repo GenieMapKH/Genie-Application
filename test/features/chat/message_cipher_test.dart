@@ -12,6 +12,7 @@ import 'package:genie/features/chat/e2ee/message_reader.dart';
 import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:genie/features/chat/models/chat_listing.dart';
 import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
@@ -196,12 +197,14 @@ void main() {
         text: 'hello',
         attachment: null,
         replyToId: null,
+        listing: null,
       ));
       expect(await aliceCipher.decrypt(message), (
         id: 'm1',
         text: 'hello',
         attachment: null,
         replyToId: null,
+        listing: null,
       ));
     });
 
@@ -222,6 +225,7 @@ void main() {
           text: 'see you at 5',
           attachment: null,
           replyToId: null,
+          listing: null,
         ));
       },
     );
@@ -447,6 +451,7 @@ void main() {
           text: 'hello',
           attachment: null,
           replyToId: null,
+          listing: null,
         ));
         expect(server.requests, 0);
       },
@@ -559,6 +564,57 @@ void main() {
 
     test("is not available before the other person's key is known", () async {
       expect(await aliceCipher.safetyCode(bob), isNull);
+    });
+  });
+
+  group('a listing card', () {
+    const listing = ChatListing(
+      id: 'p-1',
+      title: 'Villa near Riverside',
+      price: r'$ 120,000',
+      imageUrl: 'https://cdn.example/p-1.thumb.jpg',
+    );
+
+    test('travels inside the sealed message, beside its text', () async {
+      final sealed = await aliceCipher.encrypt(
+        listing.fallbackText,
+        id: 'm3',
+        peerId: bob,
+        listing: listing,
+      );
+      final opened = await bobCipher.decrypt(
+        EncryptedMessage(
+          id: 'm3',
+          senderId: alice,
+          recipientId: bob,
+          ciphertext: sealed.ciphertext,
+          nonce: sealed.nonce,
+          createdAt: now,
+        ),
+      );
+
+      expect(opened?.text, '\u{1F3E0} Villa near Riverside · \$ 120,000');
+      expect(opened?.listing?.id, 'p-1');
+      expect(opened?.listing?.imageUrl, 'https://cdn.example/p-1.thumb.jpg');
+    });
+
+    test('an ordinary message carries none', () async {
+      final message = await sentByAlice('m1', 'hello');
+      expect((await bobCipher.decrypt(message))?.listing, isNull);
+    });
+
+    test('keeps only an https picture, and ignores what is not a card', () {
+      expect(
+        ChatListing.tryParse({
+          'id': 'p',
+          'title': 't',
+          'price': '1',
+          'image': 'http://plain.example/x.jpg',
+        })?.imageUrl,
+        isNull,
+      );
+      expect(ChatListing.tryParse({'id': 'p', 'title': 't'}), isNull);
+      expect(ChatListing.tryParse('p-1'), isNull);
     });
   });
 }

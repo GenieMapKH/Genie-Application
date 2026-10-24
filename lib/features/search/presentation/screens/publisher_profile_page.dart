@@ -10,6 +10,7 @@ import 'package:genie/features/follow/presentation/view_models/follow_providers.
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:genie/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:genie/features/search/data/models/publisher_profile.dart';
 import 'package:genie/features/search/data/models/publisher_summary.dart';
 import 'package:genie/features/search/data/search_failure.dart';
@@ -153,6 +154,12 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
               onChat: isMe
                   ? null
                   : widget.onChat ?? () => _openChat(context, shown),
+              menu: isMe
+                  ? null
+                  : SafetyMenuButton(
+                      userId: person.id,
+                      userName: shown.displayName,
+                    ),
               onViewOnMap: hasListings
                   ? () => Navigator.of(
                       context,
@@ -206,6 +213,17 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
       error: (error, _) => _failure(context, error),
       data: (loaded) {
         final person = loaded.person;
+        // Guests are sent no contact details: say how to see them.
+        if (!ref.watch(isSignedInProvider)) {
+          return SliverToBoxAdapter(
+            child: SearchMessageView(
+              icon: Icons.lock_outline_rounded,
+              title: context.l10n.profileSignInForContact,
+              actionLabel: context.l10n.loginRequiredAction,
+              onAction: () => showSignInRequiredDialog(context),
+            ),
+          );
+        }
         if (person.phone == null && person.email == null) {
           return SliverToBoxAdapter(
             child: SearchMessageView(

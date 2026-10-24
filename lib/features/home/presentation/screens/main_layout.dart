@@ -21,6 +21,9 @@ import 'package:genie/features/home/utils/map/map_location_service.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
 import 'package:genie/features/search/presentation/search_layout.dart';
+import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:genie/features/search/data/models/saved_search.dart';
+import 'package:genie/features/search/presentation/view_models/saved_searches_provider.dart';
 import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:genie/features/security/presentation/widgets/new_sign_in_alert.dart';
 import 'package:genie/shared/utils/app_popup.dart';
@@ -146,6 +149,27 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     if (bounds != null && justLoaded) _frameOnMap(bounds);
   }
 
+  /// A saved search was opened: back to the map, showing its filter over
+  /// its area.
+  Future<void> _openSavedSearch(SavedSearch? search) async {
+    if (search == null) return;
+    ref.read(savedSearchToOpenProvider.notifier).state = null;
+    ref.read(searchAreaControllerProvider.notifier).clear();
+    ref.read(propertyCarouselProvider.notifier).clear();
+    ref.read(mapPropertyFilterProvider.notifier).state = search.filter;
+    ref.read(mainNavProvider.notifier).resetToHome();
+    final controller = await _mapControllerCompleter.future;
+    await controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(search.area.minLat, search.area.minLng),
+          northeast: LatLng(search.area.maxLat, search.area.maxLng),
+        ),
+        0,
+      ),
+    );
+  }
+
   Future<void> _frameOnMap(LatLngBounds bounds) async {
     final size = MediaQuery.sizeOf(context);
     final covered =
@@ -185,6 +209,10 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     ref.listen<SearchAreaState?>(
       searchAreaControllerProvider,
       _onSearchAreaChanged,
+    );
+    ref.listen<SavedSearch?>(
+      savedSearchToOpenProvider,
+      (_, search) => _openSavedSearch(search),
     );
     final bool overlayPage = !isHome;
 

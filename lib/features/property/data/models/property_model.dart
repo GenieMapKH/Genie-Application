@@ -22,6 +22,11 @@ class PropertyModel {
 
   /// When it last went live; null if never (or sent by an older server).
   final DateTime? publishedAt;
+
+  /// The last time what a buyer pays fell while it was live, and what they
+  /// paid before. Null when it has not, or a later price undid it.
+  final DateTime? priceDroppedAt;
+  final double? previousPrice;
   final List<String> imageUrls;
 
   /// Small copies of [imageUrls], in the same order, for cards and lists.
@@ -78,6 +83,8 @@ class PropertyModel {
     required this.status,
     required this.createdAt,
     this.publishedAt,
+    this.priceDroppedAt,
+    this.previousPrice,
     this.imageUrls = const [],
     this.thumbnailUrls = const [],
     this.boundaryPoints = const [],
@@ -121,6 +128,17 @@ class PropertyModel {
       thumbnailUrls.length == imageUrls.length ? thumbnailUrls : imageUrls;
 
   bool get hasDiscount => discountType != null && discountValue != null;
+
+  /// How long a price drop is shown as news.
+  static const priceDropShownFor = Duration(days: 14);
+
+  /// What a buyer paid before a price drop in the last two weeks, else null.
+  double? recentPreviousPrice({DateTime? now}) {
+    final droppedAt = priceDroppedAt;
+    if (droppedAt == null || previousPrice == null) return null;
+    final age = (now ?? DateTime.now()).difference(droppedAt);
+    return age <= priceDropShownFor ? previousPrice : null;
+  }
 
   /// The price before any discount.
   double get askingPrice => double.tryParse(price) ?? 0;
@@ -245,6 +263,12 @@ class PropertyModel {
       status: json['status'] ?? 'Draft',
       createdAt: DateTime.parse(json['createdAt']),
       publishedAt: DateTime.tryParse(json['publishedAt'] as String? ?? ''),
+      priceDroppedAt: DateTime.tryParse(
+        json['priceDroppedAt'] as String? ?? '',
+      ),
+      previousPrice: json['previousPrice'] == null
+          ? null
+          : double.tryParse(json['previousPrice'].toString()),
       imageUrls: images,
       thumbnailUrls: thumbnails,
       boundaryPoints: points,
@@ -329,6 +353,8 @@ class PropertyModel {
     String? status,
     DateTime? createdAt,
     DateTime? publishedAt,
+    DateTime? priceDroppedAt,
+    double? previousPrice,
     List<String>? imageUrls,
     List<String>? thumbnailUrls,
     List<LatLng>? boundaryPoints,
@@ -367,6 +393,8 @@ class PropertyModel {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       publishedAt: publishedAt ?? this.publishedAt,
+      priceDroppedAt: priceDroppedAt ?? this.priceDroppedAt,
+      previousPrice: previousPrice ?? this.previousPrice,
       imageUrls: imageUrls ?? this.imageUrls,
       thumbnailUrls: thumbnailUrls ?? this.thumbnailUrls,
       boundaryPoints: boundaryPoints ?? this.boundaryPoints,

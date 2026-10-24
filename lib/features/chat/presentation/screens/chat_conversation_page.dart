@@ -11,6 +11,7 @@ import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
 import 'package:genie/features/chat/presentation/screens/chat_pin_setup_page.dart';
 import 'package:genie/features/chat/models/chat_composer_mode.dart';
+import 'package:genie/features/chat/models/chat_send_problem.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_composer_banner.dart';
 import 'package:genie/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
@@ -36,17 +37,27 @@ import 'package:genie/features/chat/providers/visible_conversation.dart';
 import 'package:genie/features/chat/providers/voice_playback_provider.dart';
 import 'package:genie/features/chat/providers/voice_recording_provider.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:genie/features/safety/presentation/view_models/block_providers.dart';
+import 'package:genie/features/safety/presentation/widgets/blocked_conversation_bar.dart';
+import 'package:genie/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/chat/models/chat_listing.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_listing_offer_bar.dart';
 
 class ChatConversationPage extends ConsumerWidget {
   final String participantId;
   final String participantName;
 
+  /// The listing the chat was opened from: offered above the message bar,
+  /// to send so the owner knows which one is meant.
+  final ChatListing? listingToOffer;
+
   const ChatConversationPage({
     super.key,
     required this.participantId,
     required this.participantName,
+    this.listingToOffer,
   });
 
   @override
@@ -96,14 +107,21 @@ class ChatConversationPage extends ConsumerWidget {
                   ? () => startCall(participantId, participantName)
                   : null,
             ),
-            const SizedBox(width: 8),
+            if (chat != null && userId != participantId)
+              SafetyMenuButton(userId: participantId, userName: participantName)
+            else
+              const SizedBox(width: 8),
           ],
         ),
       ),
       body: userId == participantId
           ? ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)
           : chat != null
-          ? _Conversation(chat: chat, participantName: participantName)
+          ? _Conversation(
+              chat: chat,
+              participantName: participantName,
+              listingToOffer: listingToOffer,
+            )
           : profile.isLoading
           ? const Center(child: CircularProgressIndicator())
           : ChatNotice(
@@ -117,8 +135,13 @@ class ChatConversationPage extends ConsumerWidget {
 class _Conversation extends ConsumerStatefulWidget {
   final ChatParticipants chat;
   final String participantName;
+  final ChatListing? listingToOffer;
 
-  const _Conversation({required this.chat, required this.participantName});
+  const _Conversation({
+    required this.chat,
+    required this.participantName,
+    this.listingToOffer,
+  });
 
   @override
   ConsumerState<_Conversation> createState() => _ConversationState();
@@ -130,6 +153,16 @@ class _ConversationState extends ConsumerState<_Conversation> {
   /// The microphone is held down: the message bar stays (the finger is on
   /// its button) and shows the recording in place of the field.
   bool _holdingVoice = false;
+
+  /// Still offered above the message bar: not sent nor closed yet.
+  late ChatListing? _offeredListing = widget.listingToOffer;
+
+  void _sendOfferedListing() {
+    final listing = _offeredListing;
+    if (listing == null) return;
+    setState(() => _offeredListing = null);
+    ref.read(activeChatProvider(widget.chat).notifier).sendListing(listing);
+  }
 
   @override
   void initState() {
@@ -304,12 +337,21 @@ class _ConversationState extends ConsumerState<_Conversation> {
       recordingProvider.select((recording) => recording.isActive),
     );
     final composerMode = ref.watch(chatComposerProvider(widget.chat));
+    final blockStatus = ref
+        .watch(blockStatusProvider(widget.chat.participantId))
+        .valueOrNull;
     // Voice messages keep playing while their bubbles scroll out of view,
     // and stop when this screen closes.
     ref.watch(voicePlaybackProvider.notifier);
 
     ref.listen(provider.select((state) => state.sendError), (_, error) {
       if (error == null) return;
+      // Blocked since the conversation opened: the bar below says so.
+      if (error == ChatSendProblem.blocked) {
+        ref
+            .read(blockStatusProvider(widget.chat.participantId).notifier)
+            .refresh();
+      }
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
@@ -348,6 +390,12 @@ class _ConversationState extends ConsumerState<_Conversation> {
                 participantName: widget.participantName,
               ),
             )
+          else if (blockStatus != null && !blockStatus.canMessage)
+            BlockedConversationBar(
+              status: blockStatus,
+              participantId: widget.chat.participantId,
+              participantName: widget.participantName,
+            )
           else if (isRecording && !_holdingVoice)
             Consumer(
               builder: (context, ref, _) => ChatVoiceRecorderBar(
@@ -356,7 +404,13 @@ class _ConversationState extends ConsumerState<_Conversation> {
                 onSend: () => ref.read(recordingProvider.notifier).finish(),
               ),
             )
-          else
+          else ...[
+            if (_offeredListing case final listing?)
+              ChatListingOfferBar(
+                listing: listing,
+                onSend: _sendOfferedListing,
+                onDismiss: () => setState(() => _offeredListing = null),
+              ),
             ChatInputBar(
               onSend: _send,
               mode: composerMode,
@@ -373,6 +427,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
                     )
                   : null,
             ),
+          ],
         ],
       ),
     };

@@ -21,4 +21,26 @@ void main() {
     expect(AuthStorage.userIdOfToken(_jwt({'sub': ''})), isNull);
     expect(AuthStorage.userIdOfToken(_jwt({'name': 'no subject'})), isNull);
   });
+
+  group('isTokenExpired', () {
+    final now = DateTime(2026, 10, 24, 12);
+    int secondsAt(DateTime time) => time.millisecondsSinceEpoch ~/ 1000;
+
+    test('is true once exp has passed, or is under the leeway away', () {
+      final past = _jwt({'exp': secondsAt(now.subtract(Duration(minutes: 1)))});
+      final soon = _jwt({'exp': secondsAt(now.add(Duration(seconds: 10)))});
+      expect(AuthStorage.isTokenExpired(past, now: now), isTrue);
+      expect(AuthStorage.isTokenExpired(soon, now: now), isTrue);
+    });
+
+    test('is false for a token with time left', () {
+      final fresh = _jwt({'exp': secondsAt(now.add(Duration(minutes: 10)))});
+      expect(AuthStorage.isTokenExpired(fresh, now: now), isFalse);
+    });
+
+    test('leaves an unreadable token to the server', () {
+      expect(AuthStorage.isTokenExpired('not-a-jwt', now: now), isFalse);
+      expect(AuthStorage.isTokenExpired(_jwt({'sub': 'x'}), now: now), isFalse);
+    });
+  });
 }

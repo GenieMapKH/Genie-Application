@@ -19,10 +19,13 @@ class ChatSendException extends AppException {
   const ChatSendException(this.problem, [String? message])
     : super(message ?? 'Message not sent');
 
-  /// Names a refusal by what the server said, which is English.
-  factory ChatSendException.rejected(Object? reason) {
+  /// Names a refusal by its [code], else by what the server said, which is
+  /// English.
+  factory ChatSendException.rejected(Object? reason, {Object? code}) {
     final text = reason is String ? reason : '';
-    final problem = text.contains('chat PIN')
+    final problem = code == 'blocked'
+        ? ChatSendProblem.blocked
+        : text.contains('chat PIN')
         ? ChatSendProblem.pinRequired
         : text.contains('too quickly')
         ? ChatSendProblem.tooFast
@@ -199,7 +202,10 @@ class ChatSocketService {
     }
 
     if (ack is! Map || ack['status'] != 'ok') {
-      throw ChatSendException.rejected(ack is Map ? ack['message'] : null);
+      throw ChatSendException.rejected(
+        ack is Map ? ack['message'] : null,
+        code: ack is Map ? ack['code'] : null,
+      );
     }
     return ack;
   }

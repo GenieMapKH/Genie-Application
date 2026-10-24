@@ -64,10 +64,19 @@ class _Switches extends ConsumerWidget {
     WidgetRef ref, {
     bool? chatMessages,
     bool? promotions,
+    bool? savedSearchAlerts,
+    bool? followedListings,
+    bool? savedListingUpdates,
   }) async {
     final saved = await ref
         .read(notificationPreferencesProvider.notifier)
-        .change(chatMessages: chatMessages, promotions: promotions);
+        .change(
+          chatMessages: chatMessages,
+          promotions: promotions,
+          savedSearchAlerts: savedSearchAlerts,
+          followedListings: followedListings,
+          savedListingUpdates: savedListingUpdates,
+        );
     if (!saved && context.mounted) {
       AppPopup.showError(context, context.l10n.notificationsSaveFailed);
     }
@@ -96,6 +105,27 @@ class _Switches extends ConsumerWidget {
             onChanged: (on) =>
                 ref.read(showNotificationTextProvider.notifier).select(on),
           ),
+        SettingsSwitchRow(
+          icon: Icons.travel_explore,
+          title: l10n.notificationsSavedSearchTitle,
+          subtitle: l10n.notificationsSavedSearchHelp,
+          value: preferences.savedSearchAlerts,
+          onChanged: (on) => _change(context, ref, savedSearchAlerts: on),
+        ),
+        SettingsSwitchRow(
+          icon: Icons.person_add_alt,
+          title: l10n.notificationsFollowedTitle,
+          subtitle: l10n.notificationsFollowedHelp,
+          value: preferences.followedListings,
+          onChanged: (on) => _change(context, ref, followedListings: on),
+        ),
+        SettingsSwitchRow(
+          icon: Icons.trending_down,
+          title: l10n.notificationsSavedUpdatesTitle,
+          subtitle: l10n.notificationsSavedUpdatesHelp,
+          value: preferences.savedListingUpdates,
+          onChanged: (on) => _change(context, ref, savedListingUpdates: on),
+        ),
         SettingsSwitchRow(
           icon: Icons.local_offer_outlined,
           title: l10n.notificationsPromotionsTitle,

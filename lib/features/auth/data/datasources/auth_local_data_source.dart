@@ -51,14 +51,31 @@ class AuthStorage {
   /// The `sub` of the JWT [token], or null when it is not a readable JWT.
   @visibleForTesting
   static String? userIdOfToken(String? token) {
+    final sub = _payloadOf(token)?['sub'];
+    return sub is String && sub.isNotEmpty ? sub : null;
+  }
+
+  /// Whether the JWT [token]'s `exp` has passed or is under [leeway] away.
+  /// False when it is not a readable JWT: the server decides then.
+  static bool isTokenExpired(
+    String token, {
+    Duration leeway = const Duration(seconds: 30),
+    DateTime? now,
+  }) {
+    final exp = _payloadOf(token)?['exp'];
+    if (exp is! num) return false;
+    final expiresAt = DateTime.fromMillisecondsSinceEpoch(exp.toInt() * 1000);
+    return (now ?? DateTime.now()).isAfter(expiresAt.subtract(leeway));
+  }
+
+  static Map<String, dynamic>? _payloadOf(String? token) {
     final parts = token?.split('.');
     if (parts == null || parts.length != 3) return null;
     try {
       final payload = jsonDecode(
         utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
       );
-      final sub = payload is Map ? payload['sub'] : null;
-      return sub is String && sub.isNotEmpty ? sub : null;
+      return payload is Map<String, dynamic> ? payload : null;
     } on FormatException {
       return null;
     }

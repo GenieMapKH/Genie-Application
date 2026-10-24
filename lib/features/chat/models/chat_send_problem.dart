@@ -13,6 +13,9 @@ enum ChatSendProblem {
   /// The account has no chat PIN yet, and the server sends nothing without.
   pinRequired,
 
+  /// One of the two has blocked the other.
+  blocked,
+
   /// The other person's key changed; the user accepts it first.
   keyChanged,
 

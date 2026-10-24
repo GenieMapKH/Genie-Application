@@ -26,6 +26,7 @@ import 'package:genie/features/profile/presentation/view_models/user_providers.d
 import 'chat_fakes.dart';
 
 import 'voice_fakes.dart';
+import '../safety/fake_block_repository.dart';
 
 void main() {
   group('voice details', () {
@@ -210,6 +211,7 @@ void main() {
             ),
             chatRepositoryProvider.overrideWithValue(repository),
             chatSocketServiceProvider.overrideWithValue(socket),
+            noBlocksOverride(),
             e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
             messageCipherProvider.overrideWith((ref, userId) => cipher),
             chatAttachmentServiceProvider.overrideWithValue(attachments),

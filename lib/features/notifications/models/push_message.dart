@@ -33,6 +33,13 @@ sealed class PushMessage {
           propertyId: text('propertyId'),
           url: _httpsOnly(text('url')),
         );
+      case 'saved_search_match' ||
+          'followed_listing' ||
+          'price_drop' ||
+          'listing_sold':
+        final propertyId = text('propertyId');
+        if (propertyId == null) break;
+        return ListingAlertPush(propertyId: propertyId);
       case 'call_incoming':
         final callId = text('callId');
         final callerId = text('callerId');
@@ -107,6 +114,15 @@ class ChatMessagePush extends PushMessage {
 /// Another device signed in to this account.
 class SignInAlertPush extends PushMessage {
   const SignInAlertPush();
+}
+
+/// A listing the user asked to hear about: a saved search matched it,
+/// someone they follow posted it, or one they saved dropped its price or
+/// sold. Opens the listing.
+class ListingAlertPush extends PushMessage {
+  final String propertyId;
+
+  const ListingAlertPush({required this.propertyId});
 }
 
 /// An offer sent by the app's team. Opens a listing, else a web page.

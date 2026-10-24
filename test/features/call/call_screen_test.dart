@@ -14,6 +14,7 @@ import 'package:genie/features/profile/presentation/view_models/user_providers.d
 
 import '../chat/chat_fakes.dart';
 import 'call_fakes.dart';
+import '../safety/fake_block_repository.dart';
 
 void main() {
   late FakeCallSignaling signaling;
@@ -123,6 +124,7 @@ void main() {
           ),
           chatRepositoryProvider.overrideWithValue(FakeChatRepository()),
           chatSocketServiceProvider.overrideWithValue(FakeChatSocket()),
+          noBlocksOverride(),
           e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
           messageCipherProvider.overrideWith((ref, userId) => FakeCipher()),
           chatAttachmentServiceProvider.overrideWithValue(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:genie/features/safety/presentation/screens/blocked_accounts_page.dart';
 import 'package:genie/features/security/presentation/screens/account_removal_page.dart';
 import 'package:genie/features/security/presentation/screens/change_password_page.dart';
 import 'package:genie/features/security/presentation/screens/create_password_page.dart';
@@ -14,7 +15,8 @@ import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:genie/shared/widgets/lists/settings_list.dart';
 
 /// Everything that protects the account: chat encryption keys, the password,
-/// the devices signed in, and deactivating or deleting the account.
+/// the devices signed in, the accounts blocked, and deactivating or deleting
+/// the account.
 class SecurityPage extends ConsumerWidget {
   const SecurityPage({super.key});
 
@@ -87,6 +89,11 @@ class SecurityPage extends ConsumerWidget {
                 icon: Icons.devices_outlined,
                 title: l10n.securityDevices,
                 onTap: () => context.pushPage(const DevicesPage()),
+              ),
+              SettingsRow(
+                icon: Icons.block,
+                title: l10n.blockedAccountsTitle,
+                onTap: () => context.pushPage(const BlockedAccountsPage()),
               ),
             ],
           ),

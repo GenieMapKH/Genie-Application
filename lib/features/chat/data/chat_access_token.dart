@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
@@ -22,7 +20,7 @@ class ChatAccessToken {
   Future<String?> read({bool afterRejection = false}) async {
     final token = await AuthStorage.getAccessToken();
     if (token == null) return null;
-    if (!afterRejection && !_isExpired(token)) return token;
+    if (!afterRejection && !AuthStorage.isTokenExpired(token)) return token;
 
     try {
       await dio.get('/users/me');
@@ -30,23 +28,5 @@ class ChatAccessToken {
       AppLogger.error('Could not renew the session for chat', e);
     }
     return AuthStorage.getAccessToken();
-  }
-
-  /// Whether the JWT's `exp` has passed or is about to.
-  bool _isExpired(String jwt) {
-    try {
-      final payload = jsonDecode(
-        utf8.decode(base64Url.decode(base64Url.normalize(jwt.split('.')[1]))),
-      );
-      final expiresAt = DateTime.fromMillisecondsSinceEpoch(
-        (payload['exp'] as num).toInt() * 1000,
-      );
-      return DateTime.now().isAfter(
-        expiresAt.subtract(const Duration(seconds: 30)),
-      );
-    } catch (_) {
-      // Not a readable JWT: let the server decide.
-      return false;
-    }
   }
 }

@@ -33,6 +33,9 @@ class PublisherProfileHeader extends StatelessWidget {
   /// Null hides the button: your own profile.
   final VoidCallback? onChat;
 
+  /// Beside the follow button: reporting or blocking them.
+  final Widget? menu;
+
   const PublisherProfileHeader({
     super.key,
     required this.person,
@@ -41,6 +44,7 @@ class PublisherProfileHeader extends StatelessWidget {
     this.followPending = false,
     this.onFollow,
     this.onChat,
+    this.menu,
   });
 
   @override
@@ -55,13 +59,20 @@ class PublisherProfileHeader extends StatelessWidget {
             avatarUrl: person.avatarUrl,
             radius: 44,
           ),
-          trailing: onFollow == null
+          trailing: onFollow == null && menu == null
               ? null
-              : PublisherFollowButton(
-                  following: followPending
-                      ? null
-                      : follow?.isFollowing ?? false,
-                  onPressed: onFollow!,
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (onFollow case final onFollow?)
+                      PublisherFollowButton(
+                        following: followPending
+                            ? null
+                            : follow?.isFollowing ?? false,
+                        onPressed: onFollow,
+                      ),
+                    ?menu,
+                  ],
                 ),
         ),
         Padding(

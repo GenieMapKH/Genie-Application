@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:genie/features/property/data/models/property_insights.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/chat_listing_of.dart';
 import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
 import 'package:genie/features/property/presentation/view_models/property_providers.dart';
 import 'package:genie/features/property/presentation/view_models/property_recommendations_provider.dart';
 import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:genie/features/property/presentation/widgets/detail/actions/call_owner.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_detail_actions.dart';
 import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_gallery.dart';
@@ -13,6 +16,7 @@ import 'package:genie/features/property/presentation/widgets/detail/property_det
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
 import 'package:genie/features/property/presentation/widgets/detail/actions/property_owner_actions.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:genie/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_facts_section.dart';
 import 'package:genie/features/property/presentation/widgets/detail/sections/property_grid_section.dart';
@@ -213,6 +217,18 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       ),
                                     ),
                                     onClose: _dismiss,
+                                    menu: isOwner || property.ownerId == null
+                                        ? null
+                                        : SafetyMenuButton(
+                                            userId: property.ownerId!,
+                                            userName: ownerDisplayName(
+                                              context.l10n,
+                                              property.ownerName,
+                                            ),
+                                            listingId: property.id,
+                                            iconColor:
+                                                context.colors.textPrimary,
+                                          ),
                                     onFavoriteToggled: () {
                                       if (!requireSignIn(context, ref)) return;
                                       ref
@@ -235,6 +251,12 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                 onChat: () {
                                   if (!requireSignIn(context, ref)) return;
                                   if (property.ownerId != null) {
+                                    ref
+                                        .read(propertyRepositoryProvider)
+                                        .recordLead(
+                                          property.id,
+                                          LeadChannel.chat,
+                                        );
                                     // Use root navigator so chat opens as a full-screen page
                                     Navigator.of(
                                       context,
@@ -247,6 +269,12 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                               participantName: ownerDisplayName(
                                                 context.l10n,
                                                 property.ownerName,
+                                              ),
+                                              // Offered to send, so the owner
+                                              // knows which listing is meant.
+                                              listingToOffer: chatListingOf(
+                                                context.l10n,
+                                                property,
                                               ),
                                             ),
                                       ),
@@ -263,7 +291,19 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                     );
                                   }
                                 },
-                                onCall: () {},
+                                onCall: () {
+                                  // Guests are sent no numbers to call.
+                                  if (!requireSignIn(context, ref)) return;
+                                  if (callNumberOf(property) != null) {
+                                    ref
+                                        .read(propertyRepositoryProvider)
+                                        .recordLead(
+                                          property.id,
+                                          LeadChannel.call,
+                                        );
+                                  }
+                                  callOwner(context, property);
+                                },
                               ),
                           ],
                         ),

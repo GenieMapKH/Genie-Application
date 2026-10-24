@@ -10,6 +10,7 @@ import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
+import '../safety/fake_block_repository.dart';
 
 /// Swiping, holding and the reply / edit / delete flows on the chat screen.
 void main() {
@@ -58,6 +59,7 @@ void main() {
           ),
           chatRepositoryProvider.overrideWithValue(repository),
           chatSocketServiceProvider.overrideWithValue(socket),
+          noBlocksOverride(),
           e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
           messageCipherProvider.overrideWith((ref, userId) => cipher),
           chatAttachmentServiceProvider.overrideWithValue(

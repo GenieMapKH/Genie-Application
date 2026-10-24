@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
 import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
+import 'package:genie/features/property/utils/property_format.dart';
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/utils/owner_display_name.dart';
 import 'package:genie/shared/widgets/media/user_avatar.dart';
@@ -121,8 +122,57 @@ class _PostedByState extends State<_PostedBy> {
                 ],
               ),
             ),
+            if (property.recentPreviousPrice() case final before?)
+              _PriceDropBadge(previousPrice: before),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// "Price dropped", and what a buyer paid before it.
+class _PriceDropBadge extends StatelessWidget {
+  final double previousPrice;
+
+  const _PriceDropBadge({required this.previousPrice});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: colors.primarySoft,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.trending_down, size: 16, color: colors.primary),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.l10n.feedPriceDropped,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: colors.textPrimary,
+                ),
+              ),
+              Text(
+                PropertyFormat.money(previousPrice),
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: colors.textMuted,
+                  decoration: TextDecoration.lineThrough,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

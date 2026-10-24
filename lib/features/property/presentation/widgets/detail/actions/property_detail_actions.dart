@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:genie/core/theme/app_colors.dart';
 
-/// The close, favourite and share buttons floating over the detail gallery.
+/// The close, favourite and share buttons floating over the detail gallery,
+/// and a "more" menu after them.
 class PropertyDetailActions extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback onClose;
   final VoidCallback onFavoriteToggled;
   final VoidCallback? onShare;
+
+  /// Drawn in the same round button as the others.
+  final Widget? menu;
 
   const PropertyDetailActions({
     super.key,
@@ -14,6 +18,7 @@ class PropertyDetailActions extends StatelessWidget {
     required this.onClose,
     required this.onFavoriteToggled,
     this.onShare,
+    this.menu,
   });
 
   @override
@@ -33,6 +38,10 @@ class PropertyDetailActions extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           _CircleButton(icon: Icons.ios_share, onPressed: onShare),
+          if (menu case final menu?) ...[
+            const SizedBox(width: 10),
+            _Circle(child: menu),
+          ],
         ],
       ),
     );
@@ -50,26 +59,41 @@ class _CircleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPressed,
-      child: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.14),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      child: _Circle(
         child: Icon(
           icon,
           size: 20,
           color: iconColor ?? context.colors.textPrimary,
         ),
       ),
+    );
+  }
+}
+
+/// The round, shadowed surface every button here sits on.
+class _Circle extends StatelessWidget {
+  final Widget child;
+
+  const _Circle({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 38,
+      height: 38,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.14),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }

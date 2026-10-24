@@ -197,6 +197,62 @@ void main() {
     expect(sessionsEnded, 0);
   });
 
+  group('a token the device can see has expired', () {
+    // A JWT whose `exp` passed an hour ago.
+    final expiredJwt = [
+      'eyJhbGciOiJSUzI1NiJ9',
+      base64Url
+          .encode(
+            utf8.encode(
+              jsonEncode({
+                'sub': 'me',
+                'exp':
+                    DateTime.now()
+                        .subtract(const Duration(hours: 1))
+                        .millisecondsSinceEpoch ~/
+                    1000,
+              }),
+            ),
+          )
+          .replaceAll('=', ''),
+      'signature',
+    ].join('.');
+
+    setUp(() {
+      FlutterSecureStorage.setMockInitialValues({
+        'access_token': expiredJwt,
+        'refresh_token': 'old-refresh',
+      });
+    });
+
+    test('is renewed before the request is sent', () async {
+      final response = await dio.get('/users/me');
+
+      expect(response.statusCode, 200);
+      expect(api.calls, ['/auth/refresh', '/users/me']);
+      expect(await AuthStorage.getAccessToken(), 'new-access');
+    });
+
+    test('is sent as it is when the renewal cannot be reached', () async {
+      api.refresh = null;
+
+      await expectLater(dio.get('/users/me'), throwsA(isA<DioException>()));
+
+      expect(api.calls.first, '/auth/refresh');
+      expect(await AuthStorage.getRefreshToken(), 'old-refresh');
+      expect(sessionsEnded, 0);
+    });
+
+    test('is not sent once the server refused to renew it', () async {
+      api.refresh = 401;
+
+      await expectLater(dio.get('/users/me'), throwsA(isA<DioException>()));
+
+      expect(sessionsEnded, 1);
+      expect(await AuthStorage.getAccessToken(), isNull);
+    });
+  });
+
   test('a guest has no session to renew or to lose', () async {
     FlutterSecureStorage.setMockInitialValues({});
 

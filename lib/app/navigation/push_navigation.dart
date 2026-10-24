@@ -41,6 +41,8 @@ PushOpener pushOpener(Ref ref) {
         await context.pushPage(const DevicesPage());
       case PromotionPush(:final propertyId, :final url):
         await _openPromotion(ref, context, propertyId: propertyId, url: url);
+      case ListingAlertPush(:final propertyId):
+        await _openPromotion(ref, context, propertyId: propertyId, url: null);
       case IncomingCallPush():
         await openCallFromPush(ref, message);
       case CallEndedPush() || UnknownPush():

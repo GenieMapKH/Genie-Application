@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:genie/features/property/presentation/screens/property_insights_page.dart';
 import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
 import 'package:genie/shared/utils/app_popup.dart';
 import 'package:genie/core/theme/app_colors.dart';
@@ -35,6 +36,23 @@ class PropertyOptionsSheet {
                 ),
               ),
               const SizedBox(height: 16),
+              ListTile(
+                leading: Icon(
+                  Icons.insights_outlined,
+                  color: context.colors.accent,
+                ),
+                title: Text(context.l10n.insightsTitle),
+                onTap: () {
+                  // Found before the sheet closes and takes its context.
+                  final navigator = Navigator.of(context, rootNavigator: true);
+                  Navigator.pop(context);
+                  navigator.push(
+                    MaterialPageRoute(
+                      builder: (_) => PropertyInsightsPage(property: property),
+                    ),
+                  );
+                },
+              ),
               if (isDraft)
                 ListTile(
                   leading: Icon(Icons.public, color: context.colors.accent),

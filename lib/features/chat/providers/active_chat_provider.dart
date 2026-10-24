@@ -22,6 +22,7 @@ import 'package:genie/features/chat/providers/active_chat_state.dart';
 import 'package:genie/features/chat/providers/chat_provider.dart';
 import 'package:genie/features/chat/providers/chat_service_providers.dart';
 import 'package:genie/shared/utils/random_uuid.dart';
+import 'package:genie/features/chat/models/chat_listing.dart';
 
 export 'active_chat_state.dart';
 
@@ -134,6 +135,24 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     await _deliver(message);
   }
 
+  /// Sends [listing] as a card. Its text says what it is, for an app that
+  /// cannot draw the card and for the notification.
+  Future<void> sendListing(ChatListing listing) async {
+    if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
+
+    final message = ChatMessage(
+      id: _newMessageId(),
+      senderId: userId,
+      recipientId: participantId,
+      text: listing.fallbackText,
+      createdAt: DateTime.now(),
+      status: ChatMessageStatus.sending,
+      listing: listing,
+    );
+    state = state.copyWith(messages: [...state.messages, message]);
+    await _deliver(message);
+  }
+
   /// Sends a picture. It is shown at once, then encrypted, uploaded and
   /// announced to the other person in an ordinary encrypted message.
   Future<void> sendImage(
@@ -225,6 +244,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
         peerId: participantId,
         attachment: message.attachment,
         replyToId: message.replyToId,
+        listing: message.listing,
       );
       await socketService.send(
         id: message.id,

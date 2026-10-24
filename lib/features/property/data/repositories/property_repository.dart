@@ -4,6 +4,7 @@ import 'package:genie/core/network/api_cache_manager.dart';
 import 'package:genie/core/logging/app_logger.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/map_property_filter.dart';
+import '../models/property_insights.dart';
 import '../models/property_model.dart';
 
 /// One page of the user's own listings, where the next one starts (null
@@ -274,5 +275,22 @@ class PropertyRepository {
     } catch (e) {
       AppLogger.error('Recording a listing view failed', e);
     }
+  }
+
+  /// Counts the signed-in user as a lead of listing [id]: they tapped Call
+  /// or Chat. The server keeps one per person and channel and ignores the
+  /// owner; a failure only leaves the count one short, so it is logged.
+  Future<void> recordLead(String id, LeadChannel channel) async {
+    try {
+      await dio.post('/properties/$id/lead', data: {'channel': channel.name});
+    } catch (e) {
+      AppLogger.error('Recording a lead failed', e);
+    }
+  }
+
+  /// How the signed-in owner's listing [id] is doing.
+  Future<PropertyInsights> fetchInsights(String id) async {
+    final response = await dio.get('/properties/$id/insights');
+    return PropertyInsights.fromJson(response.data as Map<String, dynamic>);
   }
 }

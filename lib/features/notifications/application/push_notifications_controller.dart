@@ -81,6 +81,10 @@ class PushNotificationsController {
         NotificationChannel.promotions,
         'promotion:$promotionId',
       ),
+      ListingAlertPush(:final propertyId) => (
+        NotificationChannel.listingAlerts,
+        'listing:$propertyId',
+      ),
       _ => (NotificationChannel.chatMessages, null),
     };
     system

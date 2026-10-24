@@ -39,10 +39,19 @@ class NotificationRepository {
   Future<NotificationPreferences> updatePreferences({
     bool? chatMessages,
     bool? promotions,
+    bool? savedSearchAlerts,
+    bool? followedListings,
+    bool? savedListingUpdates,
   }) async {
     final response = await dio.patch(
       '/notifications/preferences',
-      data: {'chatMessages': ?chatMessages, 'promotions': ?promotions},
+      data: {
+        'chatMessages': ?chatMessages,
+        'promotions': ?promotions,
+        'savedSearchAlerts': ?savedSearchAlerts,
+        'followedListings': ?followedListings,
+        'savedListingUpdates': ?savedListingUpdates,
+      },
     );
     return NotificationPreferences.fromJson(
       Map<String, dynamic>.from(response.data as Map),

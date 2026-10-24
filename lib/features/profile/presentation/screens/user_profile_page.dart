@@ -15,6 +15,7 @@ import 'package:genie/features/settings/presentation/widgets/preference_rows.dar
 import 'package:genie/l10n/l10n.dart';
 import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:genie/shared/widgets/lists/settings_list.dart';
+import 'package:genie/features/search/presentation/screens/saved_searches_page.dart';
 
 /// The "User" tab: who is signed in, and the way into every account setting.
 class UserProfilePage extends ConsumerStatefulWidget {
@@ -148,6 +149,11 @@ class _AccountMenu extends ConsumerWidget {
               icon: Icons.notifications_none_outlined,
               title: l10n.notificationsTitle,
               onTap: () => context.pushPage(const NotificationSettingsPage()),
+            ),
+            SettingsRow(
+              icon: Icons.travel_explore,
+              title: l10n.savedSearchesTitle,
+              onTap: () => context.pushPage(const SavedSearchesPage()),
             ),
           ],
         ),

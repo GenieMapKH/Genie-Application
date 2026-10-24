@@ -11,6 +11,11 @@ enum NotificationChannel {
   chatMessages('chat_messages', 'Chat messages', Importance.high),
   security('security', 'Security alerts', Importance.high),
   promotions('promotions', 'Offers and news', Importance.defaultImportance),
+  listingAlerts(
+    'listing_alerts',
+    'New listings for you',
+    Importance.defaultImportance,
+  ),
   calls('calls', 'Calls', Importance.max),
   missedCalls('missed_calls', 'Missed calls', Importance.high);
 

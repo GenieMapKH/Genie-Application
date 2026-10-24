@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:genie/features/chat/models/chat_attachment.dart';
 import 'package:genie/features/chat/models/chat_reply.dart';
 import 'package:genie/features/chat/models/chat_voice.dart';
+import 'package:genie/features/chat/models/chat_listing.dart';
 
 class ChatConversation {
   /// Shown until the last message has been decrypted on this device.
@@ -259,6 +260,9 @@ class ChatMessage {
   /// When the sender last changed the text, or null.
   final DateTime? editedAt;
 
+  /// A listing sent as a card; [text] is then what apps without cards show.
+  final ChatListing? listing;
+
   ChatMessage({
     required this.id,
     required this.senderId,
@@ -272,6 +276,7 @@ class ChatMessage {
     this.replyToId,
     this.replyTo,
     this.editedAt,
+    this.listing,
   });
 
   bool get isReadable => text != undecryptableText;
@@ -289,6 +294,7 @@ class ChatMessage {
       status == ChatMessageStatus.sent &&
       hasText &&
       attachment == null &&
+      listing == null &&
       localImage == null &&
       localVoice == null &&
       now.difference(createdAt) < editWindow;
@@ -334,6 +340,7 @@ class ChatMessage {
       replyToId: replyToId,
       replyTo: withoutReply ? null : replyTo ?? this.replyTo,
       editedAt: editedAt ?? this.editedAt,
+      listing: listing,
     );
   }
 }

@@ -1688,6 +1688,24 @@ abstract class AppLocalizations {
   /// **'Call Now'**
   String get propertyCallNow;
 
+  /// No description provided for @propertyNoPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone number was shared for this listing. Try chatting with the owner instead.'**
+  String get propertyNoPhoneNumber;
+
+  /// No description provided for @propertyCallFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The phone app could not be opened.'**
+  String get propertyCallFailed;
+
+  /// No description provided for @profileSignInForContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see their phone and email.'**
+  String get profileSignInForContact;
+
   /// No description provided for @propertyCannotChatOwnerInformationMissing.
   ///
   /// In en, this message translates to:
@@ -1729,6 +1747,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saves'**
   String get propertySaves;
+
+  /// No description provided for @insightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsTitle;
+
+  /// No description provided for @insightsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the insights. Check your connection.'**
+  String get insightsLoadFailed;
+
+  /// No description provided for @insightsTotalViews.
+  ///
+  /// In en, this message translates to:
+  /// **'People viewed'**
+  String get insightsTotalViews;
+
+  /// No description provided for @insightsTotalSaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved it'**
+  String get insightsTotalSaves;
+
+  /// No description provided for @insightsTotalCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Tapped Call'**
+  String get insightsTotalCalls;
+
+  /// No description provided for @insightsTotalChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Started a chat'**
+  String get insightsTotalChats;
+
+  /// No description provided for @insightsLast14Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 14 days'**
+  String get insightsLast14Days;
+
+  /// No description provided for @insightsMeasureViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewers'**
+  String get insightsMeasureViews;
+
+  /// No description provided for @insightsMeasureSaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Saves'**
+  String get insightsMeasureSaves;
+
+  /// No description provided for @insightsMeasureLeads.
+  ///
+  /// In en, this message translates to:
+  /// **'Leads'**
+  String get insightsMeasureLeads;
+
+  /// No description provided for @insightsViewers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new viewer} other{{count} new viewers}}'**
+  String insightsViewers(int count);
+
+  /// No description provided for @insightsSaves.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new save} other{{count} new saves}}'**
+  String insightsSaves(int count);
+
+  /// No description provided for @insightsLeads.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new lead} other{{count} new leads}}'**
+  String insightsLeads(int count);
+
+  /// No description provided for @insightsThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week: {thisWeek}. The week before: {lastWeek}.'**
+  String insightsThisWeek(String thisWeek, int lastWeek);
+
+  /// No description provided for @insightsEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.'**
+  String get insightsEmptyHint;
 
   /// No description provided for @propertyShareThisProperty.
   ///
@@ -3434,6 +3542,36 @@ abstract class AppLocalizations {
   /// **'Edited'**
   String get chatEdited;
 
+  /// No description provided for @chatAskAboutListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Asking about this listing?'**
+  String get chatAskAboutListing;
+
+  /// No description provided for @chatSendListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get chatSendListing;
+
+  /// No description provided for @chatDismissListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get chatDismissListing;
+
+  /// No description provided for @chatViewListing.
+  ///
+  /// In en, this message translates to:
+  /// **'View listing'**
+  String get chatViewListing;
+
+  /// No description provided for @chatListingUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing is no longer available.'**
+  String get chatListingUnavailable;
+
   /// No description provided for @chatDeleteMessageQuestion.
   ///
   /// In en, this message translates to:
@@ -3589,6 +3727,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create your chat PIN before sending messages.'**
   String get chatSendPinRequired;
+
+  /// No description provided for @chatSendBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t message this person.'**
+  String get chatSendBlocked;
+
+  /// No description provided for @chatYouBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You blocked {name}. They can\'t message or call you.'**
+  String chatYouBlocked(String name);
+
+  /// No description provided for @chatCannotReply.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t reply to this conversation.'**
+  String get chatCannotReply;
+
+  /// No description provided for @safetyMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get safetyMore;
+
+  /// No description provided for @blockAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get blockAction;
+
+  /// No description provided for @unblockAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get unblockAction;
+
+  /// No description provided for @blockConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}?'**
+  String blockConfirmTitle(String name);
+
+  /// No description provided for @blockConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'They won\'t be able to message or call you, and you\'ll stop following each other. They won\'t be told.'**
+  String get blockConfirmMessage;
+
+  /// No description provided for @unblockConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock {name}?'**
+  String unblockConfirmTitle(String name);
+
+  /// No description provided for @unblockConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be able to message each other again. Follows removed by the block don\'t come back.'**
+  String get unblockConfirmMessage;
+
+  /// No description provided for @blockDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is blocked.'**
+  String blockDone(String name);
+
+  /// No description provided for @unblockDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is unblocked.'**
+  String unblockDone(String name);
+
+  /// No description provided for @blockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Check your connection and try again.'**
+  String get blockFailed;
+
+  /// No description provided for @blockedAccountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked accounts'**
+  String get blockedAccountsTitle;
+
+  /// No description provided for @blockedAccountsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t blocked anyone.'**
+  String get blockedAccountsEmpty;
+
+  /// No description provided for @blockedAccountsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the accounts you blocked.'**
+  String get blockedAccountsLoadFailed;
+
+  /// No description provided for @reportListingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report listing'**
+  String get reportListingAction;
+
+  /// No description provided for @reportUserAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report account'**
+  String get reportUserAction;
+
+  /// No description provided for @reportListingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this listing'**
+  String get reportListingTitle;
+
+  /// No description provided for @reportUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this account'**
+  String get reportUserTitle;
+
+  /// No description provided for @reportHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what\'s wrong. The owner won\'t know who reported it.'**
+  String get reportHelp;
+
+  /// No description provided for @reportReasonScam.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam or fraud'**
+  String get reportReasonScam;
+
+  /// No description provided for @reportReasonMisleading.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong price, photos or details'**
+  String get reportReasonMisleading;
+
+  /// No description provided for @reportReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Already sold or rented'**
+  String get reportReasonUnavailable;
+
+  /// No description provided for @reportReasonDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted more than once'**
+  String get reportReasonDuplicate;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment or threats'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonImpersonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pretending to be someone else'**
+  String get reportReasonImpersonation;
+
+  /// No description provided for @reportReasonInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Offensive or inappropriate'**
+  String get reportReasonInappropriate;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportDetailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything else we should know (optional)'**
+  String get reportDetailsHint;
+
+  /// No description provided for @reportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get reportSend;
+
+  /// No description provided for @reportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks. We\'ll review your report.'**
+  String get reportSent;
+
+  /// No description provided for @reportTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve sent a lot of reports. Try again later.'**
+  String get reportTooMany;
+
+  /// No description provided for @reportTargetGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This has already been removed.'**
+  String get reportTargetGone;
+
+  /// No description provided for @reportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The report wasn\'t sent. Check your connection and try again.'**
+  String get reportFailed;
 
   /// No description provided for @chatSendKeyChanged.
   ///
@@ -4465,6 +4819,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deals and updates from our team.'**
   String get notificationsPromotionsHelp;
+
+  /// No description provided for @notificationsSavedSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved search alerts'**
+  String get notificationsSavedSearchTitle;
+
+  /// No description provided for @notificationsSavedSearchHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'New listings that match a search you saved.'**
+  String get notificationsSavedSearchHelp;
+
+  /// No description provided for @notificationsFollowedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'People you follow'**
+  String get notificationsFollowedTitle;
+
+  /// No description provided for @notificationsFollowedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'When someone you follow posts a new listing.'**
+  String get notificationsFollowedHelp;
+
+  /// No description provided for @notificationsSavedUpdatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved listings'**
+  String get notificationsSavedUpdatesTitle;
+
+  /// No description provided for @notificationsSavedUpdatesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Price drops, and when a listing you saved is sold.'**
+  String get notificationsSavedUpdatesHelp;
+
+  /// No description provided for @feedPriceDropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Price dropped'**
+  String get feedPriceDropped;
+
+  /// No description provided for @savedSearchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved searches'**
+  String get savedSearchesTitle;
+
+  /// No description provided for @savedSearchesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved searches yet. Set a filter on the map and tap the bookmark to save it.'**
+  String get savedSearchesEmpty;
+
+  /// No description provided for @savedSearchesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your saved searches.'**
+  String get savedSearchesLoadFailed;
+
+  /// No description provided for @savedSearchSaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this search'**
+  String get savedSearchSaveTitle;
+
+  /// No description provided for @savedSearchSaveHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll tell you when a new listing in this map area matches your filter.'**
+  String get savedSearchSaveHelp;
+
+  /// No description provided for @savedSearchName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get savedSearchName;
+
+  /// No description provided for @savedSearchSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Search saved. We\'ll let you know about new listings.'**
+  String get savedSearchSaved;
+
+  /// No description provided for @savedSearchLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can save up to {count} searches. Delete one first.'**
+  String savedSearchLimit(int count);
+
+  /// No description provided for @savedSearchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Check your connection and try again.'**
+  String get savedSearchFailed;
+
+  /// No description provided for @savedSearchNoArea.
+  ///
+  /// In en, this message translates to:
+  /// **'The map is still loading. Try again in a moment.'**
+  String get savedSearchNoArea;
+
+  /// No description provided for @savedSearchAnyListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Any listing in this area'**
+  String get savedSearchAnyListing;
+
+  /// No description provided for @savedSearchKeywords.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 keyword} other{{count} keywords}}'**
+  String savedSearchKeywords(int count);
+
+  /// No description provided for @savedSearchAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get savedSearchAlerts;
+
+  /// No description provided for @savedSearchRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get savedSearchRename;
+
+  /// No description provided for @savedSearchDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get savedSearchDelete;
+
+  /// No description provided for @savedSearchDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved search deleted.'**
+  String get savedSearchDeleted;
 
   /// No description provided for @notificationsAlwaysOn.
   ///

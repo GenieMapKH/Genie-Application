@@ -7,6 +7,7 @@ import 'package:genie/features/chat/presentation/widgets/conversation/chat_reply
 import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_message.dart';
 import 'package:genie/core/theme/app_colors.dart';
 import 'package:genie/l10n/l10n.dart';
+import 'package:genie/features/chat/presentation/widgets/conversation/chat_listing_card.dart';
 
 /// One message in a conversation: the user's own on the right, the other
 /// person's on the left. A reply shows the message it quotes above it, and
@@ -76,7 +77,12 @@ class ChatMessageBubble extends StatelessWidget {
               )
             else if (attachment != null && !attachment.isImage)
               _buildText(context, '\u{1F4CE} ${attachment.name}', failed),
-            if (message.text.isNotEmpty)
+            if (message.listing case final listing?)
+              ChatListingCard(
+                listing: listing,
+                onRetry: failed ? onRetry : null,
+              )
+            else if (message.text.isNotEmpty)
               _buildText(
                 context,
                 message.text == ChatMessage.undecryptableText

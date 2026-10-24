@@ -20,6 +20,7 @@ import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
+import '../safety/fake_block_repository.dart';
 
 /// "Encrypts" by reversing the bytes, and refuses a wrong key.
 class _ReversingCrypto extends Fake implements CryptoService {
@@ -370,6 +371,7 @@ void main() {
             ),
             chatRepositoryProvider.overrideWithValue(repository),
             chatSocketServiceProvider.overrideWithValue(socket),
+            noBlocksOverride(),
             e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
             messageCipherProvider.overrideWith((ref, userId) => cipher),
             chatAttachmentServiceProvider.overrideWithValue(attachments),

@@ -11,6 +11,7 @@ import 'package:genie/features/profile/data/models/user_profile.dart';
 import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
+import '../safety/fake_block_repository.dart';
 
 final _start = DateTime.utc(2026, 10, 19, 10);
 
@@ -168,6 +169,7 @@ void main() {
             ),
             chatRepositoryProvider.overrideWithValue(repository),
             chatSocketServiceProvider.overrideWithValue(socket),
+            noBlocksOverride(),
             e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
             messageCipherProvider.overrideWith((ref, userId) => FakeCipher()),
             chatAttachmentServiceProvider.overrideWithValue(
@@ -209,9 +211,7 @@ void main() {
       expect(find.text('Call declined'), findsOneWidget);
     });
 
-    testWidgets('lists a call below the older messages', (
-      tester,
-    ) async {
+    testWidgets('lists a call below the older messages', (tester) async {
       repository.history = [
         encrypted('m1', 'before', from: me),
         encrypted('m2', 'after', from: peer),

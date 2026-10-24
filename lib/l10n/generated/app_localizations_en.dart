@@ -902,6 +902,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyCallNow => 'Call Now';
 
   @override
+  String get propertyNoPhoneNumber =>
+      'No phone number was shared for this listing. Try chatting with the owner instead.';
+
+  @override
+  String get propertyCallFailed => 'The phone app could not be opened.';
+
+  @override
+  String get profileSignInForContact => 'Sign in to see their phone and email.';
+
+  @override
   String get propertyCannotChatOwnerInformationMissing =>
       'Cannot chat: owner information missing.';
 
@@ -922,6 +932,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertySaves => 'Saves';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsLoadFailed =>
+      'Couldn\'t load the insights. Check your connection.';
+
+  @override
+  String get insightsTotalViews => 'People viewed';
+
+  @override
+  String get insightsTotalSaves => 'Saved it';
+
+  @override
+  String get insightsTotalCalls => 'Tapped Call';
+
+  @override
+  String get insightsTotalChats => 'Started a chat';
+
+  @override
+  String get insightsLast14Days => 'Last 14 days';
+
+  @override
+  String get insightsMeasureViews => 'Viewers';
+
+  @override
+  String get insightsMeasureSaves => 'Saves';
+
+  @override
+  String get insightsMeasureLeads => 'Leads';
+
+  @override
+  String insightsViewers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new viewers',
+      one: '1 new viewer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsSaves(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new saves',
+      one: '1 new save',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsLeads(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new leads',
+      one: '1 new lead',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsThisWeek(String thisWeek, int lastWeek) {
+    return 'This week: $thisWeek. The week before: $lastWeek.';
+  }
+
+  @override
+  String get insightsEmptyHint =>
+      'Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.';
 
   @override
   String get propertyShareThisProperty => 'Share This Property';
@@ -1932,6 +2015,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatEdited => 'Edited';
 
   @override
+  String get chatAskAboutListing => 'Asking about this listing?';
+
+  @override
+  String get chatSendListing => 'Send';
+
+  @override
+  String get chatDismissListing => 'Not now';
+
+  @override
+  String get chatViewListing => 'View listing';
+
+  @override
+  String get chatListingUnavailable => 'This listing is no longer available.';
+
+  @override
   String get chatDeleteMessageQuestion => 'Delete this message?';
 
   @override
@@ -2027,6 +2125,130 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get chatSendPinRequired =>
       'Create your chat PIN before sending messages.';
+
+  @override
+  String get chatSendBlocked => 'You can\'t message this person.';
+
+  @override
+  String chatYouBlocked(String name) {
+    return 'You blocked $name. They can\'t message or call you.';
+  }
+
+  @override
+  String get chatCannotReply => 'You can\'t reply to this conversation.';
+
+  @override
+  String get safetyMore => 'More';
+
+  @override
+  String get blockAction => 'Block';
+
+  @override
+  String get unblockAction => 'Unblock';
+
+  @override
+  String blockConfirmTitle(String name) {
+    return 'Block $name?';
+  }
+
+  @override
+  String get blockConfirmMessage =>
+      'They won\'t be able to message or call you, and you\'ll stop following each other. They won\'t be told.';
+
+  @override
+  String unblockConfirmTitle(String name) {
+    return 'Unblock $name?';
+  }
+
+  @override
+  String get unblockConfirmMessage =>
+      'You\'ll be able to message each other again. Follows removed by the block don\'t come back.';
+
+  @override
+  String blockDone(String name) {
+    return '$name is blocked.';
+  }
+
+  @override
+  String unblockDone(String name) {
+    return '$name is unblocked.';
+  }
+
+  @override
+  String get blockFailed =>
+      'That didn\'t work. Check your connection and try again.';
+
+  @override
+  String get blockedAccountsTitle => 'Blocked accounts';
+
+  @override
+  String get blockedAccountsEmpty => 'You haven\'t blocked anyone.';
+
+  @override
+  String get blockedAccountsLoadFailed =>
+      'Couldn\'t load the accounts you blocked.';
+
+  @override
+  String get reportListingAction => 'Report listing';
+
+  @override
+  String get reportUserAction => 'Report account';
+
+  @override
+  String get reportListingTitle => 'Report this listing';
+
+  @override
+  String get reportUserTitle => 'Report this account';
+
+  @override
+  String get reportHelp =>
+      'Tell us what\'s wrong. The owner won\'t know who reported it.';
+
+  @override
+  String get reportReasonScam => 'Scam or fraud';
+
+  @override
+  String get reportReasonMisleading => 'Wrong price, photos or details';
+
+  @override
+  String get reportReasonUnavailable => 'Already sold or rented';
+
+  @override
+  String get reportReasonDuplicate => 'Posted more than once';
+
+  @override
+  String get reportReasonHarassment => 'Harassment or threats';
+
+  @override
+  String get reportReasonImpersonation => 'Pretending to be someone else';
+
+  @override
+  String get reportReasonInappropriate => 'Offensive or inappropriate';
+
+  @override
+  String get reportReasonSpam => 'Spam';
+
+  @override
+  String get reportReasonOther => 'Something else';
+
+  @override
+  String get reportDetailsHint => 'Anything else we should know (optional)';
+
+  @override
+  String get reportSend => 'Send report';
+
+  @override
+  String get reportSent => 'Thanks. We\'ll review your report.';
+
+  @override
+  String get reportTooMany => 'You\'ve sent a lot of reports. Try again later.';
+
+  @override
+  String get reportTargetGone => 'This has already been removed.';
+
+  @override
+  String get reportFailed =>
+      'The report wasn\'t sent. Check your connection and try again.';
 
   @override
   String get chatSendKeyChanged =>
@@ -2534,6 +2756,93 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsPromotionsHelp => 'Deals and updates from our team.';
+
+  @override
+  String get notificationsSavedSearchTitle => 'Saved search alerts';
+
+  @override
+  String get notificationsSavedSearchHelp =>
+      'New listings that match a search you saved.';
+
+  @override
+  String get notificationsFollowedTitle => 'People you follow';
+
+  @override
+  String get notificationsFollowedHelp =>
+      'When someone you follow posts a new listing.';
+
+  @override
+  String get notificationsSavedUpdatesTitle => 'Saved listings';
+
+  @override
+  String get notificationsSavedUpdatesHelp =>
+      'Price drops, and when a listing you saved is sold.';
+
+  @override
+  String get feedPriceDropped => 'Price dropped';
+
+  @override
+  String get savedSearchesTitle => 'Saved searches';
+
+  @override
+  String get savedSearchesEmpty =>
+      'No saved searches yet. Set a filter on the map and tap the bookmark to save it.';
+
+  @override
+  String get savedSearchesLoadFailed => 'Couldn\'t load your saved searches.';
+
+  @override
+  String get savedSearchSaveTitle => 'Save this search';
+
+  @override
+  String get savedSearchSaveHelp =>
+      'We\'ll tell you when a new listing in this map area matches your filter.';
+
+  @override
+  String get savedSearchName => 'Name';
+
+  @override
+  String get savedSearchSaved =>
+      'Search saved. We\'ll let you know about new listings.';
+
+  @override
+  String savedSearchLimit(int count) {
+    return 'You can save up to $count searches. Delete one first.';
+  }
+
+  @override
+  String get savedSearchFailed =>
+      'That didn\'t work. Check your connection and try again.';
+
+  @override
+  String get savedSearchNoArea =>
+      'The map is still loading. Try again in a moment.';
+
+  @override
+  String get savedSearchAnyListing => 'Any listing in this area';
+
+  @override
+  String savedSearchKeywords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count keywords',
+      one: '1 keyword',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get savedSearchAlerts => 'Alerts';
+
+  @override
+  String get savedSearchRename => 'Rename';
+
+  @override
+  String get savedSearchDelete => 'Delete';
+
+  @override
+  String get savedSearchDeleted => 'Saved search deleted.';
 
   @override
   String get notificationsAlwaysOn =>
