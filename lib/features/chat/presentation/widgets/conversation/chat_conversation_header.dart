@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/media/user_avatar.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_presence_label.dart';
-import 'package:genie/features/chat/providers/active_chat_state.dart';
-import 'package:genie/features/chat/providers/chat_participant_providers.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/owner_display_name.dart';
+import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_presence_label.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_state.dart';
+import 'package:tilomnov/features/chat/providers/chat_participant_providers.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/owner_display_name.dart';
 
 /// App-bar title of a conversation: who it is with and whether they are
 /// online. Tapping it opens the participant sheet: their profile (with a way

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
-import 'package:genie/shared/widgets/buttons/app_button.dart';
+import 'package:tilomnov/features/auth/presentation/screens/welcome_page.dart';
+import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
 
 void main() {
   testWidgets('MyApp renders WelcomePage with smooth splash and actions', (
@@ -16,7 +16,8 @@ void main() {
 
     // Initially displays the WelcomePage
     expect(find.byType(WelcomePage), findsOneWidget);
-    expect(find.byType(SvgPicture), findsOneWidget);
+    // The logo and the language switch's flag.
+    expect(find.byType(SvgPicture), findsNWidgets(2));
 
     // Let splash delay and entrance animations complete
     await tester.pump(const Duration(milliseconds: 700));

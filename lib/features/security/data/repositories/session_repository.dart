@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/features/security/data/models/device_session.dart';
+import 'package:tilomnov/features/security/data/models/device_session.dart';
 
 /// API access for the devices signed in to the account. A sign-out takes
 /// effect on the other device at once.

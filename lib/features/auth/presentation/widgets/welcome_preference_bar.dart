@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Language and theme switches for the welcome screen, so they can be changed
 /// before signing in. Shares the providers behind the Settings page.

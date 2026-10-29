@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 /// What the map shows after a place or a person was chosen: the region to
 /// look at and the listings that belong to it.

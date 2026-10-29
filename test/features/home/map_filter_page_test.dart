@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/presentation/providers/map_filter_draft_provider.dart';
-import 'package:genie/features/home/presentation/screens/map_filter_page.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/property_repository.dart';
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_filter_draft_provider.dart';
+import 'package:tilomnov/features/home/presentation/screens/map_filter_page.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 import '../../support/test_app.dart';
 

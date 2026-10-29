@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/notifications/data/push_messaging.dart';
-import 'package:genie/features/notifications/data/system_notifications.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/notifications/data/push_messaging.dart';
+import 'package:tilomnov/features/notifications/data/system_notifications.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
 
 /// Opens what a tapped notification is about. Supplied by the app, which
 /// knows every screen.

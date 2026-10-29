@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/follow/presentation/follow_actions.dart';
-import 'package:genie/features/follow/presentation/view_models/follow_providers.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
-import 'package:genie/features/safety/presentation/widgets/safety_menu_button.dart';
-import 'package:genie/features/search/data/models/publisher_profile.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/search/data/search_failure.dart';
-import 'package:genie/features/search/presentation/search_layout.dart';
-import 'package:genie/features/search/presentation/view_models/publisher_profile_provider.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
-import 'package:genie/features/search/presentation/widgets/profile/publisher_contact_card.dart';
-import 'package:genie/features/search/presentation/widgets/profile/publisher_listings_grid.dart';
-import 'package:genie/features/search/presentation/widgets/profile/publisher_profile_header.dart';
-import 'package:genie/features/search/presentation/widgets/profile/publisher_profile_tabs.dart';
-import 'package:genie/features/search/presentation/widgets/search_message_view.dart';
-import 'package:genie/features/search/presentation/widgets/search_skeleton_list.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
-import 'package:genie/shared/transitions/circular_reveal_route.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/follow/presentation/follow_actions.dart';
+import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
+import 'package:tilomnov/features/search/data/models/publisher_profile.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/search/data/search_failure.dart';
+import 'package:tilomnov/features/search/presentation/search_layout.dart';
+import 'package:tilomnov/features/search/presentation/view_models/publisher_profile_provider.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/features/search/presentation/widgets/profile/publisher_contact_card.dart';
+import 'package:tilomnov/features/search/presentation/widgets/profile/publisher_listings_grid.dart';
+import 'package:tilomnov/features/search/presentation/widgets/profile/publisher_profile_header.dart';
+import 'package:tilomnov/features/search/presentation/widgets/profile/publisher_profile_tabs.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_message_view.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_skeleton_list.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/transitions/app_page_route.dart';
+import 'package:tilomnov/shared/transitions/circular_reveal_route.dart';
 
 /// A person's or agency's public profile, opened from search or from a
 /// chat: who they are, then every listing they have published. Closes with

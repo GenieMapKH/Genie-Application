@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/providers/chat_participant_providers.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/features/chat/providers/chat_participant_providers.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// "Online", "Last seen 5 min ago", … or empty when nothing is known.
 String describePresence(

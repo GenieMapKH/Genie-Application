@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/media/app_image_cache.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/providers/chat_participant_providers.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/media/app_image_cache.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/providers/chat_participant_providers.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// The picture of a chat message: the local copy while it is being sent,
 /// otherwise downloaded and decrypted on demand. Tap to view it full screen.

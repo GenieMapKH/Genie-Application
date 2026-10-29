@@ -23,6 +23,22 @@ class MapCameraFocus {
     return 180 / math.pi * math.atan(0.5 * (math.exp(n) - math.exp(-n)));
   }
 
+  /// The smallest box holding all of [points], which must not be empty.
+  static LatLngBounds boundsOf(List<LatLng> points) {
+    var south = points.first.latitude, north = south;
+    var west = points.first.longitude, east = west;
+    for (final point in points) {
+      south = math.min(south, point.latitude);
+      north = math.max(north, point.latitude);
+      west = math.min(west, point.longitude);
+      east = math.max(east, point.longitude);
+    }
+    return LatLngBounds(
+      southwest: LatLng(south, west),
+      northeast: LatLng(north, east),
+    );
+  }
+
   /// Where [point] sits on the whole-world map at [zoom], in logical pixels.
   static math.Point<double> worldPixel(LatLng point, double zoom) {
     final worldPixels = _tileSize * math.pow(2, zoom);

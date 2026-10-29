@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/data/models/property_keyword.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/media/tinted_svg.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/property_keyword.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// Every listing feature as a chip; the lit ones must all be on a listing.
 class KeywordFilterChips extends StatelessWidget {
@@ -46,12 +46,7 @@ class KeywordFilterChips extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TintedSvg(
-              keyword.iconPath,
-              width: 14,
-              height: 14,
-              color: tint,
-            ),
+            TintedSvg(keyword.iconPath, width: 14, height: 14, color: tint),
             const SizedBox(width: 6),
             Text(
               propertyKeywordLabel(context.l10n, keyword.code),

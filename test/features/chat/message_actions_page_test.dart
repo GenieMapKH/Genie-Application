@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/message_deletion.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/message_deletion.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
 import '../safety/fake_block_repository.dart';
@@ -91,7 +91,8 @@ void main() {
 
   Future<void> send(WidgetTester tester, String text, {IconData? icon}) async {
     await tester.enterText(find.byType(TextField), text);
-    await tester.tap(find.byIcon(icon ?? Icons.send_outlined));
+    await tester.pump(); // The send button takes the microphone's place.
+    await tester.tap(find.byIcon(icon ?? Icons.send_rounded));
     await tester.pump();
     await tester.pump();
   }

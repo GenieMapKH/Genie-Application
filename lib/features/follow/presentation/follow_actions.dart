@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/follow/data/follow_repository.dart';
-import 'package:genie/features/follow/presentation/view_models/follow_providers.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/follow/data/follow_repository.dart';
+import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 /// Follows [userId], or unfollows them if already followed, from wherever a
 /// follow button is: a guest is asked to sign in first, and a refusal is

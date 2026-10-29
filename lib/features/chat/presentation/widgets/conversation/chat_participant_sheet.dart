@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:genie/shared/widgets/media/user_avatar.dart';
-import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_presence_label.dart';
-import 'package:genie/features/chat/providers/active_chat_state.dart';
-import 'package:genie/features/chat/providers/chat_participant_providers.dart';
-import 'package:genie/features/chat/providers/chat_profile_opener.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_presence_label.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_state.dart';
+import 'package:tilomnov/features/chat/providers/chat_participant_providers.dart';
+import 'package:tilomnov/features/chat/providers/chat_profile_opener.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Who the user is chatting with, in two tabs: "Profile" (and a way to
 /// their full profile page) and "Security code", the code that proves the

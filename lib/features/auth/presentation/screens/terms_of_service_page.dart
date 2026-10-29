@@ -1,90 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
-/// Terms of Service screen for Genie Property.
-/// Enforces scrolling to the very bottom before the user can agree.
+/// Terms of Service screen for Tilomnov, for reading. Ticking the box on
+/// the sign-up form is enough to agree; the box here does the same, without
+/// having to scroll through first. Pops with whether the user agrees.
 class TermsOfServicePage extends StatefulWidget {
-  final ValueChanged<bool>? onAgreeChanged;
   final bool initialAgreed;
 
-  const TermsOfServicePage({
-    super.key,
-    this.onAgreeChanged,
-    this.initialAgreed = false,
-  });
+  const TermsOfServicePage({super.key, this.initialAgreed = false});
 
   @override
   State<TermsOfServicePage> createState() => _TermsOfServicePageState();
 }
 
 class _TermsOfServicePageState extends State<TermsOfServicePage> {
-  final ScrollController _scrollController = ScrollController();
-  late bool _hasScrolledToBottom;
-  late bool _isAgreed;
-
-  @override
-  void initState() {
-    super.initState();
-    _hasScrolledToBottom = widget.initialAgreed;
-    _isAgreed = widget.initialAgreed;
-    _scrollController.addListener(_handleScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkScrollability();
-    });
-  }
-
-  void _checkScrollability() {
-    if (!_scrollController.hasClients) return;
-    if (_scrollController.position.maxScrollExtent <= 0) {
-      if (!_hasScrolledToBottom) {
-        setState(() {
-          _hasScrolledToBottom = true;
-        });
-      }
-    }
-  }
-
-  void _handleScroll() {
-    if (!_scrollController.hasClients) return;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-
-    if (!_hasScrolledToBottom && currentScroll >= (maxScroll - 24.0)) {
-      setState(() {
-        _hasScrolledToBottom = true;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_handleScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
+  late bool _isAgreed = widget.initialAgreed;
 
   void _handleAgree(bool value) {
-    if (!_hasScrolledToBottom) {
-      AppPopup.showError(context, context.l10n.termsScrollToAgree);
-      return;
-    }
-
-    setState(() {
-      _isAgreed = value;
-    });
-
-    if (widget.onAgreeChanged != null) {
-      widget.onAgreeChanged!(value);
-    }
-
+    setState(() => _isAgreed = value);
     if (value) {
       Future.delayed(const Duration(milliseconds: 250), () {
-        if (mounted) {
-          Navigator.of(context).pop(true);
-        }
+        if (mounted) Navigator.of(context).pop(true);
       });
     }
   }
@@ -119,7 +57,6 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
-                controller: _scrollController,
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,13 +153,13 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                   ),
                 ],
               ),
-              child: Opacity(
-                opacity: _hasScrolledToBottom ? 1.0 : 0.45,
+              child: InkWell(
+                key: const Key('terms_agree_row'),
+                onTap: () => _handleAgree(!_isAgreed),
                 child: Row(
                   children: [
-                    SizedBox(
-                      width: 24,
-                      height: 24,
+                    Transform.scale(
+                      scale: 1.3,
                       child: Checkbox(
                         value: _isAgreed,
                         activeColor: context.colors.primary,
@@ -230,31 +167,20 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         side: BorderSide(
-                          color: _hasScrolledToBottom
-                              ? context.colors.primary
-                              : context.colors.textHint,
+                          color: context.colors.primary,
                           width: 1.5,
                         ),
-                        onChanged: _hasScrolledToBottom
-                            ? (val) => _handleAgree(val ?? false)
-                            : null,
+                        onChanged: (val) => _handleAgree(val ?? false),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () => _handleAgree(!_isAgreed),
-                        child: Text(
-                          _hasScrolledToBottom
-                              ? context.l10n.termsAgree
-                              : context.l10n.termsScrollHint,
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: _hasScrolledToBottom
-                                ? context.colors.textPrimary
-                                : context.colors.textMuted,
-                          ),
+                      child: Text(
+                        context.l10n.termsAgree,
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: context.colors.textPrimary,
                         ),
                       ),
                     ),

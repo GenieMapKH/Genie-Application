@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Asks before a security change. True when the user chose [action].
 /// [isDestructive] paints the action in the danger colour.

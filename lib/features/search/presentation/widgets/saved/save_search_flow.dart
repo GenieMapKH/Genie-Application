@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/property/data/models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/search/data/saved_search_repository.dart';
-import 'package:genie/features/search/presentation/view_models/saved_searches_provider.dart';
-import 'package:genie/features/search/presentation/widgets/saved/saved_search_name_dialog.dart';
-import 'package:genie/features/search/presentation/widgets/saved/saved_search_summary.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/property/data/models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/search/data/saved_search_repository.dart';
+import 'package:tilomnov/features/search/presentation/view_models/saved_searches_provider.dart';
+import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search_name_dialog.dart';
+import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search_summary.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 /// Saves the area the map shows with [filter], under a name the user
 /// gives. A guest is asked to sign in first. True when saved.

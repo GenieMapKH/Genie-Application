@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
-import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/features/property/presentation/widgets/forms/fields/property_select_field.dart';
 
 class MaintenanceFeeFieldWidget extends StatelessWidget {
   final AddPropertyPageState state;
@@ -112,31 +113,15 @@ class LeaseRemainingFieldWidget extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               flex: 1,
-              child: DropdownButtonFormField<String>(
-                initialValue: state.selectedLeaseUnit ?? 'Months',
-                isExpanded: true,
-                icon: Icon(
-                  Icons.keyboard_arrow_down,
-                  color: context.colors.textHint,
-                ),
-                style: GoogleFonts.inter(
-                  color: context.colors.textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                dropdownColor: context.colors.surface,
-                borderRadius: BorderRadius.circular(12.0),
+              child: PropertySelectField(
+                value: state.selectedLeaseUnit ?? 'Months',
+                items: const ['Months', 'Years'],
+                labelOf: (item) => propertyValueLabel(context.l10n, item),
                 decoration: defaultPropertyInputDecoration(
                   context,
                   context.l10n.propertySelectUnit,
                 ),
                 onChanged: onUnitChanged,
-                items: ['Months', 'Years'].map((String item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(propertyValueLabel(context.l10n, item)),
-                  );
-                }).toList(),
               ),
             ),
           ],

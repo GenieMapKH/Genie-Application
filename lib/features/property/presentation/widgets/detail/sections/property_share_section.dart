@@ -2,29 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/widgets/share/property_share_sheet.dart';
+import 'package:tilomnov/features/property/utils/property_share_link.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
-/// "Share This Property" — a scannable QR of the listing's deep link plus
-/// Share and Download actions.
+/// "Share This Property" — a scannable QR of the listing's web page plus
+/// Share and Download actions, both through [PropertyShareSheet]. A listing
+/// that is not public has no page to scan to, so it says why instead.
 class PropertyShareSection extends StatelessWidget {
   final PropertyModel property;
-  final VoidCallback? onShare;
-  final VoidCallback? onDownload;
 
-  const PropertyShareSection({
-    super.key,
-    required this.property,
-    this.onShare,
-    this.onDownload,
-  });
-
-  /// Deep link encoded in the QR code.
-  String get _shareUrl => 'https://genie.com.kh/property/${property.id}';
+  const PropertyShareSection({super.key, required this.property});
 
   @override
   Widget build(BuildContext context) {
+    if (!property.isPublic) return _NotShareable(property: property);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -70,7 +64,7 @@ class PropertyShareSection extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               QrImageView(
-                data: _shareUrl,
+                data: propertyShareLink(property.id).toString(),
                 version: QrVersions.auto,
                 size: 160,
                 padding: EdgeInsets.zero,
@@ -90,7 +84,8 @@ class PropertyShareSection extends StatelessWidget {
                   Expanded(
                     child: _ShareButton(
                       label: context.l10n.propertyShare,
-                      onPressed: onShare,
+                      onPressed: () =>
+                          PropertyShareSheet.show(context, property),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -98,10 +93,66 @@ class PropertyShareSection extends StatelessWidget {
                     child: _ShareButton(
                       label: context.l10n.propertyDownload,
                       isPrimary: true,
-                      onPressed: onDownload,
+                      onPressed: () => PropertyShareSheet.show(
+                        context,
+                        property,
+                        saveImage: true,
+                      ),
                     ),
                   ),
                 ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The section's title over why this listing cannot be shared.
+class _NotShareable extends StatelessWidget {
+  final PropertyModel property;
+
+  const _NotShareable({required this.property});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.l10n.propertyShareThisProperty,
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: colors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: colors.surfaceMuted,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.lock_outline, size: 18, color: colors.textMuted),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  PropertyShareSheet.notShareableReason(context.l10n, property),
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    height: 1.45,
+                    color: colors.textSecondary,
+                  ),
+                ),
               ),
             ],
           ),

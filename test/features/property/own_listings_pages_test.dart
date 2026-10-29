@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/property_repository.dart';
-import 'package:genie/features/property/presentation/view_models/own_listings.dart';
-import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/shared/utils/paged_list.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
 
 import '../../support/test_app.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// One choice in an [showOptionSheet].
 class SheetOption<T> {
@@ -12,11 +12,15 @@ class SheetOption<T> {
 
 /// Bottom sheet for picking one of a few [options]; the one in use is ticked.
 /// Returns the picked option, or null when the sheet is dismissed.
+///
+/// [footer] is shown under the options and stays open when used: for a
+/// related setting that is not one of the choices.
 Future<SheetOption<T>?> showOptionSheet<T>(
   BuildContext context, {
   required String title,
   required List<SheetOption<T>> options,
   required T selected,
+  Widget? footer,
 }) {
   return showModalBottomSheet<SheetOption<T>>(
     context: context,
@@ -54,6 +58,10 @@ Future<SheetOption<T>?> showOptionSheet<T>(
                     : null,
                 onTap: () => Navigator.pop(sheetContext, option),
               ),
+            if (footer != null) ...[
+              Divider(height: 16, color: colors.border),
+              footer,
+            ],
             const SizedBox(height: 8),
           ],
         ),

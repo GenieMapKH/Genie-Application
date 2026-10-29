@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/chat/providers/conversation_list.dart';
-import 'package:genie/features/chat/providers/conversation_previews.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/shared/utils/paged_list.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/chat/providers/conversation_list.dart';
+import 'package:tilomnov/features/chat/providers/conversation_previews.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
 
 /// The signed-in user's conversation list (or, with [archived], the
 /// archive), a page at a time, kept current by the chat socket.

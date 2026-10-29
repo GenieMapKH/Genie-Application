@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/data/models/place_suggestion.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/search/data/models/search_results.dart';
-import 'package:genie/features/search/presentation/widgets/results/person_result_tile.dart';
-import 'package:genie/features/search/presentation/widgets/results/place_result_tile.dart';
-import 'package:genie/features/search/presentation/widgets/results/property_result_tile.dart';
-import 'package:genie/features/search/presentation/widgets/results/search_section_header.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/models/place_suggestion.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/search/data/models/search_results.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/person_result_tile.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/place_result_tile.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/property_result_tile.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/search_section_header.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// The three groups of results, places first as in a map app. Built lazily:
 /// only rows on screen are laid out.

@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
 class _FakeCrypto extends Fake implements CryptoService {}

@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/keys/key_service.dart';
-import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_listing.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/peer_key_store.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 
 /// Thrown when a message cannot be encrypted for the other person. The user
 /// is told [problem] in their language.

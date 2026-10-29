@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 
 String _jwt(Map<String, Object?> payload) {
   String part(Object value) =>

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/widgets/avatar_options_sheet.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/media/app_network_image.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/widgets/avatar_options_sheet.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 
 /// Top of the account screen: the picture, the name people see and the handle.
 class ProfileHeader extends StatelessWidget {

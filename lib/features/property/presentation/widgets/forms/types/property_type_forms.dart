@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
-import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
 import '../fields/property_size_fields.dart';
 import '../fields/property_dropdown_fields.dart';
 import '../fields/property_misc_fields.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 Widget _buildSpacing() => const SizedBox(height: 16);
 

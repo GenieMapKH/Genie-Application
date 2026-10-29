@@ -1,5 +1,5 @@
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// How a value a listing stores in English is shown: property and listing
 /// types, statuses and the options of the listing form. What is stored and

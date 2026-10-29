@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_details.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_facts.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/property/data/models/property_details.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_facts.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 void main() {
   final l10n = lookupAppLocalizations(const Locale('en'));

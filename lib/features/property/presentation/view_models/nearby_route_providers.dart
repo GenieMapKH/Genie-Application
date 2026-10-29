@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/property/data/models/nearby_route.dart';
-import 'package:genie/features/property/data/repositories/nearby_route_repository.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/models/nearby_route.dart';
+import 'package:tilomnov/features/property/data/repositories/nearby_route_repository.dart';
 
 final nearbyRouteRepositoryProvider = Provider<NearbyRouteRepository>(
   (ref) => NearbyRouteRepository(ref.watch(apiClientProvider)),

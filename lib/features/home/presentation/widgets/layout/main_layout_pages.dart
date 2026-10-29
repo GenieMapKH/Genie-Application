@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
-import 'package:genie/features/feed/presentation/screens/feed_page.dart';
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/features/home/presentation/widgets/layout/kept_tab_pages.dart';
-import 'package:genie/features/profile/presentation/screens/user_profile_page.dart';
-import 'package:genie/features/chat/presentation/screens/chat_list_page.dart';
-import 'package:genie/features/property/presentation/screens/my_properties_page.dart';
-import 'package:genie/features/property/presentation/screens/saved_properties_page.dart';
+import 'package:tilomnov/features/feed/presentation/screens/feed_page.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/layout/kept_tab_pages.dart';
+import 'package:tilomnov/features/profile/presentation/screens/user_profile_page.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_list_page.dart';
+import 'package:tilomnov/features/property/presentation/screens/my_properties_page.dart';
+import 'package:tilomnov/features/property/presentation/screens/saved_properties_page.dart';
 
 /// The full-screen pages that slide in over the map for every tab but
 /// Explore. Each is kept once opened ([KeptTabPages]).

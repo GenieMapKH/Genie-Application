@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/models/chat_call_entry.dart';
-import 'package:genie/features/chat/providers/active_chat_state.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_state.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 
 /// The calls of one open conversation, to show among its messages. Loaded
 /// when the conversation opens, and again whenever a call ends (the server

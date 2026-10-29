@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/device/microphone_permission.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_voice.dart';
-import 'package:genie/features/chat/providers/voice_playback_provider.dart';
-import 'package:genie/features/chat/providers/voice_recording_provider.dart';
+import 'package:tilomnov/core/device/microphone_permission.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/providers/voice_playback_provider.dart';
+import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
 
 import 'chat_fakes.dart';
 

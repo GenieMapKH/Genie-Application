@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// What the user chose to do with a message they held down.
 enum ChatMessageAction { reply, copy, edit, delete }

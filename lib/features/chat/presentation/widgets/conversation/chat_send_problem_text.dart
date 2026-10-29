@@ -1,6 +1,6 @@
-import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// Why a message was not sent, as the snackbar says it.
 String chatSendProblemText(AppLocalizations l10n, ChatSendProblem problem) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// A tinted box for something the user should know before they act.
 class InfoNote extends StatelessWidget {

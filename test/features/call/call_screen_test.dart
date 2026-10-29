@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/device/microphone_permission.dart';
-import 'package:genie/features/call/application/call_controller.dart';
-import 'package:genie/features/call/data/call_signaling.dart';
-import 'package:genie/features/call/presentation/call_screen.dart';
-import 'package:genie/features/call/providers/call_providers.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/providers/chat_call_starter.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/core/device/microphone_permission.dart';
+import 'package:tilomnov/features/call/application/call_controller.dart';
+import 'package:tilomnov/features/call/data/call_signaling.dart';
+import 'package:tilomnov/features/call/presentation/call_screen.dart';
+import 'package:tilomnov/features/call/providers/call_providers.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_starter.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 
 import '../chat/chat_fakes.dart';
 import 'call_fakes.dart';

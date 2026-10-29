@@ -3,15 +3,15 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
-import 'package:genie/features/home/presentation/widgets/map/liquid/drop_on_screen.dart';
-import 'package:genie/features/home/presentation/widgets/map/liquid/liquid_labels.dart';
-import 'package:genie/features/home/presentation/widgets/map/liquid/liquid_necks.dart';
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/cluster_transition.dart';
-import 'package:genie/features/home/utils/map/map_camera_focus.dart';
-import 'package:genie/features/home/utils/map/markers/price_tag_pin.dart';
-import 'package:genie/features/home/utils/map/markers/property_markers.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_camera_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/drop_on_screen.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/liquid_labels.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/liquid_necks.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
+import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
+import 'package:tilomnov/features/home/utils/map/markers/price_tag_pin.dart';
+import 'package:tilomnov/features/home/utils/map/markers/property_markers.dart';
 
 /// Paints a [ClusterTransition] at [progress] over a flat, north-up map
 /// whose camera is [readCamera], filling the map's whole frame.

@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/search/data/models/search_results.dart';
-import 'package:genie/features/search/data/search_failure.dart';
-import 'package:genie/features/search/data/search_session_token.dart';
-import 'package:genie/features/search/data/search_text.dart';
-import 'package:genie/features/search/presentation/view_models/search_providers.dart';
+import 'package:tilomnov/features/search/data/models/search_results.dart';
+import 'package:tilomnov/features/search/data/search_failure.dart';
+import 'package:tilomnov/features/search/data/search_session_token.dart';
+import 'package:tilomnov/features/search/data/search_text.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
 
 /// What the search page shows for the text being typed.
 class SearchQueryState {

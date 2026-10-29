@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
 
 Widget _list({
   required int rows,

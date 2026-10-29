@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 const _square = [LatLng(0, 0), LatLng(0, 1), LatLng(1, 1), LatLng(1, 0)];

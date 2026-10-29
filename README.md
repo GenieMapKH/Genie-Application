@@ -1,9 +1,9 @@
-# Genie
+# Tilomnov
 
-Flutter app for the Genie property marketplace: browse listings on a map, draw land
+Flutter app for the Tilomnov property marketplace: browse listings on a map, draw land
 boundaries, list your own property, and chat with owners (end-to-end encrypted).
 
-The backend lives in the `genie-backend` repository.
+The backend lives in the `tilomnov-backend` repository.
 
 ## Run it
 

@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 /// The signed-in user's own listings (drafts too) inside the area the map
 /// shows, so the map can mark them for editing. Read again when the map

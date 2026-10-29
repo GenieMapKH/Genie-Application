@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/call/data/call_tone_player.dart';
-import 'package:genie/features/call/models/call_state.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/call/data/call_tone_player.dart';
+import 'package:tilomnov/features/call/models/call_state.dart';
 
 /// Plays the sounds of a call as it moves along: the caller hears the other
 /// phone ring until it is answered, both phones chime once the call

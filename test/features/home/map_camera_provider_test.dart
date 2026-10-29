@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_camera_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {

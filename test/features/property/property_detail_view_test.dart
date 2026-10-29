@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/property_repository.dart';
-import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
 
 import '../../support/test_app.dart';
 

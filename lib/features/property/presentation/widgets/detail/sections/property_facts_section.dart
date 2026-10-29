@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
-import 'package:genie/features/property/presentation/view_models/property_facts.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_facts.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// "Property details": everything the seller filled in, grouped under small
 /// headings as label/value rows, then the listing's features as chips.

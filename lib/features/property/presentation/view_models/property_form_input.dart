@@ -1,4 +1,4 @@
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 /// Everything typed or picked on the add-property form, as the form holds
 /// it (text and dropdown labels). Converts to the request body the server

@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:genie/core/network/api_cache_manager.dart';
-import 'package:genie/features/chat/models/chat_call_entry.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
 
 /// One page of a conversation list, where the next one starts (null after
 /// the last), and the unread messages in the whole list.

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// Top of a profile screen: a coloured cover band behind the status bar,
 /// with the back arrow (and [title]) on it, the round [avatar] overlapping

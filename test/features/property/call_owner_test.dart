@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_details.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/widgets/detail/actions/call_owner.dart';
+import 'package:tilomnov/features/property/data/models/property_details.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/actions/call_owner.dart';
 
 PropertyModel _listing({String? listingPhone, String? ownerPhone}) =>
     PropertyModel(

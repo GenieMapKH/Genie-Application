@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/message_deletion.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/message_deletion.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 
 import 'chat_fakes.dart';
 

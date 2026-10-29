@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/data/search_failure.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
-import 'package:genie/features/search/presentation/widgets/results/property_result_tile.dart';
-import 'package:genie/features/search/presentation/widgets/search_message_view.dart';
-import 'package:genie/features/search/presentation/widgets/search_skeleton_list.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/search_failure.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/property_result_tile.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_message_view.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_skeleton_list.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// The body of the results panel, as a sliver: placeholder rows while
 /// loading, the reason and a retry when it failed, else the listings.

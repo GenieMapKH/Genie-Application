@@ -2,14 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/e2ee/push_preview.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/notifications/application/push_notifications_controller.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
-import 'package:genie/features/notifications/providers/notification_providers.dart';
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/e2ee/push_preview.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/notifications/application/push_notifications_controller.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
+import 'package:tilomnov/features/notifications/providers/notification_providers.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// What the app shows for a chat message: the sender's name, and the text
 /// when this phone can read it (and the user allows it), else "New message".

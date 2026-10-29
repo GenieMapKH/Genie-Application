@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// The longest name the server keeps.
 const _maxName = 60;

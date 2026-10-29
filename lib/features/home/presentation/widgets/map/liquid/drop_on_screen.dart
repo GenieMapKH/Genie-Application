@@ -4,9 +4,9 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 
-import 'package:genie/features/home/utils/map/cluster_transition.dart';
-import 'package:genie/features/home/utils/map/markers/price_tag_pin.dart';
-import 'package:genie/features/home/utils/map/markers/property_markers.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
+import 'package:tilomnov/features/home/utils/map/markers/price_tag_pin.dart';
+import 'package:tilomnov/features/home/utils/map/markers/property_markers.dart';
 
 /// One drop as drawn this frame.
 ///

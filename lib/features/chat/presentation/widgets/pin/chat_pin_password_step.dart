@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/presentation/widgets/pin/pin_status_line.dart';
-import 'package:genie/features/chat/providers/chat_pin_setup_provider.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/buttons/app_button.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_status_line.dart';
+import 'package:tilomnov/features/chat/providers/chat_pin_setup_provider.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
 
 /// The account password, typed once to move chats locked with it to a PIN.
 /// After a refusal it offers to start over with new keys, for a password

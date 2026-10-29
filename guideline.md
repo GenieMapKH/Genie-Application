@@ -1,6 +1,6 @@
-# Genie Frontend Architecture Guideline
+# Tilomnov Frontend Architecture Guideline
 
-Welcome to the Genie Frontend Guideline! This document serves as your map to navigate the newly refactored, highly modular Flutter codebase. It is designed following Clean Code principles (Robert C. Martin), ensuring that every file has a single responsibility, stays under 200 lines, and is easy to maintain.
+Welcome to the Tilomnov Frontend Guideline! This document serves as your map to navigate the newly refactored, highly modular Flutter codebase. It is designed following Clean Code principles (Robert C. Martin), ensuring that every file has a single responsibility, stays under 200 lines, and is easy to maintain.
 
 ---
 
@@ -89,6 +89,36 @@ If you are new to this codebase, you must understand these three core concepts:
 3. **Clean Architecture / Modularity**:
    - No single file should exceed ~200 lines. 
    - If a file grows, identify what independent widget or logic can be extracted into a new file.
+
+---
+
+## ✨ Motion, Shape & Glass
+
+The app moves and is shaped the way Apple's apps are. Reuse these instead of writing new durations, curves or radii.
+
+- **Springs, not timed curves** (`lib/core/theme/app_motion.dart`). They are described like SwiftUI's springs (a duration and a bounce):
+  - `smooth` (0.5 s, no bounce): things that arrive, such as pages, sheets and panels.
+  - `snappy` (0.35 s, 0.15): direct answers to a touch.
+  - `bouncy` (0.45 s, 0.3): only for small celebrations, such as a listing being saved.
+  - `press`: following a finger down.
+  - `selection`: the tab droplet.
+
+  Drive springs with `controller.animateWith(SpringSimulation(spring, value, target, controller.velocity))`, so an interrupted motion carries on from where it is. Use `AnimationController.unbounded` when the spring may overshoot.
+- **Reduce Motion**: always check `AppMotion.reduceMotionOf(context)`. Never check only `MediaQuery.disableAnimationsOf`, which misses iOS's setting. With reduced motion, motion becomes an instant change or a fade; haptics stay.
+- **Presses**: wrap tappable custom surfaces in `TactileButton`. It sinks at once on touch, holds while pressed, and springs back on release.
+- **Haptics** (`lib/core/device/app_haptics.dart`): use them for a choice or an outcome, never on every touch.
+  - `selection()`: a tab or option was picked.
+  - `lightTap()`: something was saved or sent.
+- **Continuous corners** (`lib/core/theme/app_shapes.dart`):
+  - Cards, sheets and dialogs use `RoundedSuperellipseBorder` / `ClipRSuperellipse`, so curvature eases into the edge. Shadows may keep a plain `BorderRadius`, which is quicker.
+  - An inner shape inset by `p` uses `AppShapes.concentric(outer, p)`.
+- **Glass** (`lib/features/home/presentation/widgets/glass/`):
+  - **Who gets it:** only phones whose own interface is glass: iOS 26+, and Xiaomi/Redmi/POCO on HyperOS 3+ that are not low-RAM (`GlassCapability`).
+  - **Opting out:** users can turn it off in Settings. It also falls back to the solid look with Reduce Transparency or increased contrast.
+  - **Where:** glass is only for the navigation layer (bottom bar, map buttons), never for content such as cards, sheets or chat.
+  - **Blur:** one plain `ImageFilter.blur`, shared through the `BackdropGroup` in `MainLayout`. iOS can apply nothing else over the map.
+  - **Painting:** paint selection and highlights on the glass, never glass on glass, and don't animate the blur.
+  - **Testing:** try it on any device with `--dart-define=FORCE_GLASS=true`.
 
 ---
 

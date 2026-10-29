@@ -1,5 +1,5 @@
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
 
 /// What happened to one PIN the user typed. The PIN screen shows it while
 /// the user is still typing, instead of closing and failing afterwards.

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/core/device/device_description.dart';
+import 'package:tilomnov/core/device/device_description.dart';
 
 /// Tells the sign-in endpoints which device is calling, so the server can
 /// list it under "Logged-in devices". Other endpoints do not need it.

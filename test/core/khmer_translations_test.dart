@@ -3,9 +3,13 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Strings that are the same in every language: an example address and a
-/// coordinate system's name.
-const _sameInEveryLanguage = {'authExampleGmailCom', 'homeCrsWgs84UtmZone48p'};
+/// Strings that are the same in every language: an example address, an
+/// example phone number and a coordinate system's name.
+const _sameInEveryLanguage = {
+  'authExampleGmailCom',
+  'authPhoneHint',
+  'homeCrsWgs84UtmZone48p',
+};
 
 Map<String, dynamic> _strings(String locale) {
   final arb = jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync());

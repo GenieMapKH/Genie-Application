@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
-import 'package:genie/features/property/data/models/property_details.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/utils/property_format.dart';
+import 'package:tilomnov/features/property/data/models/property_details.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
 
 PropertyModel _property({
   String price = '105400',

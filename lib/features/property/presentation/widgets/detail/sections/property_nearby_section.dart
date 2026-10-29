@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/data/models/nearby_place.dart';
-import 'package:genie/features/property/data/models/property_keyword.dart';
-import 'package:genie/features/property/presentation/screens/nearby_route_page.dart';
-import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/utils/nearby_distance_format.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/media/tinted_svg.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/nearby_place.dart';
+import 'package:tilomnov/features/property/data/models/property_keyword.dart';
+import 'package:tilomnov/features/property/presentation/screens/nearby_route_page.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
+import 'package:tilomnov/features/property/utils/nearby_distance_format.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// "What's nearby": the closest markets, hospitals and schools by road, for
 /// the categories the seller tagged the listing near. Shows nothing for a

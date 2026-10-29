@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/features/property/presentation/view_models/property_publisher_opener.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/search/presentation/screens/publisher_profile_page.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_publisher_opener.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/search/presentation/screens/publisher_profile_page.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
 
 /// Lets a listing open its publisher's profile page.
 ///

@@ -1,16 +1,16 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
-import 'package:genie/features/auth/presentation/screens/login_page.dart';
-import 'package:genie/features/auth/presentation/screens/create_account_page.dart';
-import 'package:genie/features/auth/presentation/screens/forgot_password_page.dart';
-import 'package:genie/features/auth/presentation/screens/otp_verification_page.dart';
-import 'package:genie/features/auth/presentation/screens/reset_password_page.dart';
-import 'package:genie/features/home/presentation/screens/main_layout.dart';
-import 'package:genie/app/session/chat_pin_gate.dart';
+import 'package:tilomnov/features/auth/presentation/screens/welcome_page.dart';
+import 'package:tilomnov/features/auth/presentation/screens/login_page.dart';
+import 'package:tilomnov/features/auth/presentation/screens/create_account_page.dart';
+import 'package:tilomnov/features/auth/presentation/screens/forgot_password_page.dart';
+import 'package:tilomnov/features/auth/presentation/screens/otp_verification_page.dart';
+import 'package:tilomnov/features/auth/presentation/screens/reset_password_page.dart';
+import 'package:tilomnov/features/home/presentation/screens/main_layout.dart';
+import 'package:tilomnov/app/session/chat_pin_gate.dart';
 
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/shared/transitions/app_transition_page.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/shared/transitions/app_transition_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(

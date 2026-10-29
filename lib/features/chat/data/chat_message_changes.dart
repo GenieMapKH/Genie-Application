@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/models/chat_message_action_problem.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/models/chat_message_action_problem.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 /// What came of an edit: when the server says it was edited, or why not.
 typedef ChatEditResult = ({

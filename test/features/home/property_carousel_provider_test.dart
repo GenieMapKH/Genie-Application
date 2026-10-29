@@ -2,9 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
-import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 PropertyModel _property(
   String id, {

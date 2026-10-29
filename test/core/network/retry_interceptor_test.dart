@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/network/api_cache_manager.dart';
-import 'package:genie/core/network/network_status.dart';
-import 'package:genie/core/network/network_status_interceptor.dart';
-import 'package:genie/core/network/retry_interceptor.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/core/network/network_status.dart';
+import 'package:tilomnov/core/network/network_status_interceptor.dart';
+import 'package:tilomnov/core/network/retry_interceptor.dart';
 
 /// Fails the first [failures] requests the way it is told, then answers.
 class _FlakyServer extends Interceptor {

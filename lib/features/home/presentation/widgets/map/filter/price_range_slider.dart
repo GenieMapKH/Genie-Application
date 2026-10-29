@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/home/presentation/providers/map_filter_draft_provider.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/price_histogram.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_filter_draft_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/price_histogram.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// The price histogram over a two-thumb slider, with a bubble naming the
 /// range while a thumb moves. A null end means "no limit".

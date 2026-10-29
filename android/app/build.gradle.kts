@@ -5,8 +5,8 @@ plugins {
     // START: FlutterFire Configuration
     id("com.google.gms.google-services")
     // END: FlutterFire Configuration
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // No kotlin-android here: the Flutter Gradle Plugin applies it (android.builtInKotlin=false).
+    // The Flutter Gradle Plugin must be applied after the Android Gradle plugin.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -35,7 +35,7 @@ if (mapsApiKey.isEmpty()) {
 }
 
 android {
-    namespace = "com.example.genie"
+    namespace = "com.sparkbytekh.tilomnov"
     compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
@@ -47,8 +47,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.genie"
+        // The store listing is tied to this id: it cannot change after release.
+        applicationId = "com.sparkbytekh.tilomnov"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -83,6 +83,23 @@ android {
 
 flutter {
     source = "../.."
+}
+
+// Optional: APK_EXPORT_DIR in android/local.properties (never committed) is a
+// folder every `flutter build apk` also copies its APKs into. Unset, nothing
+// is copied (CI and other machines are unaffected).
+val apkExportDir: String? = localProperties.getProperty("APK_EXPORT_DIR")
+if (!apkExportDir.isNullOrBlank()) {
+    val exportApks = tasks.register<Copy>("exportApks") {
+        from(layout.buildDirectory.dir("outputs/flutter-apk")) { include("*.apk") }
+        into(apkExportDir)
+    }
+    // The Flutter plugin creates the assemble tasks after this script runs.
+    afterEvaluate {
+        listOf("assembleDebug", "assembleProfile", "assembleRelease").forEach { name ->
+            tasks.findByName(name)?.finalizedBy(exportApks)
+        }
+    }
 }
 
 dependencies {

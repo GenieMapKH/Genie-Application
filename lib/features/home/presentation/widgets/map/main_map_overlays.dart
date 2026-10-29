@@ -2,18 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/cluster_transition.dart';
-import 'package:genie/features/home/utils/map/coalesced_rebuild.dart';
-import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
-import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
-import 'package:genie/features/home/utils/map/markers/property_markers.dart';
-import 'package:genie/features/home/utils/map/markers/vertex_markers.dart';
-import 'package:genie/features/home/utils/map/svg_marker.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_camera_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
+import 'package:tilomnov/features/home/utils/map/coalesced_rebuild.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_callbacks.dart';
+import 'package:tilomnov/features/home/utils/map/map_overlay_builder.dart';
+import 'package:tilomnov/features/home/utils/map/markers/property_markers.dart';
+import 'package:tilomnov/features/home/utils/map/markers/vertex_markers.dart';
+import 'package:tilomnov/features/home/utils/map/svg_marker.dart';
 
 /// Keeps the main map's two layers up to date: the listings, and the
 /// boundary being drawn. Each is redrawn only when what it shows changes, so

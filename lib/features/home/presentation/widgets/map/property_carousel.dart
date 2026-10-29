@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
-import 'package:genie/features/property/presentation/widgets/property_item_card.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_item_card.dart';
 
 /// Horizontally swipeable strip of property cards that slides in above the
 /// bottom nav when a map property is selected.
@@ -27,14 +27,39 @@ class PropertyCarousel extends ConsumerStatefulWidget {
   /// Map height hidden while the carousel is on screen.
   static const double mapInset = height + bottomNavHeight;
 
+  /// Widest a card gets. On a phone a card is [_phoneFraction] of the
+  /// screen; on a tablet it stays phone-sized and its neighbours show
+  /// beside it instead of one card stretching across the screen.
+  static const double _maxCardWidth = 400.0;
+  static const double _phoneFraction = 0.88;
+
+  /// The share of [width] one card takes.
+  static double viewportFractionFor(double width) => width <= 0
+      ? _phoneFraction
+      : (_maxCardWidth / width).clamp(0.0, _phoneFraction);
+
   @override
   ConsumerState<PropertyCarousel> createState() => _PropertyCarouselState();
 }
 
 class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
-  late final PageController _controller = PageController(
-    viewportFraction: 0.88,
+  /// Replaced when the width changes the card share (a tablet rotated):
+  /// a controller's viewport fraction is fixed once made.
+  PageController _controller = PageController(
+    viewportFraction: PropertyCarousel._phoneFraction,
   );
+
+  void _fitControllerTo(double width) {
+    final fraction = PropertyCarousel.viewportFractionFor(width);
+    if ((fraction - _controller.viewportFraction).abs() < 0.001) return;
+    final old = _controller;
+    _controller = PageController(
+      viewportFraction: fraction,
+      initialPage: ref.read(propertyCarouselProvider).index,
+    );
+    // The PageView lets go of the old one in this build.
+    WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
+  }
 
   /// The last non-empty list. Held so the cards stay on screen through the
   /// slide-out animation after the selection is cleared, and so the PageView
@@ -114,39 +139,42 @@ class _PropertyCarouselState extends ConsumerState<PropertyCarousel> {
                   child: GestureDetector(
                     onVerticalDragEnd: (details) =>
                         _handleVerticalDrag(details, state.selected),
-                    child: PageView.builder(
-                      controller: _controller,
-                      itemCount: _items.length,
-                      onPageChanged: ref
-                          .read(propertyCarouselProvider.notifier)
-                          .setIndex,
-                      itemBuilder: (context, index) {
-                        final property = _items[index];
-                        return Consumer(
-                          builder: (context, ref, _) {
-                            final isSaved = ref.watch(
-                              isPropertySavedProvider(property.id),
-                            );
-
-                            return PropertyItemCard(
-                              property: property,
-                              isFavorite: isSaved,
-                              onFavoriteToggled: () {
-                                if (!requireSignIn(context, ref)) return;
-                                ref
-                                    .read(savedPropertyIdsProvider.notifier)
-                                    .toggle(property.id);
-                              },
-                              onTap: () => widget.onOpenDetail(property),
-                            );
-                          },
-                        );
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        _fitControllerTo(constraints.maxWidth);
+                        return _buildPages();
                       },
                     ),
                   ),
                 ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPages() {
+    return PageView.builder(
+      controller: _controller,
+      itemCount: _items.length,
+      onPageChanged: ref.read(propertyCarouselProvider.notifier).setIndex,
+      itemBuilder: (context, index) {
+        final property = _items[index];
+        return Consumer(
+          builder: (context, ref, _) {
+            final isSaved = ref.watch(isPropertySavedProvider(property.id));
+
+            return PropertyItemCard(
+              property: property,
+              isFavorite: isSaved,
+              onFavoriteToggled: () {
+                if (!requireSignIn(context, ref)) return;
+                ref.read(savedPropertyIdsProvider.notifier).toggle(property.id);
+              },
+              onTap: () => widget.onOpenDetail(property),
+            );
+          },
+        );
+      },
     );
   }
 }

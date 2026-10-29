@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
-import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_form_input.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 enum PropertyField {
   title,

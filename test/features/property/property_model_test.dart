@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 void main() {
   group('fromJson', () {

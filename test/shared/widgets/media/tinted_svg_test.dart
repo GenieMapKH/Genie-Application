@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/shared/widgets/media/tinted_svg.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// Every icon drawn in one colour, with the colour put in when it is read
 /// rather than by a filter: no pixel may keep the icon's own colour, also

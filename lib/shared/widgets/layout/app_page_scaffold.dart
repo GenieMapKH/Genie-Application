@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
-import 'package:genie/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/shared/transitions/app_page_route.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
 
 /// A full screen with the standard header on top of [child]: the frame of
 /// every settings screen.

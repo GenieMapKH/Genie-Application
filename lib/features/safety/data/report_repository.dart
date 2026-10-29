@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 
 import 'models/report_reason.dart';
 

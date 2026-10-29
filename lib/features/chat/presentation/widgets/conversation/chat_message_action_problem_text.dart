@@ -1,5 +1,5 @@
-import 'package:genie/features/chat/models/chat_message_action_problem.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/chat/models/chat_message_action_problem.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// Why a message was not edited or deleted, as the snackbar says it.
 String chatMessageActionProblemText(

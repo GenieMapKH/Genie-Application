@@ -1,5 +1,5 @@
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 /// The text of each conversation's last message, decrypted for the list.
 /// Previews already opened are kept by message id and nonce (an edit is

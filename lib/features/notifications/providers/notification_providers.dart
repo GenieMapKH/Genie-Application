@@ -2,15 +2,15 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/notifications/application/push_notifications_controller.dart';
-import 'package:genie/features/notifications/application/push_registration.dart';
-import 'package:genie/features/notifications/data/notification_repository.dart';
-import 'package:genie/features/notifications/data/push_messaging.dart';
-import 'package:genie/features/notifications/data/system_notifications.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/notifications/application/push_notifications_controller.dart';
+import 'package:tilomnov/features/notifications/application/push_registration.dart';
+import 'package:tilomnov/features/notifications/data/notification_repository.dart';
+import 'package:tilomnov/features/notifications/data/push_messaging.dart';
+import 'package:tilomnov/features/notifications/data/system_notifications.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 
 final pushMessagingProvider = Provider<PushMessaging>(
   (ref) => FirebasePushMessaging(),

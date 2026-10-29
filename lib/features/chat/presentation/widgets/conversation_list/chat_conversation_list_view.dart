@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation_list/chat_list_entry.dart';
-import 'package:genie/shared/utils/paged_list.dart';
-import 'package:genie/shared/widgets/lists/load_more_on_scroll.dart';
-import 'package:genie/shared/widgets/lists/loading_more_indicator.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/chat_list_entry.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
+import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 /// The conversations of the chat list or the archive, one row each; the
 /// next page is asked for with [onLoadMore] as the end comes near.

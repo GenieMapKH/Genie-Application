@@ -12,5 +12,23 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    registerAccessibilityChannel(engineBridge.pluginRegistry)
+  }
+
+  /// Settings Flutter does not report itself (see reduce_transparency.dart).
+  private func registerAccessibilityChannel(_ registry: FlutterPluginRegistry) {
+    guard let registrar = registry.registrar(forPlugin: "TilomnovAccessibility") else { return }
+    let channel = FlutterMethodChannel(
+      name: "tilomnov/accessibility",
+      binaryMessenger: registrar.messenger()
+    )
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "reduceTransparency":
+        result(UIAccessibility.isReduceTransparencyEnabled)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
   }
 }

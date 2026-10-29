@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_voice.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_duration_text.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_waveform.dart';
-import 'package:genie/features/chat/providers/voice_playback_provider.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_duration_text.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_waveform.dart';
+import 'package:tilomnov/features/chat/providers/voice_playback_provider.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// A voice message in a conversation: play or pause, its waveform (tap or
 /// drag it to jump), how long it is, and the playback speed while it plays.

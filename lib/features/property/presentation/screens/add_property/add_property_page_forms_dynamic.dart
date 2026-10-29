@@ -3,15 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:genie/features/property/data/models/property_keyword.dart';
-import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
-import 'package:genie/features/property/presentation/widgets/forms/types/property_type_forms.dart';
-import 'package:genie/features/property/presentation/widgets/forms/types/warehouse_property_form.dart';
+import 'package:tilomnov/features/property/data/models/property_keyword.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/features/property/presentation/widgets/forms/types/property_type_forms.dart';
+import 'package:tilomnov/features/property/presentation/widgets/forms/types/warehouse_property_form.dart';
 import 'add_property_page.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
-import 'package:genie/shared/widgets/media/tinted_svg.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 extension AddPropertyPageFormsDynamic on AddPropertyPageState {
   Widget buildMapPreview() {

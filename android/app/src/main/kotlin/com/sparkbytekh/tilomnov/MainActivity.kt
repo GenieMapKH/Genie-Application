@@ -1,4 +1,4 @@
-package com.example.genie
+package com.sparkbytekh.tilomnov
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/safety/data/block_repository.dart';
-import 'package:genie/features/safety/data/models/block_status.dart';
-import 'package:genie/features/safety/data/models/blocked_account.dart';
-import 'package:genie/features/safety/presentation/view_models/block_providers.dart';
+import 'package:tilomnov/features/safety/data/block_repository.dart';
+import 'package:tilomnov/features/safety/data/models/block_status.dart';
+import 'package:tilomnov/features/safety/data/models/blocked_account.dart';
+import 'package:tilomnov/features/safety/presentation/view_models/block_providers.dart';
 
 /// Answers at once from memory: nobody is blocked unless [status] says so.
 class FakeBlockRepository extends BlockRepository {

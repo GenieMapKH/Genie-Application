@@ -1,15 +1,15 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/layers/clustered_layer.dart';
-import 'package:genie/features/home/utils/map/layers/detailed_property_layer.dart';
-import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
-import 'package:genie/features/home/utils/map/layers/drawing_layer.dart';
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
-import 'package:genie/features/home/utils/map/layers/property_dots_layer.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/layers/clustered_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/detailed_property_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_callbacks.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:tilomnov/features/home/utils/map/layers/property_dots_layer.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 /// The icon set the overlay builder draws with. Loaded once by the map view.
 class MapIcons {

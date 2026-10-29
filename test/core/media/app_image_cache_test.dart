@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/media/app_image_cache.dart';
+import 'package:tilomnov/core/media/app_image_cache.dart';
 
 void main() {
   group('AppImageCache.decodeWidth', () {

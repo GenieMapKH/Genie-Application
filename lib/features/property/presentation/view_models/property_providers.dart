@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:dio/dio.dart';
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/property_repository.dart';
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
 
 final propertyRepositoryProvider = Provider<PropertyRepository>((ref) {
   return PropertyRepository(ref.watch(apiClientProvider));

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:genie/features/call/models/call_state.dart';
-import 'package:genie/features/call/presentation/call_screen.dart';
-import 'package:genie/features/call/providers/call_providers.dart';
-import 'package:genie/features/chat/providers/chat_call_starter.dart';
-import 'package:genie/features/chat/providers/voice_playback_provider.dart';
-import 'package:genie/features/notifications/application/push_notifications_controller.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
+import 'package:tilomnov/features/call/models/call_state.dart';
+import 'package:tilomnov/features/call/presentation/call_screen.dart';
+import 'package:tilomnov/features/call/providers/call_providers.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_starter.dart';
+import 'package:tilomnov/features/chat/providers/voice_playback_provider.dart';
+import 'package:tilomnov/features/notifications/application/push_notifications_controller.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
 
 /// The call button of a conversation.
 ChatCallStarter callFromChat(Ref ref) {

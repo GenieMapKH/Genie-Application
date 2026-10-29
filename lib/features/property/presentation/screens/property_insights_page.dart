@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/data/models/property_insights.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_insights_provider.dart';
-import 'package:genie/features/property/presentation/widgets/insights/insights_day_chart.dart';
-import 'package:genie/features/property/presentation/widgets/insights/insights_totals.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/property_insights.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_insights_provider.dart';
+import 'package:tilomnov/features/property/presentation/widgets/insights/insights_day_chart.dart';
+import 'package:tilomnov/features/property/presentation/widgets/insights/insights_totals.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 
 /// How one of the owner's listings is doing: everyone who opened, saved,
 /// called or chatted, and the last two weeks day by day.

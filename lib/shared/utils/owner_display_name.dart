@@ -1,4 +1,4 @@
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// The name the server falls back to for someone who set none. It is
 /// English, so it is shown in the user's language instead.

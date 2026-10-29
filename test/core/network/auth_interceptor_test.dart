@@ -4,8 +4,8 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/network/auth_interceptor.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/core/network/auth_interceptor.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 
 /// Stands in for the API. `/users/me` is served only to [acceptedToken];
 /// `/auth/refresh` answers what [refresh] says.

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
 
 void main() {
   late ProviderContainer container;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_recording_progress.dart';
-import 'package:genie/features/chat/providers/voice_recording_provider.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_recording_progress.dart';
+import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// What the message bar shows while the microphone is held down: the
 /// recording, and how to throw it away instead of sending it.

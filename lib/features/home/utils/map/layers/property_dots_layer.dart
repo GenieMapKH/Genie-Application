@@ -1,8 +1,8 @@
 import 'package:flutter/painting.dart';
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/layers/clustered_layer.dart';
-import 'package:genie/features/home/utils/map/markers/property_markers.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/layers/clustered_layer.dart';
+import 'package:tilomnov/features/home/utils/map/markers/property_markers.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Zoomed-in view: one tappable marker per listing (a price tag, or a dot for
@@ -48,7 +48,7 @@ abstract final class PropertyDotsLayer {
           : PropertyMarkers.priceTagLayout(
               price: property.formattedPrice,
               isNew: property.isNew,
-              propertyType: property.propertyType,
+              listingType: property.listingType ?? 'Sale',
               isVisited: property.isVisited,
               newLabel: newLabel,
             );
@@ -87,7 +87,7 @@ abstract final class PropertyDotsLayer {
         price: property.formattedPrice,
         isNew: property.isNew,
         isSelected: isSelected,
-        propertyType: property.propertyType,
+        listingType: property.listingType ?? 'Sale',
         isVisited: property.isVisited,
         newLabel: newLabel,
       );
@@ -96,7 +96,7 @@ abstract final class PropertyDotsLayer {
           price: property.formattedPrice,
           isNew: property.isNew,
           isSelected: isSelected,
-          propertyType: property.propertyType,
+          listingType: property.listingType ?? 'Sale',
           isVisited: property.isVisited,
           newLabel: newLabel,
         ),

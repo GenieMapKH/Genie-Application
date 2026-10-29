@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/presentation/view_models/property_visibility.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_visibility.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Lets the owner pick Public, Draft or Sold for a listing now of [status].
 /// Resolves to the choice, or null when dismissed. A choice the server would

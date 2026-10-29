@@ -1,5 +1,5 @@
-name: genie
-description: "A new Flutter project."
+name: tilomnov
+description: "Tilomnov: a map-based property marketplace."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -80,6 +80,8 @@ dependencies:
   url_launcher: ^6.3.3
   flutter_webrtc: ^1.6.2+hotfix.4
   sentry: ^10.2.0
+  share_plus: ^13.3.1
+  gal: ^2.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

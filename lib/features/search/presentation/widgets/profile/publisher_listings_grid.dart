@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
-import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/features/property/presentation/widgets/saved_property_card.dart';
 
 /// A publisher's listing cards, as many per row as fit: two on a phone,
 /// more on a tablet.

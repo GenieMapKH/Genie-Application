@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/backup/backup_service.dart';
-import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
-import 'package:genie/features/chat/e2ee/backup/key_backup_vault.dart';
-import 'package:genie/features/chat/e2ee/keys/key_service.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/backup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_key_manager.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/key_backup_vault.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
 
 /// Moves chats still locked with the account password, as they were for a
 /// short while, to the chat PIN. One per screen: [unlock] with the password

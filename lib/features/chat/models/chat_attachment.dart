@@ -1,4 +1,4 @@
-import 'package:genie/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
 
 /// A file sent in a chat. The file itself is stored encrypted on the server;
 /// this is what travels inside the encrypted message so the other person can

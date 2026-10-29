@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/call/data/call_media.dart';
-import 'package:genie/features/call/data/call_signaling.dart';
+import 'package:tilomnov/features/call/data/call_media.dart';
+import 'package:tilomnov/features/call/data/call_signaling.dart';
 
 /// Records what the app asked the server, and lets a test answer.
 class FakeCallSignaling extends Fake implements CallSignaling {

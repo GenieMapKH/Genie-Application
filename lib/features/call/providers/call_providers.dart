@@ -1,15 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/device/microphone_permission.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/call/application/call_controller.dart';
-import 'package:genie/features/call/application/call_tones.dart';
-import 'package:genie/features/call/data/call_media.dart';
-import 'package:genie/features/call/data/call_signaling.dart';
-import 'package:genie/features/call/data/call_tone_player.dart';
-import 'package:genie/features/call/models/call_state.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/shared/utils/random_uuid.dart';
+import 'package:tilomnov/core/device/microphone_permission.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/call/application/call_controller.dart';
+import 'package:tilomnov/features/call/application/call_tones.dart';
+import 'package:tilomnov/features/call/data/call_media.dart';
+import 'package:tilomnov/features/call/data/call_signaling.dart';
+import 'package:tilomnov/features/call/data/call_tone_player.dart';
+import 'package:tilomnov/features/call/models/call_state.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/shared/utils/random_uuid.dart';
 
 /// Calls travel over the chat connection of the signed-in user.
 final callSignalingProvider = Provider(

@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/home/utils/map/map_camera_focus.dart';
-import 'package:genie/features/property/data/models/nearby_place.dart';
-import 'package:genie/features/property/data/models/nearby_route.dart';
-import 'package:genie/features/property/presentation/view_models/nearby_route_providers.dart';
-import 'package:genie/features/property/utils/nearby_distance_format.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
+import 'package:tilomnov/features/property/data/models/nearby_place.dart';
+import 'package:tilomnov/features/property/data/models/nearby_route.dart';
+import 'package:tilomnov/features/property/presentation/view_models/nearby_route_providers.dart';
+import 'package:tilomnov/features/property/utils/nearby_distance_format.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// A nearby place marked on the map, with the road to it from the listing.
 class NearbyRoutePage extends ConsumerWidget {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// The look a button takes from the theme when no colours are given.
 enum _AppButtonKind { primary, secondary }
 
-/// A reusable, customizable button component designed for Genie with tactile micro-interactions.
+/// A reusable, customizable button component designed for Tilomnov with tactile micro-interactions.
 ///
 /// Colours left out come from the theme, so the button follows light and
 /// dark mode: brand background with white text, or for [AppButton.secondary]

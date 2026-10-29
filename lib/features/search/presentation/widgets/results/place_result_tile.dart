@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/search/data/models/place_suggestion.dart';
-import 'package:genie/features/search/presentation/widgets/results/highlighted_text.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/search/data/models/place_suggestion.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/highlighted_text.dart';
 
 /// A suggested place: pin, name, and where it is.
 class PlaceResultTile extends StatelessWidget {

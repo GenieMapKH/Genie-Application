@@ -1,5 +1,5 @@
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// What went wrong with signing in or up, or resetting a password, in the
 /// user's language. The server's own message is English and meant for

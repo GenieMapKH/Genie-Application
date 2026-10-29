@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/notifications/application/push_notifications_controller.dart';
-import 'package:genie/features/notifications/application/push_registration.dart';
-import 'package:genie/features/notifications/data/notification_repository.dart';
-import 'package:genie/features/notifications/data/system_notifications.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
+import 'package:tilomnov/features/notifications/application/push_notifications_controller.dart';
+import 'package:tilomnov/features/notifications/application/push_registration.dart';
+import 'package:tilomnov/features/notifications/data/notification_repository.dart';
+import 'package:tilomnov/features/notifications/data/system_notifications.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
 
 import 'notification_fakes.dart';
 

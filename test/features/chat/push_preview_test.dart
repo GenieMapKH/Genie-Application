@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/e2ee/push_preview.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/e2ee/push_preview.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 import 'chat_fakes.dart';
 import 'voice_fakes.dart';

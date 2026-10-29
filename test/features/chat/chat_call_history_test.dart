@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/models/chat_call_entry.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_timeline.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_timeline.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
 import '../safety/fake_block_repository.dart';

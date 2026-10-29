@@ -1,4 +1,4 @@
-import 'package:genie/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
 
 /// The message a reply quotes, as shown above the reply. It is the quoted
 /// message as it is now: an edit changes it, and a delete removes it.

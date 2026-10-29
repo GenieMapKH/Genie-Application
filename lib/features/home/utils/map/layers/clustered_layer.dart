@@ -1,10 +1,10 @@
 import 'package:flutter/painting.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/markers/property_markers.dart';
-import 'package:genie/features/home/utils/map/screen_clustering.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/markers/property_markers.dart';
+import 'package:tilomnov/features/home/utils/map/screen_clustering.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 /// Zoomed-out view: a green dot at each listing's real position. Dots that
 /// would overlap on screen merge into a bubble showing how many it holds.

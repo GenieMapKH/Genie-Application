@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/widgets/saved_property_card.dart';
+import 'package:tilomnov/shared/transitions/app_page_route.dart';
 
 import '../../support/test_app.dart';
 

@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/data/google_sign_in_service.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/data/repositories/avatar_repository.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
-import 'package:genie/features/profile/presentation/view_models/avatar_controller.dart';
-import 'package:genie/features/profile/presentation/view_models/profile_edit_controller.dart';
+import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/data/repositories/avatar_repository.dart';
+import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/avatar_controller.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/profile_edit_controller.dart';
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepository(ref.watch(apiClientProvider));

@@ -3,11 +3,11 @@ import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/data/voice/voice_player.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
+import 'package:tilomnov/features/chat/data/voice/voice_player.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 
 /// Which voice message is loaded and how far it has played.
 class VoicePlaybackState {

@@ -1,4 +1,4 @@
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 /// How a conversation's messages change when one of them is edited or
 /// deleted: replies that quote it change with it.

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/home/presentation/providers/glass_navigation_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/map_capsule.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
 
-import 'package:genie/shared/widgets/buttons/tactile_button.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/media/tinted_svg.dart';
+import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// The pills under the map's search bar: one listing type and one property
 /// type at a time, kept in [mapPropertyFilterProvider], which the map obeys.
@@ -47,47 +49,54 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      // The parent leaves 16 on the left and 4 on the right; the last pill's
-      // own 8 margin plus this 4 makes the end gap 16 as well.
-      padding: const EdgeInsets.only(right: 4.0),
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        // A horizontal scroll view is only as wide as its content when that
-        // fits, which clipped the pills short of the screen edge on a tablet.
-        child: SizedBox(
-          width: double.infinity,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.hardEdge,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Listing Type Column
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildListingTypeSelector(),
-                    if (_isListingTypeOpen) ...[
-                      const SizedBox(height: 8),
-                      _buildDropdownPill('Sale'),
-                      const SizedBox(height: 8),
-                      _buildDropdownPill('Rent'),
-                      const SizedBox(height: 8),
-                      _buildDropdownPill('To Let'),
-                    ],
+    // The parent leaves 16 on both sides, the same as the search bar and the
+    // round buttons above, so the row starts and stops 16 from each edge.
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+      // A horizontal scroll view is only as wide as its content when that
+      // fits, which clipped the pills short of the screen edge on a tablet.
+      child: SizedBox(
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.hardEdge,
+          child: Row(
+            spacing: _gap,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Listing Type Column
+              Column(
+                spacing: _gap,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildListingTypeSelector(),
+                  if (_isListingTypeOpen) ...[
+                    _buildDropdownPill('Sale'),
+                    _buildDropdownPill('Rent'),
+                    _buildDropdownPill('To Let'),
                   ],
-                ),
-                const SizedBox(width: 8),
-                // Property Types
-                for (final (value, iconPath) in _propertyTypes)
-                  _buildPropertyTypePill(_typeLabel(value), value, iconPath),
-              ],
-            ),
+                ],
+              ),
+              // Property Types
+              for (final (value, iconPath) in _propertyTypes)
+                _buildPropertyTypePill(_typeLabel(value), value, iconPath),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  /// The space between pills, the same as between the buttons above them.
+  static const _gap = 8.0;
+
+  bool get _glass => watchGlassNavigation(ref, context);
+
+  /// A pill's icon and label: the accent when picked; otherwise quiet on a
+  /// solid surface and plain text colour over glass, as the round buttons do.
+  Color _ink(bool selected, {required Color solid}) {
+    if (selected) return context.colors.primaryStrong;
+    return _glass ? context.colors.textPrimary : solid;
   }
 
   /// One listing type by name; the filter page's "For rent" (Rent and To Let)
@@ -101,62 +110,36 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
   Widget _buildListingTypeSelector() {
     final selectedLabel = _listingLabel(_filter.listingTypes);
     final bool isListingTypeSelected = _filter.listingTypes.isNotEmpty;
+    final ink = _ink(isListingTypeSelected, solid: context.colors.textMuted);
     return TactileButton(
       onPressed: () {
         setState(() {
           _isListingTypeOpen = !_isListingTypeOpen;
         });
       },
-      child: Container(
+      child: MapCapsule(
+        shadowed: false,
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          border: Border.all(
-            color: isListingTypeSelected
-                ? context.colors.primaryStrong
-                : Colors.transparent,
-            width: 1.5,
-          ),
-          borderRadius: BorderRadius.circular(24.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        outline: isListingTypeSelected ? context.colors.primaryStrong : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               _isListingTypeOpen ? Icons.cancel : Icons.maps_home_work_outlined,
-              color: isListingTypeSelected
-                  ? context.colors.primaryStrong
-                  : context.colors.textMuted,
+              color: ink,
               size: 18,
             ),
             const SizedBox(width: 6),
             Text(
               selectedLabel ?? context.l10n.listingTypeTitle,
-              style: GoogleFonts.inter(
-                color: isListingTypeSelected
-                    ? context.colors.primaryStrong
-                    : context.colors.textSecondary,
-                fontWeight: isListingTypeSelected
-                    ? FontWeight.w600
-                    : FontWeight.w500,
-                fontSize: 14,
-              ),
+              style: _labelStyle(isListingTypeSelected),
             ),
             const SizedBox(width: 4),
             Icon(
               _isListingTypeOpen
                   ? Icons.keyboard_arrow_up
                   : Icons.keyboard_arrow_down,
-              color: isListingTypeSelected
-                  ? context.colors.primaryStrong
-                  : context.colors.textMuted,
+              color: ink,
               size: 18,
             ),
           ],
@@ -174,34 +157,13 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
         _update((filter) => filter.toggleListing(text));
         setState(() => _isListingTypeOpen = false); // Auto close on select
       },
-      child: Container(
+      child: MapCapsule(
+        shadowed: false,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(24.0),
-          border: Border.all(
-            color: isSelected
-                ? context.colors.primaryStrong
-                : Colors.transparent,
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        outline: isSelected ? context.colors.primaryStrong : null,
         child: Text(
           propertyValueLabel(context.l10n, text),
-          style: GoogleFonts.inter(
-            color: isSelected
-                ? context.colors.primaryStrong
-                : context.colors.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 14,
-          ),
+          style: _labelStyle(isSelected),
         ),
       ),
     );
@@ -211,26 +173,10 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
     final isSelected = _filter.propertyType == value;
     return TactileButton(
       onPressed: () => _update((filter) => filter.toggleType(value)),
-      child: Container(
-        margin: const EdgeInsets.only(right: 8.0),
+      child: MapCapsule(
+        shadowed: false,
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(24.0),
-          border: Border.all(
-            color: isSelected
-                ? context.colors.primaryStrong
-                : Colors.transparent,
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        outline: isSelected ? context.colors.primaryStrong : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -238,24 +184,19 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
               iconPath,
               width: 16,
               height: 16,
-              color: isSelected
-                  ? context.colors.primaryStrong
-                  : context.colors.textMuted,
+              color: _ink(isSelected, solid: context.colors.textMuted),
             ),
             const SizedBox(width: 6),
-            Text(
-              text,
-              style: GoogleFonts.inter(
-                color: isSelected
-                    ? context.colors.primaryStrong
-                    : context.colors.textSecondary,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
+            Text(text, style: _labelStyle(isSelected)),
           ],
         ),
       ),
     );
   }
+
+  TextStyle _labelStyle(bool selected) => GoogleFonts.inter(
+    color: _ink(selected, solid: context.colors.textSecondary),
+    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+    fontSize: 14,
+  );
 }

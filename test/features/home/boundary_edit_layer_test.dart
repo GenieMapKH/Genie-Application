@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/utils/map/layers/boundary_edit_layer.dart';
-import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
+import 'package:tilomnov/features/home/utils/map/layers/boundary_edit_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_callbacks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // Roughly a 110 m square, small enough to show edge lengths at zoom 19.

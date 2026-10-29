@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/utils/map/markers/price_tag_layout.dart';
+import 'package:tilomnov/features/home/utils/map/markers/price_tag_layout.dart';
 
 /// One listing marker: a lone listing's dot, a bubble standing for [count]
 /// listings, or, zoomed in, a listing's price [tag].

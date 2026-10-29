@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// "Property Highlights" — the description with a Show more/less toggle, and
 /// the days-listed / views / saves counters beneath it.
@@ -128,7 +128,7 @@ class _StatsRowState extends ConsumerState<_StatsRow> {
       children: [
         _Stat(
           value: context.l10n.propertyDaysCount(property.daysListed),
-          label: context.l10n.propertyGenie,
+          label: context.l10n.propertyTilomnov,
         ),
         const SizedBox(width: 24),
         _Stat(

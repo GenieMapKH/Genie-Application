@@ -1,5 +1,5 @@
-import 'package:genie/features/chat/providers/voice_recording_provider.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// Why a voice message could not be recorded or sent, in the user's language.
 String voiceRecordingProblemText(

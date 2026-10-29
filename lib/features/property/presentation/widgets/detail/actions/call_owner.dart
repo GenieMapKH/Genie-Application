@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 /// The number "Call Now" dials: the one written on the listing, else the
 /// owner's own. Null for a guest, who is never sent either.

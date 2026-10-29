@@ -1,5 +1,5 @@
-import 'package:genie/features/safety/data/models/report_reason.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/safety/data/models/report_reason.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// The words for [reason].
 String reportReasonText(AppLocalizations l10n, ReportReason reason) {

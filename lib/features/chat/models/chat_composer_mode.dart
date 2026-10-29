@@ -1,4 +1,4 @@
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 /// What the message bar does with the next text, besides sending a new
 /// message: reply to [message], or replace its text.

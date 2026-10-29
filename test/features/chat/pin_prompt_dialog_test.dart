@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_rules.dart';
-import 'package:genie/features/chat/presentation/widgets/pin/pin_prompt_dialog.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_rules.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_prompt_dialog.dart';
 
 void main() {
   Future<Future<String?>> openPrompt(

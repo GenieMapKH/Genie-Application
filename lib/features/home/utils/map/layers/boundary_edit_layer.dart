@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
-import 'package:genie/features/home/utils/map/map_measurements.dart';
-import 'package:genie/features/home/utils/map/markers/label_markers.dart';
-import 'package:genie/features/home/utils/map/markers/vertex_markers.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_callbacks.dart';
+import 'package:tilomnov/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:tilomnov/features/home/utils/map/map_measurements.dart';
+import 'package:tilomnov/features/home/utils/map/markers/label_markers.dart';
+import 'package:tilomnov/features/home/utils/map/markers/vertex_markers.dart';
 
 /// A closed boundary being edited: corners can be dragged, and each edge has
 /// a "+" handle that adds a corner when tapped or dragged. Edge lengths and

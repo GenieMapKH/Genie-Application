@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:genie/features/chat/data/voice/voice_player.dart';
-import 'package:genie/features/chat/data/voice/voice_recorder.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/data/voice/voice_player.dart';
+import 'package:tilomnov/features/chat/data/voice/voice_recorder.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
 
 import 'chat_fakes.dart';
 

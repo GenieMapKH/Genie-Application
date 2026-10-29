@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/theme/app_theme.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/settings/data/app_settings_storage.dart';
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_theme.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Pumps [home] inside the real app shell: both themes, both languages and

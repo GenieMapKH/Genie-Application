@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/config/app_config.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/media/app_image_cache.dart';
-import 'package:genie/core/theme/font_licenses.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/settings/data/app_settings_storage.dart';
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/core/config/app_config.dart';
+import 'package:tilomnov/core/device/glass_capability.dart';
+import 'package:tilomnov/core/device/reduce_transparency.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/media/app_image_cache.dart';
+import 'package:tilomnov/core/theme/font_licenses.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/foundation.dart';
@@ -16,24 +18,24 @@ import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'package:genie/app/app.dart';
-import 'package:genie/app/missing_config_app.dart';
+import 'package:tilomnov/app/app.dart';
+import 'package:tilomnov/app/missing_config_app.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:genie/firebase_options.dart';
-import 'package:genie/app/navigation/property_publisher_navigation.dart';
-import 'package:genie/features/property/presentation/view_models/property_publisher_opener.dart';
-import 'package:genie/app/navigation/chat_listing_navigation.dart';
-import 'package:genie/app/navigation/chat_profile_navigation.dart';
-import 'package:genie/app/navigation/call_navigation.dart';
-import 'package:genie/app/navigation/push_navigation.dart';
-import 'package:genie/app/push_background_handler.dart';
-import 'package:genie/app/push_chat_text.dart';
+import 'package:tilomnov/firebase_options.dart';
+import 'package:tilomnov/app/navigation/property_publisher_navigation.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_publisher_opener.dart';
+import 'package:tilomnov/app/navigation/chat_listing_navigation.dart';
+import 'package:tilomnov/app/navigation/chat_profile_navigation.dart';
+import 'package:tilomnov/app/navigation/call_navigation.dart';
+import 'package:tilomnov/app/navigation/push_navigation.dart';
+import 'package:tilomnov/app/push_background_handler.dart';
+import 'package:tilomnov/app/push_chat_text.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:genie/features/chat/providers/chat_call_starter.dart';
-import 'package:genie/features/chat/providers/chat_profile_opener.dart';
-import 'package:genie/features/notifications/providers/notification_providers.dart';
-import 'package:genie/features/chat/providers/chat_listing_opener.dart';
-import 'package:genie/core/observability/error_reporting.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_starter.dart';
+import 'package:tilomnov/features/chat/providers/chat_profile_opener.dart';
+import 'package:tilomnov/features/notifications/providers/notification_providers.dart';
+import 'package:tilomnov/features/chat/providers/chat_listing_opener.dart';
+import 'package:tilomnov/core/observability/error_reporting.dart';
 
 /// Android only: asks for the newest Google Maps renderer and for the
 /// display's highest refresh rate. Without the latter many devices keep a
@@ -75,7 +77,15 @@ void main() async {
 
   // Independent of each other, so they run at the same time: the first
   // frame waits for the slowest, not for all of them in turn.
-  final (_, _, cryptoService, _, preferences) = await (
+  final (
+    _,
+    _,
+    cryptoService,
+    _,
+    preferences,
+    glassCapable,
+    reduceTransparency,
+  ) = await (
     Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ).then((_) {
@@ -92,6 +102,10 @@ void main() async {
     // Read before the first frame, so the app opens in the saved theme and
     // language.
     SharedPreferences.getInstance(),
+    // Read before the first frame, so the navigation never starts in one
+    // look and swaps to the other.
+    GlassCapability().read(),
+    const ReduceTransparency().read(),
   ).wait;
   final settingsStorage = AppSettingsStorage(preferences);
 
@@ -102,6 +116,13 @@ void main() async {
         overrides: [
           cryptoServiceProvider.overrideWithValue(cryptoService),
           appSettingsStorageProvider.overrideWithValue(settingsStorage),
+          glassCapableDeviceProvider.overrideWithValue(glassCapable),
+          reduceTransparencyProvider.overrideWith(
+            (ref) => ReduceTransparencyNotifier(
+              const ReduceTransparency(),
+              initial: reduceTransparency,
+            ),
+          ),
           chatProfileOpenerProvider.overrideWith(profileFromChatOpener),
           chatListingOpenerProvider.overrideWith(listingFromChatOpener),
           propertyPublisherOpenerProvider.overrideWith(

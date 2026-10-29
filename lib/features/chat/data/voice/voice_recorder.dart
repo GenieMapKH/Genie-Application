@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 
 /// A finished recording, before it becomes a voice message.
 typedef RecordedAudio = ({Uint8List bytes, String mimeType, String extension});

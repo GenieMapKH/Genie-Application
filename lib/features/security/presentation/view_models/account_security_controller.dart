@@ -1,5 +1,5 @@
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/security/data/repositories/account_repository.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
 
 /// How a change that needs proof of identity ended. The screen turns this
 /// into a message.
@@ -13,6 +13,9 @@ enum AccountActionResult {
   /// This device signed in less than a day ago and may not do this yet.
   deviceTooNew,
 
+  /// Another account already uses the email.
+  emailTaken,
+
   /// The server could not be reached or failed.
   failed,
 }
@@ -20,7 +23,8 @@ enum AccountActionResult {
 /// Why a new password was refused before it was sent anywhere.
 enum PasswordProblem { currentMissing, tooShort, mismatch, sameAsCurrent }
 
-/// The account's password, and deactivating or deleting the account. No UI.
+/// The account's password and email, and deactivating or deleting the
+/// account. No UI.
 class AccountSecurityController {
   /// Same rule as the server.
   static const minPasswordLength = 8;
@@ -81,6 +85,20 @@ class AccountSecurityController {
     );
   }
 
+  /// Adds [email] to an account that has none, confirmed with [password].
+  Future<AccountActionResult> addEmail({
+    required String email,
+    required String password,
+  }) {
+    return _attempt(
+      'add email',
+      () => _repository.addEmail(
+        email: email.trim().toLowerCase(),
+        password: password,
+      ),
+    );
+  }
+
   /// Asks the server to confirm the account password in [proof]. With
   /// [AccountActionResult.done] comes the token that stands in for a
   /// forgotten chat backup PIN.
@@ -113,6 +131,8 @@ class AccountSecurityController {
       return AccountActionResult.tooManyAttempts;
     } on DeviceTooNewException {
       return AccountActionResult.deviceTooNew;
+    } on EmailTakenException {
+      return AccountActionResult.emailTaken;
     } catch (e) {
       AppLogger.error('Could not $what', e);
       return AccountActionResult.failed;

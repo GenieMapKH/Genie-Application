@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
 
 /// What the identity key backup is locked with. Every account protects its
 /// chats with a 6-digit chat PIN. [password] is only for backups made while

@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/security/data/known_devices_storage.dart';
-import 'package:genie/features/security/data/models/device_session.dart';
-import 'package:genie/features/security/data/repositories/account_repository.dart';
-import 'package:genie/features/security/data/repositories/session_repository.dart';
-import 'package:genie/features/security/presentation/view_models/account_security_controller.dart';
-import 'package:genie/features/security/presentation/view_models/new_sign_in_detector.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/security/data/known_devices_storage.dart';
+import 'package:tilomnov/features/security/data/models/device_session.dart';
+import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
+import 'package:tilomnov/features/security/data/repositories/session_repository.dart';
+import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
+import 'package:tilomnov/features/security/presentation/view_models/new_sign_in_detector.dart';
 
 final sessionRepositoryProvider = Provider<SessionRepository>(
   (ref) => SessionRepository(ref.watch(apiClientProvider)),

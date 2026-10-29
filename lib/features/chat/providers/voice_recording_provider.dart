@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/device/microphone_permission.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/voice/voice_recorder.dart';
-import 'package:genie/features/chat/models/chat_voice.dart';
-import 'package:genie/features/chat/providers/active_chat_provider.dart';
+import 'package:tilomnov/core/device/microphone_permission.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/voice/voice_recorder.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
 
 enum VoiceRecordingStatus { idle, starting, recording, finishing }
 

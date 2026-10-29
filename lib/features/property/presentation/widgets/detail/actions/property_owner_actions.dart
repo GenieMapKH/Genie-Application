@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
-import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
-import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/presentation/view_models/property_visibility.dart';
-import 'package:genie/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
-import 'package:genie/features/property/presentation/widgets/detail/actions/property_visibility_sheet.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_visibility.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_visibility_sheet.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 /// Takes the place of Chat / Call Now when the owner opens their own
 /// listing: Edit opens the edit form, Visibility makes it public, a draft

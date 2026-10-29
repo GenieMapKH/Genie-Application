@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 /// What the map shows: the pills under the search bar and the filter page.
 /// A null field or empty list means "any". The server applies the same rules

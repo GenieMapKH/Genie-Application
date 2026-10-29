@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/property/data/repositories/favorites_repository.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/repositories/favorites_repository.dart';
 
 final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
   return FavoritesRepository(ref.watch(apiClientProvider));

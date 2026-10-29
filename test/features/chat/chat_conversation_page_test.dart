@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/safety/data/models/block_status.dart';
-import 'package:genie/features/safety/presentation/view_models/block_providers.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_record_button.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/safety/data/models/block_status.dart';
+import 'package:tilomnov/features/safety/presentation/view_models/block_providers.dart';
 
-import 'package:genie/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
 
 import '../../support/test_app.dart';
 import '../safety/fake_block_repository.dart';
@@ -104,7 +105,9 @@ void main() {
     await openChat(tester);
 
     await tester.enterText(find.byType(TextField), 'Hello there');
-    await tester.tap(find.byIcon(Icons.send_outlined));
+
+    await tester.pump(); // The send button takes the microphone's place.
+    await tester.tap(find.byIcon(Icons.send_rounded));
     await tester.pump();
     await tester.pump();
 
@@ -130,7 +133,9 @@ void main() {
     socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
 
     await tester.enterText(find.byType(TextField), 'Hello');
-    await tester.tap(find.byIcon(Icons.send_outlined));
+
+    await tester.pump(); // The send button takes the microphone's place.
+    await tester.tap(find.byIcon(Icons.send_rounded));
     await tester.pump();
     await tester.pump();
 
@@ -292,7 +297,7 @@ void main() {
 
       await tester.tap(find.widgetWithText(TextButton, 'Unblock'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(TextButton, 'Unblock').last);
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Unblock'));
       for (var i = 0; i < 5; i++) {
         await tester.pump();
       }
@@ -325,7 +330,9 @@ void main() {
       socket.sendError = const ChatSendException(ChatSendProblem.blocked);
 
       await tester.enterText(find.byType(TextField), 'Hello');
-      await tester.tap(find.byIcon(Icons.send_outlined));
+
+      await tester.pump(); // The send button takes the microphone's place.
+      await tester.tap(find.byIcon(Icons.send_rounded));
       for (var i = 0; i < 5; i++) {
         await tester.pump();
       }
@@ -390,6 +397,101 @@ void main() {
 
       expect(find.text('View listing'), findsOneWidget);
       expect(sideOf(tester, 'Villa near Riverside'), Alignment.centerLeft);
+    });
+  });
+
+  group('message bar', () {
+    Finder voiceButton() => find.byType(VoiceRecordButton);
+
+    testWidgets('typing swaps the microphone for the send button', (
+      tester,
+    ) async {
+      await openChat(tester);
+      expect(voiceButton(), findsOneWidget);
+      expect(find.byIcon(Icons.send_rounded), findsNothing);
+
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+      expect(voiceButton(), findsNothing);
+      expect(find.byIcon(Icons.send_rounded), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'Hi');
+      await tester.pump();
+      await tester.tap(find.byIcon(Icons.send_rounded));
+      await tester.pump();
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pump();
+      expect(voiceButton(), findsOneWidget);
+    });
+
+    testWidgets('a tap beside the send icon still sends', (tester) async {
+      await openChat(tester);
+      await tester.enterText(find.byType(TextField), 'Near miss');
+      await tester.pump();
+
+      // Outside the drawn circle, inside the button's touch area.
+      final circle = tester.getRect(find.byIcon(Icons.send_rounded));
+      await tester.tapAt(circle.topLeft - const Offset(3, 3));
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      expect(find.text('Near miss'), findsOneWidget);
+      expect(socket.sent, hasLength(1));
+    });
+  });
+
+  group('message status', () {
+    testWidgets('"Sent" is under my newest message only', (tester) async {
+      repository.history = [
+        encrypted('m1', 'First', from: me),
+        encrypted('m2', 'Second', from: me),
+      ];
+      await openChat(tester);
+
+      expect(find.text('Sent'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Sent')).dy,
+        greaterThan(tester.getBottomLeft(find.text('Second')).dy),
+      );
+    });
+
+    testWidgets('no "Sent" once they replied', (tester) async {
+      repository.history = [
+        encrypted('m1', 'Still available?', from: me),
+        encrypted('m2', 'Yes', from: peer),
+      ];
+      await openChat(tester);
+
+      expect(find.text('Sent'), findsNothing);
+    });
+
+    testWidgets('tapping my message shows its time and delivery', (
+      tester,
+    ) async {
+      repository.history = [encrypted('m1', 'Hello', from: me)];
+      await openChat(tester);
+
+      await tester.tap(find.text('Hello'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Delivered'), findsOneWidget);
+      expect(find.text('Sent'), findsNothing);
+      expect(find.textContaining(':'), findsOneWidget); // The time above.
+
+      await tester.tap(find.text('Hello'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Delivered'), findsNothing);
+      expect(find.text('Sent'), findsOneWidget);
+    });
+
+    testWidgets('tapping their message shows only its time', (tester) async {
+      repository.history = [encrypted('m1', 'Hi there', from: peer)];
+      await openChat(tester);
+
+      await tester.tap(find.text('Hi there'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Delivered'), findsNothing);
+      expect(find.textContaining(':'), findsOneWidget);
     });
   });
 }

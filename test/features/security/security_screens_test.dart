@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/security/data/repositories/account_repository.dart';
-import 'package:genie/features/security/data/repositories/session_repository.dart';
-import 'package:genie/features/security/presentation/screens/account_removal_page.dart';
-import 'package:genie/features/security/presentation/screens/change_password_page.dart';
-import 'package:genie/features/security/presentation/screens/devices_page.dart';
-import 'package:genie/features/security/presentation/screens/security_page.dart';
-import 'package:genie/features/security/presentation/view_models/security_providers.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_key_manager.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
+import 'package:tilomnov/features/security/data/repositories/session_repository.dart';
+import 'package:tilomnov/features/security/presentation/screens/account_removal_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/change_password_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/devices_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/security_page.dart';
+import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
 
 import '../../support/test_app.dart';
 

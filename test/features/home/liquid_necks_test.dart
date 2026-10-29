@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/presentation/widgets/map/liquid/drop_on_screen.dart';
-import 'package:genie/features/home/presentation/widgets/map/liquid/liquid_necks.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/drop_on_screen.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/liquid_necks.dart';
 
 DropOnScreen _drop(double x, {double cohesion = 1}) => (
   center: Offset(x, 0),

@@ -3,18 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:genie/app/navigation/call_navigation.dart';
-import 'package:genie/app/router/app_router.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/providers/visible_conversation.dart';
-import 'package:genie/features/notifications/application/push_notifications_controller.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
-import 'package:genie/features/security/presentation/screens/devices_page.dart';
-import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/app/navigation/call_navigation.dart';
+import 'package:tilomnov/app/router/app_router.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/providers/visible_conversation.dart';
+import 'package:tilomnov/features/notifications/application/push_notifications_controller.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:tilomnov/features/security/presentation/screens/devices_page.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 
 /// Opens what a tapped notification is about. It lives in `app/` because it
 /// leads into several features: chat, security, listings.

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:genie/features/property/data/models/nearby_route.dart';
-import 'package:genie/features/property/utils/polyline_decoder.dart';
+import 'package:tilomnov/features/property/data/models/nearby_route.dart';
+import 'package:tilomnov/features/property/utils/polyline_decoder.dart';
 
 class NearbyRouteRepository {
   final Dio dio;

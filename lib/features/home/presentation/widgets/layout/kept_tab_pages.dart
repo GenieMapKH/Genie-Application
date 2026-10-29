@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Full-screen tab pages that slide in and out by tab order, and are kept
-/// once built.
+import 'package:tilomnov/core/theme/app_motion.dart';
+
+/// Full-screen tab pages that cross-fade in and out, drifting slightly in the
+/// direction of the tab order, and are kept once built.
 ///
 /// A page is built the first time its tab is shown and then kept, hidden,
 /// while another tab is shown. Coming back shows it exactly as it was (scroll
@@ -61,7 +63,10 @@ class _KeptTabPagesState extends State<KeptTabPages> {
   }
 }
 
-/// One kept page: slides to [place] and, once it rests off screen, is hidden.
+/// One kept page: fades in at [place], or out towards it, and once it rests
+/// off screen is hidden. Like the tabs of an iOS tab bar it does not sweep
+/// across the screen: it only drifts a little, enough to say which way the
+/// tabs lie. With reduced motion it switches at once.
 class _KeptPage extends StatefulWidget {
   /// Where the page should be: [Offset.zero] on screen, ±1 off to a side.
   final Offset place;
@@ -88,7 +93,10 @@ class _KeptPage extends StatefulWidget {
 }
 
 class _KeptPageState extends State<_KeptPage> {
-  static const _slide = Duration(milliseconds: 300);
+  static const _fade = Duration(milliseconds: 240);
+
+  /// How far a page drifts while fading, as a share of its width.
+  static const _drift = 0.04;
 
   late Offset _offset;
   bool _sliding = false;
@@ -98,7 +106,7 @@ class _KeptPageState extends State<_KeptPage> {
     super.initState();
     _offset = widget.place;
     if (widget.animate && widget.enterFrom != widget.place) {
-      // Built off screen, then slid in on the next frame.
+      // Built off screen, then faded in on the next frame.
       _offset = widget.enterFrom;
       _sliding = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -112,7 +120,8 @@ class _KeptPageState extends State<_KeptPage> {
     super.didUpdateWidget(oldWidget);
     if (widget.place != _offset) {
       _offset = widget.place;
-      _sliding = widget.animate;
+      // A switch made at once has nothing to wait for.
+      _sliding = widget.animate && !AppMotion.reduceMotionOf(context);
     }
   }
 
@@ -120,18 +129,27 @@ class _KeptPageState extends State<_KeptPage> {
   Widget build(BuildContext context) {
     final visible = _offset == Offset.zero || _sliding;
 
+    final duration = widget.animate && !AppMotion.reduceMotionOf(context)
+        ? _fade
+        : Duration.zero;
+
     return AnimatedSlide(
-      offset: _offset,
-      duration: widget.animate ? _slide : Duration.zero,
-      curve: Curves.easeInOut,
-      onEnd: () {
-        if (_sliding) setState(() => _sliding = false);
-      },
-      child: Offstage(
-        offstage: !visible,
-        child: TickerMode(
-          enabled: visible,
-          child: HeroMode(enabled: visible, child: widget.child),
+      offset: _offset * _drift,
+      duration: duration,
+      curve: AppMotion.easeOut,
+      child: AnimatedOpacity(
+        opacity: _offset == Offset.zero ? 1 : 0,
+        duration: duration,
+        curve: Curves.easeOut,
+        onEnd: () {
+          if (_sliding) setState(() => _sliding = false);
+        },
+        child: Offstage(
+          offstage: !visible,
+          child: TickerMode(
+            enabled: visible,
+            child: HeroMode(enabled: visible, child: widget.child),
+          ),
         ),
       ),
     );

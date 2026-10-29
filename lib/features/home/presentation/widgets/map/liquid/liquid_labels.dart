@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
 
 /// Paints the counts on bubbles and the prices on tags during a
 /// [ClusterTransition], fading out where the drops leave and in where they

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// The two themes of the app, built from [AppColors]. Everything Material
 /// draws on its own (dialogs, sheets, snack bars, text fields) is set up here
@@ -48,10 +48,29 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         modalBackgroundColor: colors.surface,
       ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: colors.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 8,
+        shadowColor: Colors.black.withValues(alpha: 0.18),
+        position: PopupMenuPosition.under,
+        menuPadding: const EdgeInsets.symmetric(vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: colors.border),
+        ),
+        textStyle: GoogleFonts.inter(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: colors.textPrimary,
+        ),
+      ),
       snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(color: colors.highlight),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colors.highlight,
+      ),
       textSelectionTheme: TextSelectionThemeData(cursorColor: colors.primary),
       extensions: [colors],
     );

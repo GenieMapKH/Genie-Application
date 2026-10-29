@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/app/session/chat_pin_gate.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/backup/password_lock_migration.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
-import 'package:genie/features/chat/presentation/screens/chat_pin_setup_page.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/app/session/chat_pin_gate.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/password_lock_migration.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_pin_setup_page.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 
 import '../../support/test_app.dart';
 

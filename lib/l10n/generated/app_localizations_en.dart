@@ -36,6 +36,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are offline. Connect to the internet for updates.';
 
   @override
+  String get offlineDialogTitle => 'No internet connection';
+
+  @override
+  String get offlineDialogMessage =>
+      'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.';
+
+  @override
+  String get offlineKeepBrowsing => 'Keep browsing';
+
+  @override
   String get navExplore => 'Explore';
 
   @override
@@ -130,6 +140,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageTitle => 'Language';
 
   @override
+  String get glassNavigationTitle => 'Glass navigation';
+
+  @override
+  String get glassNavigationSubtitle => 'Match your phone\'s see-through bars';
+
+  @override
   String get personalInfoTitle => 'Personal information';
 
   @override
@@ -193,7 +209,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personalInfoPhoneInvalid =>
-      'Enter a phone number of at most 20 characters.';
+      'Enter a valid phone number, for example 012 345 678.';
 
   @override
   String get personalInfoEmail => 'Email';
@@ -588,14 +604,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authContinueWithGoogle => 'Continue with Google';
 
   @override
-  String get authByContinuingYouAgreeToOut =>
-      'By continuing, you agree to out ';
-
-  @override
-  String get authTermsOfServices => 'terms of services.';
-
-  @override
-  String get authEmailAddressOrPhoneNumber => 'Email Address or Phone number';
+  String get authTermsOfServices => 'terms of service';
 
   @override
   String get authForgetPassword => 'Forget Password?';
@@ -925,7 +934,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyPropertyHighlights => 'Property Highlights';
 
   @override
-  String get propertyGenie => 'Tilomnov';
+  String get propertyTilomnov => 'Tilomnov';
 
   @override
   String get propertyViews => 'Views';
@@ -1018,6 +1027,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertyDownload => 'Download';
+
+  @override
+  String get propertyShareSheetTitle => 'Share this listing';
+
+  @override
+  String get propertyShareScanToView => 'Scan to view this listing';
+
+  @override
+  String get propertyShareCopyLink => 'Copy link';
+
+  @override
+  String get propertyShareLinkCopied => 'Link copied';
+
+  @override
+  String get propertyShareSaveImage => 'Save image';
+
+  @override
+  String get propertyShareImageSaved => 'Saved to your photos';
+
+  @override
+  String get propertyShareImageSaveFailed => 'Couldn\'t save the image';
+
+  @override
+  String get propertySharePhotosDenied =>
+      'Allow Tilomnov to add photos in Settings to save the image.';
+
+  @override
+  String get propertyShareFailed => 'Couldn\'t share this listing';
+
+  @override
+  String get propertyShareMessageSeeOnMap =>
+      'See the photos and exact location on the map:';
+
+  @override
+  String get propertyShareMessageFooter =>
+      'Shared from Tilomnov, land and homes on the map.';
+
+  @override
+  String get propertyShareCaptionCopied =>
+      'Caption copied: paste it if the app leaves it out';
+
+  @override
+  String get propertyShareNotPublicDraft =>
+      'Only you can see this listing until it is published. Publish it to share its link and QR code.';
+
+  @override
+  String get propertyShareNotPublicPending =>
+      'This listing goes public once its payment is complete. You can share it then.';
+
+  @override
+  String get propertyShareNotPublicEnded =>
+      'This listing is no longer public, so its link and QR code cannot be shared.';
 
   @override
   String get propertyTitleType => 'Title Type';
@@ -1223,6 +1284,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sessionEnded => 'You were signed out of this device.';
+
+  @override
+  String get updateRequiredTitle => 'Update required';
+
+  @override
+  String get updateRequiredMessage =>
+      'This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.';
 
   @override
   String get securityForgotPin => 'Forgot chat PIN';
@@ -1734,7 +1802,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatPinCreateHelp =>
-      'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Genie, can see it.';
+      'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.';
 
   @override
   String get chatPinConfirmTitle => 'Confirm your chat PIN';
@@ -1797,10 +1865,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authErrEnterName => 'Please enter your name';
 
   @override
-  String get authErrEnterEmailOrPhone =>
-      'Enter a valid email address or phone number';
-
-  @override
   String get authErrEnterPassword => 'Enter a valid password';
 
   @override
@@ -1823,29 +1887,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authErrPasswordsDontMatch => 'Passwords do not match';
 
   @override
-  String get termsScrollToAgree =>
-      'Please scroll to the bottom of the terms to agree.';
-
-  @override
-  String get termsTitle => 'Terms of Service for Genie Property';
+  String get termsTitle => 'Terms of Service for Tilomnov';
 
   @override
   String get termsLastUpdated => 'Last updated: 14 February 2026';
 
   @override
   String get termsWelcome =>
-      'Welcome to Genie Property. By accessing or using the Genie application and services, you agree to comply with and be bound by the following Terms of Service.';
+      'Welcome to Tilomnov. By accessing or using the Tilomnov application and services, you agree to comply with and be bound by the following Terms of Service.';
 
   @override
   String get termsDisagree =>
       'If you do not agree with these terms, please do not use the application.';
 
   @override
-  String get termsAboutTitle => '1. About Genie';
+  String get termsAboutTitle => '1. About Tilomnov';
 
   @override
   String get termsAboutIntro =>
-      'Genie is a map-based property platform that allows users to:';
+      'Tilomnov is a map-based property platform that allows users to:';
 
   @override
   String get termsAboutView =>
@@ -1864,7 +1924,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsAboutPlatformOnly =>
-      'Genie acts only as a platform and does not own, sell, or broker any property.';
+      'Tilomnov acts only as a platform and does not own, sell, or broker any property.';
 
   @override
   String get termsAccountsTitle => '2. User Accounts';
@@ -1886,7 +1946,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsAccountsSuspend =>
-      'Genie reserves the right to suspend accounts that provide false information.';
+      'Tilomnov reserves the right to suspend accounts that provide false information.';
 
   @override
   String get termsListingsTitle => '3. Property Listings';
@@ -1909,14 +1969,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsListingsNotResponsible =>
-      'Genie is not responsible for incorrect property data submitted by users.';
+      'Tilomnov is not responsible for incorrect property data submitted by users.';
 
   @override
   String get termsMapTitle => '4. Map and Coordinate Accuracy';
 
   @override
   String get termsMapIntro =>
-      'Genie provides tools for map visualization, UTM conversion, and distance measurement.';
+      'Tilomnov provides tools for map visualization, UTM conversion, and distance measurement.';
 
   @override
   String get termsMapGuidanceOnly =>
@@ -1928,9 +1988,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsAgree => 'Agree terms of services';
-
-  @override
-  String get termsScrollHint => 'Scroll to bottom to agree terms of services';
 
   @override
   String get authErrEnterValidEmail => 'Enter a valid email address';
@@ -1987,6 +2044,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatMessageSending => 'Sending…';
+
+  @override
+  String get chatMessageSent => 'Sent';
+
+  @override
+  String chatMessageTimeYesterday(String time) {
+    return 'Yesterday $time';
+  }
+
+  @override
+  String get chatDeliveredJustNow => 'Delivered just now';
+
+  @override
+  String chatDeliveredMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes ago',
+      one: '1 minute ago',
+    );
+    return 'Delivered $_temp0';
+  }
+
+  @override
+  String chatDeliveredHours(int hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours hours ago',
+      one: '1 hour ago',
+    );
+    return 'Delivered $_temp0';
+  }
+
+  @override
+  String chatDeliveredOn(String day) {
+    return 'Delivered $day';
+  }
+
+  @override
+  String get chatAttachPicture => 'Attach a picture';
+
+  @override
+  String get chatShowEmojis => 'Emoji';
+
+  @override
+  String get chatShowKeyboard => 'Keyboard';
+
+  @override
+  String get chatSendMessage => 'Send message';
 
   @override
   String get chatReply => 'Reply';
@@ -2380,10 +2487,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyMovedToDraft => 'Property moved to draft';
 
   @override
-  String get propertyPublishProperty => 'Publish Property';
+  String get propertyPublish => 'Publish';
 
   @override
-  String get propertyPublishing => 'Publishing your property...';
+  String get propertyArchive => 'Archive';
+
+  @override
+  String get propertyArchivedPrivately =>
+      'Saved privately. Only you can see this listing.';
 
   @override
   String get propertySaveFailed =>
@@ -3056,4 +3167,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertyPublisherViewProfile => 'View Profile';
+
+  @override
+  String get authPhoneHint => '012 345 678';
+
+  @override
+  String get authEmailOptional => 'Email (optional)';
+
+  @override
+  String get authAgreeToTermsPrefix => 'I agree to the ';
+
+  @override
+  String get personalInfoAddEmail => 'Add email';
+
+  @override
+  String get addEmailTitle => 'Add email';
+
+  @override
+  String get addEmailIntro =>
+      'Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.';
+
+  @override
+  String get addEmailDone => 'Email added';
+
+  @override
+  String get addEmailTaken => 'This email is already used by another account.';
+
+  @override
+  String get closestTitleNearYou => 'Listings near you';
+
+  @override
+  String get closestTitleNearMap => 'Listings near the map centre';
+
+  @override
+  String get closestSubtitle => 'Nearest first, then further away';
+
+  @override
+  String closestAway(String distance) {
+    return '$distance away';
+  }
+
+  @override
+  String get closestEmptyTitle => 'No listings found';
+
+  @override
+  String get closestEmptyHint => 'Try clearing some filters.';
+
+  @override
+  String get closestLoadFailed => 'Listings could not be loaded.';
+
+  @override
+  String get closestRefresh => 'Measure from where I am now';
+
+  @override
+  String get closestShowList => 'Show listings near you';
 }

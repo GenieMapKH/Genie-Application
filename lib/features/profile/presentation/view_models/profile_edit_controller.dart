@@ -1,5 +1,6 @@
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/shared/utils/phone_number.dart';
 
 /// How saving one profile field ended. The screen turns this into a message.
 enum ProfileSaveResult {
@@ -38,7 +39,6 @@ class ProfileEditController {
     ProfileField.displayName: 60,
     ProfileField.firstName: 50,
     ProfileField.lastName: 50,
-    ProfileField.phone: 20,
   };
 
   final UserRepository _repository;
@@ -49,12 +49,17 @@ class ProfileEditController {
   ProfileEditController(this._repository, {required void Function() onSaved})
     : _onSaved = onSaved;
 
-  /// What [input] is saved as: trimmed, usernames in lowercase, and null
-  /// for an empty field (which clears it).
+  /// What [input] is saved as: trimmed, usernames in lowercase, phone
+  /// numbers as the server stores them (`+85512345678`), and null for an
+  /// empty field (which clears it).
   static String? normalize(ProfileField field, String? input) {
     final trimmed = input?.trim() ?? '';
     if (trimmed.isEmpty) return null;
-    return field == ProfileField.username ? trimmed.toLowerCase() : trimmed;
+    return switch (field) {
+      ProfileField.username => trimmed.toLowerCase(),
+      ProfileField.phone => normalizePhoneNumber(trimmed) ?? trimmed,
+      _ => trimmed,
+    };
   }
 
   /// Whether [value] (already normalized) may be saved for [field].
@@ -63,7 +68,9 @@ class ProfileEditController {
       return value != null && _username.hasMatch(value);
     }
     // A phone number may be the only way to sign in, so it cannot be emptied.
-    if (field == ProfileField.phone && value == null) return false;
+    if (field == ProfileField.phone) {
+      return value != null && normalizePhoneNumber(value) == value;
+    }
     final maxLength = _maxLengths[field];
     return value == null || maxLength == null || value.length <= maxLength;
   }

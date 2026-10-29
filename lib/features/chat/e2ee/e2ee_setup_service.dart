@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/backup/backup_service.dart';
-import 'package:genie/features/chat/e2ee/backup/key_backup_vault.dart';
-import 'package:genie/features/chat/e2ee/keys/key_service.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/backup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/key_backup_vault.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
 
 /// How [E2eeSetupService.initialize] ended. The UI turns this into a message.
 enum E2eeSetupResult {

@@ -137,7 +137,53 @@ abstract final class BoundaryLabelLayout {
     return placed;
   }
 
+  /// Whether [box] (screen px at [zoom]) lies wholly inside the boundary
+  /// [points]: all its corners are inside and no side of the plot crosses it,
+  /// so a label there covers none of the outline, even on an L-shaped plot.
+  static bool fitsInside(Rect box, List<LatLng> points, double zoom) {
+    final screen = [for (final point in points) toScreen(point, zoom)];
+    final corners = [
+      box.topLeft,
+      box.topRight,
+      box.bottomRight,
+      box.bottomLeft,
+    ];
+    if (!corners.every((corner) => _contains(screen, corner))) return false;
+    for (var i = 0; i < screen.length; i++) {
+      final a = screen[i];
+      final b = screen[(i + 1) % screen.length];
+      for (var j = 0; j < corners.length; j++) {
+        final c = corners[j];
+        final d = corners[(j + 1) % corners.length];
+        if (_segmentsCross(a, b, c, d)) return false;
+      }
+    }
+    return true;
+  }
+
   static double _worldSize(double zoom) => 256 * math.pow(2, zoom).toDouble();
+
+  /// Even-odd ray casting: whether [point] is inside the outline [ring].
+  static bool _contains(List<Offset> ring, Offset point) {
+    var inside = false;
+    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      final a = ring[i];
+      final b = ring[j];
+      if ((a.dy > point.dy) != (b.dy > point.dy) &&
+          point.dx < (b.dx - a.dx) * (point.dy - a.dy) / (b.dy - a.dy) + a.dx) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  /// Whether segment [a]–[b] crosses segment [c]–[d].
+  static bool _segmentsCross(Offset a, Offset b, Offset c, Offset d) {
+    double turn(Offset o, Offset p, Offset q) =>
+        (p.dx - o.dx) * (q.dy - o.dy) - (p.dy - o.dy) * (q.dx - o.dx);
+    return (turn(c, d, a) > 0) != (turn(c, d, b) > 0) &&
+        (turn(a, b, c) > 0) != (turn(a, b, d) > 0);
+  }
 
   /// Positive when [points] run clockwise on screen.
   static double _signedArea(List<Offset> points) {

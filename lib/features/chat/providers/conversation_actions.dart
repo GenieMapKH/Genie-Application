@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 
 /// Archives, restores and deletes conversations.
 ///

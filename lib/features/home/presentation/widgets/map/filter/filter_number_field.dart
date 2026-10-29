@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/utils/property_format.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
 
 /// A number box of the filter page. Empty means "no limit" (null). It follows
 /// [value] when something else changes it, such as the price slider.

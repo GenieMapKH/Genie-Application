@@ -1,7 +1,7 @@
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/data/google_sign_in_service.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 
 final loginControllerProvider =
     StateNotifierProvider<LoginController, AsyncValue<bool>>((ref) {

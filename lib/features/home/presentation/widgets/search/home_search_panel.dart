@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/features/home/presentation/widgets/map/main_map_controls.dart';
-import 'package:genie/features/home/presentation/widgets/map/map_top_controls.dart';
-import 'package:genie/features/home/presentation/widgets/map/property_carousel.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/presentation/search_layout.dart';
-import 'package:genie/features/search/presentation/widgets/area/search_area_panel.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/main_map_controls.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/map_top_controls.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/property_carousel.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/presentation/search_layout.dart';
+import 'package:tilomnov/features/search/presentation/widgets/area/search_area_panel.dart';
 
 /// Places the search results panel on the home map, between the search bar
 /// and the navigation bar.

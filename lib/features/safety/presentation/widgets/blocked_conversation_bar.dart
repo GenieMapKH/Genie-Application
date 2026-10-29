@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/safety/data/models/block_status.dart';
-import 'package:genie/features/safety/presentation/block_actions.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/safety/data/models/block_status.dart';
+import 'package:tilomnov/features/safety/presentation/block_actions.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// In place of the message bar when the two cannot message: the blocker
 /// can unblock from here; the person blocked is only told they cannot reply.

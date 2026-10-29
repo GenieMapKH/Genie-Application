@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/property_repository.dart';
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 /// Answers each map search only when the test says so.
 class _MapRepository extends PropertyRepository {

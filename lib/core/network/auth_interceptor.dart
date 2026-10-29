@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 
 /// Attaches the session to every request, and renews it when the server
 /// answers that the access token is no longer good.

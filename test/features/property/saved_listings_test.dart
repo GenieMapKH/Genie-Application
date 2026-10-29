@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/favorites_repository.dart';
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
-import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/favorites_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
 
 import '../../support/test_app.dart';
 

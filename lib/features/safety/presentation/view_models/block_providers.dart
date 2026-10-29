@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/follow/presentation/view_models/follow_providers.dart';
-import 'package:genie/features/safety/data/block_repository.dart';
-import 'package:genie/features/safety/data/models/block_status.dart';
-import 'package:genie/features/safety/data/models/blocked_account.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
+import 'package:tilomnov/features/safety/data/block_repository.dart';
+import 'package:tilomnov/features/safety/data/models/block_status.dart';
+import 'package:tilomnov/features/safety/data/models/blocked_account.dart';
 
 final blockRepositoryProvider = Provider<BlockRepository>((ref) {
   return BlockRepository(ref.watch(apiClientProvider));

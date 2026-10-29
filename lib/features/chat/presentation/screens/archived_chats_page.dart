@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation_list/chat_conversation_list_view.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/chat_conversation_list_view.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
 
 /// Conversations the user archived. Swipe or long-press one to move it back
 /// or delete it; a new message moves it back by itself.

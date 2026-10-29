@@ -5,20 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
-import 'package:genie/features/home/utils/map/map_camera_focus.dart';
-import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/core/storage/map_storage.dart';
-import 'package:genie/features/home/presentation/widgets/map/liquid/liquid_cluster_overlay.dart';
-import 'package:genie/features/home/presentation/widgets/map/main_map_overlays.dart';
-import 'package:genie/features/home/presentation/widgets/map/property_carousel.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_camera_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
+import 'package:tilomnov/features/home/utils/map/map_overlay_builder.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/core/storage/map_storage.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/liquid_cluster_overlay.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/main_map_overlays.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/property_carousel.dart';
+import 'package:tilomnov/core/theme/app_motion.dart';
 
 class MainMapView extends ConsumerStatefulWidget {
   final Completer<GoogleMapController> mapControllerCompleter;
@@ -74,7 +75,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _overlays.animateClusters = !MediaQuery.disableAnimationsOf(context);
+    _overlays.animateClusters = !AppMotion.reduceMotionOf(context);
     final l10n = context.l10n;
     if (_iconsLanguage == l10n.localeName) return;
     _iconsLanguage = l10n.localeName;

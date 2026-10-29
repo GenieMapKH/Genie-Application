@@ -1,21 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/chat/data/chat_access_token.dart';
-import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/data/chat_attachment_store.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/backup/backup_service.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/keys/key_service.dart';
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/e2ee/backup/password_lock_migration.dart';
-import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/api_version_interceptor.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_access_token.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_store.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/backup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_key_manager.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/password_lock_migration.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/peer_key_store.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 
 /// Overridden in `main.dart` once libsodium has been initialised.
 final cryptoServiceProvider = Provider<CryptoService>((ref) {
@@ -78,6 +79,8 @@ final chatSocketServiceProvider = Provider<ChatSocketService>((ref) {
   final userId = ref.watch(currentUserIdProvider);
   final service = ChatSocketService(
     readAccessToken: ChatAccessToken(dio: ref.watch(apiClientProvider)).read,
+    onApiVersionRetired: () =>
+        ref.read(apiVersionRetiredProvider.notifier).state = true,
   );
   ref.onDispose(service.dispose);
   if (userId != null) {

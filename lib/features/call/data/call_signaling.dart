@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
 
 /// How the two phones describe a connection to each other (WebRTC).
 typedef SessionDescription = ({String type, String sdp});

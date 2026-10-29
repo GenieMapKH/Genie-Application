@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/media/image_compressor.dart';
-import 'package:genie/core/media/image_upload_policy.dart';
+import 'package:tilomnov/core/media/image_compressor.dart';
+import 'package:tilomnov/core/media/image_upload_policy.dart';
 import 'package:image_picker/image_picker.dart';
 
 const _policy = ImageUploadPolicy(

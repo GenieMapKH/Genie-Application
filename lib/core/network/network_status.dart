@@ -34,6 +34,9 @@ class NetworkStatus {
     _probeTimer ??= Timer.periodic(_probeEvery, (_) => _runProbe());
   }
 
+  /// Asks the server now, e.g. when the user taps Retry.
+  Future<void> checkNow() => _runProbe();
+
   Future<void> _runProbe() async {
     try {
       await probe?.call();

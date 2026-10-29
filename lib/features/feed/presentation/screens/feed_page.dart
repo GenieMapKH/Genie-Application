@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/feed/presentation/view_models/feed_provider.dart';
-import 'package:genie/features/feed/presentation/widgets/feed_listing_card.dart';
-import 'package:genie/features/feed/presentation/widgets/feed_message_view.dart';
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/search/presentation/screens/publisher_profile_page.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/utils/paged_list.dart';
-import 'package:genie/shared/widgets/layout/app_header_bar.dart';
-import 'package:genie/shared/widgets/layout/paused_while_hidden.dart';
-import 'package:genie/shared/widgets/lists/load_more_on_scroll.dart';
-import 'package:genie/shared/widgets/lists/loading_more_indicator.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/feed/presentation/view_models/feed_provider.dart';
+import 'package:tilomnov/features/feed/presentation/widgets/feed_listing_card.dart';
+import 'package:tilomnov/features/feed/presentation/widgets/feed_message_view.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/search/presentation/screens/publisher_profile_page.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
+import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 /// The Feed tab: new listings of the people the user follows, newest first.
 class FeedPage extends ConsumerWidget {

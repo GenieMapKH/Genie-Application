@@ -1,6 +1,6 @@
-import 'package:genie/features/security/data/known_devices_storage.dart';
-import 'package:genie/features/security/data/models/device_session.dart';
-import 'package:genie/features/security/data/repositories/session_repository.dart';
+import 'package:tilomnov/features/security/data/known_devices_storage.dart';
+import 'package:tilomnov/features/security/data/models/device_session.dart';
+import 'package:tilomnov/features/security/data/repositories/session_repository.dart';
 
 /// Notices when another device signs in to the account, so its owner hears
 /// about it on the devices they already use. No UI.

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/notifications/data/notification_repository.dart';
-import 'package:genie/features/notifications/data/push_messaging.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/notifications/data/notification_repository.dart';
+import 'package:tilomnov/features/notifications/data/push_messaging.dart';
 
 /// Keeps the server told where this device can be reached, for the account
 /// signed in on it, and in which language to write to it.

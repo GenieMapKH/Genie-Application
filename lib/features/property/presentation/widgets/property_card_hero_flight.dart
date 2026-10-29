@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_shapes.dart';
 
 /// How a listing card flies to the same listing's card on the next page
 /// (the feed's wide card to a profile's narrow one, and back). Each card
@@ -34,10 +35,12 @@ Widget propertyCardFlightShuttle(
 
   return IgnorePointer(
     child: DecoratedBox(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colors.divider),
+        shape: AppShapes.continuous(
+          16,
+          side: BorderSide(color: colors.divider),
+        ),
       ),
       child: Stack(
         fit: StackFit.expand,
@@ -75,7 +78,7 @@ class _ScaledFace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
+    return ClipRSuperellipse(
       borderRadius: BorderRadius.circular(16),
       child: FittedBox(
         fit: BoxFit.fitWidth,

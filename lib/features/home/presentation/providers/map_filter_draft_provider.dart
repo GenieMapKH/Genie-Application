@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 /// The span of the filter page's price slider: sale prices, or monthly rents.
 class MapPriceScale {

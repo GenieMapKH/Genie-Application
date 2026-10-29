@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_route.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_route.dart';
 
 /// Stacks the black backdrops of every open sheet the way they show on screen.
 double _backdropOpacity(WidgetTester tester) {

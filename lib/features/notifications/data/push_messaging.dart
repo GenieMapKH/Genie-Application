@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:genie/core/config/app_config.dart';
+import 'package:tilomnov/core/config/app_config.dart';
 
 /// A push as it reaches the app: its data, and what the system showed.
 typedef ReceivedPush = ({

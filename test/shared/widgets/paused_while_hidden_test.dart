@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/shared/widgets/layout/paused_while_hidden.dart';
+import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
 
 final _count = StateProvider<int>((ref) => 0);
 

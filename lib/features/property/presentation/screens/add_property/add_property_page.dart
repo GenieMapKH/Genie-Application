@@ -1,21 +1,21 @@
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/core/media/image_compressor.dart';
-import 'package:genie/core/media/image_upload_policy.dart';
-import 'package:genie/shared/utils/image_rejection_message.dart';
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/core/media/image_compressor.dart';
+import 'package:tilomnov/core/media/image_upload_policy.dart';
+import 'package:tilomnov/shared/utils/image_rejection_message.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/home/utils/map/map_measurements.dart';
-import 'package:genie/features/property/utils/property_format.dart';
+import 'package:tilomnov/features/home/utils/map/map_measurements.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
-import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_form_input.dart';
 
 import 'add_property_page_form_binding.dart';
 import 'add_property_page_layout.dart';
@@ -110,6 +110,9 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
 
   bool hasAttemptedSubmit = false;
   bool isLoading = false;
+
+  /// Whether the Archive button, not Publish, started the running save.
+  bool isArchiving = false;
 
   final GlobalKey titleKey = GlobalKey();
   final GlobalKey priceKey = GlobalKey();

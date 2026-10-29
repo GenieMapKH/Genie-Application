@@ -52,3 +52,5 @@ app.*.map.json
 # Debug artifacts
 crash_log.txt
 *.log
+
+sentry.properties

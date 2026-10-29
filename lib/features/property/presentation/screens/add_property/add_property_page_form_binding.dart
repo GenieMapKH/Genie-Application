@@ -1,4 +1,4 @@
-import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_form_input.dart';
 import 'add_property_page.dart';
 
 /// Moves the form's values between the page's fields and a

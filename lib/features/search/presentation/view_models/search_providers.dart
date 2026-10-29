@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/search/data/search_history_repository.dart';
-import 'package:genie/features/search/data/search_repository.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/search/data/search_history_repository.dart';
+import 'package:tilomnov/features/search/data/search_repository.dart';
 
 /// Kept for the whole app session, so its recent answers outlive the page.
 final searchRepositoryProvider = Provider<SearchRepository>((ref) {

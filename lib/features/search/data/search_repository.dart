@@ -2,15 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/core/network/api_cache_manager.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/data/models/place_suggestion.dart';
-import 'package:genie/features/search/data/models/publisher_profile.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/search/data/models/search_area.dart';
-import 'package:genie/features/search/data/models/search_results.dart';
-import 'package:genie/features/search/data/search_failure.dart';
-import 'package:genie/features/search/data/search_results_cache.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/models/place_suggestion.dart';
+import 'package:tilomnov/features/search/data/models/publisher_profile.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/search/data/models/search_area.dart';
+import 'package:tilomnov/features/search/data/models/search_results.dart';
+import 'package:tilomnov/features/search/data/search_failure.dart';
+import 'package:tilomnov/features/search/data/search_results_cache.dart';
 
 /// `/public/search`: one request per text answers places, listings and
 /// people together. Every failure surfaces as a [SearchFailure].

@@ -4,16 +4,16 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/keys/key_service.dart';
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/e2ee/message_reader.dart';
-import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_listing.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/e2ee/message_reader.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/peer_key_store.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
 const alice = 'alice';

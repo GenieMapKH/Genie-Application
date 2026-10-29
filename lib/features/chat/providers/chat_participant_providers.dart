@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/providers/active_chat_state.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_state.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 
 /// Whether the given user is online, kept current while something watches.
 final chatPresenceProvider = StreamProvider.autoDispose

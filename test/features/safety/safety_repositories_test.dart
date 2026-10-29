@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
-import 'package:genie/features/safety/data/block_repository.dart';
-import 'package:genie/features/safety/data/models/report_reason.dart';
-import 'package:genie/features/safety/data/report_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/safety/data/block_repository.dart';
+import 'package:tilomnov/features/safety/data/models/report_reason.dart';
+import 'package:tilomnov/features/safety/data/report_repository.dart';
 
 import '../../support/test_app.dart';
 

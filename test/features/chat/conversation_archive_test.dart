@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/conversation_change.dart';
-import 'package:genie/features/chat/providers/active_chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/chat/providers/conversation_actions.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/conversation_change.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/chat/providers/conversation_actions.dart';
 
 import 'chat_fakes.dart';
 

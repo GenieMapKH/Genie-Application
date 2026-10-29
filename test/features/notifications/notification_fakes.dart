@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/notifications/data/notification_repository.dart';
-import 'package:genie/features/notifications/data/push_messaging.dart';
-import 'package:genie/features/notifications/data/system_notifications.dart';
-import 'package:genie/features/notifications/models/notification_preferences.dart';
+import 'package:tilomnov/features/notifications/data/notification_repository.dart';
+import 'package:tilomnov/features/notifications/data/push_messaging.dart';
+import 'package:tilomnov/features/notifications/data/system_notifications.dart';
+import 'package:tilomnov/features/notifications/models/notification_preferences.dart';
 
 class FakePushMessaging implements PushMessaging {
   bool allow = true;

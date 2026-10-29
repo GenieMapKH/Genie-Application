@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// Six boxes for a 6-digit PIN, typed on the number pad. Digits show as
 /// dots. [onCompleted] runs when the sixth digit is typed.

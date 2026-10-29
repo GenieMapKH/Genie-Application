@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/safety/presentation/screens/blocked_accounts_page.dart';
-import 'package:genie/features/security/presentation/screens/account_removal_page.dart';
-import 'package:genie/features/security/presentation/screens/change_password_page.dart';
-import 'package:genie/features/security/presentation/screens/create_password_page.dart';
-import 'package:genie/features/security/presentation/screens/devices_page.dart';
-import 'package:genie/features/security/presentation/widgets/e2ee_settings_actions.dart';
-import 'package:genie/features/security/presentation/widgets/forgot_pin_actions.dart';
-import 'package:genie/features/security/presentation/widgets/info_note.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/lists/settings_list.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/safety/presentation/screens/blocked_accounts_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/account_removal_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/change_password_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/create_password_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/devices_page.dart';
+import 'package:tilomnov/features/security/presentation/widgets/e2ee_settings_actions.dart';
+import 'package:tilomnov/features/security/presentation/widgets/forgot_pin_actions.dart';
+import 'package:tilomnov/features/security/presentation/widgets/info_note.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
 
 /// Everything that protects the account: chat encryption keys, the password,
 /// the devices signed in, the accounts blocked, and deactivating or deleting

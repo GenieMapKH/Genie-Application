@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// A compact emoji keyboard shown under the message box.
 class ChatEmojiPanel extends StatefulWidget {

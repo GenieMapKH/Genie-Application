@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/settings/data/app_settings_storage.dart';
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:genie/features/notifications/models/notification_preferences.dart';
-import 'package:genie/features/notifications/presentation/notification_settings_page.dart';
-import 'package:genie/features/notifications/providers/notification_preferences_provider.dart';
-import 'package:genie/features/notifications/providers/notification_providers.dart';
+import 'package:tilomnov/features/notifications/models/notification_preferences.dart';
+import 'package:tilomnov/features/notifications/presentation/notification_settings_page.dart';
+import 'package:tilomnov/features/notifications/providers/notification_preferences_provider.dart';
+import 'package:tilomnov/features/notifications/providers/notification_providers.dart';
 
 import 'notification_fakes.dart';
 

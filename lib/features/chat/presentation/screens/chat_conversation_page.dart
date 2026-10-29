@@ -3,47 +3,47 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/device/microphone_permission.dart';
-import 'package:genie/core/media/image_upload_policy.dart';
-import 'package:genie/shared/utils/image_rejection_message.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
-import 'package:genie/features/chat/presentation/screens/chat_pin_setup_page.dart';
-import 'package:genie/features/chat/models/chat_composer_mode.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_composer_banner.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_image_picker.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_input_bar.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_key_changed_banner.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_message_action_problem_text.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_message_tile.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_notice.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_send_problem_text.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
-import 'package:genie/features/chat/presentation/widgets/pin/pin_check_dialog.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_recorder_bar.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_hold_panel.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_recording_problem_text.dart';
-import 'package:genie/features/chat/providers/active_chat_provider.dart';
-import 'package:genie/features/chat/models/chat_timeline.dart';
-import 'package:genie/features/chat/providers/chat_call_history_provider.dart';
-import 'package:genie/features/chat/providers/chat_call_starter.dart';
-import 'package:genie/features/chat/providers/chat_composer_provider.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/chat/providers/visible_conversation.dart';
-import 'package:genie/features/chat/providers/voice_playback_provider.dart';
-import 'package:genie/features/chat/providers/voice_recording_provider.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/safety/presentation/view_models/block_providers.dart';
-import 'package:genie/features/safety/presentation/widgets/blocked_conversation_bar.dart';
-import 'package:genie/features/safety/presentation/widgets/safety_menu_button.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/features/chat/models/chat_listing.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_listing_offer_bar.dart';
+import 'package:tilomnov/core/device/microphone_permission.dart';
+import 'package:tilomnov/core/media/image_upload_policy.dart';
+import 'package:tilomnov/shared/utils/image_rejection_message.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_pin_setup_page.dart';
+import 'package:tilomnov/features/chat/models/chat_composer_mode.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_composer_banner.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_image_picker.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_input_bar.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_key_changed_banner.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_message_action_problem_text.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_message_tile.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_notice.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_send_problem_text.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_check_dialog.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/chat_voice_recorder_bar.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_hold_panel.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_recording_problem_text.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
+import 'package:tilomnov/features/chat/models/chat_timeline.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_history_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_starter.dart';
+import 'package:tilomnov/features/chat/providers/chat_composer_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/chat/providers/visible_conversation.dart';
+import 'package:tilomnov/features/chat/providers/voice_playback_provider.dart';
+import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/safety/presentation/view_models/block_providers.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/blocked_conversation_bar.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_listing_offer_bar.dart';
 
 class ChatConversationPage extends ConsumerWidget {
   final String participantId;
@@ -91,6 +91,8 @@ class ChatConversationPage extends ConsumerWidget {
           actions: [
             IconButton(
               tooltip: context.l10n.callVoice,
+              // Larger than the circle it draws, so a tap beside it still calls.
+              constraints: const BoxConstraints.tightFor(width: 56, height: 56),
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -481,6 +483,11 @@ class _ConversationState extends ConsumerState<_Conversation> {
     if (items.isEmpty) {
       return ChatNotice(message: context.l10n.chatMessagesAreEndToEndEncrypted);
     }
+    // "Sent" goes under the user's newest message while no reply follows it.
+    final newest = items.whereType<ChatMessageItem>().lastOrNull?.message;
+    final sentStatusId = newest?.senderId == widget.chat.userId
+        ? newest!.id
+        : null;
 
     // Reversed, so the list stays anchored to the newest message.
     return ListView.builder(
@@ -497,6 +504,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
               chat: widget.chat,
               message: message,
               participantName: widget.participantName,
+              showSentStatus: message.id == sentStatusId,
             ),
             ChatCallItem(:final call) => ChatCallEntryTile(
               call: call,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
-import 'package:genie/features/profile/presentation/screens/personal_info_page.dart';
-import 'package:genie/features/profile/presentation/screens/user_profile_page.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/features/profile/presentation/screens/personal_info_page.dart';
+import 'package:tilomnov/features/profile/presentation/screens/user_profile_page.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../support/test_app.dart';

@@ -1,7 +1,7 @@
-import 'package:genie/shared/widgets/media/app_network_image.dart';
+import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
 
-import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_image_gallery.dart';
 
 /// The detail sheet's photo strip: full-width images stacked vertically so
 /// scrolling walks through the listing's photos.

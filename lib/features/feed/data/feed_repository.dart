@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 import 'feed_cache.dart';
 

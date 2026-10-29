@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/safety/data/models/report_reason.dart';
-import 'package:genie/features/safety/presentation/block_actions.dart';
-import 'package:genie/features/safety/presentation/view_models/block_providers.dart';
-import 'package:genie/features/safety/presentation/widgets/report_sheet.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/safety/data/models/report_reason.dart';
+import 'package:tilomnov/features/safety/presentation/block_actions.dart';
+import 'package:tilomnov/features/safety/presentation/view_models/block_providers.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/report_sheet.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/menus/app_menu_item.dart';
 
 enum _SafetyAction { reportListing, reportPerson, block, unblock }
 
@@ -42,42 +43,36 @@ class SafetyMenuButton extends ConsumerWidget {
       tooltip: l10n.safetyMore,
       icon: Icon(Icons.more_vert, color: iconColor ?? context.colors.textMuted),
       onSelected: (action) => _run(context, ref, action),
-      itemBuilder: (_) => [
+      itemBuilder: (menuContext) => [
         if (listingId != null)
-          _item(
-            _SafetyAction.reportListing,
-            Icons.flag_outlined,
-            l10n.reportListingAction,
+          appMenuItem(
+            menuContext,
+            value: _SafetyAction.reportListing,
+            icon: Icons.flag_outlined,
+            label: l10n.reportListingAction,
           ),
-        _item(
-          _SafetyAction.reportPerson,
-          Icons.report_outlined,
-          l10n.reportUserAction,
+        appMenuItem(
+          menuContext,
+          value: _SafetyAction.reportPerson,
+          icon: Icons.report_outlined,
+          label: l10n.reportUserAction,
         ),
         if (isBlocked)
-          _item(
-            _SafetyAction.unblock,
-            Icons.lock_open_outlined,
-            l10n.unblockAction,
+          appMenuItem(
+            menuContext,
+            value: _SafetyAction.unblock,
+            icon: Icons.lock_open_outlined,
+            label: l10n.unblockAction,
           )
         else
-          _item(_SafetyAction.block, Icons.block, l10n.blockAction),
+          appMenuItem(
+            menuContext,
+            value: _SafetyAction.block,
+            icon: Icons.block,
+            label: l10n.blockAction,
+            danger: true,
+          ),
       ],
-    );
-  }
-
-  PopupMenuItem<_SafetyAction> _item(
-    _SafetyAction action,
-    IconData icon,
-    String label,
-  ) {
-    return PopupMenuItem(
-      value: action,
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(label),
-        contentPadding: EdgeInsets.zero,
-      ),
     );
   }
 

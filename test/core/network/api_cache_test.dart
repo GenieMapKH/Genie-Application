@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/network/api_cache_manager.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
 
 /// Answers every request itself and counts what reached "the server".
 class _FakeServer extends Interceptor {

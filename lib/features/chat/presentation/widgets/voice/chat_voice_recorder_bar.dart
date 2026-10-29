@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_recording_progress.dart';
-import 'package:genie/features/chat/providers/voice_recording_provider.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_recording_progress.dart';
+import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Takes the place of the message field while a voice message is recorded:
 /// how long it is so far and how loud, with a way to throw it away or send.

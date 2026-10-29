@@ -18,6 +18,10 @@ class VoiceRecordButton extends StatefulWidget {
   static const cancelDistance = 120.0;
 
   final String label;
+
+  /// Touched anywhere in a square this wide, larger than the 44 it draws.
+  final double touchSize;
+
   final VoidCallback? onTap;
   final VoidCallback? onHoldStart;
 
@@ -28,6 +32,7 @@ class VoiceRecordButton extends StatefulWidget {
   const VoiceRecordButton({
     super.key,
     required this.label,
+    this.touchSize = 44,
     this.onTap,
     this.onHoldStart,
     this.onHoldEnd,
@@ -110,14 +115,19 @@ class _VoiceRecordButtonState extends State<VoiceRecordButton> {
         onPointerMove: _onMove,
         onPointerUp: _onUp,
         onPointerCancel: _onCancel,
-        child: AnimatedScale(
-          scale: _holding ? 1.35 : 1,
-          duration: const Duration(milliseconds: 150),
-          curve: Curves.easeOut,
-          child: SvgPicture.asset(
-            'assets/icons/chat_voice.svg',
-            width: 44,
-            height: 44,
+        child: SizedBox.square(
+          dimension: widget.touchSize,
+          child: Center(
+            child: AnimatedScale(
+              scale: _holding ? 1.35 : 1,
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              child: SvgPicture.asset(
+                'assets/icons/chat_voice.svg',
+                width: 44,
+                height: 44,
+              ),
+            ),
           ),
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/map_overlay_builder.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 PropertyModel _listing(String id, double lng) => PropertyModel(
   id: id,

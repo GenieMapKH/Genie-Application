@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:genie/core/config/app_config.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
-import 'package:genie/features/chat/models/conversation_change.dart';
-import 'package:genie/features/chat/models/message_deletion.dart';
+import 'package:tilomnov/core/config/app_config.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/api_version_interceptor.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/models/conversation_change.dart';
+import 'package:tilomnov/features/chat/models/message_deletion.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 /// Thrown when a message could not be handed to the server. [message] is
@@ -50,6 +51,9 @@ class ChatSocketService {
   /// Reads the current access token; null when signed out. [afterRejection]
   /// is set when the server refused the previous one.
   final Future<String?> Function({bool afterRejection}) readAccessToken;
+
+  /// Called when the server no longer serves this build's API version.
+  final void Function()? onApiVersionRetired;
   final String _url;
 
   io.Socket? _socket;
@@ -76,8 +80,11 @@ class ChatSocketService {
     'call:signal',
   ];
 
-  ChatSocketService({required this.readAccessToken, String? baseUrl})
-    : _url = '${baseUrl ?? AppConfig.apiBaseUrl}/chat';
+  ChatSocketService({
+    required this.readAccessToken,
+    this.onApiVersionRetired,
+    String? baseUrl,
+  }) : _url = '${baseUrl ?? AppConfig.apiBaseUrl}/chat';
 
   /// Messages delivered live: from the other person, or sent by this user
   /// on another device.
@@ -242,7 +249,13 @@ class ChatSocketService {
           .disableAutoConnect()
           .enableForceNew()
           // Asked on every (re)connection, so a renewed token is picked up.
-          .setAuthFn((callback) => callback({'token': _handshakeToken}))
+          // The API version decides which events and payloads are spoken.
+          .setAuthFn(
+            (callback) => callback({
+              'token': _handshakeToken,
+              'apiVersion': AppConfig.apiVersion,
+            }),
+          )
           .build(),
     );
 
@@ -263,8 +276,12 @@ class ChatSocketService {
 
     // A refused handshake. Network failures are retried by the socket itself.
     socket.onConnectError((error) {
-      if (error is Map && error['message'] == 'unauthorized') {
+      final message = error is Map ? error['message'] : null;
+      if (message == 'unauthorized') {
         _reconnectAfterRejection();
+      } else if (message == ApiVersionInterceptor.retiredCode) {
+        AppLogger.debug('Chat socket refused: this API version is retired');
+        onApiVersionRetired?.call();
       }
     });
 

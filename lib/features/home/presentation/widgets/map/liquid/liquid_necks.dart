@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:genie/features/home/presentation/widgets/map/liquid/drop_on_screen.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/drop_on_screen.dart';
 
 /// The necks joining drops close enough to pull on each other, drawn as
 /// plain paths so their edges stay as crisp as the map's own dots.

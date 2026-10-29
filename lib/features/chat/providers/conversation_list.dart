@@ -1,5 +1,5 @@
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/shared/utils/paged_list.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
 
 /// A conversation list as shown: the conversations loaded so far, and the
 /// unread messages in the whole list, loaded or not (the chat tab's badge).

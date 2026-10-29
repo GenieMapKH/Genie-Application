@@ -29,6 +29,8 @@
 		<string>audio</string>
 		<string>remote-notification</string>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Tilomnov saves the pictures of listings you share to your photos.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Record voice messages and talk in calls.</string>
 	<key>LSRequiresIPhoneOS</key>

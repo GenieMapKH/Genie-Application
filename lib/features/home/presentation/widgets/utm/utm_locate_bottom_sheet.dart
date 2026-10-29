@@ -1,4 +1,4 @@
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -13,8 +13,8 @@ import 'components/utm_sheet_header.dart';
 import 'entry/utm_scan_section.dart';
 import 'entry/utm_manual_entry.dart';
 import 'components/utm_preview_button.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 class UtmLocateBottomSheet extends StatefulWidget {
   final List<Map<String, dynamic>>? initialCoordinates;

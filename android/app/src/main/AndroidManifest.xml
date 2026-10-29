@@ -13,6 +13,9 @@
     <!-- Calls: an incoming call rings as a full-screen notification. The app
          itself is never shown over the lock screen: Accept asks to unlock. -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- Saving a listing's share picture to the gallery: only Android 9 and
+         older ask for it; newer versions add pictures without it. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     
     <application
         android:label="Tilomnov"

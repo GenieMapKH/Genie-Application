@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:sentry/sentry.dart';
 
-import 'package:genie/core/config/app_config.dart';
+import 'package:tilomnov/core/config/app_config.dart';
 
 /// Error reports, sent to Sentry when the build was given a `SENTRY_DSN`;
 /// otherwise nothing is sent. Only what the app did not catch is reported:

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/home/presentation/providers/map_filter_draft_provider.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/filter_number_field.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/filter_section.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/price_range_slider.dart';
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_filter_draft_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/filter_number_field.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/filter_section.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/price_range_slider.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Price range: histogram and slider, then Min / Max Price boxes. The slider
 /// and the boxes edit the same range.

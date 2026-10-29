@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:genie/core/network/api_cache_manager.dart';
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/map_property_filter.dart';
 import '../models/property_insights.dart';

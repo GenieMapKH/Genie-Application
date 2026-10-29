@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/search/data/models/saved_search.dart';
-import 'package:genie/features/search/presentation/view_models/saved_searches_provider.dart';
-import 'package:genie/features/search/presentation/widgets/saved/saved_search_name_dialog.dart';
-import 'package:genie/features/search/presentation/widgets/saved/saved_search_summary.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/search/data/models/saved_search.dart';
+import 'package:tilomnov/features/search/presentation/view_models/saved_searches_provider.dart';
+import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search_name_dialog.dart';
+import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search_summary.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/shared/widgets/menus/app_menu_item.dart';
 
 /// The searches the user saved from the map filter. Each can alert about
 /// new listings, be renamed, deleted, or opened on the map again.
@@ -135,17 +136,19 @@ class _SavedSearchTile extends ConsumerWidget {
               _TileAction.rename => _rename(context, ref),
               _TileAction.delete => _delete(context, ref),
             },
-            itemBuilder: (_) => [
-              PopupMenuItem(
+            itemBuilder: (menuContext) => [
+              appMenuItem(
+                menuContext,
                 value: _TileAction.rename,
-                child: Text(l10n.savedSearchRename),
+                icon: Icons.edit_outlined,
+                label: l10n.savedSearchRename,
               ),
-              PopupMenuItem(
+              appMenuItem(
+                menuContext,
                 value: _TileAction.delete,
-                child: Text(
-                  l10n.savedSearchDelete,
-                  style: TextStyle(color: colors.danger),
-                ),
+                icon: Icons.delete_outline,
+                label: l10n.savedSearchDelete,
+                danger: true,
               ),
             ],
           ),

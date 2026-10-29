@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_listing.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_listing_preview.dart';
-import 'package:genie/features/chat/providers/chat_listing_opener.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_listing_preview.dart';
+import 'package:tilomnov/features/chat/providers/chat_listing_opener.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// A listing sent in a conversation, so both people know which one they talk
 /// about. Tapping it opens the listing.

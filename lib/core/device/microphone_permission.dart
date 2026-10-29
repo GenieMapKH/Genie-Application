@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:genie/core/device/system_settings.dart';
+import 'package:tilomnov/core/device/system_settings.dart';
 
 /// Whether the app may use the microphone.
 enum MicrophoneAccess {

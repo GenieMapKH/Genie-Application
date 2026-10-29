@@ -1,7 +1,7 @@
-import 'package:genie/features/property/data/models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/property/data/models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// One line naming what a saved search looks for, e.g.
 /// "House · For sale · $50K–$200K · 2 keywords". "Any listing" when nothing

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/presentation/screens/login_page.dart';
-import 'package:genie/shared/widgets/buttons/app_button.dart';
-import 'package:genie/shared/widgets/media/google_icon.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/auth/presentation/screens/login_page.dart';
+import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
+import 'package:tilomnov/shared/widgets/media/google_icon.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:dio/dio.dart';
-import 'package:genie/features/auth/data/google_sign_in_service.dart';
-import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
-import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
+import 'package:tilomnov/features/auth/presentation/screens/welcome_page.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/login_controller.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../support/test_app.dart';

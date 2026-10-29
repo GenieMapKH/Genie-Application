@@ -3,21 +3,21 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/data/chat_attachment_store.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_emoji_panel.dart';
-import 'package:genie/features/chat/providers/active_chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_store.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_emoji_panel.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
 import '../safety/fake_block_repository.dart';
@@ -421,7 +421,7 @@ void main() {
       expect(find.byType(ChatEmojiPanel), findsOneWidget);
 
       await tester.tap(find.text('😀'));
-      await tester.tap(find.byIcon(Icons.send_outlined));
+      await tester.tap(find.byIcon(Icons.send_rounded));
       await tester.pump();
       await tester.pump();
 

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
 
 /// A field of the profile the user can change, one at a time.
 enum ProfileField {

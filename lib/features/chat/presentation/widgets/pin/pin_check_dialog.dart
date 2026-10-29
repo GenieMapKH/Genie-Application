@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
-import 'package:genie/features/chat/presentation/widgets/pin/pin_code_field.dart';
-import 'package:genie/features/chat/presentation/widgets/pin/pin_status_line.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_code_field.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_status_line.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Asks for the chat PIN and checks each one typed with [check] while the
 /// dialog stays open: a wrong PIN says how many tries are left, and after

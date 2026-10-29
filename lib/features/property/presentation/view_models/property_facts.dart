@@ -1,7 +1,7 @@
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// One line of the listing's details: "Parking" — "Yes".
 class PropertyFact {

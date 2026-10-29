@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_call_entry.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_duration_text.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_duration_text.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// A call that took place, as a centred line among the messages:
 /// "Outgoing call · 2:34", "Missed call", "No answer"...

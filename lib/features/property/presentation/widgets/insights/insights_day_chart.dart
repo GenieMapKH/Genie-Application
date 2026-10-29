@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/data/models/property_insights.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/property_insights.dart';
 
 /// One bar per day for one measure, today last. Tapping a bar names its day
 /// and count above the chart; the newest day is named until then.

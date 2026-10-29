@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Asks for the account password that locks the chat keys. Returns null if
 /// the user cancels. The password is only checked by what it opens.

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/owner_display_name.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_image_gallery.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/owner_display_name.dart';
 
 /// A two-column grid of compact listing tiles, used for both the "Similar
 /// Property" and "Property for you" sections of the detail sheet.

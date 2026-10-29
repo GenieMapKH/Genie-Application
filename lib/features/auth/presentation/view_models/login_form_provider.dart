@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tilomnov/shared/utils/phone_number.dart';
 
 import 'login_controller.dart';
 
@@ -128,11 +129,8 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
     return emailRegex.hasMatch(value.trim());
   }
 
-  bool _validatePhone(String value) {
-    final clean = value.replaceAll(RegExp(r'[\s\-()]'), '');
-    final phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-    return phoneRegex.hasMatch(clean);
-  }
+  /// Same rule as sign-up and the server: `012 345 678`, `+855 12 345 678`...
+  bool _validatePhone(String value) => normalizePhoneNumber(value) != null;
 
   bool validateForm() {
     bool isValid = true;
@@ -180,8 +178,10 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
     if (state.selectedMethod == AuthMethod.email) {
       return controller.login(state.email.trim(), state.password);
     } else {
-      final cleanPhone = state.phone.replaceAll(RegExp(r'[\s\-()]'), '');
-      return controller.login(cleanPhone, state.password);
+      return controller.login(
+        normalizePhoneNumber(state.phone)!,
+        state.password,
+      );
     }
   }
 }

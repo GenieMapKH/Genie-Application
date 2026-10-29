@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 
-import 'package:genie/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
 
 /// API access for the profile picture. Each call returns the profile as it
 /// is afterwards.

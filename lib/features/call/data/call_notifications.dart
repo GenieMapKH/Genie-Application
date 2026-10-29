@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:genie/features/notifications/data/system_notifications.dart';
+import 'package:tilomnov/features/notifications/data/system_notifications.dart';
 
 /// Rings on Android when the app is not open: a full-screen notification
 /// that keeps ringing until it is answered, declined or the call ends.

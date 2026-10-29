@@ -40,7 +40,7 @@ class MissingConfigApp extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'In VS Code, press F5 and pick "Genie (debug, .env)". '
+                  'In VS Code, press F5 and pick "Tilomnov (debug, .env)". '
                   'Copy .env.example to .env first if you have no .env.',
                 ),
               ],

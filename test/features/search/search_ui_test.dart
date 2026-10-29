@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/search/data/search_repository.dart';
-import 'package:genie/features/search/presentation/screens/search_page.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/search/presentation/view_models/search_providers.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
-import 'package:genie/features/search/presentation/widgets/area/search_area_panel.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/search/data/search_repository.dart';
+import 'package:tilomnov/features/search/presentation/screens/search_page.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/features/search/presentation/widgets/area/search_area_panel.dart';
 
 import '../../support/test_app.dart';
 

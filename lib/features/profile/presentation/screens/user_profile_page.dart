@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:genie/app/session/sign_out.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/screens/personal_info_page.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/profile/presentation/widgets/profile_avatar.dart';
-import 'package:genie/features/security/presentation/screens/security_page.dart';
-import 'package:genie/features/notifications/presentation/notification_settings_page.dart';
-import 'package:genie/features/settings/presentation/widgets/preference_rows.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/lists/settings_list.dart';
-import 'package:genie/features/search/presentation/screens/saved_searches_page.dart';
+import 'package:tilomnov/app/session/sign_out.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/screens/personal_info_page.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/profile/presentation/widgets/profile_avatar.dart';
+import 'package:tilomnov/features/security/presentation/screens/security_page.dart';
+import 'package:tilomnov/features/notifications/presentation/notification_settings_page.dart';
+import 'package:tilomnov/features/settings/presentation/widgets/preference_rows.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
+import 'package:tilomnov/features/search/presentation/screens/saved_searches_page.dart';
 
 /// The "User" tab: who is signed in, and the way into every account setting.
 class UserProfilePage extends ConsumerStatefulWidget {

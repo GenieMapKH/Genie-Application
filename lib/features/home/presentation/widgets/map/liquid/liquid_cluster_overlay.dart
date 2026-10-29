@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
-import 'package:genie/features/home/presentation/widgets/map/liquid/liquid_cluster_painter.dart';
-import 'package:genie/features/home/utils/map/cluster_transition.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_camera_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/liquid/liquid_cluster_painter.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
 
 /// Plays a [ClusterTransition] over the map, frame by frame.
 ///

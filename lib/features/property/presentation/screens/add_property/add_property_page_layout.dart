@@ -3,20 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/layout/app_header_bar.dart';
-import 'package:genie/features/property/presentation/widgets/property_type_selector.dart';
-import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
-import 'package:genie/features/property/presentation/widgets/existing_property_photos.dart';
-import 'package:genie/features/property/presentation/widgets/forms/fields/property_discount_field.dart';
-import 'package:genie/features/property/presentation/widgets/property_image_picker.dart';
-import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_type_selector.dart';
+import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:tilomnov/features/property/presentation/widgets/existing_property_photos.dart';
+import 'package:tilomnov/features/property/presentation/widgets/forms/fields/property_discount_field.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_image_picker.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
 import 'add_property_page.dart';
-import 'add_property_page_form_binding.dart';
 import 'add_property_page_forms_dynamic.dart';
 import 'add_property_page_logic.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/core/logging/app_logger.dart';
+import 'add_property_submit_bar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 extension AddPropertyPageLayout on AddPropertyPageState {
   Widget buildAddPropertyLayout(BuildContext context) {
@@ -31,9 +30,6 @@ extension AddPropertyPageLayout on AddPropertyPageState {
               title: isEditing
                   ? context.l10n.propertyEditProperty
                   : context.l10n.propertyAddProperty,
-              // Editing saves with the button below; a new listing can also
-              // be kept as a draft from here.
-              trailing: isEditing ? null : _saveDraftButton(context),
             ),
             Expanded(
               child: GestureDetector(
@@ -175,52 +171,44 @@ extension AddPropertyPageLayout on AddPropertyPageState {
       ),
       bottomNavigationBar: buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: isEditing
-          ? PublishButtonWidget(
-              isLoading: formState.isLoading,
-              onPressed: validateAndSubmit,
-              label: context.l10n.propertySaveChanges,
-              loadingLabel: context.l10n.propertySavingChanges,
-            )
-          : PublishButtonWidget(
-              isLoading: formState.isLoading,
-              onPressed: validateAndSubmit,
-            ),
+      floatingActionButton: _submitBar(context, formState.isLoading),
     );
   }
 
-  Widget _saveDraftButton(BuildContext context) {
-    return TextButton(
-      onPressed: () async {
-        try {
-          final property = await ref
-              .read(addPropertyControllerProvider.notifier)
-              .submitProperty(
-                input: collectFormInput(),
-                boundaryPoints: widget.boundaryPoints,
-                selectedPhotos: selectedPhotos,
-                status: 'Draft',
-              );
-          if (context.mounted && property != null) {
-            Navigator.of(context).pop(property);
-          }
-        } catch (e, stackTrace) {
-          AppLogger.error('Could not save the draft', e, stackTrace);
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(context.l10n.propertySaveFailed)),
-            );
-          }
-        }
-      },
-      child: Text(
-        context.l10n.commonSave,
-        style: GoogleFonts.inter(
-          color: context.colors.accent,
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
+  /// Editing saves the changes; a new listing is either published (public)
+  /// or archived (kept private, status 'Draft').
+  Widget _submitBar(BuildContext context, bool isLoading) {
+    final l10n = context.l10n;
+    if (isEditing) {
+      return AddPropertySubmitBar(
+        children: [
+          AddPropertySubmitButton(
+            label: isLoading
+                ? l10n.propertySavingChanges
+                : l10n.propertySaveChanges,
+            icon: Icons.check_rounded,
+            isLoading: isLoading,
+            onPressed: isLoading ? null : validateAndSubmit,
+          ),
+        ],
+      );
+    }
+    return AddPropertySubmitBar(
+      children: [
+        AddPropertySubmitButton(
+          label: l10n.propertyArchive,
+          icon: Icons.lock_outline_rounded,
+          filled: false,
+          isLoading: isLoading && isArchiving,
+          onPressed: isLoading ? null : archive,
         ),
-      ),
+        AddPropertySubmitButton(
+          label: l10n.propertyPublish,
+          icon: Icons.upload_outlined,
+          isLoading: isLoading && !isArchiving,
+          onPressed: isLoading ? null : validateAndSubmit,
+        ),
+      ],
     );
   }
 }

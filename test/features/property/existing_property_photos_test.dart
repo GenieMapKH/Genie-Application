@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/presentation/widgets/existing_property_photos.dart';
+import 'package:tilomnov/features/property/presentation/widgets/existing_property_photos.dart';
 
 import '../../support/test_app.dart';
 

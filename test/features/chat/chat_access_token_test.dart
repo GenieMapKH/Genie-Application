@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_access_token.dart';
+import 'package:tilomnov/features/chat/data/chat_access_token.dart';
 
 /// A token that only needs a readable `exp`; nothing here checks signatures.
 String _tokenExpiring(Duration fromNow) {

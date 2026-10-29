@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/home/presentation/screens/map_filter_page.dart';
-import 'package:genie/features/home/presentation/widgets/map/map_button_icon.dart';
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
-import 'package:genie/shared/widgets/buttons/tactile_button.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/home/presentation/screens/map_filter_page.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/map_button_icon.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
 
 /// Opens the filter page. A dot shows that it narrows the map by something
 /// the pills can't show (price, size or features).
@@ -22,7 +22,7 @@ class MapFilterButton extends ConsumerWidget {
         context,
       ).push(MaterialPageRoute<void>(builder: (_) => const MapFilterPage())),
       child: Align(
-        widthFactor: 0.8,
+        widthFactor: MapButtonIcon.discWidthFactor,
         child: Stack(
           children: [
             const MapButtonIcon(

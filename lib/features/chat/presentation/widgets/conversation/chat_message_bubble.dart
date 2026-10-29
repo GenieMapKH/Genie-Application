@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_image_attachment.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_reply_quote.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/chat_voice_message.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_listing_card.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_image_attachment.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_reply_quote.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/chat_voice_message.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_listing_card.dart';
 
 /// One message in a conversation: the user's own on the right, the other
 /// person's on the left. A reply shows the message it quotes above it, and

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation_list/chat_conversation_tile.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation_list/delete_chat_dialog.dart';
-import 'package:genie/features/chat/providers/conversation_actions.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/lists/swipe_action_tile.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/chat_conversation_tile.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/delete_chat_dialog.dart';
+import 'package:tilomnov/features/chat/providers/conversation_actions.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/lists/swipe_action_tile.dart';
 
 /// A conversation in the chat list or the archive: tap to open it; swipe it
 /// left or long-press it to archive (or move back) and delete it.

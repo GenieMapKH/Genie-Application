@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/follow/data/models/follow_summary.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/follow/presentation/widgets/follow_button.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/cover_banner_header.dart';
-import 'package:genie/shared/widgets/media/user_avatar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/follow/data/models/follow_summary.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/follow/presentation/widgets/follow_button.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/cover_banner_header.dart';
+import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
 
 /// Top of a publisher's profile: a cover with their picture and the follow
 /// button, their name and handle, how many listings and followers they have

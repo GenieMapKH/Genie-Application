@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/feed/data/feed_repository.dart';
-import 'package:genie/features/follow/presentation/view_models/follow_providers.dart';
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/shared/utils/paged_list.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/feed/data/feed_repository.dart';
+import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
 
 final feedRepositoryProvider = Provider<FeedRepository>((ref) {
   return FeedRepository(ref.watch(apiClientProvider));

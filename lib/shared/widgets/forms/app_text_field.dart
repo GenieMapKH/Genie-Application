@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
-/// A modern, reusable text input field component designed for Genie.
+/// A modern, reusable text input field component designed for Tilomnov.
 /// Features smooth animated focus glow, interactive border states, and custom error messaging.
 class AppTextField extends StatefulWidget {
   final String? label;

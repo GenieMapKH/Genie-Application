@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
 
 class _StubAdapter implements HttpClientAdapter {
   final int status;

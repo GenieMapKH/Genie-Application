@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/network/safe_log_interceptor.dart';
+import 'package:tilomnov/core/network/safe_log_interceptor.dart';
 
 /// Answers every request with [status] and an empty JSON body.
 class _StubAdapter implements HttpClientAdapter {

@@ -5,14 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:genie/app/push_chat_text.dart';
-import 'package:genie/features/call/data/call_notifications.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/push_preview.dart';
-import 'package:genie/features/notifications/data/system_notifications.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
-import 'package:genie/features/settings/data/app_settings_storage.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/app/push_chat_text.dart';
+import 'package:tilomnov/features/call/data/call_notifications.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/push_preview.dart';
+import 'package:tilomnov/features/notifications/data/system_notifications.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
+import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// Runs when a push arrives while the app is closed or in the background
 /// (a separate isolate, without the app's state). Pushes with a visible

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -61,6 +61,29 @@ class MapLocationService {
     } catch (e) {
       AppLogger.error('Could not get the location', e);
       return const LocationResult.failure(LocationProblem.failed);
+    }
+  }
+
+  /// The device's position when location is on and already allowed, else
+  /// null. Never asks for permission: for features that work without it.
+  static Future<Position?> positionIfAllowed() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) return null;
+      final permission = await Geolocator.checkPermission();
+      if (permission != LocationPermission.always &&
+          permission != LocationPermission.whileInUse) {
+        return null;
+      }
+      return await Geolocator.getLastKnownPosition() ??
+          await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.medium,
+              timeLimit: Duration(seconds: 8),
+            ),
+          );
+    } catch (e) {
+      AppLogger.error('Could not get the location', e);
+      return null;
     }
   }
 

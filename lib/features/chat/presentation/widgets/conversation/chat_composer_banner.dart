@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_composer_mode.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_reply_quote.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_composer_mode.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_reply_quote.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Above the message bar while replying or editing: which message, and a
 /// button to go back to writing a new one.

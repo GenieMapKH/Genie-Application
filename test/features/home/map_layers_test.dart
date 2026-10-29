@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
-import 'package:genie/features/home/utils/map/screen_clustering.dart';
+import 'package:tilomnov/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:tilomnov/features/home/utils/map/screen_clustering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {

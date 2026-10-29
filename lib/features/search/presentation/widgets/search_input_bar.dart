@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/search/data/search_text.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/search/data/search_text.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Back arrow, the search field and its clear button, at the top of the
 /// search page. A thin progress line under it shows a request in flight

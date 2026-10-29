@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/features/notifications/models/notification_preferences.dart';
+import 'package:tilomnov/features/notifications/models/notification_preferences.dart';
 
 /// Where a device registers for pushes, as the server names it.
 enum PushPlatform { android, ios, web }

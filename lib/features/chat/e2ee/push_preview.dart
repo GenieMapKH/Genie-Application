@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/keys/key_service.dart';
-import 'package:genie/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:genie/features/chat/e2ee/keys/peer_key_store.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/peer_key_store.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 /// Words for what a message holds besides text, in the user's language.
 typedef ChatPreviewLabels = ({String photo, String voice});

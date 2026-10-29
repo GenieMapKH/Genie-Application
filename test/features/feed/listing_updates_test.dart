@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/feed/presentation/widgets/feed_listing_card.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/feed/presentation/widgets/feed_listing_card.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 import '../../support/test_app.dart';
 

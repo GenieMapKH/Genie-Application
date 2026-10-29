@@ -11,8 +11,7 @@ import 'package:flutter/foundation.dart';
 /// here, never a secret.
 abstract final class AppConfig {
   /// Used by a build that was not given `API_BASE_URL`.
-  static const _defaultApiBaseUrl =
-      'https://gateway-production-c0c5.up.railway.app';
+  static const _defaultApiBaseUrl = 'https://tilomnovgateway.sparkbytekh.com';
 
   /// From the env file, or `--dart-define=API_BASE_URL=...` for one run.
   /// Devices only reach each other in chat when they use the same server.
@@ -24,6 +23,23 @@ abstract final class AppConfig {
 
   /// Base URL of the API gateway, without a trailing slash.
   static const apiBaseUrl = hasApiBaseUrl ? _apiBaseUrl : _defaultApiBaseUrl;
+
+  /// The API version this build speaks: in every path (`/v1/...`) and in
+  /// the chat socket's handshake. Raised only after the server serves the
+  /// new version (genie-backend `docs/API_VERSIONING.md`).
+  static const apiVersion = '1';
+
+  /// Where the API calls go: [apiBaseUrl] under [apiVersion]. `/health`
+  /// and the chat socket are not versioned, so they use [apiBaseUrl].
+  static const apiUrl = '$apiBaseUrl/v$apiVersion';
+
+  /// The public website (`WEB_BASE_URL`), without a trailing slash: where a
+  /// shared listing's link and QR code lead, so anyone can open it without
+  /// the app.
+  static const webBaseUrl = String.fromEnvironment(
+    'WEB_BASE_URL',
+    defaultValue: 'https://tilomnov.sparkbytekh.com',
+  );
 
   /// The public half of the Firebase "Web Push certificates" key pair
   /// (`FCM_WEB_VAPID_KEY`). Only a browser needs it to receive pushes; it is

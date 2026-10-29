@@ -3,8 +3,8 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/animation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/markers/price_tag_layout.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/markers/price_tag_layout.dart';
 
 /// One listing gliding from the spot that showed it to the one that will.
 /// Drops heading for the same spot meet and fuse; drops leaving one spot

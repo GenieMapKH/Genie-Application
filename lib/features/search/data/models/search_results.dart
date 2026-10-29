@@ -1,6 +1,6 @@
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/data/models/place_suggestion.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/models/place_suggestion.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
 
 /// Everything one search text found: places first, as in a map app, then
 /// published listings, then the people who post them.

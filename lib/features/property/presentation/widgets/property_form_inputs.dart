@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/features/property/presentation/widgets/forms/fields/property_select_field.dart';
 
 class PropertySectionTitle extends StatelessWidget {
   final String title;
@@ -168,31 +169,18 @@ class PropertyDropdown extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
+        PropertySelectField(
           // A value this list does not offer (kept from another property
-          // type) shows as unpicked instead of failing the dropdown.
-          initialValue: items.contains(value) ? value : null,
-          isExpanded: true,
-          icon: Icon(Icons.keyboard_arrow_down, color: context.colors.textHint),
-          style: GoogleFonts.inter(
-            color: context.colors.textPrimary,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-          dropdownColor: context.colors.surface,
-          borderRadius: BorderRadius.circular(12.0),
+          // type) shows as unpicked.
+          value: value,
+          items: items,
+          labelOf: (item) => propertyValueLabel(context.l10n, item),
           decoration: defaultPropertyInputDecoration(
             context,
             hintText ?? context.l10n.propertySelectHint,
             hasError: hasError,
           ),
           onChanged: onChanged,
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(propertyValueLabel(context.l10n, item)),
-            );
-          }).toList(),
         ),
       ],
     );

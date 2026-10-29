@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
-import 'package:genie/features/auth/presentation/view_models/login_form_provider.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/login_controller.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/login_form_provider.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 import '../widgets/login_header.dart';
 import '../widgets/login_form.dart';
 import '../widgets/social_login_buttons.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/presentation/auth_error_message.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Login screen supporting Email and Phone Number authentication methods,
 /// Google OAuth login, "Keep me signed in" preference, and custom error states.

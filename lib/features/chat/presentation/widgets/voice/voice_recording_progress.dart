@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/data/voice/voice_recorder.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/live_voice_waveform.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/voice_duration_text.dart';
-import 'package:genie/features/chat/providers/voice_recording_provider.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/data/voice/voice_recorder.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/live_voice_waveform.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_duration_text.dart';
+import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// A recording under way, in a rounded field: a pulsing dot, how long it is
 /// so far, and how loud. [trailing] (a hint) sits at the end when given.

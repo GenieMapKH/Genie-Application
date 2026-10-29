@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/layout/app_header_bar.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/property_list_layout.dart';
-import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
-import 'package:genie/features/property/presentation/view_models/own_listings.dart';
-import 'package:genie/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
+import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
 
-import 'package:genie/features/property/presentation/widgets/my_properties/property_card.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/empty_properties_state.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/property_options_sheet.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/property_tabs.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/paused_while_hidden.dart';
-import 'package:genie/shared/widgets/lists/load_more_on_scroll.dart';
-import 'package:genie/shared/widgets/lists/loading_more_indicator.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_card.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/empty_properties_state.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_edit_route.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_options_sheet.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_tabs.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
+import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 class MyPropertiesPage extends ConsumerWidget {
   final bool isEmbedded;
@@ -189,8 +190,11 @@ class MyPropertiesPage extends ConsumerWidget {
   ) {
     return PropertyCard(
       property: property,
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => AddPropertyPage.edit(property)),
+      onTap: (cardRect) => Navigator.of(context).push(
+        PropertyEditRoute(
+          origin: cardRect,
+          page: AddPropertyPage.edit(property),
+        ),
       ),
       onOptionsTapped: () => PropertyOptionsSheet.show(context, ref, property),
     );

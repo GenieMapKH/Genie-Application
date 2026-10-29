@@ -1,7 +1,7 @@
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:intl/intl.dart';
-import 'package:genie/features/property/presentation/property_labels.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Shared display formatting for property price, size and spec lines so the
 /// map card, detail sheet and similar-property tiles stay consistent.

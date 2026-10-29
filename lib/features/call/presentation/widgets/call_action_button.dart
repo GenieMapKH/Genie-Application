@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// A round call button with its label underneath: answer, end, mute...
 /// The circle and the label are one target, so it is easy to hit.

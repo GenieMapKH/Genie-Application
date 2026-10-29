@@ -1,5 +1,5 @@
-import 'package:genie/features/chat/models/chat_call_entry.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 /// One line of a conversation: a message, or a call that took place.
 sealed class ChatTimelineItem {

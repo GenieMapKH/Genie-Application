@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/media/user_avatar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
 
 /// Top of the results panel: what is shown, how many listings, and a close
 /// button.

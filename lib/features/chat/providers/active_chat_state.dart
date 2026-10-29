@@ -1,6 +1,6 @@
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 
 enum ActiveChatStatus { loading, ready, unavailable }
 

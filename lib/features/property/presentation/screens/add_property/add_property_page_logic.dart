@@ -2,14 +2,14 @@
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'add_property_page.dart';
 import 'add_property_page_form_binding.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {
   /// Publishes a new listing, or saves the edits to an existing one. A
@@ -97,6 +97,33 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       AppLogger.error('Saving property changes failed', e);
       if (!mounted) return;
       AppPopup.showError(context, context.l10n.propertyCouldNotSaveChanges);
+    }
+  }
+
+  /// Keeps a new listing private (status 'Draft'): only the owner sees it,
+  /// so it may stay incomplete until it is published.
+  Future<void> archive() async {
+    setState(() => isArchiving = true);
+    try {
+      final property = await ref
+          .read(addPropertyControllerProvider.notifier)
+          .submitProperty(
+            input: collectFormInput(),
+            boundaryPoints: widget.boundaryPoints,
+            selectedPhotos: selectedPhotos,
+            status: 'Draft',
+          );
+      if (!mounted || property == null) return;
+      AppPopup.showSuccess(context, context.l10n.propertyArchivedPrivately);
+      Navigator.of(context).pop(property);
+    } catch (e, stackTrace) {
+      AppLogger.error('Could not archive the property', e, stackTrace);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.propertySaveFailed)));
+    } finally {
+      if (mounted) setState(() => isArchiving = false);
     }
   }
 
@@ -225,87 +252,6 @@ extension AddPropertyPageLogic on AddPropertyPageState {
           ],
         );
       },
-    );
-  }
-}
-
-class PublishButtonWidget extends StatelessWidget {
-  final bool isLoading;
-  final VoidCallback onPressed;
-
-  /// "Publish Property" when null.
-  final String? label;
-
-  /// "Publishing your property..." when null.
-  final String? loadingLabel;
-
-  const PublishButtonWidget({
-    super.key,
-    required this.isLoading,
-    required this.onPressed,
-    this.label,
-    this.loadingLabel,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isKeyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
-
-    return AnimatedSlide(
-      offset: isKeyboardOpen ? const Offset(0, 1.2) : Offset.zero,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOutQuad,
-      child: AnimatedOpacity(
-        opacity: isKeyboardOpen ? 0.0 : 1.0,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutQuad,
-        child: IgnorePointer(
-          ignoring: isKeyboardOpen,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              left: 16.0,
-              right: 16.0,
-              top: 8.0,
-              bottom: 70.0,
-            ),
-            child: ElevatedButton.icon(
-              onPressed: isLoading ? null : onPressed,
-              icon: isLoading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: context.colors.onPrimary,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Icon(
-                      Icons.upload_outlined,
-                      color: context.colors.onPrimary,
-                      size: 20,
-                    ),
-              label: Text(
-                isLoading
-                    ? loadingLabel ?? context.l10n.propertyPublishing
-                    : label ?? context.l10n.propertyPublishProperty,
-                style: GoogleFonts.inter(
-                  color: context.colors.onPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.accent,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                elevation: 4,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

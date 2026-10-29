@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/shared/widgets/buttons/tactile_button.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/media/tinted_svg.dart';
+import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 class DrawingControlsPanel extends StatelessWidget {
+  /// The buttons' distance from the screen's bottom. The nav bar is hidden
+  /// while drawing, so they sit just above the system's own bottom inset.
+  static double _bottomOf(BuildContext context) =>
+      MediaQuery.viewPaddingOf(context).bottom + 24;
+
+  /// How far up from the screen's bottom the buttons hide the map: the
+  /// undo and delete column is the tallest.
+  static double coveredBottomOf(BuildContext context) =>
+      _bottomOf(context) + 48 + 12 + 48;
+
   final bool isEditingPolygon;
   final VoidCallback onRevertPressed;
   final VoidCallback onDeletePressed;
@@ -58,12 +68,13 @@ class DrawingControlsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottom = _bottomOf(context);
     return Stack(
       children: [
         // Left Column: Revert and Delete
         Positioned(
           left: 16,
-          bottom: 124, // Offset for extendBody
+          bottom: bottom,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {}, // Prevent taps from bleeding through to the map
@@ -88,7 +99,7 @@ class DrawingControlsPanel extends StatelessWidget {
         ),
         // Bottom Center: Cancel and Save
         Positioned(
-          bottom: 124, // Offset for extendBody
+          bottom: bottom,
           left: 0,
           right: 0,
           child: Align(
@@ -169,7 +180,7 @@ class DrawingControlsPanel extends StatelessWidget {
         if (!isEditingPolygon)
           Positioned(
             right: 16,
-            bottom: 124, // Offset for extendBody
+            bottom: bottom,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {}, // Prevent taps from bleeding through to the map

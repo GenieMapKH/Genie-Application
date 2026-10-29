@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/settings/data/app_settings_storage.dart';
+import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
 
 /// Overridden in `main.dart`: the saved settings are read before the first
 /// frame, so the app never starts in the wrong theme or language.
@@ -58,5 +58,24 @@ class LocaleNotifier extends StateNotifier<Locale?> {
   Future<void> select(Locale locale) async {
     state = locale;
     await _storage.writeLocale(locale);
+  }
+}
+
+/// Whether the navigation is drawn in glass on phones that support it (see
+/// [AppSettingsStorage.readGlassNavigation]).
+final glassNavigationProvider =
+    StateNotifierProvider<GlassNavigationNotifier, bool>(
+      (ref) => GlassNavigationNotifier(ref.watch(appSettingsStorageProvider)),
+    );
+
+class GlassNavigationNotifier extends StateNotifier<bool> {
+  final AppSettingsStorage _storage;
+
+  GlassNavigationNotifier(this._storage)
+    : super(_storage.readGlassNavigation());
+
+  Future<void> select(bool enabled) async {
+    state = enabled;
+    await _storage.writeGlassNavigation(enabled);
   }
 }

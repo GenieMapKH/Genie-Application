@@ -1,5 +1,5 @@
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
 
 /// A person's or agency's public profile: who they are, and what they list.
 class PublisherProfile {

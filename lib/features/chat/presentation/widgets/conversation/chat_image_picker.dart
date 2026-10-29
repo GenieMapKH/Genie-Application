@@ -2,10 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:genie/core/media/image_compressor.dart';
-import 'package:genie/core/media/image_upload_policy.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/media/image_compressor.dart';
+import 'package:tilomnov/core/media/image_upload_policy.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// A picture the user chose to send.
 typedef PickedChatImage = ({Uint8List bytes, String name, String mimeType});

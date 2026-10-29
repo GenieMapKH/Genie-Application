@@ -1,8 +1,8 @@
 import 'dart:ui' show Offset, Rect, Size;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/utils/map/layers/boundary_label_layout.dart';
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:tilomnov/features/home/utils/map/layers/boundary_label_layout.dart';
+import 'package:tilomnov/features/home/utils/map/layers/layer_geometry.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// About 1 m of latitude in degrees; longitude near 11.5° N is close enough.
@@ -24,6 +24,16 @@ final _thinStrip = [_at(0, 0), _at(50, 50), _at(39, 61), _at(-11, 11)];
 
 const _sideLabel = Size(44, 24);
 const _areaLabel = Size(80, 30);
+
+/// A 60 m square with its north-east quarter cut out.
+final _lShape = [
+  _at(0, 0),
+  _at(60, 0),
+  _at(60, 30),
+  _at(30, 30),
+  _at(30, 60),
+  _at(0, 60),
+];
 
 /// Lays a plot out the way the map does and returns every box it used.
 List<Rect> _layOut(List<LatLng> points, double zoom) {
@@ -166,6 +176,42 @@ void main() {
       // The 20 m west sides are ~4 px at zoom 15; the long ones fit.
       expect(placed.keys.where((i) => i < 25), isEmpty);
       expect(placed.keys, containsAll([25, 26, 27]));
+    });
+  });
+
+  group('fitsInside', () {
+    Rect areaBoxAt(LatLng position, double zoom) =>
+        BoundaryLabelLayout.markerRect(
+          position,
+          _areaLabel,
+          const Offset(0.5, 0.5),
+          zoom,
+        );
+
+    test('the area fits on a plot big enough on screen', () {
+      final square = [_at(0, 0), _at(60, 0), _at(60, 60), _at(0, 60)];
+      final box = areaBoxAt(centroidOf(square), 19);
+      expect(BoundaryLabelLayout.fitsInside(box, square, 19), isTrue);
+    });
+
+    test('the area does not fit on a plot too small on screen', () {
+      final square = [_at(0, 0), _at(60, 0), _at(60, 60), _at(0, 60)];
+      final box = areaBoxAt(centroidOf(square), 16);
+      expect(BoundaryLabelLayout.fitsInside(box, square, 16), isFalse);
+    });
+
+    test('the area does not fit across a thin strip', () {
+      final box = areaBoxAt(centroidOf(_thinStrip), 19);
+      expect(BoundaryLabelLayout.fitsInside(box, _thinStrip, 19), isFalse);
+    });
+
+    test('a box over the cut-out corner of an L-shape does not fit', () {
+      // Centred on the inner corner: three of its corners are on the plot,
+      // the fourth in the cut-out.
+      final box = areaBoxAt(_at(30, 30), 19);
+      expect(BoundaryLabelLayout.fitsInside(box, _lShape, 19), isFalse);
+      final inArm = areaBoxAt(_at(15, 15), 19);
+      expect(BoundaryLabelLayout.fitsInside(inArm, _lShape, 19), isTrue);
     });
   });
 

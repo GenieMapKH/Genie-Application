@@ -1,7 +1,7 @@
-import 'package:genie/features/chat/models/chat_listing.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// [property] as a card to send in a chat: its first photo (the small copy)
 /// and the price its cards show, in the sender's words.

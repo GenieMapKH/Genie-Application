@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/widgets/forms/app_text_field.dart';
 
 import '../view_models/login_form_provider.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 class LoginForm extends StatelessWidget {
   final Animation<Offset> slideAnimation;

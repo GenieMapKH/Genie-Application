@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_listing.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation/chat_listing_preview.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_listing_preview.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Above the message bar when the chat was opened from a listing: the
 /// listing, with a button to send it, so the owner knows which one the

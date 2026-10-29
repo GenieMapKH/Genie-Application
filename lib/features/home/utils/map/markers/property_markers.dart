@@ -118,7 +118,7 @@ abstract final class PropertyMarkers {
     required String price,
     bool isNew = false,
     bool isSelected = false,
-    String propertyType = 'Sell',
+    String listingType = 'Sale',
     bool isVisited = false,
     String newLabel = 'New',
   }) {
@@ -126,12 +126,12 @@ abstract final class PropertyMarkers {
       price: price,
       isNew: isNew,
       isSelected: isSelected,
-      propertyType: propertyType,
+      listingType: listingType,
       isVisited: isVisited,
       newLabel: newLabel,
     );
     return _priceCache.get(
-      _priceKey(price, isNew, isSelected, propertyType, isVisited, newLabel),
+      _priceKey(price, isNew, isSelected, listingType, isVisited, newLabel),
       () => _renderPriceTag(tag),
     );
   }
@@ -141,7 +141,7 @@ abstract final class PropertyMarkers {
     required String price,
     bool isNew = false,
     bool isSelected = false,
-    String propertyType = 'Sell',
+    String listingType = 'Sale',
     bool isVisited = false,
     String newLabel = 'New',
   }) {
@@ -149,7 +149,7 @@ abstract final class PropertyMarkers {
       price,
       isNew,
       isSelected,
-      propertyType,
+      listingType,
       isVisited,
       newLabel,
     );
@@ -173,8 +173,8 @@ abstract final class PropertyMarkers {
             )
           : null,
       background: isSelected
-          ? _priceColor(propertyType, isVisited).withValues(alpha: 0.8)
-          : _priceColor(propertyType, isVisited),
+          ? _priceColor(listingType, isVisited).withValues(alpha: 0.8)
+          : _priceColor(listingType, isVisited),
       borderWidth: isSelected ? 2.5 : 1.5,
     );
   }
@@ -183,10 +183,10 @@ abstract final class PropertyMarkers {
     String price,
     bool isNew,
     bool isSelected,
-    String propertyType,
+    String listingType,
     bool isVisited,
     String newLabel,
-  ) => 'price-$price-$isNew-$isSelected-$propertyType-$isVisited-$newLabel';
+  ) => 'price-$price-$isNew-$isSelected-$listingType-$isVisited-$newLabel';
 
   /// Where a [priceTag]'s point is on its bitmap, as a marker anchor.
   static Offset priceTagAnchor(PriceTagLayout tag) {
@@ -250,13 +250,13 @@ abstract final class PropertyMarkers {
     );
   }
 
-  static Color _priceColor(String propertyType, bool isVisited) {
-    switch (propertyType.toLowerCase()) {
+  static Color _priceColor(String listingType, bool isVisited) {
+    switch (listingType.toLowerCase()) {
       case 'rent':
         return isVisited ? const Color(0xFFEFB6B8) : const Color(0xFFE5484D);
       case 'to let':
         return isVisited ? const Color(0xFFEFDDB5) : const Color(0xFFDBA122);
-      default: // 'sell' and anything unknown
+      default: // 'sale' and anything unknown
         return isVisited ? const Color(0xFF6AE0B1) : _green;
     }
   }

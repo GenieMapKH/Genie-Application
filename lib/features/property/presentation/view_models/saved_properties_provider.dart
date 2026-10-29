@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/favorites_repository.dart';
-import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
-import 'package:genie/shared/utils/paged_list.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/favorites_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
 
 /// How saved listings are ordered. Shown with `sortOptionLabel`.
 enum SortOption {

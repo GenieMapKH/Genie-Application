@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/device/app_haptics.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
 
 /// The close, favourite and share buttons floating over the detail gallery,
 /// and a "more" menu after them.
@@ -34,7 +36,10 @@ class PropertyDetailActions extends StatelessWidget {
           _CircleButton(
             icon: isFavorite ? Icons.favorite : Icons.favorite_border,
             iconColor: isFavorite ? context.colors.accent : null,
-            onPressed: onFavoriteToggled,
+            onPressed: () {
+              if (!isFavorite) AppHaptics.lightTap();
+              onFavoriteToggled();
+            },
           ),
           const SizedBox(width: 10),
           _CircleButton(icon: Icons.ios_share, onPressed: onShare),
@@ -57,8 +62,9 @@ class _CircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
+    return TactileButton(
+      pressedScale: 0.9,
+      onPressed: onPressed,
       child: _Circle(
         child: Icon(
           icon,

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/safety/data/models/blocked_account.dart';
-import 'package:genie/features/safety/presentation/block_actions.dart';
-import 'package:genie/features/safety/presentation/view_models/block_providers.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/media/user_avatar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/safety/data/models/blocked_account.dart';
+import 'package:tilomnov/features/safety/presentation/block_actions.dart';
+import 'package:tilomnov/features/safety/presentation/view_models/block_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
 
 /// Everyone the signed-in user blocked, each with a way to unblock them.
 class BlockedAccountsPage extends ConsumerWidget {

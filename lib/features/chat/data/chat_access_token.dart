@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 
 /// Supplies the access token for the chat socket handshake.
 ///

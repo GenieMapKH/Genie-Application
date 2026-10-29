@@ -1,5 +1,5 @@
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/shared/utils/paged_list.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
 
 /// What the My Properties screen shows: the user's own listings loaded so
 /// far, and how many they have in each status (all of them, loaded or not),

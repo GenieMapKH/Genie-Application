@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/notifications/models/push_message.dart';
-import 'package:genie/features/property/data/models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/search/data/models/saved_search.dart';
-import 'package:genie/features/search/data/saved_search_repository.dart';
-import 'package:genie/features/search/presentation/screens/saved_searches_page.dart';
-import 'package:genie/features/search/presentation/view_models/saved_searches_provider.dart';
-import 'package:genie/features/search/presentation/widgets/saved/save_search_flow.dart';
+import 'package:tilomnov/features/notifications/models/push_message.dart';
+import 'package:tilomnov/features/property/data/models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/search/data/models/saved_search.dart';
+import 'package:tilomnov/features/search/data/saved_search_repository.dart';
+import 'package:tilomnov/features/search/presentation/screens/saved_searches_page.dart';
+import 'package:tilomnov/features/search/presentation/view_models/saved_searches_provider.dart';
+import 'package:tilomnov/features/search/presentation/widgets/saved/save_search_flow.dart';
 
 import '../../support/test_app.dart';
 

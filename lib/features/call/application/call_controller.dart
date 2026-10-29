@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/device/microphone_permission.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/call/data/call_media.dart';
-import 'package:genie/features/call/data/call_signaling.dart';
-import 'package:genie/features/call/models/call_state.dart';
+import 'package:tilomnov/core/device/microphone_permission.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/call/data/call_media.dart';
+import 'package:tilomnov/features/call/data/call_signaling.dart';
+import 'package:tilomnov/features/call/models/call_state.dart';
 
 /// Runs the one call this phone can be in: placing it, ringing, answering,
 /// connecting the audio, and ending it, whoever ends it.

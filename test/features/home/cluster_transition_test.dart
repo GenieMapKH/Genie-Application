@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/utils/map/cluster_layout.dart';
-import 'package:genie/features/home/utils/map/cluster_transition.dart';
-import 'package:genie/features/home/utils/map/markers/property_markers.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
+import 'package:tilomnov/features/home/utils/map/markers/property_markers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 const _a = LatLng(11.55, 104.91);

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/repositories/nearby_route_repository.dart';
-import 'package:genie/features/property/utils/polyline_decoder.dart';
+import 'package:tilomnov/features/property/data/repositories/nearby_route_repository.dart';
+import 'package:tilomnov/features/property/utils/polyline_decoder.dart';
 
 void main() {
   test('decodes the polyline of the Google documentation example', () {

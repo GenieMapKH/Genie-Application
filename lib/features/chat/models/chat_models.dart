@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_reply.dart';
-import 'package:genie/features/chat/models/chat_voice.dart';
-import 'package:genie/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_reply.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
 
 class ChatConversation {
   /// Shown until the last message has been decrypted on this device.

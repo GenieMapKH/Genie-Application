@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/layout/app_header_bar.dart';
-import 'package:genie/features/chat/presentation/screens/archived_chats_page.dart';
-import 'package:genie/features/chat/presentation/widgets/conversation_list/chat_conversation_list_view.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/chat/presentation/screens/archived_chats_page.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/chat_conversation_list_view.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/layout/paused_while_hidden.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
+import 'package:tilomnov/shared/widgets/menus/app_menu_item.dart';
 
 class ChatListPage extends ConsumerStatefulWidget {
   final bool isEmbedded;
@@ -74,19 +75,14 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
     return PopupMenuButton<void>(
       tooltip: context.l10n.chatMoreOptions,
       icon: Icon(Icons.more_vert, color: context.colors.accent),
-      color: context.colors.surface,
       itemBuilder: (menuContext) => [
-        PopupMenuItem<void>(
+        appMenuItem<void>(
+          menuContext,
+          icon: Icons.archive_outlined,
+          label: context.l10n.chatArchivedChats,
           onTap: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const ArchivedChatsPage())),
-          child: Row(
-            children: [
-              Icon(Icons.archive_outlined, color: context.colors.textSecondary),
-              const SizedBox(width: 12),
-              Text(context.l10n.chatArchivedChats),
-            ],
-          ),
         ),
       ],
     );

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/presentation/widgets/map/filter/map_filter_button.dart';
-import 'package:genie/features/home/presentation/widgets/map/map_button_icon.dart';
-import 'package:genie/features/home/presentation/widgets/search/home_search_bar.dart';
-import 'package:genie/features/home/presentation/widgets/utm/utm_locate_bottom_sheet.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/shared/widgets/buttons/tactile_button.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/map_filter_button.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/map_button_icon.dart';
+import 'package:tilomnov/features/home/presentation/widgets/search/home_search_bar.dart';
+import 'package:tilomnov/features/home/presentation/widgets/utm/utm_locate_bottom_sheet.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/presentation/widgets/map/property_type_filters.dart';
-import 'package:genie/features/home/utils/scanner/document_scanner_service.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/property_type_filters.dart';
+import 'package:tilomnov/features/home/utils/scanner/document_scanner_service.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 class MapTopControls extends StatelessWidget {
   /// How far the search bar and the type filters reach below the status bar.
@@ -42,7 +42,7 @@ class MapTopControls extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 4.0, top: 12.0),
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0),
           child: SizedBox(
             height: 350,
             child: Stack(
@@ -53,20 +53,19 @@ class MapTopControls extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      // Each button is cropped to its disc, so the gaps here
+                      // are the same 8 as between the pills below.
+                      spacing: 8,
                       children: [
                         Expanded(
                           child: HomeSearchBar(onOpenProperty: onOpenProperty),
                         ),
-                        // Each button's picture has 8.4 of space beside its
-                        // disc; this makes the search bar's gap the same as
-                        // the 16.8 between the two buttons.
-                        const SizedBox(width: 8.4),
                         const MapFilterButton(),
                         // Scan button
                         TactileButton(
                           onPressed: () => _handleScanClick(context),
                           child: Align(
-                            widthFactor: 0.8,
+                            widthFactor: MapButtonIcon.discWidthFactor,
                             child: MapButtonIcon(
                               asset: 'assets/icons/scan.svg',
                               width: 76,
@@ -82,7 +81,7 @@ class MapTopControls extends StatelessWidget {
                 ),
                 Positioned(
                   top: 117,
-                  right: 8.0,
+                  right: 0,
                   child: TactileButton(
                     onPressed: onToggleMapType,
                     child: Container(

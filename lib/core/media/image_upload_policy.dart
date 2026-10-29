@@ -1,4 +1,4 @@
-import 'package:genie/core/errors/app_exceptions.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
 
 /// How large a picture may be before it is uploaded, and how small it is made.
 ///
@@ -6,7 +6,7 @@ import 'package:genie/core/errors/app_exceptions.dart';
 /// picture is re-encoded as a JPEG on the device before it leaves it, so the
 /// server and its storage only ever receive small files. The storage buckets
 /// enforce their own, larger limit as the last line of defence (see
-/// `genie-backend/user/src/supabase`): [maxBytes] here is always below it.
+/// `tilomnov-backend/user/src/supabase`): [maxBytes] here is always below it.
 class ImageUploadPolicy {
   /// The largest original the app will even try to read: bigger than this is
   /// refused before anything is decoded. A phone photo is never close.

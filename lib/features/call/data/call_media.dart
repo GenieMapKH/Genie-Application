@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/call/data/call_signaling.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/call/data/call_signaling.dart';
 
 /// How the audio connection between the two phones is doing.
 enum MediaConnection { connecting, connected, lost }

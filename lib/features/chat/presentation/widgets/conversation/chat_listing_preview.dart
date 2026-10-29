@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/models/chat_listing.dart';
-import 'package:genie/shared/widgets/media/app_network_image.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 
 /// A listing's photo, title and price in a row: the card in a message, and
 /// the one offered above the message bar.

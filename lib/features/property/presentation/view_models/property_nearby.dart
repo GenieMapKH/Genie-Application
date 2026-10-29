@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/property/data/models/nearby_place.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/data/models/nearby_place.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 /// The full listing (the map's list leaves out details such as nearby
 /// places), fetched when its detail sheet opens.

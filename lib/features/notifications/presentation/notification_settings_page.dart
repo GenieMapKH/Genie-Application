@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/device/system_settings.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/notifications/models/notification_preferences.dart';
-import 'package:genie/features/notifications/providers/notification_preferences_provider.dart';
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/layout/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/lists/settings_list.dart';
+import 'package:tilomnov/core/device/system_settings.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/notifications/models/notification_preferences.dart';
+import 'package:tilomnov/features/notifications/providers/notification_preferences_provider.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
 
 /// Which notifications the user wants. Security alerts and calls cannot be
 /// turned off here, only in the phone's settings.

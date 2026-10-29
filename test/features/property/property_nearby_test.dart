@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/nearby_route.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/screens/nearby_route_page.dart';
-import 'package:genie/features/property/presentation/view_models/nearby_route_providers.dart';
-import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/property/data/models/nearby_route.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/screens/nearby_route_page.dart';
+import 'package:tilomnov/features/property/presentation/view_models/nearby_route_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// A full listing as `GET /public/properties/:id` returns it.
 PropertyModel _listing({

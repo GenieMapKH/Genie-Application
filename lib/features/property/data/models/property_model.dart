@@ -1,4 +1,4 @@
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -121,6 +121,11 @@ class PropertyModel {
 
   /// Listings younger than 12 hours get the "New" badge on the map.
   bool get isNew => hoursListed <= 12;
+
+  /// On the map and the website for anyone: only then does its shared link
+  /// or QR code open it. A draft, one being paid for, a sold or an expired
+  /// one is not.
+  bool get isPublic => status == 'Active';
 
   /// What a card, list tile or map card shows: the thumbnails, or the full
   /// photos when the server sent none (an older server).

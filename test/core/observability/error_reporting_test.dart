@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/observability/error_reporting.dart';
+import 'package:tilomnov/core/observability/error_reporting.dart';
 import 'package:sentry/sentry.dart';
 
 void main() {

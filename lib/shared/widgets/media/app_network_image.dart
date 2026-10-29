@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/media/app_image_cache.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/media/app_image_cache.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// A picture from a URL, kept on disk and in memory by [AppImageCache].
 ///

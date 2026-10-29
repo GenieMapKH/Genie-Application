@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// Swipes a message sideways to reply to it: the other person's to the
 /// right, the user's own ([towardsLeft]) to the left. Past [_threshold] a

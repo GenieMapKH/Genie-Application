@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/property/data/models/property_insights.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/data/models/property_insights.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 /// How the owner's listing is doing; read each time its page opens.
 final propertyInsightsProvider = FutureProvider.autoDispose

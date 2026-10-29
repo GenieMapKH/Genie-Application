@@ -22,7 +22,7 @@ abstract final class AppImageCache {
 
   static final CacheManager files = CacheManager(
     Config(
-      'genie_images',
+      'tilomnov_images',
       stalePeriod: _keepUnused,
       maxNrOfCacheObjects: _maxFiles,
     ),

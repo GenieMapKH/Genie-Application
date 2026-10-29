@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/shared/widgets/buttons/tactile_button.dart';
-import 'package:genie/features/home/presentation/widgets/map/map_top_controls.dart';
-import 'package:genie/features/home/presentation/widgets/map/map_floating_menu.dart';
-import 'package:genie/features/home/presentation/widgets/map/map_button_icon.dart';
-import 'package:genie/features/home/presentation/widgets/map/drawing_controls_panel.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
-import 'package:genie/features/home/presentation/widgets/map/property_carousel.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/screens/add_property/add_property_page.dart';
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/home/utils/map/map_measurements.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/map_top_controls.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/map_side_buttons.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/drawing_controls_panel.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/property_carousel.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/home/utils/map/map_measurements.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 class MainMapControls extends ConsumerWidget {
   final VoidCallback onGoToCurrentPosition;
@@ -43,7 +41,7 @@ class MainMapControls extends ConsumerWidget {
   /// Resting offset above the bottom nav bar.
   static const double baseBottom = 110.0;
 
-  /// Size of the round floating buttons (add menu, current position).
+  /// Width of the round floating buttons on the right.
   static const double buttonSize = 76.0;
 
   @override
@@ -75,10 +73,11 @@ class MainMapControls extends ConsumerWidget {
             onOpenProperty: onOpenProperty,
           ),
 
-        // Plus Icon and Animated Menu (Bottom Left)
+        // Coordinates, Draw and Current Position (Bottom Right)
         if (!mapState.isDrawing)
-          MapFloatingMenu(
+          MapSideButtons(
             bottom: sideButtonBottom,
+            buttonSize: buttonSize,
             // Drawing is how a listing is posted: a guest is asked to sign
             // in before drawing, not after.
             onDrawPressed: () {
@@ -91,23 +90,7 @@ class MainMapControls extends ConsumerWidget {
                   .startDrawing(initialPoints: result);
               onAnimateToCoordinates(result);
             },
-          ),
-
-        // Current Position Icon (Bottom Right)
-        if (!mapState.isDrawing)
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 400),
-            curve: const Cubic(0.16, 1.0, 0.3, 1.0),
-            right: 0,
-            bottom: sideButtonBottom,
-            child: TactileButton(
-              onPressed: onGoToCurrentPosition,
-              child: MapButtonIcon(
-                asset: 'assets/icons/current_position.svg',
-                width: buttonSize,
-                height: buttonSize,
-              ),
-            ),
+            onGoToCurrentPosition: onGoToCurrentPosition,
           ),
 
         // Drawing UI Controls

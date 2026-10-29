@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// The small spinner at the end of a list while its next page is on its way.
 class LoadingMoreIndicator extends StatelessWidget {

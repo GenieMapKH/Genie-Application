@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// The line under a PIN field: "Checking...", or what went wrong with the
 /// last PIN (tries left, the wait after too many, no connection). Keeps its

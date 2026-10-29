@@ -146,6 +146,24 @@ abstract class AppLocalizations {
   /// **'You are offline. Connect to the internet for updates.'**
   String get commonOffline;
 
+  /// No description provided for @offlineDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offlineDialogTitle;
+
+  /// No description provided for @offlineDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.'**
+  String get offlineDialogMessage;
+
+  /// No description provided for @offlineKeepBrowsing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep browsing'**
+  String get offlineKeepBrowsing;
+
   /// No description provided for @navExplore.
   ///
   /// In en, this message translates to:
@@ -332,6 +350,18 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get languageTitle;
 
+  /// No description provided for @glassNavigationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Glass navigation'**
+  String get glassNavigationTitle;
+
+  /// No description provided for @glassNavigationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Match your phone\'s see-through bars'**
+  String get glassNavigationSubtitle;
+
   /// No description provided for @personalInfoTitle.
   ///
   /// In en, this message translates to:
@@ -449,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoPhoneInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Enter a phone number of at most 20 characters.'**
+  /// **'Enter a valid phone number, for example 012 345 678.'**
   String get personalInfoPhoneInvalid;
 
   /// No description provided for @personalInfoEmail.
@@ -1124,23 +1154,11 @@ abstract class AppLocalizations {
   /// **'Continue with Google'**
   String get authContinueWithGoogle;
 
-  /// No description provided for @authByContinuingYouAgreeToOut.
-  ///
-  /// In en, this message translates to:
-  /// **'By continuing, you agree to out '**
-  String get authByContinuingYouAgreeToOut;
-
   /// No description provided for @authTermsOfServices.
   ///
   /// In en, this message translates to:
-  /// **'terms of services.'**
+  /// **'terms of service'**
   String get authTermsOfServices;
-
-  /// No description provided for @authEmailAddressOrPhoneNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Email Address or Phone number'**
-  String get authEmailAddressOrPhoneNumber;
 
   /// No description provided for @authForgetPassword.
   ///
@@ -1730,11 +1748,11 @@ abstract class AppLocalizations {
   /// **'Property Highlights'**
   String get propertyPropertyHighlights;
 
-  /// No description provided for @propertyGenie.
+  /// No description provided for @propertyTilomnov.
   ///
   /// In en, this message translates to:
   /// **'Tilomnov'**
-  String get propertyGenie;
+  String get propertyTilomnov;
 
   /// No description provided for @propertyViews.
   ///
@@ -1861,6 +1879,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download'**
   String get propertyDownload;
+
+  /// No description provided for @propertyShareSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this listing'**
+  String get propertyShareSheetTitle;
+
+  /// No description provided for @propertyShareScanToView.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to view this listing'**
+  String get propertyShareScanToView;
+
+  /// No description provided for @propertyShareCopyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get propertyShareCopyLink;
+
+  /// No description provided for @propertyShareLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get propertyShareLinkCopied;
+
+  /// No description provided for @propertyShareSaveImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Save image'**
+  String get propertyShareSaveImage;
+
+  /// No description provided for @propertyShareImageSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to your photos'**
+  String get propertyShareImageSaved;
+
+  /// No description provided for @propertyShareImageSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save the image'**
+  String get propertyShareImageSaveFailed;
+
+  /// No description provided for @propertySharePhotosDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Tilomnov to add photos in Settings to save the image.'**
+  String get propertySharePhotosDenied;
+
+  /// No description provided for @propertyShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t share this listing'**
+  String get propertyShareFailed;
+
+  /// No description provided for @propertyShareMessageSeeOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'See the photos and exact location on the map:'**
+  String get propertyShareMessageSeeOnMap;
+
+  /// No description provided for @propertyShareMessageFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared from Tilomnov, land and homes on the map.'**
+  String get propertyShareMessageFooter;
+
+  /// No description provided for @propertyShareCaptionCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption copied: paste it if the app leaves it out'**
+  String get propertyShareCaptionCopied;
+
+  /// No description provided for @propertyShareNotPublicDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you can see this listing until it is published. Publish it to share its link and QR code.'**
+  String get propertyShareNotPublicDraft;
+
+  /// No description provided for @propertyShareNotPublicPending.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing goes public once its payment is complete. You can share it then.'**
+  String get propertyShareNotPublicPending;
+
+  /// No description provided for @propertyShareNotPublicEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing is no longer public, so its link and QR code cannot be shared.'**
+  String get propertyShareNotPublicEnded;
 
   /// No description provided for @propertyTitleType.
   ///
@@ -2251,6 +2359,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You were signed out of this device.'**
   String get sessionEnded;
+
+  /// No description provided for @updateRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get updateRequiredTitle;
+
+  /// No description provided for @updateRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.'**
+  String get updateRequiredMessage;
 
   /// No description provided for @securityForgotPin.
   ///
@@ -3059,7 +3179,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatPinCreateHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Genie, can see it.'**
+  /// **'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.'**
   String get chatPinCreateHelp;
 
   /// No description provided for @chatPinConfirmTitle.
@@ -3170,12 +3290,6 @@ abstract class AppLocalizations {
   /// **'Please enter your name'**
   String get authErrEnterName;
 
-  /// No description provided for @authErrEnterEmailOrPhone.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a valid email address or phone number'**
-  String get authErrEnterEmailOrPhone;
-
   /// No description provided for @authErrEnterPassword.
   ///
   /// In en, this message translates to:
@@ -3218,16 +3332,10 @@ abstract class AppLocalizations {
   /// **'Passwords do not match'**
   String get authErrPasswordsDontMatch;
 
-  /// No description provided for @termsScrollToAgree.
-  ///
-  /// In en, this message translates to:
-  /// **'Please scroll to the bottom of the terms to agree.'**
-  String get termsScrollToAgree;
-
   /// No description provided for @termsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Terms of Service for Genie Property'**
+  /// **'Terms of Service for Tilomnov'**
   String get termsTitle;
 
   /// No description provided for @termsLastUpdated.
@@ -3239,7 +3347,7 @@ abstract class AppLocalizations {
   /// No description provided for @termsWelcome.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Genie Property. By accessing or using the Genie application and services, you agree to comply with and be bound by the following Terms of Service.'**
+  /// **'Welcome to Tilomnov. By accessing or using the Tilomnov application and services, you agree to comply with and be bound by the following Terms of Service.'**
   String get termsWelcome;
 
   /// No description provided for @termsDisagree.
@@ -3251,13 +3359,13 @@ abstract class AppLocalizations {
   /// No description provided for @termsAboutTitle.
   ///
   /// In en, this message translates to:
-  /// **'1. About Genie'**
+  /// **'1. About Tilomnov'**
   String get termsAboutTitle;
 
   /// No description provided for @termsAboutIntro.
   ///
   /// In en, this message translates to:
-  /// **'Genie is a map-based property platform that allows users to:'**
+  /// **'Tilomnov is a map-based property platform that allows users to:'**
   String get termsAboutIntro;
 
   /// No description provided for @termsAboutView.
@@ -3287,7 +3395,7 @@ abstract class AppLocalizations {
   /// No description provided for @termsAboutPlatformOnly.
   ///
   /// In en, this message translates to:
-  /// **'Genie acts only as a platform and does not own, sell, or broker any property.'**
+  /// **'Tilomnov acts only as a platform and does not own, sell, or broker any property.'**
   String get termsAboutPlatformOnly;
 
   /// No description provided for @termsAccountsTitle.
@@ -3323,7 +3431,7 @@ abstract class AppLocalizations {
   /// No description provided for @termsAccountsSuspend.
   ///
   /// In en, this message translates to:
-  /// **'Genie reserves the right to suspend accounts that provide false information.'**
+  /// **'Tilomnov reserves the right to suspend accounts that provide false information.'**
   String get termsAccountsSuspend;
 
   /// No description provided for @termsListingsTitle.
@@ -3359,7 +3467,7 @@ abstract class AppLocalizations {
   /// No description provided for @termsListingsNotResponsible.
   ///
   /// In en, this message translates to:
-  /// **'Genie is not responsible for incorrect property data submitted by users.'**
+  /// **'Tilomnov is not responsible for incorrect property data submitted by users.'**
   String get termsListingsNotResponsible;
 
   /// No description provided for @termsMapTitle.
@@ -3371,7 +3479,7 @@ abstract class AppLocalizations {
   /// No description provided for @termsMapIntro.
   ///
   /// In en, this message translates to:
-  /// **'Genie provides tools for map visualization, UTM conversion, and distance measurement.'**
+  /// **'Tilomnov provides tools for map visualization, UTM conversion, and distance measurement.'**
   String get termsMapIntro;
 
   /// No description provided for @termsMapGuidanceOnly.
@@ -3391,12 +3499,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Agree terms of services'**
   String get termsAgree;
-
-  /// No description provided for @termsScrollHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Scroll to bottom to agree terms of services'**
-  String get termsScrollHint;
 
   /// No description provided for @authErrEnterValidEmail.
   ///
@@ -3493,6 +3595,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sending…'**
   String get chatMessageSending;
+
+  /// No description provided for @chatMessageSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get chatMessageSent;
+
+  /// No description provided for @chatMessageTimeYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday {time}'**
+  String chatMessageTimeYesterday(String time);
+
+  /// No description provided for @chatDeliveredJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered just now'**
+  String get chatDeliveredJustNow;
+
+  /// No description provided for @chatDeliveredMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered {minutes, plural, =1{1 minute ago} other{{minutes} minutes ago}}'**
+  String chatDeliveredMinutes(int minutes);
+
+  /// No description provided for @chatDeliveredHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered {hours, plural, =1{1 hour ago} other{{hours} hours ago}}'**
+  String chatDeliveredHours(int hours);
+
+  /// No description provided for @chatDeliveredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered {day}'**
+  String chatDeliveredOn(String day);
+
+  /// No description provided for @chatAttachPicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach a picture'**
+  String get chatAttachPicture;
+
+  /// No description provided for @chatShowEmojis.
+  ///
+  /// In en, this message translates to:
+  /// **'Emoji'**
+  String get chatShowEmojis;
+
+  /// No description provided for @chatShowKeyboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard'**
+  String get chatShowKeyboard;
+
+  /// No description provided for @chatSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get chatSendMessage;
 
   /// No description provided for @chatReply.
   ///
@@ -4166,17 +4328,23 @@ abstract class AppLocalizations {
   /// **'Property moved to draft'**
   String get propertyMovedToDraft;
 
-  /// No description provided for @propertyPublishProperty.
+  /// No description provided for @propertyPublish.
   ///
   /// In en, this message translates to:
-  /// **'Publish Property'**
-  String get propertyPublishProperty;
+  /// **'Publish'**
+  String get propertyPublish;
 
-  /// No description provided for @propertyPublishing.
+  /// No description provided for @propertyArchive.
   ///
   /// In en, this message translates to:
-  /// **'Publishing your property...'**
-  String get propertyPublishing;
+  /// **'Archive'**
+  String get propertyArchive;
+
+  /// No description provided for @propertyArchivedPrivately.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved privately. Only you can see this listing.'**
+  String get propertyArchivedPrivately;
 
   /// No description provided for @propertySaveFailed.
   ///
@@ -5335,6 +5503,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Profile'**
   String get propertyPublisherViewProfile;
+
+  /// No description provided for @authPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'012 345 678'**
+  String get authPhoneHint;
+
+  /// No description provided for @authEmailOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Email (optional)'**
+  String get authEmailOptional;
+
+  /// No description provided for @authAgreeToTermsPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get authAgreeToTermsPrefix;
+
+  /// No description provided for @personalInfoAddEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add email'**
+  String get personalInfoAddEmail;
+
+  /// No description provided for @addEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add email'**
+  String get addEmailTitle;
+
+  /// No description provided for @addEmailIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.'**
+  String get addEmailIntro;
+
+  /// No description provided for @addEmailDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Email added'**
+  String get addEmailDone;
+
+  /// No description provided for @addEmailTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already used by another account.'**
+  String get addEmailTaken;
+
+  /// No description provided for @closestTitleNearYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings near you'**
+  String get closestTitleNearYou;
+
+  /// No description provided for @closestTitleNearMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings near the map centre'**
+  String get closestTitleNearMap;
+
+  /// No description provided for @closestSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest first, then further away'**
+  String get closestSubtitle;
+
+  /// No description provided for @closestAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} away'**
+  String closestAway(String distance);
+
+  /// No description provided for @closestEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No listings found'**
+  String get closestEmptyTitle;
+
+  /// No description provided for @closestEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try clearing some filters.'**
+  String get closestEmptyHint;
+
+  /// No description provided for @closestLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings could not be loaded.'**
+  String get closestLoadFailed;
+
+  /// No description provided for @closestRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Measure from where I am now'**
+  String get closestRefresh;
+
+  /// No description provided for @closestShowList.
+  ///
+  /// In en, this message translates to:
+  /// **'Show listings near you'**
+  String get closestShowList;
 }
 
 class _AppLocalizationsDelegate

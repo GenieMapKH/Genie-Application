@@ -35,6 +35,16 @@ class AppLocalizationsKm extends AppLocalizations {
       'អ្នកមិនមានអ៊ីនធឺណិតទេ។ សូមភ្ជាប់អ៊ីនធឺណិតដើម្បីទទួលព័ត៌មានថ្មី។';
 
   @override
+  String get offlineDialogTitle => 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត';
+
+  @override
+  String get offlineDialogMessage =>
+      'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទរបស់អ្នក។ អ្នកនៅតែអាចមើលអ្វីដែលបានរក្សាទុកក្នុងទូរសព្ទនេះ។';
+
+  @override
+  String get offlineKeepBrowsing => 'បន្តមើល';
+
+  @override
   String get navExplore => 'ស្វែងរក';
 
   @override
@@ -129,6 +139,13 @@ class AppLocalizationsKm extends AppLocalizations {
   String get languageTitle => 'ភាសា';
 
   @override
+  String get glassNavigationTitle => 'របាររុករកកញ្ចក់';
+
+  @override
+  String get glassNavigationSubtitle =>
+      'ធ្វើឲ្យរបាររុករកថ្លាដូចទូរស័ព្ទរបស់អ្នក';
+
+  @override
   String get personalInfoTitle => 'ព័ត៌មានផ្ទាល់ខ្លួន';
 
   @override
@@ -191,7 +208,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get personalInfoPhoneInvalid =>
-      'សូមបញ្ចូលលេខទូរសព្ទដែលមិនលើសពី ២០ តួ។';
+      'សូមបញ្ចូលលេខទូរសព្ទឱ្យបានត្រឹមត្រូវ ឧទាហរណ៍ 012 345 678។';
 
   @override
   String get personalInfoEmail => 'អ៊ីមែល';
@@ -585,13 +602,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get authContinueWithGoogle => 'បន្តដោយប្រើ Google';
 
   @override
-  String get authByContinuingYouAgreeToOut => 'ដោយបន្ត មានន័យថាអ្នកយល់ព្រមនឹង';
-
-  @override
-  String get authTermsOfServices => 'លក្ខខណ្ឌនៃការប្រើប្រាស់។';
-
-  @override
-  String get authEmailAddressOrPhoneNumber => 'អាសយដ្ឋានអ៊ីមែល ឬលេខទូរសព្ទ';
+  String get authTermsOfServices => 'លក្ខខណ្ឌនៃការប្រើប្រាស់';
 
   @override
   String get authForgetPassword => 'ភ្លេចពាក្យសម្ងាត់?';
@@ -921,7 +932,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get propertyPropertyHighlights => 'ចំណុចលេចធ្លោនៃអចលនទ្រព្យ';
 
   @override
-  String get propertyGenie => 'ទីលំនៅ';
+  String get propertyTilomnov => 'ទីលំនៅ';
 
   @override
   String get propertyViews => 'ចំនួនមើល';
@@ -1011,6 +1022,58 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get propertyDownload => 'ទាញយក';
+
+  @override
+  String get propertyShareSheetTitle => 'ចែករំលែកការផ្សាយនេះ';
+
+  @override
+  String get propertyShareScanToView => 'ស្កេនដើម្បីមើលការផ្សាយនេះ';
+
+  @override
+  String get propertyShareCopyLink => 'ចម្លងតំណ';
+
+  @override
+  String get propertyShareLinkCopied => 'បានចម្លងតំណ';
+
+  @override
+  String get propertyShareSaveImage => 'រក្សាទុករូបភាព';
+
+  @override
+  String get propertyShareImageSaved => 'បានរក្សាទុកក្នុងរូបថតរបស់អ្នក';
+
+  @override
+  String get propertyShareImageSaveFailed => 'មិនអាចរក្សាទុករូបភាពបានទេ';
+
+  @override
+  String get propertySharePhotosDenied =>
+      'សូមអនុញ្ញាតឱ្យ Tilomnov បន្ថែមរូបថតនៅក្នុងការកំណត់ ដើម្បីរក្សាទុករូបភាព។';
+
+  @override
+  String get propertyShareFailed => 'មិនអាចចែករំលែកការផ្សាយនេះបានទេ';
+
+  @override
+  String get propertyShareMessageSeeOnMap =>
+      'មើលរូបថត និងទីតាំងពិតប្រាកដនៅលើផែនទី៖';
+
+  @override
+  String get propertyShareMessageFooter =>
+      'ចែករំលែកពី Tilomnov ដី និងផ្ទះនៅលើផែនទី។';
+
+  @override
+  String get propertyShareCaptionCopied =>
+      'បានចម្លងអត្ថបទ៖ សូមបិទភ្ជាប់ ប្រសិនបើកម្មវិធីមិនបង្ហាញវា';
+
+  @override
+  String get propertyShareNotPublicDraft =>
+      'មានតែអ្នកទេដែលអាចមើលការផ្សាយនេះ រហូតដល់វាត្រូវបានផ្សព្វផ្សាយ។ សូមផ្សព្វផ្សាយវា ដើម្បីចែករំលែកតំណ និងកូដ QR របស់វា។';
+
+  @override
+  String get propertyShareNotPublicPending =>
+      'ការផ្សាយនេះនឹងបង្ហាញជាសាធារណៈ នៅពេលការទូទាត់បានបញ្ចប់។ បន្ទាប់មកអ្នកអាចចែករំលែកវាបាន។';
+
+  @override
+  String get propertyShareNotPublicEnded =>
+      'ការផ្សាយនេះលែងបង្ហាញជាសាធារណៈហើយ ដូច្នេះមិនអាចចែករំលែកតំណ និងកូដ QR របស់វាបានទេ។';
 
   @override
   String get propertyTitleType => 'ប្រភេទប័ណ្ណកម្មសិទ្ធិ';
@@ -1214,6 +1277,13 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get sessionEnded => 'អ្នកត្រូវបានចាកចេញពីឧបករណ៍នេះ។';
+
+  @override
+  String get updateRequiredTitle => 'តម្រូវឱ្យធ្វើបច្ចុប្បន្នភាព';
+
+  @override
+  String get updateRequiredMessage =>
+      'កំណែ Tilomnov នេះលែងដំណើរការជាមួយម៉ាស៊ីនមេរបស់យើងទៀតហើយ។ សូមធ្វើបច្ចុប្បន្នភាពកម្មវិធីពីហាងកម្មវិធី ដើម្បីបន្តប្រើប្រាស់។';
 
   @override
   String get securityForgotPin => 'ភ្លេចលេខកូដ PIN ជជែក';
@@ -1725,7 +1795,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get chatPinCreateHelp =>
-      'សាររបស់អ្នកត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ លេខកូដ PIN ៦ ខ្ទង់នេះនាំសារទាំងនោះមកវិញ នៅពេលអ្នកចូលលើទូរស័ព្ទថ្មី។ សូមជ្រើសរើសលេខដែលអ្នកចាំបាន៖ គ្មាននរណាម្នាក់ សូម្បីតែ Genie អាចមើលឃើញវាបានទេ។';
+      'សាររបស់អ្នកត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ លេខកូដ PIN ៦ ខ្ទង់នេះនាំសារទាំងនោះមកវិញ នៅពេលអ្នកចូលលើទូរស័ព្ទថ្មី។ សូមជ្រើសរើសលេខដែលអ្នកចាំបាន៖ គ្មាននរណាម្នាក់ សូម្បីតែ Tilomnov អាចមើលឃើញវាបានទេ។';
 
   @override
   String get chatPinConfirmTitle => 'បញ្ជាក់លេខកូដ PIN ជជែករបស់អ្នក';
@@ -1788,10 +1858,6 @@ class AppLocalizationsKm extends AppLocalizations {
   String get authErrEnterName => 'សូមបញ្ចូលឈ្មោះរបស់អ្នក';
 
   @override
-  String get authErrEnterEmailOrPhone =>
-      'សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែល ឬលេខទូរស័ព្ទដែលត្រឹមត្រូវ';
-
-  @override
   String get authErrEnterPassword => 'សូមបញ្ចូលពាក្យសម្ងាត់ដែលត្រឹមត្រូវ';
 
   @override
@@ -1813,11 +1879,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get authErrPasswordsDontMatch => 'ពាក្យសម្ងាត់មិនដូចគ្នាទេ';
 
   @override
-  String get termsScrollToAgree =>
-      'សូមរំកិលទៅខាងក្រោមបំផុតនៃលក្ខខណ្ឌ ដើម្បីយល់ព្រម។';
-
-  @override
-  String get termsTitle => 'លក្ខខណ្ឌប្រើប្រាស់សម្រាប់ Genie Property';
+  String get termsTitle => 'លក្ខខណ្ឌប្រើប្រាស់សម្រាប់ Tilomnov';
 
   @override
   String get termsLastUpdated =>
@@ -1825,18 +1887,18 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get termsWelcome =>
-      'សូមស្វាគមន៍មកកាន់ Genie Property។ តាមរយៈការចូលប្រើ ឬការប្រើប្រាស់កម្មវិធី និងសេវាកម្មរបស់ Genie អ្នកយល់ព្រមគោរព និងស្ថិតក្រោមលក្ខខណ្ឌប្រើប្រាស់ខាងក្រោម។';
+      'សូមស្វាគមន៍មកកាន់ Tilomnov។ តាមរយៈការចូលប្រើ ឬការប្រើប្រាស់កម្មវិធី និងសេវាកម្មរបស់ Tilomnov អ្នកយល់ព្រមគោរព និងស្ថិតក្រោមលក្ខខណ្ឌប្រើប្រាស់ខាងក្រោម។';
 
   @override
   String get termsDisagree =>
       'ប្រសិនបើអ្នកមិនយល់ព្រមនឹងលក្ខខណ្ឌទាំងនេះទេ សូមកុំប្រើប្រាស់កម្មវិធីនេះ។';
 
   @override
-  String get termsAboutTitle => '១. អំពី Genie';
+  String get termsAboutTitle => '១. អំពី Tilomnov';
 
   @override
   String get termsAboutIntro =>
-      'Genie គឺជាវេទិកាអចលនទ្រព្យផ្អែកលើផែនទី ដែលអនុញ្ញាតឱ្យអ្នកប្រើប្រាស់៖';
+      'Tilomnov គឺជាវេទិកាអចលនទ្រព្យផ្អែកលើផែនទី ដែលអនុញ្ញាតឱ្យអ្នកប្រើប្រាស់៖';
 
   @override
   String get termsAboutView =>
@@ -1856,7 +1918,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get termsAboutPlatformOnly =>
-      'Genie ដើរតួជាវេទិកាតែប៉ុណ្ណោះ ហើយមិនមែនជាម្ចាស់ មិនលក់ ឬមិនធ្វើជាឈ្មួញកណ្តាលលើអចលនទ្រព្យណាមួយឡើយ។';
+      'Tilomnov ដើរតួជាវេទិកាតែប៉ុណ្ណោះ ហើយមិនមែនជាម្ចាស់ មិនលក់ ឬមិនធ្វើជាឈ្មួញកណ្តាលលើអចលនទ្រព្យណាមួយឡើយ។';
 
   @override
   String get termsAccountsTitle => '២. គណនីអ្នកប្រើប្រាស់';
@@ -1877,7 +1939,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get termsAccountsSuspend =>
-      'Genie រក្សាសិទ្ធិផ្អាកគណនីដែលផ្តល់ព័ត៌មានមិនពិត។';
+      'Tilomnov រក្សាសិទ្ធិផ្អាកគណនីដែលផ្តល់ព័ត៌មានមិនពិត។';
 
   @override
   String get termsListingsTitle => '៣. ការដាក់បញ្ជីអចលនទ្រព្យ';
@@ -1900,14 +1962,14 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get termsListingsNotResponsible =>
-      'Genie មិនទទួលខុសត្រូវចំពោះទិន្នន័យអចលនទ្រព្យមិនត្រឹមត្រូវ ដែលអ្នកប្រើប្រាស់បានដាក់ស្នើឡើយ។';
+      'Tilomnov មិនទទួលខុសត្រូវចំពោះទិន្នន័យអចលនទ្រព្យមិនត្រឹមត្រូវ ដែលអ្នកប្រើប្រាស់បានដាក់ស្នើឡើយ។';
 
   @override
   String get termsMapTitle => '៤. ភាពត្រឹមត្រូវនៃផែនទី និងកូអរដោនេ';
 
   @override
   String get termsMapIntro =>
-      'Genie ផ្តល់ឧបករណ៍សម្រាប់បង្ហាញផែនទី ការបំប្លែង UTM និងការវាស់ចម្ងាយ។';
+      'Tilomnov ផ្តល់ឧបករណ៍សម្រាប់បង្ហាញផែនទី ការបំប្លែង UTM និងការវាស់ចម្ងាយ។';
 
   @override
   String get termsMapGuidanceOnly =>
@@ -1919,10 +1981,6 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get termsAgree => 'យល់ព្រមលើលក្ខខណ្ឌប្រើប្រាស់';
-
-  @override
-  String get termsScrollHint =>
-      'រំកិលទៅខាងក្រោម ដើម្បីយល់ព្រមលើលក្ខខណ្ឌប្រើប្រាស់';
 
   @override
   String get authErrEnterValidEmail => 'សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែលដែលត្រឹមត្រូវ';
@@ -1980,6 +2038,44 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get chatMessageSending => 'កំពុងផ្ញើ…';
+
+  @override
+  String get chatMessageSent => 'បានផ្ញើ';
+
+  @override
+  String chatMessageTimeYesterday(String time) {
+    return 'ម្សិលមិញ $time';
+  }
+
+  @override
+  String get chatDeliveredJustNow => 'បានបញ្ជូនអម្បាញ់មិញ';
+
+  @override
+  String chatDeliveredMinutes(int minutes) {
+    return 'បានបញ្ជូន $minutes នាទីមុន';
+  }
+
+  @override
+  String chatDeliveredHours(int hours) {
+    return 'បានបញ្ជូន $hours ម៉ោងមុន';
+  }
+
+  @override
+  String chatDeliveredOn(String day) {
+    return 'បានបញ្ជូន $day';
+  }
+
+  @override
+  String get chatAttachPicture => 'ភ្ជាប់រូបភាព';
+
+  @override
+  String get chatShowEmojis => 'រូបអារម្មណ៍';
+
+  @override
+  String get chatShowKeyboard => 'ក្តារចុច';
+
+  @override
+  String get chatSendMessage => 'ផ្ញើសារ';
 
   @override
   String get chatReply => 'ឆ្លើយតប';
@@ -2371,10 +2467,14 @@ class AppLocalizationsKm extends AppLocalizations {
   String get propertyMovedToDraft => 'បានប្តូរអចលនទ្រព្យទៅជាព្រាង';
 
   @override
-  String get propertyPublishProperty => 'ផ្សព្វផ្សាយអចលនទ្រព្យ';
+  String get propertyPublish => 'ផ្សព្វផ្សាយ';
 
   @override
-  String get propertyPublishing => 'កំពុងផ្សព្វផ្សាយអចលនទ្រព្យរបស់អ្នក...';
+  String get propertyArchive => 'ដាក់បណ្ណសារ';
+
+  @override
+  String get propertyArchivedPrivately =>
+      'បានរក្សាទុកជាឯកជន។ មានតែអ្នកទេដែលអាចមើលឃើញការផ្សាយនេះ។';
 
   @override
   String get propertySaveFailed =>
@@ -3042,4 +3142,58 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get propertyPublisherViewProfile => 'មើលប្រវត្តិរូប';
+
+  @override
+  String get authPhoneHint => '012 345 678';
+
+  @override
+  String get authEmailOptional => 'អ៊ីមែល (មិនចាំបាច់)';
+
+  @override
+  String get authAgreeToTermsPrefix => 'ខ្ញុំយល់ព្រមនឹង';
+
+  @override
+  String get personalInfoAddEmail => 'បន្ថែមអ៊ីមែល';
+
+  @override
+  String get addEmailTitle => 'បន្ថែមអ៊ីមែល';
+
+  @override
+  String get addEmailIntro =>
+      'បន្ថែមអ៊ីមែល ដើម្បីអាចកំណត់ពាក្យសម្ងាត់ថ្មីបាន ពេលអ្នកភ្លេចវា។ សូមបញ្ចូលពាក្យសម្ងាត់របស់អ្នក ដើម្បីបញ្ជាក់ថាជាអ្នកពិតប្រាកដ។';
+
+  @override
+  String get addEmailDone => 'បានបន្ថែមអ៊ីមែល';
+
+  @override
+  String get addEmailTaken => 'អ៊ីមែលនេះត្រូវបានប្រើដោយគណនីផ្សេងរួចហើយ។';
+
+  @override
+  String get closestTitleNearYou => 'អចលនទ្រព្យនៅជិតអ្នក';
+
+  @override
+  String get closestTitleNearMap => 'អចលនទ្រព្យនៅជិតកណ្ដាលផែនទី';
+
+  @override
+  String get closestSubtitle => 'ជិតបំផុតមុន បន្ទាប់មកឆ្ងាយជាងនេះ';
+
+  @override
+  String closestAway(String distance) {
+    return 'ចម្ងាយ $distance';
+  }
+
+  @override
+  String get closestEmptyTitle => 'រកមិនឃើញអចលនទ្រព្យទេ';
+
+  @override
+  String get closestEmptyHint => 'សាកល្បងដកតម្រងខ្លះចេញ។';
+
+  @override
+  String get closestLoadFailed => 'មិនអាចផ្ទុកអចលនទ្រព្យបានទេ។';
+
+  @override
+  String get closestRefresh => 'វាស់ពីទីតាំងបច្ចុប្បន្នរបស់ខ្ញុំ';
+
+  @override
+  String get closestShowList => 'បង្ហាញអចលនទ្រព្យនៅជិតអ្នក';
 }

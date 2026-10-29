@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Shown instead of the message box when the other person's encryption key
 /// is not the one this device trusts. Nothing is sent until the user decides.

@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_attachment_store.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_send_problem.dart';
-import 'package:genie/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_store.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
 
 /// Sends and opens files in a chat. A file is encrypted on this device with
 /// a one-time key before it is uploaded, and decrypted only in memory.

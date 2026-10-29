@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/features/auth/presentation/screens/terms_of_service_page.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
-import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/auth/presentation/screens/terms_of_service_page.dart';
+import 'package:tilomnov/shared/transitions/app_page_route.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/login_controller.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/sign_up_form.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 import '../widgets/create_account_form.dart';
 import '../widgets/create_account_actions.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/presentation/auth_error_message.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
-/// Create an account screen for Genie.
+/// Create an account screen for Tilomnov.
 class CreateAccountPage extends ConsumerStatefulWidget {
   final VoidCallback? onSignUpPressed;
   final VoidCallback? onGoogleSignUpPressed;
@@ -35,136 +36,88 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _identifierController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  String? _nameError;
-  String? _identifierError;
-  String? _passwordError;
-  String? _termsError;
 
   bool _obscurePassword = true;
   bool _agreeToTerms = false;
   bool _isLoading = false;
 
+  /// Problems are shown once the user has tried to sign up, and then follow
+  /// what they type.
+  bool _showProblems = false;
+
   @override
   void dispose() {
     _nameController.dispose();
-    _identifierController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  bool _validateIdentifier(String value) {
-    final trimmed = value.trim();
-    if (trimmed.isEmpty) return false;
+  SignUpForm get _form => SignUpForm(
+    name: _nameController.text,
+    phone: _phoneController.text,
+    email: _emailController.text,
+    password: _passwordController.text,
+    agreedToTerms: _agreeToTerms,
+  );
 
-    // Check email
-    final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$');
-    if (emailRegex.hasMatch(trimmed)) return true;
-
-    // Check phone
-    final cleanPhone = trimmed.replaceAll(RegExp(r'[\s\-()]'), '');
-    final phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-    return phoneRegex.hasMatch(cleanPhone);
-  }
-
-  bool _validateForm() {
-    var isValid = true;
-
-    setState(() {
-      if (_nameController.text.trim().isEmpty) {
-        _nameError = context.l10n.authErrEnterName;
-        isValid = false;
-      } else {
-        _nameError = null;
-      }
-
-      if (!_validateIdentifier(_identifierController.text)) {
-        _identifierError = context.l10n.authErrEnterEmailOrPhone;
-        isValid = false;
-      } else {
-        _identifierError = null;
-      }
-
-      if (_passwordController.text.isEmpty) {
-        _passwordError = context.l10n.authErrEnterPassword;
-        isValid = false;
-      } else if (_passwordController.text.length < 8) {
-        _passwordError = context.l10n.authErrPasswordMin8;
-        isValid = false;
-      } else {
-        _passwordError = null;
-      }
-
-      if (!_agreeToTerms) {
-        _termsError = context.l10n.authErrAgreeTerms;
-        isValid = false;
-      } else {
-        _termsError = null;
-      }
-    });
-
-    return isValid;
+  String? _message(SignUpProblem? problem) {
+    if (!_showProblems || problem == null) return null;
+    final l10n = context.l10n;
+    return switch (problem) {
+      SignUpProblem.missingName => l10n.authErrEnterName,
+      SignUpProblem.invalidPhone => l10n.authErrEnterValidPhone,
+      SignUpProblem.invalidEmail => l10n.authErrEnterValidEmail,
+      SignUpProblem.missingPassword => l10n.authErrEnterPassword,
+      SignUpProblem.shortPassword => l10n.authErrPasswordMin8,
+      SignUpProblem.termsNotAccepted => l10n.authErrAgreeTerms,
+    };
   }
 
   Future<void> _handleSignUp() async {
-    final isValid = _validateForm();
-    if (isValid) {
-      setState(() => _isLoading = true);
-      try {
-        String identifier = _identifierController.text.trim();
-        // Clean phone number if it's not an email
-        if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$').hasMatch(identifier)) {
-          identifier = identifier.replaceAll(RegExp(r'[\s\-()]'), '');
-        }
+    final form = _form;
+    setState(() => _showProblems = true);
+    if (!form.isValid) return;
 
-        await ref
-            .read(authServiceProvider)
-            .register(identifier, _passwordController.text);
+    setState(() => _isLoading = true);
+    try {
+      await ref
+          .read(authServiceProvider)
+          .register(
+            phone: form.normalizedPhone!,
+            email: form.normalizedEmail,
+            name: form.trimmedName,
+            password: form.password,
+          );
 
-        if (widget.onSignUpPressed != null) {
-          widget.onSignUpPressed!();
-        } else {
-          if (mounted) {
-            AppPopup.showSuccess(
-              context,
-              context.l10n.authAccountCreatedSuccessfullyPleaseLogin,
-            );
-            _navigateToLogin();
-          }
-        }
-      } catch (e) {
-        if (mounted) {
-          AppPopup.showError(context, authErrorMessage(context.l10n, e));
-        }
-      } finally {
-        if (mounted) setState(() => _isLoading = false);
+      if (widget.onSignUpPressed != null) {
+        widget.onSignUpPressed!();
+      } else if (mounted) {
+        AppPopup.showSuccess(
+          context,
+          context.l10n.authAccountCreatedSuccessfullyPleaseLogin,
+        );
+        _navigateToLogin();
       }
+    } catch (e) {
+      if (mounted) {
+        AppPopup.showError(context, authErrorMessage(context.l10n, e));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
+  /// Only for reading: ticking the box on the form is enough to agree.
   Future<void> _openTermsOfService() async {
     final agreed = await Navigator.of(context).push<bool>(
-      AppPageRoute(
-        page: TermsOfServicePage(
-          initialAgreed: _agreeToTerms,
-          onAgreeChanged: (val) {
-            setState(() {
-              _agreeToTerms = val;
-              if (val) _termsError = null;
-            });
-          },
-        ),
-      ),
+      AppPageRoute(page: TermsOfServicePage(initialAgreed: _agreeToTerms)),
     );
-
-    if (agreed == true && mounted) {
-      setState(() {
-        _agreeToTerms = true;
-        _termsError = null;
-      });
-    }
+    if (agreed != null && mounted) setState(() => _agreeToTerms = agreed);
   }
 
   void _navigateToLogin() {
@@ -187,6 +140,7 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final form = _form;
     ref.listen<AsyncValue<bool>>(loginControllerProvider, (previous, next) {
       if (next.isLoading) return;
       // Login and sign-up can both be open (one pushed over the other) and
@@ -237,53 +191,24 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
                     CreateAccountForm(
                       nameController: _nameController,
-                      identifierController: _identifierController,
+                      phoneController: _phoneController,
+                      emailController: _emailController,
                       passwordController: _passwordController,
-                      nameError: _nameError,
-                      identifierError: _identifierError,
-                      passwordError: _passwordError,
-                      termsError: _termsError,
+                      nameError: _message(form.nameProblem),
+                      phoneError: _message(form.phoneProblem),
+                      emailError: _message(form.emailProblem),
+                      passwordError: _message(form.passwordProblem),
+                      termsError: _message(form.termsProblem),
                       obscurePassword: _obscurePassword,
                       agreeToTerms: _agreeToTerms,
-                      onNameChanged: (val) {
-                        if (_nameError != null && val.trim().isNotEmpty) {
-                          setState(() => _nameError = null);
-                        }
+                      onChanged: () {
+                        if (_showProblems) setState(() {});
                       },
-                      onIdentifierChanged: (val) {
-                        if (_identifierError != null &&
-                            _validateIdentifier(val)) {
-                          setState(() => _identifierError = null);
-                        }
-                      },
-                      onPasswordChanged: (val) {
-                        if (_passwordError != null && val.length >= 6) {
-                          setState(() => _passwordError = null);
-                        }
-                      },
-                      onTogglePasswordVisibility: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      onTermsChanged: (val) {
-                        if (val == true) {
-                          _openTermsOfService();
-                        } else {
-                          setState(() {
-                            _agreeToTerms = false;
-                          });
-                        }
-                      },
-                      onTermsTextTapped: () {
-                        if (!_agreeToTerms) {
-                          _openTermsOfService();
-                        } else {
-                          setState(() {
-                            _agreeToTerms = false;
-                          });
-                        }
-                      },
+                      onTogglePasswordVisibility: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
+                      onTermsChanged: (agreed) =>
+                          setState(() => _agreeToTerms = agreed),
+                      onTermsLinkTapped: _openTermsOfService,
                     ),
                     const SizedBox(height: 28),
 

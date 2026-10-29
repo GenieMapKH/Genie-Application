@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:genie/app/session/sign_out.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/presentation/screens/chat_pin_setup_page.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/app/session/sign_out.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_pin_setup_page.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 
 /// Every account has a chat PIN. A signed-in account without one creates it
 /// here before it can use the app: right after signing up or signing in

@@ -1,5 +1,5 @@
-import 'package:genie/features/property/data/models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/data/models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 /// A map area and filter the user saved, alerting them (when [alerts] is
 /// on) about new listings it would show.

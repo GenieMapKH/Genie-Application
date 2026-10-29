@@ -1,4 +1,4 @@
-import 'package:genie/features/search/data/models/search_results.dart';
+import 'package:tilomnov/features/search/data/models/search_results.dart';
 
 /// Recent answers, so deleting a letter or reopening the search shows them at
 /// once instead of asking the server again. Least recently used goes first.

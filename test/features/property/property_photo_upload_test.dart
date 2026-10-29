@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/repositories/property_repository.dart';
+import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../support/test_app.dart';

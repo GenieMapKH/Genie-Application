@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/auth/data/google_sign_in_service.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
+import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/login_controller.dart';
 
 class _AcceptingAuthService extends AuthService {
   _AcceptingAuthService() : super(Dio());

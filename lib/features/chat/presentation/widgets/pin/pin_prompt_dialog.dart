@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_rules.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_rules.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Asks for the 6-digit backup PIN. Returns null if the user cancels.
 /// With [isNewPin] an easily guessed PIN is refused.

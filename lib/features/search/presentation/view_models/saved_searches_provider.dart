@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/property/data/models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/search/data/models/saved_search.dart';
-import 'package:genie/features/search/data/saved_search_repository.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/search/data/models/saved_search.dart';
+import 'package:tilomnov/features/search/data/saved_search_repository.dart';
 
 final savedSearchRepositoryProvider = Provider<SavedSearchRepository>((ref) {
   return SavedSearchRepository(ref.watch(apiClientProvider));

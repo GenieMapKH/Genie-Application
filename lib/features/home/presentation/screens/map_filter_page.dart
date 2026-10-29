@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/home/presentation/providers/map_filter_draft_provider.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/filter_number_field.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/filter_section.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/keyword_filter_chips.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/listing_scope_tabs.dart';
-import 'package:genie/features/home/presentation/widgets/map/filter/price_range_section.dart';
-import 'package:genie/features/property/presentation/view_models/map_property_filter.dart';
-import 'package:genie/features/property/presentation/widgets/property_type_selector.dart';
-import 'package:genie/features/search/presentation/widgets/saved/save_search_flow.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_filter_draft_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/filter_number_field.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/filter_section.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/keyword_filter_chips.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/listing_scope_tabs.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/filter/price_range_section.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_type_selector.dart';
+import 'package:tilomnov/features/search/presentation/widgets/saved/save_search_flow.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 /// Everything the map can be narrowed by. Choices stay on this page until
 /// "See results" puts them on the map; going back drops them.

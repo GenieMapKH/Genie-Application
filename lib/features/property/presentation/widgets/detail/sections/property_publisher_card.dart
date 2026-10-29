@@ -3,17 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/follow/presentation/follow_actions.dart';
-import 'package:genie/features/follow/presentation/view_models/follow_providers.dart';
-import 'package:genie/features/follow/presentation/widgets/follow_button.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_publisher_opener.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/owner_display_name.dart';
-import 'package:genie/shared/widgets/media/user_avatar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/follow/presentation/follow_actions.dart';
+import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
+import 'package:tilomnov/features/follow/presentation/widgets/follow_button.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_publisher_opener.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/owner_display_name.dart';
+import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
 
 /// "Listed by": who posted the listing, with "View Profile" and "Follow".
 /// Nothing for a listing whose owner is unknown.

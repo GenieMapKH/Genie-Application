@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/safety/data/models/report_reason.dart';
-import 'package:genie/features/safety/data/report_repository.dart';
-import 'package:genie/features/safety/presentation/view_models/report_providers.dart';
-import 'package:genie/features/safety/presentation/widgets/report_reason_text.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/safety/data/models/report_reason.dart';
+import 'package:tilomnov/features/safety/data/report_repository.dart';
+import 'package:tilomnov/features/safety/presentation/view_models/report_providers.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/report_reason_text.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 
 /// The longest note the server keeps.
 const _maxDetails = 1000;
@@ -23,13 +24,8 @@ Future<void> showReportSheet(
   required String targetId,
 }) async {
   if (!requireSignIn(context, ref)) return;
-  final sent = await showModalBottomSheet<bool>(
-    context: context,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
+  final sent = await AppDialog.show<bool>(
+    context,
     builder: (_) => _ReportSheet(target: target, targetId: targetId),
   );
   if (sent == true && context.mounted) {
@@ -89,87 +85,62 @@ class _ReportSheetState extends ConsumerState<_ReportSheet> {
     final l10n = context.l10n;
     final colors = context.colors;
 
-    return Padding(
-      // Above the keyboard while the note is typed.
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                widget.target == ReportTarget.listing
-                    ? l10n.reportListingTitle
-                    : l10n.reportUserTitle,
-                style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: colors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                l10n.reportHelp,
-                style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
-              ),
-              const SizedBox(height: 8),
-              RadioGroup<ReportReason>(
-                groupValue: _reason,
-                onChanged: (reason) => setState(() => _reason = reason),
-                child: Column(
-                  children: [
-                    for (final reason in ReportReason.forTarget(widget.target))
-                      RadioListTile<ReportReason>(
-                        value: reason,
-                        contentPadding: EdgeInsets.zero,
-                        activeColor: colors.accent,
-                        title: Text(
-                          reportReasonText(l10n, reason),
-                          style: GoogleFonts.inter(
-                            fontSize: 15,
-                            color: colors.textPrimary,
-                          ),
-                        ),
+    return AppDialog(
+      icon: Icons.flag_rounded,
+      tone: AppDialogTone.danger,
+      title: widget.target == ReportTarget.listing
+          ? l10n.reportListingTitle
+          : l10n.reportUserTitle,
+      message: l10n.reportHelp,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RadioGroup<ReportReason>(
+            groupValue: _reason,
+            onChanged: (reason) => setState(() => _reason = reason),
+            child: Column(
+              children: [
+                for (final reason in ReportReason.forTarget(widget.target))
+                  RadioListTile<ReportReason>(
+                    value: reason,
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    activeColor: colors.danger,
+                    title: Text(
+                      reportReasonText(l10n, reason),
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: colors.textPrimary,
                       ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _details,
-                maxLength: _maxDetails,
-                minLines: 2,
-                maxLines: 5,
-                textInputAction: TextInputAction.newline,
-                decoration: InputDecoration(
-                  hintText: l10n.reportDetailsHint,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: _reason == null || _sending ? null : _send,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.danger,
-                  foregroundColor: colors.onPrimary,
-                  minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                child: _sending
-                    ? const SizedBox.square(
-                        dimension: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(l10n.reportSend),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _details,
+            maxLength: _maxDetails,
+            minLines: 2,
+            maxLines: 4,
+            textInputAction: TextInputAction.newline,
+            style: GoogleFonts.inter(fontSize: 14, color: colors.textPrimary),
+            decoration: InputDecoration(
+              hintText: l10n.reportDetailsHint,
+              filled: true,
+              fillColor: colors.surfaceMuted,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
       ),
+      primaryLabel: l10n.reportSend,
+      onPrimary: _reason == null ? null : _send,
+      primaryBusy: _sending,
+      secondaryLabel: l10n.commonCancel,
     );
   }
 }

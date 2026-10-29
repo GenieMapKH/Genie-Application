@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/property/data/models/property_insights.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/chat_listing_of.dart';
-import 'package:genie/features/property/presentation/view_models/property_nearby.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/property/presentation/view_models/property_recommendations_provider.dart';
-import 'package:genie/features/property/presentation/view_models/saved_property_ids_provider.dart';
-import 'package:genie/features/property/presentation/widgets/detail/actions/call_owner.dart';
-import 'package:genie/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
-import 'package:genie/features/property/presentation/widgets/detail/actions/property_detail_actions.dart';
-import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_gallery.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_route.dart';
-import 'package:genie/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
-import 'package:genie/features/property/presentation/widgets/detail/actions/property_owner_actions.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/safety/presentation/widgets/safety_menu_button.dart';
-import 'package:genie/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
-import 'package:genie/features/property/presentation/widgets/detail/sections/property_facts_section.dart';
-import 'package:genie/features/property/presentation/widgets/detail/sections/property_grid_section.dart';
-import 'package:genie/features/property/presentation/widgets/detail/header/property_highlights.dart';
-import 'package:genie/features/property/presentation/widgets/detail/sections/property_map_preview.dart';
-import 'package:genie/features/property/presentation/widgets/detail/sections/property_publisher_card.dart';
-import 'package:genie/features/property/presentation/widgets/detail/sections/property_share_section.dart';
-import 'package:genie/features/auth/presentation/widgets/sign_in_required_dialog.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/owner_display_name.dart';
+import 'package:tilomnov/features/property/data/models/property_insights.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/chat_listing_of.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_recommendations_provider.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/actions/call_owner.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_detail_actions.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_detail_gallery.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_route.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_owner_actions.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_facts_section.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_grid_section.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_highlights.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_map_preview.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_publisher_card.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_share_section.dart';
+import 'package:tilomnov/features/property/presentation/widgets/share/property_share_sheet.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/owner_display_name.dart';
 
 /// Full-detail view for a property, opened by tapping or flicking up the map
 /// card.
@@ -217,6 +218,10 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       ),
                                     ),
                                     onClose: _dismiss,
+                                    onShare: () => PropertyShareSheet.show(
+                                      context,
+                                      property,
+                                    ),
                                     menu: isOwner || property.ownerId == null
                                         ? null
                                         : SafetyMenuButton(

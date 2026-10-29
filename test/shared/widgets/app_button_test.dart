@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/shared/widgets/buttons/app_button.dart';
+import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
 
 void main() {
   testWidgets('AppButton.primary renders with text and triggers callback', (

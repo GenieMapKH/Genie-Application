@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/backup/password_lock_migration.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_check.dart';
-import 'package:genie/features/chat/e2ee/backup/pin_rules.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/password_lock_migration.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_rules.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 
 enum ChatPinSetupStep {
   /// Only for chats still locked with the account password.

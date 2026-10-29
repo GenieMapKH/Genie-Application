@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/presentation/widgets/voice/live_voice_waveform.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/live_voice_waveform.dart';
 
 void main() {
   group('LiveVoiceWaveform.smoothed', () {
