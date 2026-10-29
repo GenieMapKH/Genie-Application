@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/app_header_bar.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/screens/sort_order_page.dart';
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
-import 'package:genie/features/property/presentation/widgets/saved_property_card.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
+import 'package:tilomnov/features/property/presentation/screens/sort_order_page.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:tilomnov/features/property/presentation/widgets/saved_property_card.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
+import 'package:tilomnov/shared/utils/paged_list.dart';
+import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 /// The Saved Properties tab page matching Screenshots 1 & 2.
 class SavedPropertiesPage extends ConsumerWidget {
@@ -24,22 +30,40 @@ class SavedPropertiesPage extends ConsumerWidget {
 
   void _openDetail(BuildContext context, PropertyModel property) {
     Navigator.of(context).push(
-      PropertyDetailSheet.route(
+      _detailRoute(
+        context,
         property,
         heroTag: 'saved_property_hero_${property.id}',
-        onOpenProperty: (next) {
-          Navigator.of(context).pop();
-          _openDetail(context, next);
-        },
       ),
     );
   }
 
+  /// A recommendation was tapped: its sheet takes the place of this one.
+  Route<void> _detailRoute(
+    BuildContext context,
+    PropertyModel property, {
+    String? heroTag,
+    Rect? origin,
+  }) {
+    return PropertyDetailSheet.route(
+      property,
+      heroTag: heroTag,
+      origin: origin,
+      onOpenProperty: (next, tileRect) => Navigator.of(
+        context,
+      ).pushReplacement(_detailRoute(context, next, origin: tileRect)),
+    );
+  }
+
+  /// Kept while another tab is shown: changes to the listings redraw it
+  /// only once it is shown again.
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      PausedWhileHidden(builder: _buildShown);
+
+  Widget _buildShown(BuildContext context, WidgetRef ref) {
     final savedAsync = ref.watch(savedPropertiesProvider);
-    final sortedProperties = ref.watch(sortedSavedPropertiesProvider);
-    final count = savedAsync.valueOrNull?.length ?? 0;
+    final count = ref.watch(savedPropertyIdsProvider).valueOrNull?.length ?? 0;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -53,7 +77,7 @@ class SavedPropertiesPage extends ConsumerWidget {
               trailing: Padding(
                 padding: const EdgeInsets.only(right: 4.0),
                 child: Text(
-                  '$count Saved',
+                  context.l10n.propertySavedCount(count),
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -135,11 +159,9 @@ class SavedPropertiesPage extends ConsumerWidget {
                     ],
                   ),
                 ),
-                data: (_) {
-                  if (sortedProperties.isEmpty) {
-                    return _buildEmptyState(context);
-                  }
-                  return _buildPropertyList(context, ref, sortedProperties);
+                data: (page) {
+                  if (page.items.isEmpty) return _buildEmptyState(context);
+                  return _buildPropertyList(context, ref, page);
                 },
               ),
             ),
@@ -222,28 +244,51 @@ class SavedPropertiesPage extends ConsumerWidget {
   Widget _buildPropertyList(
     BuildContext context,
     WidgetRef ref,
-    List<PropertyModel> properties,
+    PagedList<PropertyModel> page,
   ) {
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.68,
+    final properties = page.items;
+    return LoadMoreOnScroll(
+      enabled: page.hasMore && !page.loadingMore,
+      onLoadMore: () => ref.read(savedPropertiesProvider.notifier).loadMore(),
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverGrid.builder(
+              gridDelegate: PropertyListLayout.isTablet(context)
+                  ? const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: PropertyListLayout.savedCardMaxWidth,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: PropertyListLayout.columnSpacing,
+                      childAspectRatio: 0.68,
+                    )
+                  : const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.68,
+                    ),
+              itemCount: properties.length,
+              itemBuilder: (context, index) {
+                final property = properties[index];
+                return SavedPropertyCard(
+                  property: property,
+                  isFavorite: true,
+                  onTap: () => _openDetail(context, property),
+                  onFavoriteToggled: () => ref
+                      .read(savedPropertyIdsProvider.notifier)
+                      .toggle(property.id),
+                );
+              },
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: page.loadingMore
+                ? const LoadingMoreIndicator()
+                : const SizedBox(height: 24),
+          ),
+        ],
       ),
-      itemCount: properties.length,
-      itemBuilder: (context, index) {
-        final property = properties[index];
-        return SavedPropertyCard(
-          property: property,
-          isFavorite: true,
-          onTap: () => _openDetail(context, property),
-          onFavoriteToggled: () {
-            ref.read(savedPropertiesProvider.notifier).toggleFavorite(property);
-          },
-        );
-      },
     );
   }
 }

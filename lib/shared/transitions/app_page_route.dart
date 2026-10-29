@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Direction for page transitions.
 enum SlideDirection { fromRight, fromLeft, none }
 
-/// A unified, consistent page route transition across the entire Genie app.
+/// A unified, consistent page route transition across the entire Tilomnov app.
 /// Implements a high-performance shared-axis slide and fade with matching reverse pop transitions
 /// and a solid backdrop (the theme's page colour) to eliminate any sub-pixel seam/flash during route replacement.
 class AppPageRoute<T> extends PageRouteBuilder<T> {

@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
-export 'package:genie/l10n/generated/app_localizations.dart';
+export 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// The languages the app is translated into, in the order the picker shows them.
 /// To add one: add `app_<code>.arb` next to `app_en.arb` and list it here.

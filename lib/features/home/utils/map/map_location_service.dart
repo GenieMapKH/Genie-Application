@@ -1,13 +1,18 @@
 import 'dart:async';
 
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+/// Why the device's position could not be had. The map says it in the
+/// user's language.
+enum LocationProblem { servicesOff, denied, deniedForever, failed }
 
 /// Result of a location request: either a position, or the reason it failed so
 /// the caller can surface a message.
 class LocationResult {
   final Position? position;
-  final String? error;
+  final LocationProblem? error;
 
   const LocationResult.success(this.position) : error = null;
   const LocationResult.failure(this.error) : position = null;
@@ -31,23 +36,19 @@ class MapLocationService {
   /// Resolves the device's current position, requesting permission if needed.
   static Future<LocationResult> currentPosition() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
-      return const LocationResult.failure(
-        'Location services are disabled. Please enable them.',
-      );
+      return const LocationResult.failure(LocationProblem.servicesOff);
     }
 
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return const LocationResult.failure('Location permissions are denied.');
+        return const LocationResult.failure(LocationProblem.denied);
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return const LocationResult.failure(
-        'Location permissions are permanently denied.',
-      );
+      return const LocationResult.failure(LocationProblem.deniedForever);
     }
 
     try {
@@ -58,7 +59,31 @@ class MapLocationService {
       );
       return LocationResult.success(position);
     } catch (e) {
-      return LocationResult.failure('Could not get location: $e');
+      AppLogger.error('Could not get the location', e);
+      return const LocationResult.failure(LocationProblem.failed);
+    }
+  }
+
+  /// The device's position when location is on and already allowed, else
+  /// null. Never asks for permission: for features that work without it.
+  static Future<Position?> positionIfAllowed() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) return null;
+      final permission = await Geolocator.checkPermission();
+      if (permission != LocationPermission.always &&
+          permission != LocationPermission.whileInUse) {
+        return null;
+      }
+      return await Geolocator.getLastKnownPosition() ??
+          await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.medium,
+              timeLimit: Duration(seconds: 8),
+            ),
+          );
+    } catch (e) {
+      AppLogger.error('Could not get the location', e);
+      return null;
     }
   }
 

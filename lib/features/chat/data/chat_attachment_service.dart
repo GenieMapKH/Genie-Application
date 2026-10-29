@@ -1,12 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_attachment_store.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_store.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
 
 /// Sends and opens files in a chat. A file is encrypted on this device with
 /// a one-time key before it is uploaded, and decrypted only in memory.
@@ -36,17 +38,17 @@ class ChatAttachmentService {
   });
 
   /// Encrypts and uploads [bytes] for [recipientId]. The result goes inside
-  /// the encrypted message; without it the stored file is unreadable.
+  /// the encrypted message; without it the stored file is unreadable. A
+  /// voice message passes its [voice] details, which travel with the key.
   Future<ChatAttachment> send(
     Uint8List bytes, {
     required String recipientId,
     required String name,
     required String mimeType,
+    ChatVoiceDetails? voice,
   }) async {
     if (bytes.length > maxBytes) {
-      throw ChatSendException(
-        'This file is too large (limit ${maxBytes ~/ (1024 * 1024)} MB).',
-      );
+      throw const ChatSendException(ChatSendProblem.fileTooLarge);
     }
 
     final sealed = cryptoService.encryptFile(bytes);
@@ -55,9 +57,7 @@ class ChatAttachmentService {
       path = await repository.uploadEncryptedFile(recipientId, sealed.cipher);
     } on DioException catch (e) {
       AppLogger.error('Attachment upload failed', e);
-      throw const ChatSendException(
-        'Could not upload the file. Check your connection.',
-      );
+      throw const ChatSendException(ChatSendProblem.uploadFailed);
     }
 
     _remember(path, bytes);
@@ -69,6 +69,7 @@ class ChatAttachmentService {
       name: name,
       mimeType: mimeType,
       size: bytes.length,
+      voice: voice,
     );
   }
 
@@ -80,8 +81,7 @@ class ChatAttachmentService {
     final inMemory = cached(attachment);
     if (inMemory != null) return inMemory;
 
-    final bytes =
-        await _openStored(attachment) ?? await _download(attachment);
+    final bytes = await _openStored(attachment) ?? await _download(attachment);
     _remember(attachment.path, bytes);
     return bytes;
   }

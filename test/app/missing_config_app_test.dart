@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/app/missing_config_app.dart';
+import 'package:tilomnov/app/missing_config_app.dart';
 
 void main() {
   testWidgets('says how to start the app instead of showing nothing', (

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 void main() {
   group('fromJson', () {
@@ -22,6 +22,51 @@ void main() {
       expect(property.viewCount, 1688);
       expect(property.contactCount, 5);
       expect(property.landSize, 1670);
+    });
+
+    test('cards show thumbnails, falling back to the photo without one', () {
+      final property = PropertyModel.fromJson({
+        'id': 'abc',
+        'title': 'Villa',
+        'price': '1000',
+        'propertyType': 'Villa',
+        'status': 'Active',
+        'createdAt': '2026-01-01T00:00:00.000Z',
+        'images': [
+          {
+            'url': 'https://s/a.jpg',
+            'thumbnailUrl': 'https://s/a.jpg.thumb.jpg',
+          },
+          {'url': 'https://s/old.jpg', 'thumbnailUrl': null},
+          {'url': 'https://s/older.jpg'},
+        ],
+      });
+
+      expect(property.imageUrls, [
+        'https://s/a.jpg',
+        'https://s/old.jpg',
+        'https://s/older.jpg',
+      ]);
+      expect(property.cardImageUrls, [
+        'https://s/a.jpg.thumb.jpg',
+        'https://s/old.jpg',
+        'https://s/older.jpg',
+      ]);
+    });
+
+    test('cards show the full photos when the lists disagree', () {
+      final property = PropertyModel(
+        id: 'abc',
+        title: 'Villa',
+        price: '1000',
+        propertyType: 'Villa',
+        status: 'Active',
+        createdAt: DateTime(2026),
+        imageUrls: const ['a.jpg', 'b.jpg'],
+        thumbnailUrls: const ['a.thumb.jpg'],
+      );
+
+      expect(property.cardImageUrls, ['a.jpg', 'b.jpg']);
     });
 
     test('defaults gracefully when the owner and counts are absent', () {

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/core/network/api_cache_manager.dart';
-import 'package:genie/features/search/data/models/search_history_entry.dart';
-import 'package:genie/features/search/data/search_failure.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/features/search/data/models/search_history_entry.dart';
+import 'package:tilomnov/features/search/data/search_failure.dart';
 
 /// `/search/history`: the signed-in user's searches, kept 14 days by the
 /// server and shared by all their devices. Every failure surfaces as a

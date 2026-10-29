@@ -1,17 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tilomnov/shared/utils/phone_number.dart';
 
 import 'login_controller.dart';
 
 enum AuthMethod { email, phone }
+
+/// What is wrong with a field of the form. The page says it in the user's
+/// language.
+enum LoginFieldError {
+  invalidEmail,
+  invalidPhone,
+  missingPassword,
+  shortPassword,
+}
 
 class LoginFormState {
   final AuthMethod selectedMethod;
   final String email;
   final String phone;
   final String password;
-  final String? emailError;
-  final String? phoneError;
-  final String? passwordError;
+  final LoginFieldError? emailError;
+  final LoginFieldError? phoneError;
+  final LoginFieldError? passwordError;
   final bool obscurePassword;
   final bool keepMeSignedIn;
 
@@ -32,9 +42,9 @@ class LoginFormState {
     String? email,
     String? phone,
     String? password,
-    String? emailError,
-    String? phoneError,
-    String? passwordError,
+    LoginFieldError? emailError,
+    LoginFieldError? phoneError,
+    LoginFieldError? passwordError,
     bool? obscurePassword,
     bool? keepMeSignedIn,
     bool clearEmailError = false,
@@ -77,7 +87,7 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
       if (_validateEmail(email)) {
         state = state.copyWith(clearEmailError: true);
       } else {
-        state = state.copyWith(emailError: 'Enter a valid email address');
+        state = state.copyWith(emailError: LoginFieldError.invalidEmail);
       }
     }
   }
@@ -88,7 +98,7 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
       if (_validatePhone(phone)) {
         state = state.copyWith(clearPhoneError: true);
       } else {
-        state = state.copyWith(phoneError: 'Enter a valid phone number');
+        state = state.copyWith(phoneError: LoginFieldError.invalidPhone);
       }
     }
   }
@@ -97,11 +107,9 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
     state = state.copyWith(password: password);
     if (state.passwordError != null) {
       if (password.isEmpty) {
-        state = state.copyWith(passwordError: 'Enter a valid password');
+        state = state.copyWith(passwordError: LoginFieldError.missingPassword);
       } else if (password.length < 6) {
-        state = state.copyWith(
-          passwordError: 'Password must be at least 6 characters',
-        );
+        state = state.copyWith(passwordError: LoginFieldError.shortPassword);
       } else {
         state = state.copyWith(clearPasswordError: true);
       }
@@ -121,35 +129,32 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
     return emailRegex.hasMatch(value.trim());
   }
 
-  bool _validatePhone(String value) {
-    final clean = value.replaceAll(RegExp(r'[\s\-()]'), '');
-    final phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-    return phoneRegex.hasMatch(clean);
-  }
+  /// Same rule as sign-up and the server: `012 345 678`, `+855 12 345 678`...
+  bool _validatePhone(String value) => normalizePhoneNumber(value) != null;
 
   bool validateForm() {
     bool isValid = true;
-    String? emailError;
-    String? phoneError;
-    String? passwordError;
+    LoginFieldError? emailError;
+    LoginFieldError? phoneError;
+    LoginFieldError? passwordError;
 
     if (state.selectedMethod == AuthMethod.email) {
       if (!_validateEmail(state.email)) {
-        emailError = 'Enter a valid email address';
+        emailError = LoginFieldError.invalidEmail;
         isValid = false;
       }
     } else {
       if (!_validatePhone(state.phone)) {
-        phoneError = 'Enter a valid phone number';
+        phoneError = LoginFieldError.invalidPhone;
         isValid = false;
       }
     }
 
     if (state.password.isEmpty) {
-      passwordError = 'Enter a valid password';
+      passwordError = LoginFieldError.missingPassword;
       isValid = false;
     } else if (state.password.length < 6) {
-      passwordError = 'Password must be at least 6 characters';
+      passwordError = LoginFieldError.shortPassword;
       isValid = false;
     }
 
@@ -165,26 +170,17 @@ class LoginFormNotifier extends AutoDisposeNotifier<LoginFormState> {
     return isValid;
   }
 
-  /// [afterSignIn] as in [LoginController.login].
-  Future<bool> submit({
-    Future<void> Function(String password)? afterSignIn,
-  }) async {
+  Future<bool> submit() async {
     if (!validateForm()) return false;
 
     final controller = ref.read(loginControllerProvider.notifier);
 
     if (state.selectedMethod == AuthMethod.email) {
-      return controller.login(
-        state.email.trim(),
-        state.password,
-        afterSignIn: afterSignIn,
-      );
+      return controller.login(state.email.trim(), state.password);
     } else {
-      final cleanPhone = state.phone.replaceAll(RegExp(r'[\s\-()]'), '');
       return controller.login(
-        cleanPhone,
+        normalizePhoneNumber(state.phone)!,
         state.password,
-        afterSignIn: afterSignIn,
       );
     }
   }

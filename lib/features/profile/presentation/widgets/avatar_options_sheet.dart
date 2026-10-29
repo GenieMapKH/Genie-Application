@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/media/image_compressor.dart';
-import 'package:genie/core/media/image_upload_policy.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/avatar_controller.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/utils/image_rejection_message.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/media/image_compressor.dart';
+import 'package:tilomnov/core/media/image_upload_policy.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/avatar_controller.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/utils/image_rejection_message.dart';
 
 /// Opens the sheet with the ways to change the profile picture.
 Future<void> showAvatarOptions(BuildContext context, UserProfile profile) {

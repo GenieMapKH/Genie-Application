@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
-import 'package:genie/features/profile/presentation/view_models/profile_edit_controller.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/profile_edit_controller.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 /// Opens the dialog that edits one text [field] of the profile.
 ///

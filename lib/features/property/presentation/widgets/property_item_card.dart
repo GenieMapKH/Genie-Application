@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/widgets/property_image_gallery.dart';
-import 'package:genie/features/property/utils/property_format.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_image_gallery.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/owner_display_name.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
+import 'package:tilomnov/features/property/presentation/widgets/favorite_heart_button.dart';
 
 /// The card that rises above the bottom nav when a property is selected on the
 /// map. Tapping it — or swiping it up — opens the full detail sheet.
@@ -33,8 +37,9 @@ class PropertyItemCard extends StatelessWidget {
           type: MaterialType.transparency,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            // The shadow keeps the quicker rounded-rectangle outline; under
+            // the card's continuous corners the difference cannot be seen.
             decoration: BoxDecoration(
-              color: context.colors.surface,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
                 BoxShadow(
@@ -44,37 +49,44 @@ class PropertyItemCard extends StatelessWidget {
                 ),
               ],
             ),
-            child: ClipRRect(
+            child: ClipRSuperellipse(
               borderRadius: BorderRadius.circular(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        PropertyImageGallery(imageUrls: property.imageUrls),
-                        Positioned(
-                          top: 12,
-                          left: 12,
-                          child: _TypePill(propertyType: property.propertyType),
-                        ),
-                        Positioned(
-                          top: 12,
-                          right: 12,
-                          child: _FavoriteButton(
-                            isFavorite: isFavorite,
-                            onPressed: onFavoriteToggled,
+              child: ColoredBox(
+                color: context.colors.surface,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          PropertyImageGallery(
+                            imageUrls: property.cardImageUrls,
                           ),
-                        ),
-                      ],
+                          Positioned(
+                            top: 12,
+                            left: 12,
+                            child: _TypePill(
+                              propertyType: property.propertyType,
+                            ),
+                          ),
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: FavoriteHeartButton(
+                              isFavorite: isFavorite,
+                              onPressed: onFavoriteToggled,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-                    child: _Details(property: property),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                      child: _Details(property: property),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -95,7 +107,7 @@ class _Details extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          PropertyFormat.money(property.finalPrice),
+          PropertyFormat.cardPrice(context.l10n, property),
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w800,
@@ -104,7 +116,7 @@ class _Details extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          PropertyFormat.cardSpecLine(property),
+          PropertyFormat.cardSpecLine(context.l10n, property),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.inter(
@@ -126,7 +138,9 @@ class _Details extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Listing by: ${property.ownerName ?? 'Property Owner'}',
+          context.l10n.propertyListingBy(
+            ownerDisplayName(context.l10n, property.ownerName),
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.inter(
@@ -163,18 +177,15 @@ class _TypePill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
+          TintedSvg(
             PropertyFormat.typeIconPath(propertyType),
             width: 14,
             height: 14,
-            colorFilter: ColorFilter.mode(
-              context.colors.textSecondary,
-              BlendMode.srcIn,
-            ),
+            color: context.colors.textSecondary,
           ),
           const SizedBox(width: 6),
           Text(
-            propertyType,
+            propertyValueLabel(context.l10n, propertyType),
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -182,101 +193,6 @@ class _TypePill extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _FavoriteButton extends StatefulWidget {
-  final bool isFavorite;
-  final VoidCallback? onPressed;
-
-  const _FavoriteButton({required this.isFavorite, this.onPressed});
-
-  @override
-  State<_FavoriteButton> createState() => _FavoriteButtonState();
-}
-
-class _FavoriteButtonState extends State<_FavoriteButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 280),
-    );
-
-    _scaleAnimation =
-        TweenSequence<double>([
-          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.28), weight: 50),
-          TweenSequenceItem(tween: Tween(begin: 1.28, end: 1.0), weight: 50),
-        ]).animate(
-          CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
-        );
-  }
-
-  @override
-  void didUpdateWidget(covariant _FavoriteButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.isFavorite != widget.isFavorite) {
-      _animController.forward(from: 0.0);
-    }
-  }
-
-  @override
-  void dispose() {
-    _animController.dispose();
-    super.dispose();
-  }
-
-  void _handleTap() {
-    _animController.forward(from: 0.0);
-    widget.onPressed?.call();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _handleTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: 44,
-        height: 44,
-        alignment: Alignment.center,
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: Container(
-            padding: const EdgeInsets.all(7),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              transitionBuilder: (child, anim) =>
-                  ScaleTransition(scale: anim, child: child),
-              child: Icon(
-                widget.isFavorite ? Icons.favorite : Icons.favorite_border,
-                key: ValueKey<bool>(widget.isFavorite),
-                size: 19,
-                color: widget.isFavorite
-                    ? context.colors.accent
-                    : context.colors.textPrimary,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 class UtmManualEntry extends StatelessWidget {
   final Animation<double> fadeAnimation;
@@ -76,7 +76,8 @@ class UtmManualEntry extends StatelessWidget {
                   height: 44,
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   decoration: BoxDecoration(
-                    color: context.colors.accent, // Purple color from screenshot
+                    color:
+                        context.colors.accent, // Purple color from screenshot
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(

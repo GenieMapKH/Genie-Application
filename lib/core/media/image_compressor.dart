@@ -4,8 +4,8 @@ import 'package:flutter_image_compress/flutter_image_compress.dart'
     show CompressFormat, FlutterImageCompress;
 import 'package:image_picker/image_picker.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/media/image_upload_policy.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/media/image_upload_policy.dart';
 
 /// A picture ready to upload: always a JPEG, as small as the policy asks.
 class PreparedImage {

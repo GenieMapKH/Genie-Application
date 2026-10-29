@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/screens/property_insights_page.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 
 class PropertyOptionsSheet {
   static void show(
@@ -34,6 +36,23 @@ class PropertyOptionsSheet {
                 ),
               ),
               const SizedBox(height: 16),
+              ListTile(
+                leading: Icon(
+                  Icons.insights_outlined,
+                  color: context.colors.accent,
+                ),
+                title: Text(context.l10n.insightsTitle),
+                onTap: () {
+                  // Found before the sheet closes and takes its context.
+                  final navigator = Navigator.of(context, rootNavigator: true);
+                  Navigator.pop(context);
+                  navigator.push(
+                    MaterialPageRoute(
+                      builder: (_) => PropertyInsightsPage(property: property),
+                    ),
+                  );
+                },
+              ),
               if (isDraft)
                 ListTile(
                   leading: Icon(Icons.public, color: context.colors.accent),
@@ -93,12 +112,15 @@ class PropertyOptionsSheet {
       if (context.mounted) {
         AppPopup.showSuccess(
           context,
-          publish ? 'Property published' : 'Property moved to draft',
+          publish
+              ? context.l10n.propertyPublishedToast
+              : context.l10n.propertyMovedToDraft,
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('Could not change the property status', e, stackTrace);
       if (context.mounted) {
-        AppPopup.showError(context, 'Failed to update property status: $e');
+        AppPopup.showError(context, context.l10n.propertyUpdateFailed);
       }
     }
   }
@@ -113,9 +135,10 @@ class PropertyOptionsSheet {
       if (context.mounted) {
         AppPopup.showSuccess(context, context.l10n.propertyPropertyDeleted);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('Could not delete the property', e, stackTrace);
       if (context.mounted) {
-        AppPopup.showError(context, 'Failed to delete property: $e');
+        AppPopup.showError(context, context.l10n.propertyDeleteFailed);
       }
     }
   }

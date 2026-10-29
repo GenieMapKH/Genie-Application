@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
+import 'package:tilomnov/shared/transitions/app_page_route.dart';
 
 void main() {
   testWidgets(

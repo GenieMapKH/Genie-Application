@@ -2,16 +2,20 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/models/conversation_change.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/models/conversation_change.dart';
+import 'package:tilomnov/features/chat/models/message_deletion.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
 
 const me = 'user-me';
 const peer = 'user-peer';
@@ -48,6 +52,12 @@ class FakeCipher extends Fake implements MessageCipher {
   /// Attachments that incoming messages carry, by message id.
   final incomingAttachments = <String, ChatAttachment>{};
 
+  /// The message each message replies to, as sealed inside it, by id.
+  final sealedReplies = <String, String>{};
+
+  /// The listing card sealed into each message, by message id.
+  final sealedListings = <String, ChatListing?>{};
+
   @override
   String get userId => me;
 
@@ -57,22 +67,35 @@ class FakeCipher extends Fake implements MessageCipher {
     required String id,
     required String peerId,
     ChatAttachment? attachment,
+    String? replyToId,
+    ChatListing? listing,
   }) async {
     if (encryptError != null) throw encryptError!;
     sealedAttachments.add(attachment);
+    sealedListings[id] = listing;
+    if (replyToId != null) sealedReplies[id] = replyToId;
     if (peerKeyStatus == PeerKeyStatus.changed) {
       throw const PeerKeyChangedException();
     }
     return (ciphertext: 'sealed:$text', nonce: 'nonce');
   }
 
+  /// How many messages were opened.
+  int decrypts = 0;
+
   @override
-  Future<OpenedMessage?> decrypt(EncryptedMessage message) async {
+  Future<OpenedMessage?> decrypt(
+    EncryptedMessage message, {
+    bool askServer = true,
+  }) async {
+    decrypts++;
     return message.ciphertext.startsWith('sealed:')
         ? (
             id: message.id,
             text: message.ciphertext.substring(7),
             attachment: incomingAttachments[message.id],
+            replyToId: sealedReplies[message.id],
+            listing: sealedListings[message.id],
           )
         : null;
   }
@@ -106,10 +129,16 @@ class FakeAttachmentService extends Fake implements ChatAttachmentService {
     required String recipientId,
     required String name,
     required String mimeType,
+    ChatVoiceDetails? voice,
   }) async {
     if (uploadError != null) throw uploadError!;
     uploads.add(bytes);
-    return fakeAttachment(uploads.length, name: name, mimeType: mimeType);
+    return fakeAttachment(
+      uploads.length,
+      name: name,
+      mimeType: mimeType,
+      voice: voice,
+    );
   }
 
   /// Nothing is ready without waiting: pictures go through loading.
@@ -128,6 +157,7 @@ ChatAttachment fakeAttachment(
   int n, {
   String name = 'photo.png',
   String mimeType = 'image/png',
+  ChatVoiceDetails? voice,
 }) {
   final id = n.toString().padLeft(12, '0');
   return ChatAttachment(
@@ -140,6 +170,7 @@ ChatAttachment fakeAttachment(
     name: name,
     mimeType: mimeType,
     size: 68,
+    voice: voice,
   );
 }
 
@@ -231,18 +262,43 @@ class FakeChatRepository extends Fake implements ChatRepository {
   /// When set, requests wait here until the test completes it.
   Completer<void>? gate;
 
+  /// The calls the server lists for any conversation.
+  List<ChatCallEntry> callHistory = [];
+  int callHistoryRequests = 0;
+
   int conversationRequests = 0;
   int historyRequests = 0;
   final markedRead = <String>[];
 
   @override
-  Future<List<ChatConversation>> fetchConversations({
+  Future<List<ChatCallEntry>> fetchCallHistory(String participantId) async {
+    callHistoryRequests++;
+    return callHistory;
+  }
+
+  /// The cursor of each page asked for (null for the first).
+  final conversationCursors = <String?>[];
+
+  /// Serves [conversations] (or [archivedConversations]) a page at a time,
+  /// in their order; the cursor is the index the next page starts at.
+  @override
+  Future<ConversationPage> fetchConversationPage({
     bool archived = false,
+    int limit = ChatRepository.conversationPageSize,
+    String? cursor,
   }) async {
     conversationRequests++;
+    conversationCursors.add(cursor);
     await gate?.future;
     if (conversationsError != null) throw conversationsError!;
-    return archived ? archivedConversations : conversations;
+    final all = archived ? archivedConversations : conversations;
+    final start = cursor == null ? 0 : int.parse(cursor);
+    final end = (start + limit).clamp(0, all.length);
+    return (
+      items: all.sublist(start.clamp(0, end), end),
+      nextCursor: end < all.length ? '$end' : null,
+      unreadTotal: all.fold(0, (sum, c) => sum + c.unreadCount),
+    );
   }
 
   Future<void> _change(String change) async {
@@ -276,6 +332,44 @@ class FakeChatRepository extends Fake implements ChatRepository {
     markedRead.add(participantId);
   }
 
+  /// Edits and deletes, e.g. "edit m1 sealed:new" or "delete m1 forEveryone".
+  final messageChanges = <String>[];
+
+  /// When set, editing and deleting a message fail with it.
+  Object? messageChangeError;
+
+  @override
+  Future<EncryptedMessage> editMessage(
+    String messageId, {
+    required String ciphertext,
+    required String nonce,
+  }) async {
+    if (messageChangeError != null) throw messageChangeError!;
+    messageChanges.add('edit $messageId $ciphertext');
+    return EncryptedMessage(
+      id: messageId,
+      senderId: me,
+      recipientId: peer,
+      ciphertext: ciphertext,
+      nonce: nonce,
+      createdAt: DateTime.utc(2026, 1, 1),
+      editedAt: DateTime.utc(2026, 1, 1, 0, 30),
+    );
+  }
+
+  @override
+  Future<void> deleteMessage(
+    String messageId, {
+    required bool forEveryone,
+    String? attachmentPath,
+  }) async {
+    if (messageChangeError != null) throw messageChangeError!;
+    messageChanges.add(
+      'delete $messageId${forEveryone ? ' forEveryone' : ''}'
+      '${attachmentPath != null ? ' $attachmentPath' : ''}',
+    );
+  }
+
   @override
   Future<ChatParticipantProfile> fetchParticipantProfile(String userId) async {
     return participant ??
@@ -288,7 +382,13 @@ class FakeChatSocket extends Fake implements ChatSocketService {
   final connections = StreamController<void>.broadcast();
   final presence = StreamController<ChatPresence>.broadcast();
   final conversationChanges = StreamController<ConversationChange>.broadcast();
+  final callEvents = StreamController<CallSocketEvent>.broadcast();
+  final editedMessages = StreamController<EncryptedMessage>.broadcast();
+  final deletedMessages = StreamController<MessageDeletion>.broadcast();
   final sent = <EncryptedMessage>[];
+
+  /// The reply each sent message named, by message id.
+  final sentReplyIds = <String, String>{};
   final watching = <String>[];
   Object? sendError;
 
@@ -304,6 +404,15 @@ class FakeChatSocket extends Fake implements ChatSocketService {
 
   @override
   Stream<ChatPresence> get onPresence => presence.stream;
+
+  @override
+  Stream<CallSocketEvent> get onCallEvent => callEvents.stream;
+
+  @override
+  Stream<EncryptedMessage> get onMessageEdited => editedMessages.stream;
+
+  @override
+  Stream<MessageDeletion> get onMessageDeleted => deletedMessages.stream;
 
   @override
   Stream<ConversationChange> get onConversationChanged =>
@@ -324,7 +433,9 @@ class FakeChatSocket extends Fake implements ChatSocketService {
     required String recipientId,
     required String ciphertext,
     required String nonce,
+    String? replyToId,
   }) async {
+    if (replyToId != null) sentReplyIds[id] = replyToId;
     final message = EncryptedMessage(
       id: id,
       senderId: me,
@@ -343,21 +454,12 @@ class FakeSetupService extends Fake implements E2eeSetupService {
   E2eeSetupResult result = E2eeSetupResult.ready;
   int runs = 0;
 
-  /// Whether each run was asked to take the account's chat over.
-  final List<bool> takeOvers = [];
-
   @override
-  Future<E2eeSetupResult> initialize(
-    String userId, {
-    PinPrompt? askPin,
-    bool takeOver = false,
-    String? password,
-  }) async {
+  Future<E2eeSetupResult> initialize(String userId, {PinPrompt? askPin}) async {
     runs++;
-    takeOvers.add(takeOver);
     return result;
   }
 }
 
-Future<String?> neverAskPin(BackupLock lock) async =>
-    fail('must not ask for a PIN or password');
+Future<bool> neverAskPin(PinCheck check) async =>
+    fail('must not ask for a PIN');

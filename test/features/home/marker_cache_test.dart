@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/utils/map/markers/marker_cache.dart';
+import 'package:tilomnov/features/home/utils/map/markers/marker_cache.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Counts renders and hands out a fresh bitmap for each one.

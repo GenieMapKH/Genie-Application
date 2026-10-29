@@ -1,5 +1,6 @@
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 
 enum ActiveChatStatus { loading, ready, unavailable }
 
@@ -20,8 +21,8 @@ class ActiveChatState {
   /// this device trusts. Nothing is sent until the user accepts the new key.
   final bool peerKeyChanged;
 
-  /// Why the last message could not be sent, for the user to read.
-  final String? sendError;
+  /// Why the last message could not be sent. The screen says it.
+  final ChatSendProblem? sendError;
 
   const ActiveChatState({
     this.status = ActiveChatStatus.loading,
@@ -36,7 +37,7 @@ class ActiveChatState {
     ActiveChatStatus? status,
     List<ChatMessage>? messages,
     bool? peerKeyChanged,
-    String? sendError,
+    ChatSendProblem? sendError,
   }) {
     return ActiveChatState(
       status: status ?? this.status,

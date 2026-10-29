@@ -1,5 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// The bottom tabs, by their position in the bar.
+abstract final class MainTab {
+  static const explore = 0;
+  static const feed = 1;
+  static const saved = 2;
+  static const chat = 3;
+  static const myProperties = 4;
+  static const user = 5;
+}
+
 class MainNavState {
   final int currentIndex;
   final int previousIndex;

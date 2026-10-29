@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:genie/features/auth/presentation/screens/welcome_page.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/shared/widgets/app_logo.dart';
+import 'package:tilomnov/features/auth/presentation/screens/welcome_page.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/shared/widgets/media/app_logo.dart';
 
-/// A modern, responsive splash/loading page displaying the Genie core logo.
+/// A modern, responsive splash/loading page displaying the Tilomnov logo.
 /// Seamlessly transitions to [WelcomePage] after a brief splash display.
 class LoadingPage extends StatefulWidget {
   final Duration displayDuration;
@@ -87,7 +87,7 @@ class _LoadingPageState extends State<LoadingPage>
           child: ScaleTransition(
             scale: _pulseAnimation,
             child: Hero(
-              tag: 'genie_core_logo',
+              tag: 'tilomnov_core_logo',
               child: AppLogo(
                 width: LoadingPage.logoWidth,
                 height: LoadingPage.logoHeight,

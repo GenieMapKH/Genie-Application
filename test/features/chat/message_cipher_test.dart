@@ -4,13 +4,16 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/key_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
-import 'package:genie/features/chat/e2ee/peer_key_store.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/e2ee/message_reader.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/peer_key_store.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
 const alice = 'alice';
@@ -193,11 +196,15 @@ void main() {
         id: 'm1',
         text: 'hello',
         attachment: null,
+        replyToId: null,
+        listing: null,
       ));
       expect(await aliceCipher.decrypt(message), (
         id: 'm1',
         text: 'hello',
         attachment: null,
+        replyToId: null,
+        listing: null,
       ));
     });
 
@@ -217,6 +224,8 @@ void main() {
           id: null,
           text: 'see you at 5',
           attachment: null,
+          replyToId: null,
+          listing: null,
         ));
       },
     );
@@ -237,6 +246,77 @@ void main() {
         noKeys.encrypt('hello', id: 'm1', peerId: bob),
         throwsA(isA<ChatEncryptionException>()),
       );
+    });
+  });
+
+  group('a reply', () {
+    Future<EncryptedMessage> replyByAlice(
+      String id,
+      String text, {
+      required String replyToId,
+      EncryptedMessage? quotedByServer,
+    }) async {
+      final sealed = await aliceCipher.encrypt(
+        text,
+        id: id,
+        peerId: bob,
+        replyToId: replyToId,
+      );
+      return EncryptedMessage(
+        id: id,
+        senderId: alice,
+        recipientId: bob,
+        ciphertext: sealed.ciphertext,
+        nonce: sealed.nonce,
+        createdAt: now,
+        replyTo: quotedByServer,
+      );
+    }
+
+    test('names the message it replies to inside the sealed text', () async {
+      final reply = await replyByAlice('m2', 'yes', replyToId: 'm1');
+
+      expect((await bobCipher.decrypt(reply))?.replyToId, 'm1');
+    });
+
+    test('shows the quoted message, opened on this device', () async {
+      final quoted = await sentByAlice('m1', 'Is it still available?');
+      final reply = await replyByAlice(
+        'm2',
+        'I mean the house',
+        replyToId: 'm1',
+        quotedByServer: quoted,
+      );
+
+      final read = await ChatMessageReader(bobCipher).read(reply);
+
+      expect(read.replyToId, 'm1');
+      expect(read.replyTo?.messageId, 'm1');
+      expect(read.replyTo?.senderId, alice);
+      expect(read.replyTo?.text, 'Is it still available?');
+    });
+
+    test('cannot be made to quote another message by the server', () async {
+      final other = await sentByAlice('m0', 'something else');
+      final reply = await replyByAlice(
+        'm2',
+        'yes',
+        replyToId: 'm1',
+        quotedByServer: other,
+      );
+
+      expect((await ChatMessageReader(bobCipher).read(reply)).replyTo, isNull);
+    });
+
+    test('quotes nothing once the quoted message is deleted', () async {
+      final reply = await replyByAlice('m2', 'yes', replyToId: 'm1');
+
+      final read = await ChatMessageReader(bobCipher).read(reply);
+
+      expect(read.text, 'yes');
+      expect(read.replyTo, isNull);
+      // Kept, so an edit seals the same reply again.
+      expect(read.replyToId, 'm1');
     });
   });
 
@@ -353,6 +433,30 @@ void main() {
       expect(server.requests, 0);
     });
 
+    test(
+      'opens a message with no network when it is already trusted',
+      () async {
+        final message = await sentByAlice('m1', 'hello');
+        final afterRestart = cipherFor(bob, {bob: bobKey});
+        // Bob has never met Alice on this phone: nothing is trusted yet.
+        server.requests = 0;
+
+        expect(await afterRestart.decrypt(message, askServer: false), isNull);
+        expect(server.requests, 0);
+
+        await afterRestart.checkPeerKey(alice);
+        server.requests = 0;
+        expect(await afterRestart.decrypt(message, askServer: false), (
+          id: 'm1',
+          text: 'hello',
+          attachment: null,
+          replyToId: null,
+          listing: null,
+        ));
+        expect(server.requests, 0);
+      },
+    );
+
     test('is not silently replaced when the server lists another', () async {
       await sentByAlice('m1', 'hello');
       server.listed[bob] = 66; // an attacker's key, or a real reset
@@ -404,9 +508,9 @@ void main() {
         aliceCipher.encrypt('hello', id: 'm1', peerId: bob),
         throwsA(
           isA<ChatEncryptionException>().having(
-            (e) => e.message,
-            'message',
-            contains('has not set up secure chat'),
+            (e) => e.problem,
+            'problem',
+            ChatSendProblem.peerNotReady,
           ),
         ),
       );
@@ -419,9 +523,9 @@ void main() {
         aliceCipher.encrypt('hello', id: 'm1', peerId: bob),
         throwsA(
           isA<ChatEncryptionException>().having(
-            (e) => e.message,
-            'message',
-            contains('Could not reach the server'),
+            (e) => e.problem,
+            'problem',
+            ChatSendProblem.noConnection,
           ),
         ),
       );
@@ -460,6 +564,57 @@ void main() {
 
     test("is not available before the other person's key is known", () async {
       expect(await aliceCipher.safetyCode(bob), isNull);
+    });
+  });
+
+  group('a listing card', () {
+    const listing = ChatListing(
+      id: 'p-1',
+      title: 'Villa near Riverside',
+      price: r'$ 120,000',
+      imageUrl: 'https://cdn.example/p-1.thumb.jpg',
+    );
+
+    test('travels inside the sealed message, beside its text', () async {
+      final sealed = await aliceCipher.encrypt(
+        listing.fallbackText,
+        id: 'm3',
+        peerId: bob,
+        listing: listing,
+      );
+      final opened = await bobCipher.decrypt(
+        EncryptedMessage(
+          id: 'm3',
+          senderId: alice,
+          recipientId: bob,
+          ciphertext: sealed.ciphertext,
+          nonce: sealed.nonce,
+          createdAt: now,
+        ),
+      );
+
+      expect(opened?.text, '\u{1F3E0} Villa near Riverside · \$ 120,000');
+      expect(opened?.listing?.id, 'p-1');
+      expect(opened?.listing?.imageUrl, 'https://cdn.example/p-1.thumb.jpg');
+    });
+
+    test('an ordinary message carries none', () async {
+      final message = await sentByAlice('m1', 'hello');
+      expect((await bobCipher.decrypt(message))?.listing, isNull);
+    });
+
+    test('keeps only an https picture, and ignores what is not a card', () {
+      expect(
+        ChatListing.tryParse({
+          'id': 'p',
+          'title': 't',
+          'price': '1',
+          'image': 'http://plain.example/x.jpg',
+        })?.imageUrl,
+        isNull,
+      );
+      expect(ChatListing.tryParse({'id': 'p', 'title': 't'}), isNull);
+      expect(ChatListing.tryParse('p-1'), isNull);
     });
   });
 }

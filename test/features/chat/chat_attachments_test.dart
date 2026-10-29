@@ -3,22 +3,24 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/data/chat_attachment_store.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
-import 'package:genie/features/chat/models/chat_attachment.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_emoji_panel.dart';
-import 'package:genie/features/chat/providers/active_chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_store.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/models/chat_attachment.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_emoji_panel.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 
 import 'chat_fakes.dart';
+import '../safety/fake_block_repository.dart';
 
 /// "Encrypts" by reversing the bytes, and refuses a wrong key.
 class _ReversingCrypto extends Fake implements CryptoService {
@@ -299,18 +301,18 @@ void main() {
 
     test('a failed upload is reported and nothing is sent', () async {
       attachments.uploadError = const ChatSendException(
-        'Could not upload the file.',
+        ChatSendProblem.uploadFailed,
       );
 
       await sendPicture();
 
       expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-      expect(chat.state.sendError, 'Could not upload the file.');
+      expect(chat.state.sendError, ChatSendProblem.uploadFailed);
       expect(socket.sent, isEmpty);
     });
 
     test('retrying after the upload succeeded does not upload again', () async {
-      socket.sendError = const ChatSendException('offline');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
       await sendPicture();
 
       socket.sendError = null;
@@ -321,7 +323,9 @@ void main() {
     });
 
     test('retrying after a failed upload uploads it then', () async {
-      attachments.uploadError = const ChatSendException('offline');
+      attachments.uploadError = const ChatSendException(
+        ChatSendProblem.noConnection,
+      );
       await sendPicture();
 
       attachments.uploadError = null;
@@ -367,6 +371,7 @@ void main() {
             ),
             chatRepositoryProvider.overrideWithValue(repository),
             chatSocketServiceProvider.overrideWithValue(socket),
+            noBlocksOverride(),
             e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
             messageCipherProvider.overrideWith((ref, userId) => cipher),
             chatAttachmentServiceProvider.overrideWithValue(attachments),
@@ -416,7 +421,7 @@ void main() {
       expect(find.byType(ChatEmojiPanel), findsOneWidget);
 
       await tester.tap(find.text('😀'));
-      await tester.tap(find.byIcon(Icons.send_outlined));
+      await tester.tap(find.byIcon(Icons.send_rounded));
       await tester.pump();
       await tester.pump();
 

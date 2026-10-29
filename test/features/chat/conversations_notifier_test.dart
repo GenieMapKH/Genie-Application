@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/message_deletion.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 
 import 'chat_fakes.dart';
 
@@ -54,7 +55,7 @@ void main() {
     final notifier = build();
     await settle();
 
-    final conversation = notifier.state.value!.single;
+    final conversation = notifier.state.value!.items.single;
     expect(conversation.lastMessage, 'See you at 5');
     expect(conversation.unreadCount, 2);
   });
@@ -68,7 +69,7 @@ void main() {
     await settle();
 
     expect(
-      notifier.state.value!.single.lastMessage,
+      notifier.state.value!.items.single.lastMessage,
       ChatConversation.encryptedPreview,
     );
   });
@@ -77,7 +78,7 @@ void main() {
     final notifier = build(signedIn: false);
     await settle();
 
-    expect(notifier.state.value, isEmpty);
+    expect(notifier.state.value!.items, isEmpty);
     expect(repository.conversationRequests, 0);
   });
 
@@ -132,7 +133,7 @@ void main() {
     await notifier.refresh();
 
     expect(notifier.state.hasError, isFalse);
-    expect(notifier.state.value, hasLength(1));
+    expect(notifier.state.value!.items, hasLength(1));
   });
 
   test('a failed first load reports the error', () async {
@@ -155,7 +156,7 @@ void main() {
     await notifier.markAsRead(peer);
 
     expect(repository.markedRead, [peer]);
-    expect(notifier.state.value!.map((c) => c.unreadCount), [0, 1]);
+    expect(notifier.state.value!.items.map((c) => c.unreadCount), [0, 1]);
   });
 
   group('a new message', () {
@@ -176,7 +177,7 @@ void main() {
         await settle();
 
         expect(repository.conversationRequests, 0);
-        final top = notifier.state.value!.first;
+        final top = notifier.state.value!.items.first;
         expect(top.participantId, peer, reason: 'moved to the top');
         expect(top.lastMessage, 'Is it still for sale?');
         expect(top.unreadCount, 2);
@@ -195,7 +196,7 @@ void main() {
       unawaited(notifier.markAsRead(peer));
       await settle();
 
-      expect(notifier.state.value!.single.unreadCount, 0);
+      expect(notifier.state.value!.items.single.unreadCount, 0);
     });
 
     test('sent from my other device is not unread', () async {
@@ -206,7 +207,7 @@ void main() {
       socket.messages.add(encrypted('m2', 'On my way', from: me));
       await settle();
 
-      final conversation = notifier.state.value!.single;
+      final conversation = notifier.state.value!.items.single;
       expect(conversation.lastMessage, 'On my way');
       expect(conversation.unreadCount, 0);
     });
@@ -222,7 +223,152 @@ void main() {
       await settle();
 
       expect(repository.conversationRequests, 1);
-      expect(notifier.state.value, hasLength(1));
+      expect(notifier.state.value!.items, hasLength(1));
     });
+  });
+
+  group('a message I sent from this device', () {
+    test('moves its conversation to the top, without reloading', () async {
+      repository.conversations = [
+        _conversation('user-other'),
+        _conversation(peer, unread: 0),
+      ];
+      final notifier = build();
+      await settle();
+      repository.conversationRequests = 0;
+
+      notifier.recordSent(encrypted('m2', 'Deal', from: me), preview: 'Deal');
+
+      expect(repository.conversationRequests, 0);
+      final top = notifier.state.value!.items.first;
+      expect(top.participantId, peer);
+      expect(top.lastMessage, 'Deal');
+      expect(top.lastMessageId, 'm2');
+      expect(top.unreadCount, 0);
+    });
+
+    test('to someone not in the list loads the list', () async {
+      final notifier = build();
+      await settle();
+      repository.conversationRequests = 0;
+      repository.conversations = [_conversation(peer)];
+
+      notifier.recordSent(encrypted('m2', 'Hi', from: me), preview: 'Hi');
+      await settle();
+
+      expect(repository.conversationRequests, 1);
+      expect(notifier.state.value!.items, hasLength(1));
+    });
+  });
+
+  group('an edit', () {
+    test(
+      'of the last message changes its preview, without reloading',
+      () async {
+        repository.conversations = [_conversation(peer)];
+        final notifier = build();
+        await settle();
+        repository.conversationRequests = 0;
+
+        socket.editedMessages.add(
+          EncryptedMessage(
+            id: 'last-$peer',
+            senderId: peer,
+            recipientId: me,
+            ciphertext: 'sealed:See you at 6',
+            nonce: 'nonce-2',
+            createdAt: DateTime.utc(2026),
+          ),
+        );
+        await settle();
+
+        expect(repository.conversationRequests, 0);
+        expect(notifier.state.value!.items.single.lastMessage, 'See you at 6');
+      },
+    );
+
+    test('of an older message changes nothing', () async {
+      repository.conversations = [_conversation(peer)];
+      final notifier = build();
+      await settle();
+      repository.conversationRequests = 0;
+
+      socket.editedMessages.add(encrypted('older', 'typo fixed', from: peer));
+      await settle();
+
+      expect(repository.conversationRequests, 0);
+      expect(notifier.state.value!.items.single.lastMessage, 'See you at 5');
+    });
+  });
+
+  group('a deletion', () {
+    test(
+      'of the last message reloads: only the server knows the one before',
+      () async {
+        repository.conversations = [_conversation(peer)];
+        build();
+        await settle();
+        repository.conversationRequests = 0;
+
+        socket.deletedMessages.add(
+          MessageDeletion(messageId: 'last-$peer', participantId: peer),
+        );
+        await settle();
+
+        expect(repository.conversationRequests, 1);
+      },
+    );
+
+    test('of an older message in a read chat changes nothing', () async {
+      repository.conversations = [_conversation(peer)];
+      build();
+      await settle();
+      repository.conversationRequests = 0;
+
+      socket.deletedMessages.add(
+        const MessageDeletion(messageId: 'older', participantId: peer),
+      );
+      await settle();
+
+      expect(repository.conversationRequests, 0);
+    });
+
+    test('in a chat with unread messages reloads its count', () async {
+      repository.conversations = [_conversation(peer, unread: 2)];
+      build();
+      await settle();
+      repository.conversationRequests = 0;
+
+      socket.deletedMessages.add(
+        const MessageDeletion(messageId: 'older', participantId: peer),
+      );
+      await settle();
+
+      expect(repository.conversationRequests, 1);
+    });
+  });
+
+  test('reloading does not open previews again', () async {
+    final cipher = FakeCipher();
+    repository.conversations = [
+      _conversation(peer),
+      _conversation('user-other'),
+    ];
+    final notifier = ConversationsNotifier(
+      repository: repository,
+      socketService: socket,
+      cipher: cipher,
+    );
+    addTearDown(notifier.dispose);
+    await settle();
+    expect(cipher.decrypts, 2);
+
+    await notifier.refresh();
+
+    expect(cipher.decrypts, 2);
+    expect(notifier.state.value!.items.map((c) => c.lastMessage), [
+      'See you at 5',
+      'See you at 5',
+    ]);
   });
 }

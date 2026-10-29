@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/search/data/models/search_history_entry.dart';
-import 'package:genie/features/search/data/search_text.dart';
-import 'package:genie/features/search/presentation/view_models/search_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/search/data/models/search_history_entry.dart';
+import 'package:tilomnov/features/search/data/search_text.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
 
 /// The signed-in user's recent searches, loaded afresh each time the search
 /// page opens so a search made on another device shows up. Empty for guests.

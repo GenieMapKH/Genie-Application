@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/security/data/models/device_session.dart';
-import 'package:genie/features/security/data/repositories/account_repository.dart';
-import 'package:genie/features/security/data/repositories/session_repository.dart';
-import 'package:genie/features/security/presentation/view_models/account_security_controller.dart';
-import 'package:genie/features/security/presentation/widgets/device_session_tile.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/security/data/models/device_session.dart';
+import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
+import 'package:tilomnov/features/security/data/repositories/session_repository.dart';
+import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
+import 'package:tilomnov/features/security/presentation/widgets/device_session_tile.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 import '../../support/test_app.dart';
 
@@ -68,50 +68,21 @@ void main() {
       });
     });
 
-    test('changing the password keeps the chat keys locked with it', () async {
-      final locked = <String>[];
+    test('a first password is confirmed with a fresh Google sign-in', () async {
+      final server = StubServer.always(200);
       final controller = AccountSecurityController(
-        AccountRepository(StubServer.always(200).dio),
-        lockChatKeys: (password) async => locked.add(password),
+        AccountRepository(server.dio),
       );
 
-      await controller.changePassword(
-        current: 'old-password',
-        next: 'new-password',
-      );
-
-      // Made sure to be here first, then locked with the new one.
-      expect(locked, ['old-password', 'new-password']);
-    });
-
-    test('a refused password change leaves the chat keys alone', () async {
-      final locked = <String>[];
-      final controller = AccountSecurityController(
-        AccountRepository(StubServer.always(403).dio),
-        lockChatKeys: (password) async => locked.add(password),
-      );
-
-      await controller.changePassword(
-        current: 'old-password',
-        next: 'new-password',
-      );
-
-      expect(locked, ['old-password']);
-    });
-
-    test('a first password protects the chats from then on', () async {
-      final locked = <String>[];
-      final controller = AccountSecurityController(
-        AccountRepository(StubServer.always(200).dio),
-        lockChatKeys: (password) async => locked.add(password),
-      );
-
-      await controller.createPassword(
+      final result = await controller.createPassword(
         googleIdToken: 'google-token',
         password: 'first-password',
       );
 
-      expect(locked, ['first-password']);
+      expect(result, AccountActionResult.done);
+      // The chat PIN, not the password, protects the chats: only the
+      // account server hears about it.
+      expect(server.requests, hasLength(1));
     });
 
     test('deactivating proves identity with the password', () async {
@@ -136,6 +107,40 @@ void main() {
 
       expect(server.requests.single.path, '/auth/account/delete');
       expect(server.requests.single.body, {'idToken': 'id-token'});
+    });
+
+    test('adding an email sends it cleaned, with the password', () async {
+      final server = StubServer.always(200);
+      final controller = AccountSecurityController(
+        AccountRepository(server.dio),
+      );
+
+      final result = await controller.addEmail(
+        email: ' Dara@Gmail.com ',
+        password: 'secret',
+      );
+
+      expect(result, AccountActionResult.done);
+      expect(server.requests.single.path, '/auth/account/email');
+      expect(server.requests.single.body, {
+        'email': 'dara@gmail.com',
+        'password': 'secret',
+      });
+    });
+
+    test('an email another account uses is told apart', () async {
+      expect(
+        await controllerAnswering(
+          409,
+        ).addEmail(email: 'a@b.com', password: 'x'),
+        AccountActionResult.emailTaken,
+      );
+      expect(
+        await controllerAnswering(
+          403,
+        ).addEmail(email: 'a@b.com', password: 'x'),
+        AccountActionResult.identityRejected,
+      );
     });
 
     test('tells a wrong password from a lockout and a failure', () async {

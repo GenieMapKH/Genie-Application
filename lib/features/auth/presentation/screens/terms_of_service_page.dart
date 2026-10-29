@@ -1,92 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
-/// Terms of Service screen for Genie Property.
-/// Enforces scrolling to the very bottom before the user can agree.
+/// Terms of Service screen for Tilomnov, for reading. Ticking the box on
+/// the sign-up form is enough to agree; the box here does the same, without
+/// having to scroll through first. Pops with whether the user agrees.
 class TermsOfServicePage extends StatefulWidget {
-  final ValueChanged<bool>? onAgreeChanged;
   final bool initialAgreed;
 
-  const TermsOfServicePage({
-    super.key,
-    this.onAgreeChanged,
-    this.initialAgreed = false,
-  });
+  const TermsOfServicePage({super.key, this.initialAgreed = false});
 
   @override
   State<TermsOfServicePage> createState() => _TermsOfServicePageState();
 }
 
 class _TermsOfServicePageState extends State<TermsOfServicePage> {
-  final ScrollController _scrollController = ScrollController();
-  late bool _hasScrolledToBottom;
-  late bool _isAgreed;
-
-  @override
-  void initState() {
-    super.initState();
-    _hasScrolledToBottom = widget.initialAgreed;
-    _isAgreed = widget.initialAgreed;
-    _scrollController.addListener(_handleScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkScrollability();
-    });
-  }
-
-  void _checkScrollability() {
-    if (!_scrollController.hasClients) return;
-    if (_scrollController.position.maxScrollExtent <= 0) {
-      if (!_hasScrolledToBottom) {
-        setState(() {
-          _hasScrolledToBottom = true;
-        });
-      }
-    }
-  }
-
-  void _handleScroll() {
-    if (!_scrollController.hasClients) return;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-
-    if (!_hasScrolledToBottom && currentScroll >= (maxScroll - 24.0)) {
-      setState(() {
-        _hasScrolledToBottom = true;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_handleScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
+  late bool _isAgreed = widget.initialAgreed;
 
   void _handleAgree(bool value) {
-    if (!_hasScrolledToBottom) {
-      AppPopup.showError(
-        context,
-        'Please scroll to the bottom of the terms to agree.',
-      );
-      return;
-    }
-
-    setState(() {
-      _isAgreed = value;
-    });
-
-    if (widget.onAgreeChanged != null) {
-      widget.onAgreeChanged!(value);
-    }
-
+    setState(() => _isAgreed = value);
     if (value) {
       Future.delayed(const Duration(milliseconds: 250), () {
-        if (mounted) {
-          Navigator.of(context).pop(true);
-        }
+        if (mounted) Navigator.of(context).pop(true);
       });
     }
   }
@@ -121,13 +57,12 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
-                controller: _scrollController,
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Terms of Service for Genie Property',
+                      context.l10n.termsTitle,
                       style: GoogleFonts.inter(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -137,7 +72,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Last updated: 14 February 2026',
+                      context.l10n.termsLastUpdated,
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
@@ -146,93 +81,53 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                     ),
                     const SizedBox(height: 20),
 
-                    _buildParagraph(
-                      'Welcome to Genie Property. By accessing or using the Genie application and services, you agree to comply with and be bound by the following Terms of Service.',
-                    ),
+                    _buildParagraph(context.l10n.termsWelcome),
                     const SizedBox(height: 12),
-                    _buildParagraph(
-                      'If you do not agree with these terms, please do not use the application.',
-                    ),
+                    _buildParagraph(context.l10n.termsDisagree),
                     const SizedBox(height: 20),
 
                     // Section 1
-                    _buildSectionHeader('1. About Genie'),
-                    _buildParagraph(
-                      'Genie is a map-based property platform that allows users to:',
-                    ),
+                    _buildSectionHeader(context.l10n.termsAboutTitle),
+                    _buildParagraph(context.l10n.termsAboutIntro),
                     const SizedBox(height: 8),
-                    _buildBulletPoint(
-                      'View property listings with accurate map locations and boundaries',
-                    ),
-                    _buildBulletPoint(
-                      'Add, manage, and share property information',
-                    ),
-                    _buildBulletPoint(
-                      'Connect buyers, sellers, agents, and developers',
-                    ),
-                    _buildBulletPoint(
-                      'Use coordinate tools such as UTM input and map measurement',
-                    ),
+                    _buildBulletPoint(context.l10n.termsAboutView),
+                    _buildBulletPoint(context.l10n.termsAboutManage),
+                    _buildBulletPoint(context.l10n.termsAboutConnect),
+                    _buildBulletPoint(context.l10n.termsAboutTools),
                     const SizedBox(height: 12),
-                    _buildParagraph(
-                      'Genie acts only as a platform and does not own, sell, or broker any property.',
-                    ),
+                    _buildParagraph(context.l10n.termsAboutPlatformOnly),
                     const SizedBox(height: 20),
 
                     // Section 2
-                    _buildSectionHeader('2. User Accounts'),
-                    _buildParagraph(
-                      'To use certain features, users must register using a valid phone number or email address.\nYou agree that:',
-                    ),
+                    _buildSectionHeader(context.l10n.termsAccountsTitle),
+                    _buildParagraph(context.l10n.termsAccountsIntro),
                     const SizedBox(height: 8),
+                    _buildBulletPoint(context.l10n.termsAccountsAccurate),
+                    _buildBulletPoint(context.l10n.termsAccountsConfidential),
                     _buildBulletPoint(
-                      'The information you provide is accurate',
-                    ),
-                    _buildBulletPoint(
-                      'You are responsible for maintaining the confidentiality of your account',
-                    ),
-                    _buildBulletPoint(
-                      'You will not impersonate another person',
+                      context.l10n.termsAccountsNoImpersonation,
                     ),
                     const SizedBox(height: 12),
-                    _buildParagraph(
-                      'Genie reserves the right to suspend accounts that provide false information.',
-                    ),
+                    _buildParagraph(context.l10n.termsAccountsSuspend),
                     const SizedBox(height: 20),
 
                     // Section 3
-                    _buildSectionHeader('3. Property Listings'),
-                    _buildParagraph(
-                      'Users who post properties (owners, agents, developers) agree that:',
-                    ),
+                    _buildSectionHeader(context.l10n.termsListingsTitle),
+                    _buildParagraph(context.l10n.termsListingsIntro),
                     const SizedBox(height: 8),
-                    _buildBulletPoint(
-                      'All information, boundaries, prices, and details are truthful',
-                    ),
-                    _buildBulletPoint(
-                      'You have the legal right to share and advertise the property',
-                    ),
-                    _buildBulletPoint(
-                      'The map boundary or UTM coordinates you provide are accurate to the best of your knowledge',
-                    ),
+                    _buildBulletPoint(context.l10n.termsListingsTruthful),
+                    _buildBulletPoint(context.l10n.termsListingsRight),
+                    _buildBulletPoint(context.l10n.termsListingsCoordinates),
                     const SizedBox(height: 12),
-                    _buildParagraph(
-                      'Genie is not responsible for incorrect property data submitted by users.',
-                    ),
+                    _buildParagraph(context.l10n.termsListingsNotResponsible),
                     const SizedBox(height: 20),
 
                     // Section 4
-                    _buildSectionHeader('4. Map and Coordinate Accuracy'),
-                    _buildParagraph(
-                      'Genie provides tools for map visualization, UTM conversion, and distance measurement.',
-                    ),
+                    _buildSectionHeader(context.l10n.termsMapTitle),
+                    _buildParagraph(context.l10n.termsMapIntro),
                     const SizedBox(height: 8),
-                    _buildBulletPoint(
-                      'Map boundaries are for visual guidance only and do not replace official cadastral surveys or land titles.',
-                    ),
-                    _buildBulletPoint(
-                      'Users should verify all land borders and titles with relevant authorities before financial transactions.',
-                    ),
+                    _buildBulletPoint(context.l10n.termsMapGuidanceOnly),
+                    _buildBulletPoint(context.l10n.termsMapVerify),
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -258,13 +153,13 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                   ),
                 ],
               ),
-              child: Opacity(
-                opacity: _hasScrolledToBottom ? 1.0 : 0.45,
+              child: InkWell(
+                key: const Key('terms_agree_row'),
+                onTap: () => _handleAgree(!_isAgreed),
                 child: Row(
                   children: [
-                    SizedBox(
-                      width: 24,
-                      height: 24,
+                    Transform.scale(
+                      scale: 1.3,
                       child: Checkbox(
                         value: _isAgreed,
                         activeColor: context.colors.primary,
@@ -272,31 +167,20 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         side: BorderSide(
-                          color: _hasScrolledToBottom
-                              ? context.colors.primary
-                              : context.colors.textHint,
+                          color: context.colors.primary,
                           width: 1.5,
                         ),
-                        onChanged: _hasScrolledToBottom
-                            ? (val) => _handleAgree(val ?? false)
-                            : null,
+                        onChanged: (val) => _handleAgree(val ?? false),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () => _handleAgree(!_isAgreed),
-                        child: Text(
-                          _hasScrolledToBottom
-                              ? 'Agree terms of services'
-                              : 'Scroll to bottom to agree terms of services',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: _hasScrolledToBottom
-                                ? context.colors.textPrimary
-                                : context.colors.textMuted,
-                          ),
+                      child: Text(
+                        context.l10n.termsAgree,
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: context.colors.textPrimary,
                         ),
                       ),
                     ),

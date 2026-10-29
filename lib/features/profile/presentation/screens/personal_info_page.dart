@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
-import 'package:genie/features/profile/presentation/view_models/profile_edit_controller.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/profile/presentation/widgets/profile_field_editor.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/option_sheet.dart';
-import 'package:genie/shared/widgets/settings_list.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/profile_edit_controller.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/profile/presentation/widgets/profile_field_editor.dart';
+import 'package:tilomnov/features/security/presentation/screens/add_email_page.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/shared/widgets/lists/option_sheet.dart';
+import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
 
 /// Everything the account knows about its owner, each row editable on its own.
 class PersonalInfoPage extends ConsumerWidget {
@@ -133,7 +134,12 @@ class _PersonalInfoList extends ConsumerWidget {
             SettingsRow(
               icon: Icons.email_outlined,
               title: l10n.personalInfoEmail,
-              value: profile.email ?? l10n.commonNotSet,
+              value: profile.email ?? l10n.personalInfoAddEmail,
+              // An email can be added once; it is then how a forgotten
+              // password is reset, so it is not changed from here.
+              onTap: profile.email == null
+                  ? () => context.pushPage(const AddEmailPage())
+                  : null,
             ),
           ],
         ),

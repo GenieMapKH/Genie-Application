@@ -1,28 +1,31 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/presentation/providers/map_properties_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/utils/map/layers/clustered_layer.dart';
-import 'package:genie/features/home/utils/map/layers/detailed_property_layer.dart';
-import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
-import 'package:genie/features/home/utils/map/layers/drawing_layer.dart';
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
-import 'package:genie/features/home/utils/map/layers/property_dots_layer.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/layers/clustered_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/detailed_property_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_callbacks.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:tilomnov/features/home/utils/map/layers/property_dots_layer.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 
 /// The icon set the overlay builder draws with. Loaded once by the map view.
 class MapIcons {
   final BitmapDescriptor? pin;
   final BitmapDescriptor? greenDot;
   final BitmapDescriptor? selectedDot;
-  final BitmapDescriptor? newBadge;
+
+  /// The "New" on price tags of recent listings, in the user's language.
+  final String newLabel;
   final BitmapDescriptor? smallWhiteDot;
 
   const MapIcons({
     this.pin,
     this.greenDot,
     this.selectedDot,
-    this.newBadge,
+    this.newLabel = 'New',
     this.smallWhiteDot,
   });
 }
@@ -49,10 +52,14 @@ class MapOverlays {
   final Set<Polygon> polygons;
   final Set<Polyline> polylines;
 
+  /// Where the listings' dots, bubbles or price tags are.
+  final ClusterLayout? clusters;
+
   const MapOverlays({
     this.markers = const {},
     this.polygons = const {},
     this.polylines = const {},
+    this.clusters,
   });
 
   /// Both sets of layers drawn together.
@@ -60,7 +67,21 @@ class MapOverlays {
     markers: {...markers, ...other.markers},
     polygons: {...polygons, ...other.polygons},
     polylines: {...polylines, ...other.polylines},
+    clusters: clusters ?? other.clusters,
   );
+
+  /// The same layers without the markers named in [ids].
+  MapOverlays withoutMarkers(Set<String> ids) => ids.isEmpty
+      ? this
+      : MapOverlays(
+          markers: {
+            for (final marker in markers)
+              if (!ids.contains(marker.markerId.value)) marker,
+          },
+          polygons: polygons,
+          polylines: polylines,
+          clusters: clusters,
+        );
 }
 
 /// Turns property data plus map state into Google Maps layers.
@@ -119,6 +140,14 @@ class MapOverlayBuilder {
       return mapState.highlightedLocalPolygon == index;
     }
 
+    /// The tapped listing is shown by its outline alone: its card already
+    /// gives the price, so a marker would only cover the area label. One
+    /// without a boundary keeps its marker, or nothing would mark it.
+    bool isOutlined(int index) =>
+        models[index] != null &&
+        boundaries[index].length >= 3 &&
+        isHighlighted(index, models[index]);
+
     void onViewProperty(int index, PropertyModel? property) {
       if (mapState.isDrawing) return;
       if (property != null) {
@@ -135,6 +164,7 @@ class MapOverlayBuilder {
         points: boundaries[i],
         property: models[i],
         isOwned: isOwned[i],
+        hasCenterMarker: !isOutlined(i),
         zoom: zoom,
         polygons: polygons,
         markers: markers,
@@ -143,8 +173,9 @@ class MapOverlayBuilder {
       );
     }
 
+    ClusterLayout? clusters;
     if (zoom <= clusterZoomThreshold) {
-      await ClusteredLayer.build(
+      clusters = await ClusteredLayer.build(
         positions: positions,
         models: models,
         zoom: zoom,
@@ -152,17 +183,21 @@ class MapOverlayBuilder {
         dotIcon: icons.greenDot,
         selectedDotIcon: icons.selectedDot,
         isHighlighted: isHighlighted,
+        isOutlined: isOutlined,
         onViewProperty: onViewProperty,
         onZoomToCluster: callbacks.onZoomToCluster,
       );
     } else {
-      await PropertyDotsLayer.build(
+      clusters = await PropertyDotsLayer.build(
+        zoom,
+        icons.newLabel,
         positions,
         models,
         markers,
         icons.greenDot,
         icons.selectedDot,
         isHighlighted,
+        isOutlined,
         onViewProperty,
       );
     }
@@ -171,6 +206,7 @@ class MapOverlayBuilder {
       markers: markers,
       polygons: polygons,
       polylines: polylines,
+      clusters: clusters,
     );
   }
 

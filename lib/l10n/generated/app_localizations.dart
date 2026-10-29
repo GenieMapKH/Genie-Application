@@ -146,6 +146,24 @@ abstract class AppLocalizations {
   /// **'You are offline. Connect to the internet for updates.'**
   String get commonOffline;
 
+  /// No description provided for @offlineDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offlineDialogTitle;
+
+  /// No description provided for @offlineDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.'**
+  String get offlineDialogMessage;
+
+  /// No description provided for @offlineKeepBrowsing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep browsing'**
+  String get offlineKeepBrowsing;
+
   /// No description provided for @navExplore.
   ///
   /// In en, this message translates to:
@@ -169,6 +187,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My Properties'**
   String get navMyProperties;
+
+  /// No description provided for @navListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings'**
+  String get navListings;
 
   /// No description provided for @navUser.
   ///
@@ -326,6 +350,18 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get languageTitle;
 
+  /// No description provided for @glassNavigationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Glass navigation'**
+  String get glassNavigationTitle;
+
+  /// No description provided for @glassNavigationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Match your phone\'s see-through bars'**
+  String get glassNavigationSubtitle;
+
   /// No description provided for @personalInfoTitle.
   ///
   /// In en, this message translates to:
@@ -443,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoPhoneInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Enter a phone number of at most 20 characters.'**
+  /// **'Enter a valid phone number, for example 012 345 678.'**
   String get personalInfoPhoneInvalid;
 
   /// No description provided for @personalInfoEmail.
@@ -491,7 +527,7 @@ abstract class AppLocalizations {
   /// No description provided for @securityChangePin.
   ///
   /// In en, this message translates to:
-  /// **'Change backup PIN'**
+  /// **'Change chat PIN'**
   String get securityChangePin;
 
   /// No description provided for @securityResetKeys.
@@ -581,19 +617,19 @@ abstract class AppLocalizations {
   /// No description provided for @pinChanged.
   ///
   /// In en, this message translates to:
-  /// **'Backup PIN changed.'**
+  /// **'Chat PIN changed.'**
   String get pinChanged;
 
   /// No description provided for @pinNoBackup.
   ///
   /// In en, this message translates to:
-  /// **'You have no backup PIN.'**
+  /// **'You have no chat PIN yet.'**
   String get pinNoBackup;
 
   /// No description provided for @pinLocked.
   ///
   /// In en, this message translates to:
-  /// **'Too many wrong PINs. The backup is locked; try again later.'**
+  /// **'Too many wrong PINs. Your PIN is locked for a while; try again later.'**
   String get pinLocked;
 
   /// No description provided for @pinFetchFailed.
@@ -605,7 +641,7 @@ abstract class AppLocalizations {
   /// No description provided for @pinWrong.
   ///
   /// In en, this message translates to:
-  /// **'Incorrect PIN. After 5 wrong tries the backup locks for a while.'**
+  /// **'Incorrect PIN. After 5 wrong tries your PIN locks for a while.'**
   String get pinWrong;
 
   /// No description provided for @pinSaveFailed.
@@ -623,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetKeysConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nIf you have a backup PIN, you will be asked for it first.'**
+  /// **'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current chat PIN first.'**
   String get resetKeysConfirmMessage;
 
   /// No description provided for @resetKeysConfirmAction.
@@ -1118,23 +1154,11 @@ abstract class AppLocalizations {
   /// **'Continue with Google'**
   String get authContinueWithGoogle;
 
-  /// No description provided for @authByContinuingYouAgreeToOut.
-  ///
-  /// In en, this message translates to:
-  /// **'By continuing, you agree to out '**
-  String get authByContinuingYouAgreeToOut;
-
   /// No description provided for @authTermsOfServices.
   ///
   /// In en, this message translates to:
-  /// **'terms of services.'**
+  /// **'terms of service'**
   String get authTermsOfServices;
-
-  /// No description provided for @authEmailAddressOrPhoneNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Email Address or Phone number'**
-  String get authEmailAddressOrPhoneNumber;
 
   /// No description provided for @authForgetPassword.
   ///
@@ -1166,23 +1190,11 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get chatTryAgain;
 
-  /// No description provided for @resetKeysPasswordHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your new chat keys will be locked with your account password.'**
-  String get resetKeysPasswordHelp;
-
   /// No description provided for @chatPasswordTitle.
   ///
   /// In en, this message translates to:
   /// **'Enter your account password'**
   String get chatPasswordTitle;
-
-  /// No description provided for @chatPasswordHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are locked with your account password. Enter it to read and send messages on this device.'**
-  String get chatPasswordHelp;
 
   /// No description provided for @chatPasswordLabel.
   ///
@@ -1201,30 +1213,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Too many tries. Wait a few minutes and try again.'**
   String get chatPasswordTooManyTries;
-
-  /// No description provided for @chatPasswordChangedElsewhere.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are locked with an earlier password. Sign in once on a phone you used before to keep your earlier messages, or use chat here now: earlier messages cannot be read on this phone.'**
-  String get chatPasswordChangedElsewhere;
-
-  /// No description provided for @chatPinLastTimeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your chat PIN one last time'**
-  String get chatPinLastTimeTitle;
-
-  /// No description provided for @chatPinLastTimeHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'From now on your account password protects your chats, so you will not need this PIN again.'**
-  String get chatPinLastTimeHelp;
-
-  /// No description provided for @securityChatsUsePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are always end-to-end encrypted and locked with your account password, so signing in on any device brings them back. No PIN is needed.'**
-  String get securityChatsUsePassword;
 
   /// No description provided for @chatMoreOptions.
   ///
@@ -1562,6 +1550,12 @@ abstract class AppLocalizations {
   /// **'Map Preview'**
   String get propertyMapPreview;
 
+  /// No description provided for @propertyViewOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'View on map'**
+  String get propertyViewOnMap;
+
   /// No description provided for @propertyAddProperty.
   ///
   /// In en, this message translates to:
@@ -1712,6 +1706,24 @@ abstract class AppLocalizations {
   /// **'Call Now'**
   String get propertyCallNow;
 
+  /// No description provided for @propertyNoPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone number was shared for this listing. Try chatting with the owner instead.'**
+  String get propertyNoPhoneNumber;
+
+  /// No description provided for @propertyCallFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The phone app could not be opened.'**
+  String get propertyCallFailed;
+
+  /// No description provided for @profileSignInForContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see their phone and email.'**
+  String get profileSignInForContact;
+
   /// No description provided for @propertyCannotChatOwnerInformationMissing.
   ///
   /// In en, this message translates to:
@@ -1736,11 +1748,11 @@ abstract class AppLocalizations {
   /// **'Property Highlights'**
   String get propertyPropertyHighlights;
 
-  /// No description provided for @propertyGenie.
+  /// No description provided for @propertyTilomnov.
   ///
   /// In en, this message translates to:
   /// **'Tilomnov'**
-  String get propertyGenie;
+  String get propertyTilomnov;
 
   /// No description provided for @propertyViews.
   ///
@@ -1753,6 +1765,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saves'**
   String get propertySaves;
+
+  /// No description provided for @insightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsTitle;
+
+  /// No description provided for @insightsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the insights. Check your connection.'**
+  String get insightsLoadFailed;
+
+  /// No description provided for @insightsTotalViews.
+  ///
+  /// In en, this message translates to:
+  /// **'People viewed'**
+  String get insightsTotalViews;
+
+  /// No description provided for @insightsTotalSaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved it'**
+  String get insightsTotalSaves;
+
+  /// No description provided for @insightsTotalCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Tapped Call'**
+  String get insightsTotalCalls;
+
+  /// No description provided for @insightsTotalChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Started a chat'**
+  String get insightsTotalChats;
+
+  /// No description provided for @insightsLast14Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 14 days'**
+  String get insightsLast14Days;
+
+  /// No description provided for @insightsMeasureViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewers'**
+  String get insightsMeasureViews;
+
+  /// No description provided for @insightsMeasureSaves.
+  ///
+  /// In en, this message translates to:
+  /// **'Saves'**
+  String get insightsMeasureSaves;
+
+  /// No description provided for @insightsMeasureLeads.
+  ///
+  /// In en, this message translates to:
+  /// **'Leads'**
+  String get insightsMeasureLeads;
+
+  /// No description provided for @insightsViewers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new viewer} other{{count} new viewers}}'**
+  String insightsViewers(int count);
+
+  /// No description provided for @insightsSaves.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new save} other{{count} new saves}}'**
+  String insightsSaves(int count);
+
+  /// No description provided for @insightsLeads.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new lead} other{{count} new leads}}'**
+  String insightsLeads(int count);
+
+  /// No description provided for @insightsThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week: {thisWeek}. The week before: {lastWeek}.'**
+  String insightsThisWeek(String thisWeek, int lastWeek);
+
+  /// No description provided for @insightsEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.'**
+  String get insightsEmptyHint;
 
   /// No description provided for @propertyShareThisProperty.
   ///
@@ -1777,6 +1879,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download'**
   String get propertyDownload;
+
+  /// No description provided for @propertyShareSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this listing'**
+  String get propertyShareSheetTitle;
+
+  /// No description provided for @propertyShareScanToView.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to view this listing'**
+  String get propertyShareScanToView;
+
+  /// No description provided for @propertyShareCopyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get propertyShareCopyLink;
+
+  /// No description provided for @propertyShareLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get propertyShareLinkCopied;
+
+  /// No description provided for @propertyShareSaveImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Save image'**
+  String get propertyShareSaveImage;
+
+  /// No description provided for @propertyShareImageSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to your photos'**
+  String get propertyShareImageSaved;
+
+  /// No description provided for @propertyShareImageSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save the image'**
+  String get propertyShareImageSaveFailed;
+
+  /// No description provided for @propertySharePhotosDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Tilomnov to add photos in Settings to save the image.'**
+  String get propertySharePhotosDenied;
+
+  /// No description provided for @propertyShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t share this listing'**
+  String get propertyShareFailed;
+
+  /// No description provided for @propertyShareMessageSeeOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'See the photos and exact location on the map:'**
+  String get propertyShareMessageSeeOnMap;
+
+  /// No description provided for @propertyShareMessageFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared from Tilomnov, land and homes on the map.'**
+  String get propertyShareMessageFooter;
+
+  /// No description provided for @propertyShareCaptionCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption copied: paste it if the app leaves it out'**
+  String get propertyShareCaptionCopied;
+
+  /// No description provided for @propertyShareNotPublicDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you can see this listing until it is published. Publish it to share its link and QR code.'**
+  String get propertyShareNotPublicDraft;
+
+  /// No description provided for @propertyShareNotPublicPending.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing goes public once its payment is complete. You can share it then.'**
+  String get propertyShareNotPublicPending;
+
+  /// No description provided for @propertyShareNotPublicEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing is no longer public, so its link and QR code cannot be shared.'**
+  String get propertyShareNotPublicEnded;
 
   /// No description provided for @propertyTitleType.
   ///
@@ -2168,10 +2360,22 @@ abstract class AppLocalizations {
   /// **'You were signed out of this device.'**
   String get sessionEnded;
 
+  /// No description provided for @updateRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get updateRequiredTitle;
+
+  /// No description provided for @updateRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.'**
+  String get updateRequiredMessage;
+
   /// No description provided for @securityForgotPin.
   ///
   /// In en, this message translates to:
-  /// **'Forgot backup PIN'**
+  /// **'Forgot chat PIN'**
   String get securityForgotPin;
 
   /// No description provided for @securityCreatePassword.
@@ -2201,43 +2405,37 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPinTitle.
   ///
   /// In en, this message translates to:
-  /// **'Forgot your backup PIN?'**
+  /// **'Forgot your chat PIN?'**
   String get forgotPinTitle;
 
   /// No description provided for @forgotPinKeepsHistory.
   ///
   /// In en, this message translates to:
-  /// **'This device still has your chat keys, so nothing is lost. Create an account password: from then on it protects your chats instead of a PIN.'**
+  /// **'This phone still has your chat keys, so nothing is lost. Confirm it is you with your account password, then choose a new PIN.'**
   String get forgotPinKeepsHistory;
 
   /// No description provided for @forgotPinLosesHistory.
   ///
   /// In en, this message translates to:
-  /// **'This device does not have your chat keys, and without the PIN they cannot be recovered. After you create an account password, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your devices can still open your chats, do this there instead to keep your history.'**
+  /// **'This phone does not have your chat keys, and without the PIN they cannot be recovered. After you confirm with your account password and choose a new PIN, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your phones can still open your chats, do this there instead to keep your history.'**
   String get forgotPinLosesHistory;
 
   /// No description provided for @forgotPinNeedsPassword.
   ///
   /// In en, this message translates to:
-  /// **'You sign in with Google, so create an account password. It protects your chats from now on, instead of a PIN.'**
+  /// **'You sign in with Google, so create an account password first. It confirms it is you when you choose a new chat PIN.'**
   String get forgotPinNeedsPassword;
-
-  /// No description provided for @forgotPinNowPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Done. Your chats are now protected by your account password.'**
-  String get forgotPinNowPassword;
 
   /// No description provided for @pinForgotHint.
   ///
   /// In en, this message translates to:
-  /// **'Forgot your PIN? Go to User > Security > Forgot backup PIN to choose a new one or turn it off.'**
+  /// **'Forgot your PIN? Go to User > Security > Forgot chat PIN.'**
   String get pinForgotHint;
 
   /// No description provided for @chatPinNeeded.
   ///
   /// In en, this message translates to:
-  /// **'Your chats are protected with a backup PIN. Enter it to read and send messages on this phone.'**
+  /// **'Enter your chat PIN to read and send messages on this phone.'**
   String get chatPinNeeded;
 
   /// No description provided for @chatOpenFailed.
@@ -2246,107 +2444,23 @@ abstract class AppLocalizations {
   /// **'Could not open this chat. Check your connection.'**
   String get chatOpenFailed;
 
-  /// No description provided for @securitySetUpPin.
-  ///
-  /// In en, this message translates to:
-  /// **'Set up backup PIN'**
-  String get securitySetUpPin;
-
-  /// No description provided for @securityTurnOffPin.
-  ///
-  /// In en, this message translates to:
-  /// **'Turn off backup PIN'**
-  String get securityTurnOffPin;
-
-  /// No description provided for @securityPinOptionalNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are always end-to-end encrypted. A backup PIN is optional: with one, you can read your earlier chats on a new phone, and nobody can replace your chat keys without it.'**
-  String get securityPinOptionalNote;
-
-  /// No description provided for @pinSetUpTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a backup PIN'**
-  String get pinSetUpTitle;
-
   /// No description provided for @pinSetUpHelp.
   ///
   /// In en, this message translates to:
   /// **'You will need this PIN to read your chats on a new phone. Choose one you will remember.'**
   String get pinSetUpHelp;
 
-  /// No description provided for @pinSetUpDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Backup PIN set.'**
-  String get pinSetUpDone;
-
-  /// No description provided for @pinAlreadySet.
-  ///
-  /// In en, this message translates to:
-  /// **'You already have a backup PIN.'**
-  String get pinAlreadySet;
-
-  /// No description provided for @pinKeysNotReady.
-  ///
-  /// In en, this message translates to:
-  /// **'Open a chat on this phone first, then set up the PIN.'**
-  String get pinKeysNotReady;
-
-  /// No description provided for @pinTurnOffConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Turn off backup PIN?'**
-  String get pinTurnOffConfirmTitle;
-
-  /// No description provided for @pinTurnOffConfirmMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats stay end-to-end encrypted. Without a PIN, a new phone cannot read your earlier messages.\n\nYou will be asked for your current PIN first.'**
-  String get pinTurnOffConfirmMessage;
-
-  /// No description provided for @pinTurnOffAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Turn off'**
-  String get pinTurnOffAction;
-
-  /// No description provided for @pinTurnedOff.
-  ///
-  /// In en, this message translates to:
-  /// **'Backup PIN turned off.'**
-  String get pinTurnedOff;
-
-  /// No description provided for @pinTurnOffFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not turn off the PIN. Nothing was changed.'**
-  String get pinTurnOffFailed;
-
   /// No description provided for @chatPinRestoreTitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter your backup PIN'**
+  /// **'Enter your chat PIN'**
   String get chatPinRestoreTitle;
 
   /// No description provided for @chatPinRestoreHelp.
   ///
   /// In en, this message translates to:
-  /// **'You protected your chats with a backup PIN. Enter it to read them on this phone.'**
+  /// **'Your chats are protected by your 6-digit chat PIN. Enter it to read them on this phone.'**
   String get chatPinRestoreHelp;
-
-  /// No description provided for @chatUsedOnAnotherDevice.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chat is now set up on another device. Use it on this phone instead? Earlier messages cannot be read here, and the other device will need to switch back the same way.\n\nTo use chat on several devices, set up a backup PIN in User > Security.'**
-  String get chatUsedOnAnotherDevice;
-
-  /// No description provided for @chatUseOnThisDevice.
-  ///
-  /// In en, this message translates to:
-  /// **'Use chat on this phone'**
-  String get chatUseOnThisDevice;
 
   /// No description provided for @devicesImmediateNote.
   ///
@@ -2630,6 +2744,78 @@ abstract class AppLocalizations {
   /// **'Follow'**
   String get profileFollow;
 
+  /// No description provided for @profileFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get profileFollowing;
+
+  /// No description provided for @profileFollowersStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get profileFollowersStat;
+
+  /// No description provided for @profileFollowingStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get profileFollowingStat;
+
+  /// No description provided for @profileFollowLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can follow up to {count} people. Unfollow someone to follow more.'**
+  String profileFollowLimit(int count);
+
+  /// No description provided for @profileFollowFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Following could not be changed. Please try again.'**
+  String get profileFollowFailed;
+
+  /// No description provided for @navFeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed'**
+  String get navFeed;
+
+  /// No description provided for @feedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feed'**
+  String get feedTitle;
+
+  /// No description provided for @feedEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your feed is empty'**
+  String get feedEmptyTitle;
+
+  /// No description provided for @feedEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow people from their profile to see their new listings here.'**
+  String get feedEmptyHint;
+
+  /// No description provided for @feedExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore listings'**
+  String get feedExplore;
+
+  /// No description provided for @feedLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your feed could not be loaded.'**
+  String get feedLoadFailed;
+
+  /// No description provided for @feedListedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Listed {date}'**
+  String feedListedOn(String date);
+
   /// No description provided for @profileContactTitle.
   ///
   /// In en, this message translates to:
@@ -2792,12 +2978,6 @@ abstract class AppLocalizations {
   /// **'{distance} m'**
   String propertyDistanceM(int distance);
 
-  /// No description provided for @propertyDriveMinutes.
-  ///
-  /// In en, this message translates to:
-  /// **'{minutes} min drive'**
-  String propertyDriveMinutes(int minutes);
-
   /// No description provided for @propertyStraightLine.
   ///
   /// In en, this message translates to:
@@ -2809,6 +2989,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load nearby places.'**
   String get propertyNearbyCouldNotLoad;
+
+  /// No description provided for @propertyNearbyRouteCouldNotLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the road to this place.'**
+  String get propertyNearbyRouteCouldNotLoad;
 
   /// No description provided for @propertyDiscount.
   ///
@@ -2905,6 +3091,2520 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Draw the property on the map first to measure it.'**
   String get propertyDrawBoundaryFirst;
+
+  /// No description provided for @forgotPinPasswordHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your account password to confirm it is you. Then choose a new chat PIN.'**
+  String get forgotPinPasswordHelp;
+
+  /// No description provided for @forgotPinRecovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Done. Your new chat PIN protects your chats.'**
+  String get forgotPinRecovered;
+
+  /// No description provided for @securityPinRequiredNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats are always end-to-end encrypted and protected by your 6-digit chat PIN. You need it to read your chats on a new phone.'**
+  String get securityPinRequiredNote;
+
+  /// No description provided for @pinUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get pinUnlock;
+
+  /// No description provided for @pinChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your PIN...'**
+  String get pinChecking;
+
+  /// No description provided for @pinWrongTriesLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Incorrect PIN. 1 try left before your PIN locks for a while.} other{Incorrect PIN. {count} tries left.}}'**
+  String pinWrongTriesLeft(int count);
+
+  /// No description provided for @pinWrongNoCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN. Please try again.'**
+  String get pinWrongNoCount;
+
+  /// No description provided for @pinLockedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong PINs. Try again in {time}.'**
+  String pinLockedFor(String time);
+
+  /// No description provided for @pinLockedLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong PINs. Please try again later.'**
+  String get pinLockedLater;
+
+  /// No description provided for @pinCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check your PIN. Check your connection and try again.'**
+  String get pinCheckFailed;
+
+  /// No description provided for @chatPinSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving your PIN...'**
+  String get chatPinSaving;
+
+  /// No description provided for @chatPasswordChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your password...'**
+  String get chatPasswordChecking;
+
+  /// No description provided for @chatPinSetupSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get chatPinSetupSignOut;
+
+  /// No description provided for @chatPinCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your chat PIN'**
+  String get chatPinCreateTitle;
+
+  /// No description provided for @chatPinCreateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.'**
+  String get chatPinCreateHelp;
+
+  /// No description provided for @chatPinConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your chat PIN'**
+  String get chatPinConfirmTitle;
+
+  /// No description provided for @chatPinConfirmHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the same 6 digits again.'**
+  String get chatPinConfirmHelp;
+
+  /// No description provided for @chatPinMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The PINs did not match. Choose your PIN again.'**
+  String get chatPinMismatch;
+
+  /// No description provided for @chatPinSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your PIN. Check your connection and try again.'**
+  String get chatPinSaveFailed;
+
+  /// No description provided for @chatPinChooseAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a different PIN'**
+  String get chatPinChooseAnother;
+
+  /// No description provided for @chatPinMoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect your chats with a PIN'**
+  String get chatPinMoveTitle;
+
+  /// No description provided for @chatPinMoveHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats are now protected by a 6-digit chat PIN instead of your account password. Enter your account password once, then choose your PIN.'**
+  String get chatPinMoveHelp;
+
+  /// No description provided for @chatPinStartOverLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t unlock? Start over'**
+  String get chatPinStartOverLink;
+
+  /// No description provided for @chatPinStartOverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over with new chat keys?'**
+  String get chatPinStartOverTitle;
+
+  /// No description provided for @chatPinStartOverMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'If your password was reset, your old chats cannot be unlocked. Starting over keeps your account, but your earlier messages can no longer be read. This cannot be undone.'**
+  String get chatPinStartOverMessage;
+
+  /// No description provided for @chatPinStartOverAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over'**
+  String get chatPinStartOverAction;
+
+  /// No description provided for @chatPinRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your messages are end-to-end encrypted. Create a 6-digit chat PIN to protect them before you start chatting.'**
+  String get chatPinRequiredMessage;
+
+  /// No description provided for @chatPinCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create PIN'**
+  String get chatPinCreateAction;
+
+  /// No description provided for @chatLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats are locked on this phone'**
+  String get chatLockedTitle;
+
+  /// No description provided for @chatEnterPinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter PIN'**
+  String get chatEnterPinAction;
+
+  /// No description provided for @chatPinLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong PINs'**
+  String get chatPinLockedTitle;
+
+  /// No description provided for @chatPinLockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'For your security, entering your chat PIN is paused for a while. Please try again later.'**
+  String get chatPinLockedMessage;
+
+  /// No description provided for @authErrEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get authErrEnterName;
+
+  /// No description provided for @authErrEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid password'**
+  String get authErrEnterPassword;
+
+  /// No description provided for @authErrPasswordMin8.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get authErrPasswordMin8;
+
+  /// No description provided for @authErrAgreeTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Please agree to the terms of services to continue.'**
+  String get authErrAgreeTerms;
+
+  /// No description provided for @authErrEnterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get authErrEnterEmail;
+
+  /// No description provided for @authErrEnterNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a new password'**
+  String get authErrEnterNewPassword;
+
+  /// No description provided for @authErrReEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please re-enter your password'**
+  String get authErrReEnterPassword;
+
+  /// No description provided for @authErrPasswordsDontMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authErrPasswordsDontMatch;
+
+  /// No description provided for @termsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service for Tilomnov'**
+  String get termsTitle;
+
+  /// No description provided for @termsLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: 14 February 2026'**
+  String get termsLastUpdated;
+
+  /// No description provided for @termsWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Tilomnov. By accessing or using the Tilomnov application and services, you agree to comply with and be bound by the following Terms of Service.'**
+  String get termsWelcome;
+
+  /// No description provided for @termsDisagree.
+  ///
+  /// In en, this message translates to:
+  /// **'If you do not agree with these terms, please do not use the application.'**
+  String get termsDisagree;
+
+  /// No description provided for @termsAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1. About Tilomnov'**
+  String get termsAboutTitle;
+
+  /// No description provided for @termsAboutIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Tilomnov is a map-based property platform that allows users to:'**
+  String get termsAboutIntro;
+
+  /// No description provided for @termsAboutView.
+  ///
+  /// In en, this message translates to:
+  /// **'View property listings with accurate map locations and boundaries'**
+  String get termsAboutView;
+
+  /// No description provided for @termsAboutManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add, manage, and share property information'**
+  String get termsAboutManage;
+
+  /// No description provided for @termsAboutConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect buyers, sellers, agents, and developers'**
+  String get termsAboutConnect;
+
+  /// No description provided for @termsAboutTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Use coordinate tools such as UTM input and map measurement'**
+  String get termsAboutTools;
+
+  /// No description provided for @termsAboutPlatformOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Tilomnov acts only as a platform and does not own, sell, or broker any property.'**
+  String get termsAboutPlatformOnly;
+
+  /// No description provided for @termsAccountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'2. User Accounts'**
+  String get termsAccountsTitle;
+
+  /// No description provided for @termsAccountsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'To use certain features, users must register using a valid phone number or email address.\nYou agree that:'**
+  String get termsAccountsIntro;
+
+  /// No description provided for @termsAccountsAccurate.
+  ///
+  /// In en, this message translates to:
+  /// **'The information you provide is accurate'**
+  String get termsAccountsAccurate;
+
+  /// No description provided for @termsAccountsConfidential.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for maintaining the confidentiality of your account'**
+  String get termsAccountsConfidential;
+
+  /// No description provided for @termsAccountsNoImpersonation.
+  ///
+  /// In en, this message translates to:
+  /// **'You will not impersonate another person'**
+  String get termsAccountsNoImpersonation;
+
+  /// No description provided for @termsAccountsSuspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Tilomnov reserves the right to suspend accounts that provide false information.'**
+  String get termsAccountsSuspend;
+
+  /// No description provided for @termsListingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Property Listings'**
+  String get termsListingsTitle;
+
+  /// No description provided for @termsListingsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Users who post properties (owners, agents, developers) agree that:'**
+  String get termsListingsIntro;
+
+  /// No description provided for @termsListingsTruthful.
+  ///
+  /// In en, this message translates to:
+  /// **'All information, boundaries, prices, and details are truthful'**
+  String get termsListingsTruthful;
+
+  /// No description provided for @termsListingsRight.
+  ///
+  /// In en, this message translates to:
+  /// **'You have the legal right to share and advertise the property'**
+  String get termsListingsRight;
+
+  /// No description provided for @termsListingsCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'The map boundary or UTM coordinates you provide are accurate to the best of your knowledge'**
+  String get termsListingsCoordinates;
+
+  /// No description provided for @termsListingsNotResponsible.
+  ///
+  /// In en, this message translates to:
+  /// **'Tilomnov is not responsible for incorrect property data submitted by users.'**
+  String get termsListingsNotResponsible;
+
+  /// No description provided for @termsMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Map and Coordinate Accuracy'**
+  String get termsMapTitle;
+
+  /// No description provided for @termsMapIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Tilomnov provides tools for map visualization, UTM conversion, and distance measurement.'**
+  String get termsMapIntro;
+
+  /// No description provided for @termsMapGuidanceOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Map boundaries are for visual guidance only and do not replace official cadastral surveys or land titles.'**
+  String get termsMapGuidanceOnly;
+
+  /// No description provided for @termsMapVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Users should verify all land borders and titles with relevant authorities before financial transactions.'**
+  String get termsMapVerify;
+
+  /// No description provided for @termsAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'Agree terms of services'**
+  String get termsAgree;
+
+  /// No description provided for @authErrEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get authErrEnterValidEmail;
+
+  /// No description provided for @authErrEnterValidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number'**
+  String get authErrEnterValidPhone;
+
+  /// No description provided for @authErrPasswordMin6.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get authErrPasswordMin6;
+
+  /// No description provided for @authErrorWrongCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect email, phone number or password.'**
+  String get authErrorWrongCredentials;
+
+  /// No description provided for @authErrorAccountExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email or phone number already exists.'**
+  String get authErrorAccountExists;
+
+  /// No description provided for @authErrorCheckDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check what you entered and try again.'**
+  String get authErrorCheckDetails;
+
+  /// No description provided for @authErrorInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'The code is wrong or has expired.'**
+  String get authErrorInvalidCode;
+
+  /// No description provided for @authErrorTooManyTries.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries. Please wait a few minutes and try again.'**
+  String get authErrorTooManyTries;
+
+  /// No description provided for @authErrorNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server. Check your connection.'**
+  String get authErrorNoConnection;
+
+  /// No description provided for @authErrorServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong on our side. Please try again later.'**
+  String get authErrorServer;
+
+  /// No description provided for @authErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get authErrorGeneric;
+
+  /// No description provided for @authResendOtpIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP in {seconds}s'**
+  String authResendOtpIn(int seconds);
+
+  /// No description provided for @chatPhotoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo unavailable. Tap to retry.'**
+  String get chatPhotoUnavailable;
+
+  /// No description provided for @chatPictureCannotBeShown.
+  ///
+  /// In en, this message translates to:
+  /// **'This picture cannot be shown.'**
+  String get chatPictureCannotBeShown;
+
+  /// No description provided for @chatMessageNotSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent. Tap to retry.'**
+  String get chatMessageNotSent;
+
+  /// No description provided for @chatMessageSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get chatMessageSending;
+
+  /// No description provided for @chatMessageSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get chatMessageSent;
+
+  /// No description provided for @chatMessageTimeYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday {time}'**
+  String chatMessageTimeYesterday(String time);
+
+  /// No description provided for @chatDeliveredJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered just now'**
+  String get chatDeliveredJustNow;
+
+  /// No description provided for @chatDeliveredMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered {minutes, plural, =1{1 minute ago} other{{minutes} minutes ago}}'**
+  String chatDeliveredMinutes(int minutes);
+
+  /// No description provided for @chatDeliveredHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered {hours, plural, =1{1 hour ago} other{{hours} hours ago}}'**
+  String chatDeliveredHours(int hours);
+
+  /// No description provided for @chatDeliveredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered {day}'**
+  String chatDeliveredOn(String day);
+
+  /// No description provided for @chatAttachPicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach a picture'**
+  String get chatAttachPicture;
+
+  /// No description provided for @chatShowEmojis.
+  ///
+  /// In en, this message translates to:
+  /// **'Emoji'**
+  String get chatShowEmojis;
+
+  /// No description provided for @chatShowKeyboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard'**
+  String get chatShowKeyboard;
+
+  /// No description provided for @chatSendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get chatSendMessage;
+
+  /// No description provided for @chatReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get chatReply;
+
+  /// No description provided for @chatCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get chatCopy;
+
+  /// No description provided for @chatEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get chatEdit;
+
+  /// No description provided for @chatCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get chatCopied;
+
+  /// No description provided for @chatYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get chatYou;
+
+  /// No description provided for @chatReplyingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to {name}'**
+  String chatReplyingTo(String name);
+
+  /// No description provided for @chatEditingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing message'**
+  String get chatEditingMessage;
+
+  /// No description provided for @chatEdited.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get chatEdited;
+
+  /// No description provided for @chatAskAboutListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Asking about this listing?'**
+  String get chatAskAboutListing;
+
+  /// No description provided for @chatSendListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get chatSendListing;
+
+  /// No description provided for @chatDismissListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get chatDismissListing;
+
+  /// No description provided for @chatViewListing.
+  ///
+  /// In en, this message translates to:
+  /// **'View listing'**
+  String get chatViewListing;
+
+  /// No description provided for @chatListingUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing is no longer available.'**
+  String get chatListingUnavailable;
+
+  /// No description provided for @chatDeleteMessageQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this message?'**
+  String get chatDeleteMessageQuestion;
+
+  /// No description provided for @chatDeleteMessageForEveryone.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for everyone'**
+  String get chatDeleteMessageForEveryone;
+
+  /// No description provided for @chatDeleteMessageForMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for me'**
+  String get chatDeleteMessageForMe;
+
+  /// No description provided for @chatDeleteOwnMessageExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'For everyone: it is removed for you and {name}, with nothing left in its place. For me: only you stop seeing it.'**
+  String chatDeleteOwnMessageExplained(String name);
+
+  /// No description provided for @chatDeleteMessageForMeExplained.
+  ///
+  /// In en, this message translates to:
+  /// **'It is removed for you only. {name} still sees it.'**
+  String chatDeleteMessageForMeExplained(String name);
+
+  /// No description provided for @chatEditTooLate.
+  ///
+  /// In en, this message translates to:
+  /// **'A message can only be edited within an hour of sending it.'**
+  String get chatEditTooLate;
+
+  /// No description provided for @chatPresenceOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get chatPresenceOnline;
+
+  /// No description provided for @chatLastSeenJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen just now'**
+  String get chatLastSeenJustNow;
+
+  /// No description provided for @chatLastSeenMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen {minutes} min ago'**
+  String chatLastSeenMinutes(int minutes);
+
+  /// No description provided for @chatLastSeenToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen today at {time}'**
+  String chatLastSeenToday(String time);
+
+  /// No description provided for @chatLastSeenYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen yesterday at {time}'**
+  String chatLastSeenYesterday(String time);
+
+  /// No description provided for @chatLastSeenOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen {date}'**
+  String chatLastSeenOn(String date);
+
+  /// No description provided for @chatKeyChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\'s security key has changed'**
+  String chatKeyChangedTitle(String name);
+
+  /// No description provided for @chatEmojiSmileys.
+  ///
+  /// In en, this message translates to:
+  /// **'Smileys'**
+  String get chatEmojiSmileys;
+
+  /// No description provided for @chatEmojiGestures.
+  ///
+  /// In en, this message translates to:
+  /// **'Gestures'**
+  String get chatEmojiGestures;
+
+  /// No description provided for @chatEmojiHearts.
+  ///
+  /// In en, this message translates to:
+  /// **'Hearts'**
+  String get chatEmojiHearts;
+
+  /// No description provided for @chatEmojiPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get chatEmojiPlaces;
+
+  /// No description provided for @chatPreviewEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted message'**
+  String get chatPreviewEncrypted;
+
+  /// No description provided for @chatPreviewPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get chatPreviewPhoto;
+
+  /// No description provided for @chatUndecryptable.
+  ///
+  /// In en, this message translates to:
+  /// **'This message cannot be read on this device.'**
+  String get chatUndecryptable;
+
+  /// No description provided for @ownerFallbackName.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Owner'**
+  String get ownerFallbackName;
+
+  /// No description provided for @chatSendSignedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'You are signed out.'**
+  String get chatSendSignedOut;
+
+  /// No description provided for @chatSendNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server. Check your connection.'**
+  String get chatSendNoConnection;
+
+  /// No description provided for @chatSendRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The server did not accept this message. Please try again.'**
+  String get chatSendRejected;
+
+  /// No description provided for @chatSendTooFast.
+  ///
+  /// In en, this message translates to:
+  /// **'You are sending messages too quickly. Wait a moment.'**
+  String get chatSendTooFast;
+
+  /// No description provided for @chatSendPinRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your chat PIN before sending messages.'**
+  String get chatSendPinRequired;
+
+  /// No description provided for @chatSendBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t message this person.'**
+  String get chatSendBlocked;
+
+  /// No description provided for @chatYouBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You blocked {name}. They can\'t message or call you.'**
+  String chatYouBlocked(String name);
+
+  /// No description provided for @chatCannotReply.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t reply to this conversation.'**
+  String get chatCannotReply;
+
+  /// No description provided for @safetyMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get safetyMore;
+
+  /// No description provided for @blockAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get blockAction;
+
+  /// No description provided for @unblockAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get unblockAction;
+
+  /// No description provided for @blockConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {name}?'**
+  String blockConfirmTitle(String name);
+
+  /// No description provided for @blockConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'They won\'t be able to message or call you, and you\'ll stop following each other. They won\'t be told.'**
+  String get blockConfirmMessage;
+
+  /// No description provided for @unblockConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock {name}?'**
+  String unblockConfirmTitle(String name);
+
+  /// No description provided for @unblockConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be able to message each other again. Follows removed by the block don\'t come back.'**
+  String get unblockConfirmMessage;
+
+  /// No description provided for @blockDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is blocked.'**
+  String blockDone(String name);
+
+  /// No description provided for @unblockDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is unblocked.'**
+  String unblockDone(String name);
+
+  /// No description provided for @blockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Check your connection and try again.'**
+  String get blockFailed;
+
+  /// No description provided for @blockedAccountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked accounts'**
+  String get blockedAccountsTitle;
+
+  /// No description provided for @blockedAccountsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t blocked anyone.'**
+  String get blockedAccountsEmpty;
+
+  /// No description provided for @blockedAccountsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the accounts you blocked.'**
+  String get blockedAccountsLoadFailed;
+
+  /// No description provided for @reportListingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report listing'**
+  String get reportListingAction;
+
+  /// No description provided for @reportUserAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report account'**
+  String get reportUserAction;
+
+  /// No description provided for @reportListingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this listing'**
+  String get reportListingTitle;
+
+  /// No description provided for @reportUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this account'**
+  String get reportUserTitle;
+
+  /// No description provided for @reportHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what\'s wrong. The owner won\'t know who reported it.'**
+  String get reportHelp;
+
+  /// No description provided for @reportReasonScam.
+  ///
+  /// In en, this message translates to:
+  /// **'Scam or fraud'**
+  String get reportReasonScam;
+
+  /// No description provided for @reportReasonMisleading.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong price, photos or details'**
+  String get reportReasonMisleading;
+
+  /// No description provided for @reportReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Already sold or rented'**
+  String get reportReasonUnavailable;
+
+  /// No description provided for @reportReasonDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted more than once'**
+  String get reportReasonDuplicate;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment or threats'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonImpersonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pretending to be someone else'**
+  String get reportReasonImpersonation;
+
+  /// No description provided for @reportReasonInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Offensive or inappropriate'**
+  String get reportReasonInappropriate;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportDetailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything else we should know (optional)'**
+  String get reportDetailsHint;
+
+  /// No description provided for @reportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get reportSend;
+
+  /// No description provided for @reportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks. We\'ll review your report.'**
+  String get reportSent;
+
+  /// No description provided for @reportTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve sent a lot of reports. Try again later.'**
+  String get reportTooMany;
+
+  /// No description provided for @reportTargetGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This has already been removed.'**
+  String get reportTargetGone;
+
+  /// No description provided for @reportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The report wasn\'t sent. Check your connection and try again.'**
+  String get reportFailed;
+
+  /// No description provided for @chatSendKeyChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Their security key has changed. Accept the new key to continue.'**
+  String get chatSendKeyChanged;
+
+  /// No description provided for @chatSendNotSetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure chat is not set up on this device.'**
+  String get chatSendNotSetUp;
+
+  /// No description provided for @chatSendPeerNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'This person has not set up secure chat yet. They can receive messages once they open the app again.'**
+  String get chatSendPeerNotReady;
+
+  /// No description provided for @chatSendFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is too large (limit {megabytes} MB).'**
+  String chatSendFileTooLarge(int megabytes);
+
+  /// No description provided for @chatSendUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not upload the file. Check your connection.'**
+  String get chatSendUploadFailed;
+
+  /// No description provided for @chatSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Message not sent. Please try again.'**
+  String get chatSendFailed;
+
+  /// No description provided for @mapNewListing.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get mapNewListing;
+
+  /// No description provided for @homeExtractedCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Found 1 coordinate.} other{Found {count} coordinates.}}'**
+  String homeExtractedCoordinates(int count);
+
+  /// No description provided for @homeScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the document. Please try again.'**
+  String get homeScanFailed;
+
+  /// No description provided for @homeInvalidUtm.
+  ///
+  /// In en, this message translates to:
+  /// **'These UTM coordinates are not valid. Please check them.'**
+  String get homeInvalidUtm;
+
+  /// No description provided for @homeScanProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get homeScanProcessing;
+
+  /// No description provided for @homeScanFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get homeScanFinished;
+
+  /// No description provided for @homeLocationServicesOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are disabled. Please enable them.'**
+  String get homeLocationServicesOff;
+
+  /// No description provided for @homeLocationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission was denied.'**
+  String get homeLocationDenied;
+
+  /// No description provided for @homeLocationDeniedForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission is permanently denied. You can allow it in the phone\'s settings.'**
+  String get homeLocationDeniedForever;
+
+  /// No description provided for @homeLocationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get your location. Please try again.'**
+  String get homeLocationFailed;
+
+  /// No description provided for @propertyMaintenanceFeeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly maintenance fee (USD)'**
+  String get propertyMaintenanceFeeHint;
+
+  /// No description provided for @propertyDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get propertyDuration;
+
+  /// No description provided for @propertySelectUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Select unit'**
+  String get propertySelectUnit;
+
+  /// No description provided for @propertySizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get propertySizeTitle;
+
+  /// No description provided for @propertyLandSizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Size'**
+  String get propertyLandSizeTitle;
+
+  /// No description provided for @propertySizeAreaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Size area (m²)'**
+  String get propertySizeAreaHint;
+
+  /// No description provided for @propertyEnterLandSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter land size (m²)'**
+  String get propertyEnterLandSize;
+
+  /// No description provided for @propertyEnterBuildingSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter building size'**
+  String get propertyEnterBuildingSize;
+
+  /// No description provided for @propertyEnterUnitSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter unit size'**
+  String get propertyEnterUnitSize;
+
+  /// No description provided for @propertyProjectNameInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Official name of the development project'**
+  String get propertyProjectNameInfo;
+
+  /// No description provided for @propertyProjectAreaInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Total land area of entire project'**
+  String get propertyProjectAreaInfo;
+
+  /// No description provided for @propertyStartingPriceInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest available unit price'**
+  String get propertyStartingPriceInfo;
+
+  /// No description provided for @propertyMonthlyRentInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower rent = higher profit potential'**
+  String get propertyMonthlyRentInfo;
+
+  /// No description provided for @propertyEquipmentInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe assets included in sale'**
+  String get propertyEquipmentInfo;
+
+  /// No description provided for @propertySelectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get propertySelectHint;
+
+  /// No description provided for @propertyPublishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Published\nSuccessfully!'**
+  String get propertyPublishedTitle;
+
+  /// No description provided for @propertyShowLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get propertyShowLess;
+
+  /// No description provided for @propertyShowMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get propertyShowMore;
+
+  /// No description provided for @propertyNoListingsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t listed any\nproperty yet'**
+  String get propertyNoListingsYet;
+
+  /// No description provided for @propertyPublishedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Property published'**
+  String get propertyPublishedToast;
+
+  /// No description provided for @propertyMovedToDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Property moved to draft'**
+  String get propertyMovedToDraft;
+
+  /// No description provided for @propertyPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get propertyPublish;
+
+  /// No description provided for @propertyArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get propertyArchive;
+
+  /// No description provided for @propertyArchivedPrivately.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved privately. Only you can see this listing.'**
+  String get propertyArchivedPrivately;
+
+  /// No description provided for @propertySaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the property. Please try again.'**
+  String get propertySaveFailed;
+
+  /// No description provided for @propertyUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update the property. Please try again.'**
+  String get propertyUpdateFailed;
+
+  /// No description provided for @propertyDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete the property. Please try again.'**
+  String get propertyDeleteFailed;
+
+  /// No description provided for @propertyListingBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing by: {name}'**
+  String propertyListingBy(String name);
+
+  /// No description provided for @propertyTabActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active ({count})'**
+  String propertyTabActive(int count);
+
+  /// No description provided for @propertyTabPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending ({count})'**
+  String propertyTabPending(int count);
+
+  /// No description provided for @propertyTabDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft ({count})'**
+  String propertyTabDraft(int count);
+
+  /// No description provided for @propertyTabSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold ({count})'**
+  String propertyTabSold(int count);
+
+  /// No description provided for @propertyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Contacts'**
+  String get propertyContacts;
+
+  /// No description provided for @propertySavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Saved'**
+  String propertySavedCount(int count);
+
+  /// No description provided for @propertySpecBeds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bds'**
+  String propertySpecBeds(int count);
+
+  /// No description provided for @propertySpecBaths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ba'**
+  String propertySpecBaths(int count);
+
+  /// No description provided for @propertyTypeForSale.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} for sale'**
+  String propertyTypeForSale(String type);
+
+  /// No description provided for @propertyTypeForRent.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} for rent'**
+  String propertyTypeForRent(String type);
+
+  /// No description provided for @propertyPriceFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {price}'**
+  String propertyPriceFrom(String price);
+
+  /// No description provided for @propertyBedroomCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Bed} other{{count} Beds}}'**
+  String propertyBedroomCount(int count);
+
+  /// No description provided for @propertyBathroomCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Bath} other{{count} Baths}}'**
+  String propertyBathroomCount(int count);
+
+  /// No description provided for @propertyDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String propertyDaysCount(int count);
+
+  /// No description provided for @sortPropertyForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Property for You'**
+  String get sortPropertyForYou;
+
+  /// No description provided for @sortRecentlyPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently Posted'**
+  String get sortRecentlyPosted;
+
+  /// No description provided for @sortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get sortNewest;
+
+  /// No description provided for @sortPriceHighToLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: High to Low'**
+  String get sortPriceHighToLow;
+
+  /// No description provided for @sortPriceLowToHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: Low to High'**
+  String get sortPriceLowToHigh;
+
+  /// No description provided for @listingTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing Type'**
+  String get listingTypeTitle;
+
+  /// No description provided for @listingTypeSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale'**
+  String get listingTypeSale;
+
+  /// No description provided for @listingTypeRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get listingTypeRent;
+
+  /// No description provided for @listingTypeToLet.
+  ///
+  /// In en, this message translates to:
+  /// **'To Let'**
+  String get listingTypeToLet;
+
+  /// No description provided for @propertyTypeLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Land'**
+  String get propertyTypeLand;
+
+  /// No description provided for @propertyTypeHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get propertyTypeHouse;
+
+  /// No description provided for @propertyTypeBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Building'**
+  String get propertyTypeBuilding;
+
+  /// No description provided for @propertyTypeCondo.
+  ///
+  /// In en, this message translates to:
+  /// **'Condo'**
+  String get propertyTypeCondo;
+
+  /// No description provided for @propertyTypeBorey.
+  ///
+  /// In en, this message translates to:
+  /// **'Borey'**
+  String get propertyTypeBorey;
+
+  /// No description provided for @propertyTypeBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business for Sale'**
+  String get propertyTypeBusiness;
+
+  /// No description provided for @propertyTypeBusinessShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get propertyTypeBusinessShort;
+
+  /// No description provided for @propertyTypeWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get propertyTypeWarehouse;
+
+  /// No description provided for @propertyStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get propertyStatusActive;
+
+  /// No description provided for @propertyStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get propertyStatusPending;
+
+  /// No description provided for @propertyStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get propertyStatusDraft;
+
+  /// No description provided for @propertyStatusSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get propertyStatusSold;
+
+  /// No description provided for @propertyStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get propertyStatusExpired;
+
+  /// No description provided for @propertyOptionHardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard Title'**
+  String get propertyOptionHardTitle;
+
+  /// No description provided for @propertyOptionSoftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft Title'**
+  String get propertyOptionSoftTitle;
+
+  /// No description provided for @propertyOptionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get propertyOptionOther;
+
+  /// No description provided for @propertyOptionStudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Studio'**
+  String get propertyOptionStudio;
+
+  /// No description provided for @propertyOptionYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get propertyOptionYes;
+
+  /// No description provided for @propertyOptionNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get propertyOptionNo;
+
+  /// No description provided for @propertyOptionUnfurnished.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfurnished'**
+  String get propertyOptionUnfurnished;
+
+  /// No description provided for @propertyOptionFullyFurnished.
+  ///
+  /// In en, this message translates to:
+  /// **'Fully Furnished'**
+  String get propertyOptionFullyFurnished;
+
+  /// No description provided for @propertyOptionElectricalAppliances.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrical appliances'**
+  String get propertyOptionElectricalAppliances;
+
+  /// No description provided for @propertyOptionCommercialBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Building'**
+  String get propertyOptionCommercialBuilding;
+
+  /// No description provided for @propertyOptionOfficeBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Office Building'**
+  String get propertyOptionOfficeBuilding;
+
+  /// No description provided for @propertyOptionMixedUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed-use'**
+  String get propertyOptionMixedUse;
+
+  /// No description provided for @propertyOptionRetailBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Retail Building'**
+  String get propertyOptionRetailBuilding;
+
+  /// No description provided for @propertyOptionOffPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-plan'**
+  String get propertyOptionOffPlan;
+
+  /// No description provided for @propertyOptionUnderConstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Construction'**
+  String get propertyOptionUnderConstruction;
+
+  /// No description provided for @propertyOptionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get propertyOptionCompleted;
+
+  /// No description provided for @propertyOptionCityView.
+  ///
+  /// In en, this message translates to:
+  /// **'City View'**
+  String get propertyOptionCityView;
+
+  /// No description provided for @propertyOptionRiverView.
+  ///
+  /// In en, this message translates to:
+  /// **'River View'**
+  String get propertyOptionRiverView;
+
+  /// No description provided for @propertyOptionGardenView.
+  ///
+  /// In en, this message translates to:
+  /// **'Garden View'**
+  String get propertyOptionGardenView;
+
+  /// No description provided for @propertyOptionPoolView.
+  ///
+  /// In en, this message translates to:
+  /// **'Pool View'**
+  String get propertyOptionPoolView;
+
+  /// No description provided for @propertyOptionNoView.
+  ///
+  /// In en, this message translates to:
+  /// **'No View'**
+  String get propertyOptionNoView;
+
+  /// No description provided for @propertyOptionCommercial.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial'**
+  String get propertyOptionCommercial;
+
+  /// No description provided for @propertyOptionLandSubdivision.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Subdivision'**
+  String get propertyOptionLandSubdivision;
+
+  /// No description provided for @propertyOptionPreLaunch.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-launch'**
+  String get propertyOptionPreLaunch;
+
+  /// No description provided for @propertyOptionCompleted50.
+  ///
+  /// In en, this message translates to:
+  /// **'50% Completed'**
+  String get propertyOptionCompleted50;
+
+  /// No description provided for @propertyOptionCompleted80.
+  ///
+  /// In en, this message translates to:
+  /// **'80% Completed'**
+  String get propertyOptionCompleted80;
+
+  /// No description provided for @propertyOptionMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Months'**
+  String get propertyOptionMonths;
+
+  /// No description provided for @propertyOptionYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Years'**
+  String get propertyOptionYears;
+
+  /// No description provided for @keywordRoadAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Road Access'**
+  String get keywordRoadAccess;
+
+  /// No description provided for @keywordCornerLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Corner Land'**
+  String get keywordCornerLand;
+
+  /// No description provided for @keywordNearMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Near Market'**
+  String get keywordNearMarket;
+
+  /// No description provided for @keywordNearSchool.
+  ///
+  /// In en, this message translates to:
+  /// **'Near School'**
+  String get keywordNearSchool;
+
+  /// No description provided for @keywordNearHospital.
+  ///
+  /// In en, this message translates to:
+  /// **'Near Hospital'**
+  String get keywordNearHospital;
+
+  /// No description provided for @keywordRiverLakeNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'River / Lake Nearby'**
+  String get keywordRiverLakeNearby;
+
+  /// No description provided for @keywordElectricityReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity Ready'**
+  String get keywordElectricityReady;
+
+  /// No description provided for @keywordWaterSupply.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Supply'**
+  String get keywordWaterSupply;
+
+  /// No description provided for @keywordResidentialArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Residential Area'**
+  String get keywordResidentialArea;
+
+  /// No description provided for @keywordCommercialArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Area'**
+  String get keywordCommercialArea;
+
+  /// No description provided for @chatPreviewVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message'**
+  String get chatPreviewVoice;
+
+  /// No description provided for @chatVoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message'**
+  String get chatVoiceMessage;
+
+  /// No description provided for @chatRecordVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a voice message'**
+  String get chatRecordVoice;
+
+  /// No description provided for @chatRecordingVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get chatRecordingVoice;
+
+  /// No description provided for @chatSendVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Send voice message'**
+  String get chatSendVoice;
+
+  /// No description provided for @chatDiscardVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete recording'**
+  String get chatDiscardVoice;
+
+  /// No description provided for @chatSlideToCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Slide to cancel'**
+  String get chatSlideToCancel;
+
+  /// No description provided for @chatCallOutgoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Outgoing call'**
+  String get chatCallOutgoing;
+
+  /// No description provided for @chatCallIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming call'**
+  String get chatCallIncoming;
+
+  /// No description provided for @chatCallLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Call lost'**
+  String get chatCallLost;
+
+  /// No description provided for @chatCallNoAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer'**
+  String get chatCallNoAnswer;
+
+  /// No description provided for @chatCallCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled call'**
+  String get chatCallCancelled;
+
+  /// No description provided for @chatCallDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Call declined'**
+  String get chatCallDeclined;
+
+  /// No description provided for @chatCallYouDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'You declined the call'**
+  String get chatCallYouDeclined;
+
+  /// No description provided for @chatCallMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed call'**
+  String get chatCallMissed;
+
+  /// No description provided for @chatVoiceTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message too short.'**
+  String get chatVoiceTooShort;
+
+  /// No description provided for @chatVoiceRecordFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not record. Try again.'**
+  String get chatVoiceRecordFailed;
+
+  /// No description provided for @chatVoiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message unavailable. Tap to retry.'**
+  String get chatVoiceUnavailable;
+
+  /// No description provided for @chatPlayVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get chatPlayVoice;
+
+  /// No description provided for @chatPauseVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get chatPauseVoice;
+
+  /// No description provided for @chatVoiceSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback speed'**
+  String get chatVoiceSpeed;
+
+  /// No description provided for @microphoneDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow microphone access to record your voice.'**
+  String get microphoneDenied;
+
+  /// No description provided for @microphoneBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access is turned off. Turn it on in Settings.'**
+  String get microphoneBlocked;
+
+  /// No description provided for @openSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get openSystemSettings;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat messages'**
+  String get notificationsChatTitle;
+
+  /// No description provided for @notificationsChatHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'When someone sends you a message.'**
+  String get notificationsChatHelp;
+
+  /// No description provided for @notificationsPromotionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers and news'**
+  String get notificationsPromotionsTitle;
+
+  /// No description provided for @notificationsPromotionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Deals and updates from our team.'**
+  String get notificationsPromotionsHelp;
+
+  /// No description provided for @notificationsSavedSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved search alerts'**
+  String get notificationsSavedSearchTitle;
+
+  /// No description provided for @notificationsSavedSearchHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'New listings that match a search you saved.'**
+  String get notificationsSavedSearchHelp;
+
+  /// No description provided for @notificationsFollowedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'People you follow'**
+  String get notificationsFollowedTitle;
+
+  /// No description provided for @notificationsFollowedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'When someone you follow posts a new listing.'**
+  String get notificationsFollowedHelp;
+
+  /// No description provided for @notificationsSavedUpdatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved listings'**
+  String get notificationsSavedUpdatesTitle;
+
+  /// No description provided for @notificationsSavedUpdatesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Price drops, and when a listing you saved is sold.'**
+  String get notificationsSavedUpdatesHelp;
+
+  /// No description provided for @feedPriceDropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Price dropped'**
+  String get feedPriceDropped;
+
+  /// No description provided for @savedSearchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved searches'**
+  String get savedSearchesTitle;
+
+  /// No description provided for @savedSearchesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved searches yet. Set a filter on the map and tap the bookmark to save it.'**
+  String get savedSearchesEmpty;
+
+  /// No description provided for @savedSearchesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your saved searches.'**
+  String get savedSearchesLoadFailed;
+
+  /// No description provided for @savedSearchSaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this search'**
+  String get savedSearchSaveTitle;
+
+  /// No description provided for @savedSearchSaveHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll tell you when a new listing in this map area matches your filter.'**
+  String get savedSearchSaveHelp;
+
+  /// No description provided for @savedSearchName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get savedSearchName;
+
+  /// No description provided for @savedSearchSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Search saved. We\'ll let you know about new listings.'**
+  String get savedSearchSaved;
+
+  /// No description provided for @savedSearchLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can save up to {count} searches. Delete one first.'**
+  String savedSearchLimit(int count);
+
+  /// No description provided for @savedSearchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Check your connection and try again.'**
+  String get savedSearchFailed;
+
+  /// No description provided for @savedSearchNoArea.
+  ///
+  /// In en, this message translates to:
+  /// **'The map is still loading. Try again in a moment.'**
+  String get savedSearchNoArea;
+
+  /// No description provided for @savedSearchAnyListing.
+  ///
+  /// In en, this message translates to:
+  /// **'Any listing in this area'**
+  String get savedSearchAnyListing;
+
+  /// No description provided for @savedSearchKeywords.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 keyword} other{{count} keywords}}'**
+  String savedSearchKeywords(int count);
+
+  /// No description provided for @savedSearchAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get savedSearchAlerts;
+
+  /// No description provided for @savedSearchRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get savedSearchRename;
+
+  /// No description provided for @savedSearchDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get savedSearchDelete;
+
+  /// No description provided for @savedSearchDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved search deleted.'**
+  String get savedSearchDeleted;
+
+  /// No description provided for @notificationsAlwaysOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.'**
+  String get notificationsAlwaysOn;
+
+  /// No description provided for @notificationsBlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for this app'**
+  String get notificationsBlockedTitle;
+
+  /// No description provided for @notificationsBlockedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.'**
+  String get notificationsBlockedHelp;
+
+  /// No description provided for @chatPreviewNewMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'New message'**
+  String get chatPreviewNewMessage;
+
+  /// No description provided for @notificationsShowTextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show message text'**
+  String get notificationsShowTextTitle;
+
+  /// No description provided for @notificationsShowTextHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Show what a message says in its notification. Anyone who can see your lock screen can read it.'**
+  String get notificationsShowTextHelp;
+
+  /// No description provided for @notificationsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your notification settings.'**
+  String get notificationsLoadFailed;
+
+  /// No description provided for @notificationsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Check your connection and try again.'**
+  String get notificationsSaveFailed;
+
+  /// No description provided for @callVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice call'**
+  String get callVoice;
+
+  /// No description provided for @callCalling.
+  ///
+  /// In en, this message translates to:
+  /// **'Calling…'**
+  String get callCalling;
+
+  /// No description provided for @callIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming voice call'**
+  String get callIncoming;
+
+  /// No description provided for @callConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get callConnecting;
+
+  /// No description provided for @callEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Call ended'**
+  String get callEnded;
+
+  /// No description provided for @callDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Call declined'**
+  String get callDeclined;
+
+  /// No description provided for @callNoAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'No answer'**
+  String get callNoAnswer;
+
+  /// No description provided for @callBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'On another call'**
+  String get callBusy;
+
+  /// No description provided for @callUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t be called right now'**
+  String get callUnavailable;
+
+  /// No description provided for @callMicrophoneNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Calls need the microphone. Allow it in Settings.'**
+  String get callMicrophoneNeeded;
+
+  /// No description provided for @callConnectionLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost'**
+  String get callConnectionLost;
+
+  /// No description provided for @callFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Call failed'**
+  String get callFailed;
+
+  /// No description provided for @callAnsweredElsewhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered on another device'**
+  String get callAnsweredElsewhere;
+
+  /// No description provided for @callAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get callAccept;
+
+  /// No description provided for @callDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get callDecline;
+
+  /// No description provided for @callHangUp.
+  ///
+  /// In en, this message translates to:
+  /// **'End call'**
+  String get callHangUp;
+
+  /// No description provided for @callMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get callMute;
+
+  /// No description provided for @callUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get callUnmute;
+
+  /// No description provided for @callSpeaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaker'**
+  String get callSpeaker;
+
+  /// No description provided for @callIncomingFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is calling'**
+  String callIncomingFrom(String name);
+
+  /// No description provided for @callMissedFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed call from {name}'**
+  String callMissedFrom(String name);
+
+  /// No description provided for @filterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filterTitle;
+
+  /// No description provided for @filterForSale.
+  ///
+  /// In en, this message translates to:
+  /// **'For sale'**
+  String get filterForSale;
+
+  /// No description provided for @filterForRent.
+  ///
+  /// In en, this message translates to:
+  /// **'For rent'**
+  String get filterForRent;
+
+  /// No description provided for @filterPriceRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Price range'**
+  String get filterPriceRange;
+
+  /// No description provided for @filterPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: {range}'**
+  String filterPriceLabel(String range);
+
+  /// No description provided for @filterPriceAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get filterPriceAny;
+
+  /// No description provided for @filterPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/month'**
+  String filterPerMonth(String price);
+
+  /// No description provided for @filterMinPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Price'**
+  String get filterMinPrice;
+
+  /// No description provided for @filterMaxPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Price'**
+  String get filterMaxPrice;
+
+  /// No description provided for @filterNoMin.
+  ///
+  /// In en, this message translates to:
+  /// **'No min'**
+  String get filterNoMin;
+
+  /// No description provided for @filterNoMax.
+  ///
+  /// In en, this message translates to:
+  /// **'No max'**
+  String get filterNoMax;
+
+  /// No description provided for @filterDownPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Down payment'**
+  String get filterDownPayment;
+
+  /// No description provided for @filterNoDownPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'No down payment'**
+  String get filterNoDownPayment;
+
+  /// No description provided for @filterLandSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Land size'**
+  String get filterLandSize;
+
+  /// No description provided for @filterPropertySize.
+  ///
+  /// In en, this message translates to:
+  /// **'Property size'**
+  String get filterPropertySize;
+
+  /// No description provided for @filterMinArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Min m²'**
+  String get filterMinArea;
+
+  /// No description provided for @filterMaxArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Max m²'**
+  String get filterMaxArea;
+
+  /// No description provided for @filterMinAboveMax.
+  ///
+  /// In en, this message translates to:
+  /// **'The minimum is above the maximum'**
+  String get filterMinAboveMax;
+
+  /// No description provided for @filterPropertyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Type'**
+  String get filterPropertyType;
+
+  /// No description provided for @filterKeywords.
+  ///
+  /// In en, this message translates to:
+  /// **'Keywords / Features'**
+  String get filterKeywords;
+
+  /// No description provided for @filterReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get filterReset;
+
+  /// No description provided for @filterSeeResults.
+  ///
+  /// In en, this message translates to:
+  /// **'See results'**
+  String get filterSeeResults;
+
+  /// No description provided for @propertyFactsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Details'**
+  String get propertyFactsTitle;
+
+  /// No description provided for @propertyFactsOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get propertyFactsOverview;
+
+  /// No description provided for @propertyFactsSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get propertyFactsSize;
+
+  /// No description provided for @propertyFactsBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms & Building'**
+  String get propertyFactsBuilding;
+
+  /// No description provided for @propertyFactsProject.
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get propertyFactsProject;
+
+  /// No description provided for @propertyFactsCosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Costs & Business'**
+  String get propertyFactsCosts;
+
+  /// No description provided for @propertyFactsFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get propertyFactsFeatures;
+
+  /// No description provided for @propertyFactPricePerSquareMetre.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per m²'**
+  String get propertyFactPricePerSquareMetre;
+
+  /// No description provided for @propertyFactPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} / month'**
+  String propertyFactPerMonth(String amount);
+
+  /// No description provided for @propertyFactMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String propertyFactMonths(int count);
+
+  /// No description provided for @propertyPublisherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Listed by'**
+  String get propertyPublisherTitle;
+
+  /// No description provided for @propertyPublisherViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get propertyPublisherViewProfile;
+
+  /// No description provided for @authPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'012 345 678'**
+  String get authPhoneHint;
+
+  /// No description provided for @authEmailOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Email (optional)'**
+  String get authEmailOptional;
+
+  /// No description provided for @authAgreeToTermsPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get authAgreeToTermsPrefix;
+
+  /// No description provided for @personalInfoAddEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add email'**
+  String get personalInfoAddEmail;
+
+  /// No description provided for @addEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add email'**
+  String get addEmailTitle;
+
+  /// No description provided for @addEmailIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.'**
+  String get addEmailIntro;
+
+  /// No description provided for @addEmailDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Email added'**
+  String get addEmailDone;
+
+  /// No description provided for @addEmailTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already used by another account.'**
+  String get addEmailTaken;
+
+  /// No description provided for @closestTitleNearYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings near you'**
+  String get closestTitleNearYou;
+
+  /// No description provided for @closestTitleNearMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings near the map centre'**
+  String get closestTitleNearMap;
+
+  /// No description provided for @closestSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest first, then further away'**
+  String get closestSubtitle;
+
+  /// No description provided for @closestAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} away'**
+  String closestAway(String distance);
+
+  /// No description provided for @closestEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No listings found'**
+  String get closestEmptyTitle;
+
+  /// No description provided for @closestEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try clearing some filters.'**
+  String get closestEmptyHint;
+
+  /// No description provided for @closestLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Listings could not be loaded.'**
+  String get closestLoadFailed;
+
+  /// No description provided for @closestRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Measure from where I am now'**
+  String get closestRefresh;
+
+  /// No description provided for @closestShowList.
+  ///
+  /// In en, this message translates to:
+  /// **'Show listings near you'**
+  String get closestShowList;
 }
 
 class _AppLocalizationsDelegate

@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:genie/features/search/data/search_failure.dart';
-import 'package:genie/features/search/data/search_repository.dart';
-import 'package:genie/features/search/presentation/view_models/search_providers.dart';
-import 'package:genie/features/search/presentation/view_models/search_query_controller.dart';
+import 'package:tilomnov/features/search/data/search_failure.dart';
+import 'package:tilomnov/features/search/data/search_repository.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_query_controller.dart';
 
 import '../../support/test_app.dart';
 

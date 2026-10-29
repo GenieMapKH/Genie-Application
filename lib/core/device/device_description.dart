@@ -1,7 +1,7 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 
 /// What this device calls itself. The server shows it to the account owner
 /// under "Logged-in devices", so they can tell their devices apart.

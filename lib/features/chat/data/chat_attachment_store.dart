@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 
 /// Chat files kept on this device, so a picture seen before opens without
 /// downloading it again, even after the app restarts.
@@ -22,7 +22,7 @@ class ChatAttachmentStore {
           files ??
           CacheManager(
             Config(
-              'genie_chat_attachments',
+              'tilomnov_chat_attachments',
               stalePeriod: _keepUnused,
               maxNrOfCacheObjects: _maxFiles,
             ),

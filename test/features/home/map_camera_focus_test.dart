@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/utils/map/map_camera_focus.dart';
+import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 
 void main() {
   group('zoomToFit', () {
@@ -147,6 +147,47 @@ void main() {
         northeast: const LatLng(11.52, 104.87),
       );
       expect(MapCameraFocus.frame(spot, screen, EdgeInsets.zero).zoom, 17);
+    });
+  });
+
+  group('a scanned boundary', () {
+    // About 40 m across, the size of a house plot.
+    const corners = [
+      LatLng(11.55000, 104.92000),
+      LatLng(11.55030, 104.92035),
+      LatLng(11.54990, 104.92060),
+      LatLng(11.54960, 104.92020),
+    ];
+    const screen = Size(400, 840);
+    const covered = EdgeInsets.only(top: 40, bottom: 272);
+
+    test('its bounds hold every corner', () {
+      final bounds = MapCameraFocus.boundsOf(corners);
+      expect(bounds.southwest, const LatLng(11.54960, 104.92000));
+      expect(bounds.northeast, const LatLng(11.55030, 104.92060));
+    });
+
+    test('shows every corner above the drawing buttons', () {
+      final camera = MapCameraFocus.frame(
+        MapCameraFocus.boundsOf(corners),
+        screen,
+        covered,
+        maxZoom: 20,
+      );
+      final centre = MapCameraFocus.worldPixel(camera.target, camera.zoom);
+      for (final corner in corners) {
+        final pixel = MapCameraFocus.worldPixel(corner, camera.zoom);
+        final x = pixel.x - centre.x + screen.width / 2;
+        final y = pixel.y - centre.y + screen.height / 2;
+        expect(x, inInclusiveRange(0, screen.width), reason: '$corner');
+        expect(
+          y,
+          inInclusiveRange(covered.top, screen.height - covered.bottom),
+          reason: '$corner',
+        );
+      }
+      // Close enough to drag the corners apart.
+      expect(camera.zoom, greaterThan(18));
     });
   });
 }

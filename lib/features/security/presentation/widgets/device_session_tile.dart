@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/security/data/models/device_session.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/security/data/models/device_session.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// "Active now", "Last used 5 minutes ago", ... for [session], as of [now].
 String lastUsedLabel(

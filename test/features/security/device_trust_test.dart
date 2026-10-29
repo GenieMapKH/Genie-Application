@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/e2ee/e2ee_key_manager.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/security/data/known_devices_storage.dart';
-import 'package:genie/features/security/data/models/device_session.dart';
-import 'package:genie/features/security/data/repositories/account_repository.dart';
-import 'package:genie/features/security/data/repositories/session_repository.dart';
-import 'package:genie/features/security/presentation/screens/change_password_page.dart';
-import 'package:genie/features/security/presentation/screens/create_password_page.dart';
-import 'package:genie/features/security/presentation/screens/devices_page.dart';
-import 'package:genie/features/security/presentation/screens/security_page.dart';
-import 'package:genie/features/security/presentation/view_models/account_security_controller.dart';
-import 'package:genie/features/security/presentation/view_models/new_sign_in_detector.dart';
-import 'package:genie/features/security/presentation/view_models/security_providers.dart';
-import 'package:genie/features/security/presentation/widgets/new_sign_in_alert.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_key_manager.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/security/data/known_devices_storage.dart';
+import 'package:tilomnov/features/security/data/models/device_session.dart';
+import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
+import 'package:tilomnov/features/security/data/repositories/session_repository.dart';
+import 'package:tilomnov/features/security/presentation/screens/change_password_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/create_password_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/devices_page.dart';
+import 'package:tilomnov/features/security/presentation/screens/security_page.dart';
+import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
+import 'package:tilomnov/features/security/presentation/view_models/new_sign_in_detector.dart';
+import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
+import 'package:tilomnov/features/security/presentation/widgets/new_sign_in_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../support/test_app.dart';
@@ -347,9 +347,9 @@ void main() {
     });
   });
 
-  // Only an account that signs in with Google alone has a backup PIN: one
-  // with a password locks its chats with the password instead.
-  group('forgotten backup PIN', () {
+  // The account password proves a forgotten chat PIN is the owner's: an
+  // account that signs in with Google alone creates one first.
+  group('forgotten chat PIN of a Google-only account', () {
     Future<void> open(WidgetTester tester, {required bool holdsKeys}) async {
       await pumpTestApp(
         tester,
@@ -362,11 +362,11 @@ void main() {
         ],
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Forgot backup PIN'));
+      await tester.tap(find.text('Forgot chat PIN'));
       await tester.pumpAndSettle();
     }
 
-    testWidgets('the way back is an account password, and no history is lost', (
+    testWidgets('first creates a password, and no history is lost', (
       tester,
     ) async {
       await open(tester, holdsKeys: true);
@@ -377,7 +377,7 @@ void main() {
 
       expect(find.byType(CreatePasswordPage), findsOneWidget);
       expect(
-        find.textContaining('It protects your chats from now on'),
+        find.textContaining('when you choose a new chat PIN'),
         findsOneWidget,
       );
     });

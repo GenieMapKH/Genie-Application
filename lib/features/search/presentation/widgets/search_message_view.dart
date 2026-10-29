@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/search/data/search_failure.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/search/data/search_failure.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// An icon, a title, a sentence and maybe a button: what search shows when it
 /// has no list to show (nothing typed, nothing found, something failed).

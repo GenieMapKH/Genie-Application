@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/presentation/search_layout.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/search/presentation/widgets/area/search_area_header.dart';
-import 'package:genie/features/search/presentation/widgets/area/search_area_listings.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/presentation/search_layout.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/presentation/widgets/area/search_area_header.dart';
+import 'package:tilomnov/features/search/presentation/widgets/area/search_area_listings.dart';
 
 /// The listings of the place or person the map shows after a search. On
 /// phones a sheet that can be dragged up over the map; on wide screens a

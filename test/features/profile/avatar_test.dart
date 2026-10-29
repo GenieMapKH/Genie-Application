@@ -2,11 +2,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/data/repositories/avatar_repository.dart';
-import 'package:genie/features/profile/presentation/view_models/avatar_controller.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/profile/presentation/widgets/avatar_options_sheet.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/data/repositories/avatar_repository.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/avatar_controller.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/profile/presentation/widgets/avatar_options_sheet.dart';
 
 import '../../support/test_app.dart';
 

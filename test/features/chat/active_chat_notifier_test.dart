@@ -1,10 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/providers/active_chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 
 import 'chat_fakes.dart';
 
@@ -83,8 +84,9 @@ void main() {
     });
 
     for (final result in [
+      E2eeSetupResult.pinNotSet,
+      E2eeSetupResult.lockedWithPassword,
       E2eeSetupResult.cancelled,
-      E2eeSetupResult.wrongPin,
       E2eeSetupResult.rateLimited,
       E2eeSetupResult.failed,
     ]) {
@@ -103,7 +105,7 @@ void main() {
     }
 
     test('can be retried after a failure', () async {
-      setup.result = E2eeSetupResult.wrongPin;
+      setup.result = E2eeSetupResult.rateLimited;
       await chat.open(askPin: neverAskPin);
 
       setup.result = E2eeSetupResult.ready;
@@ -205,6 +207,37 @@ void main() {
       expect(sent.senderId, me);
     });
 
+    test('shows it in the conversation list without reloading it', () async {
+      repository.conversations = [
+        ChatConversation.fromJson({
+          'participantId': peer,
+          'participantName': 'Dara',
+          'lastMessage': {
+            'id': 'm0',
+            'senderId': peer,
+            'ciphertext': 'sealed:Still for sale?',
+            'nonce': 'nonce',
+            'createdAt': '2026-01-01T10:00:00.000Z',
+          },
+        }),
+      ];
+      // Lets the reload that opening the chat started finish first.
+      await conversations.refresh();
+      await settle();
+      expect(
+        conversations.state.value!.items.single.lastMessage,
+        'Still for sale?',
+      );
+      repository.conversationRequests = 0;
+
+      await chat.sendMessage('Yes, come by at 5');
+
+      expect(repository.conversationRequests, 0);
+      final listed = conversations.state.value!.items.single;
+      expect(listed.lastMessage, 'Yes, come by at 5');
+      expect(listed.lastMessageId, chat.state.messages.last.id);
+    });
+
     test('sends ciphertext, never the plain text', () async {
       await chat.sendMessage('my address is 12 Main St');
 
@@ -227,28 +260,29 @@ void main() {
     });
 
     test('marks the message failed and says why', () async {
-      socket.sendError = const ChatSendException('Could not reach the server.');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
 
       await chat.sendMessage('hello');
 
       expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-      expect(chat.state.sendError, 'Could not reach the server.');
+      expect(chat.state.sendError, ChatSendProblem.noConnection);
     });
 
     test('explains when the other person has no keys yet', () async {
       cipher.encryptError = const ChatEncryptionException(
-        'This person has not set up secure chat yet.',
+        ChatSendProblem.peerNotReady,
+        'no keys',
       );
 
       await chat.sendMessage('hello');
 
       expect(socket.sent, isEmpty);
       expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-      expect(chat.state.sendError, contains('not set up secure chat'));
+      expect(chat.state.sendError, ChatSendProblem.peerNotReady);
     });
 
     test('retries a failed message under the same id', () async {
-      socket.sendError = const ChatSendException('offline');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
       await chat.sendMessage('hello');
       final failedId = chat.state.messages.single.id;
 
@@ -366,7 +400,7 @@ void main() {
 
     test('keeps a message that failed to send', () async {
       await chat.open(askPin: neverAskPin);
-      socket.sendError = const ChatSendException('offline');
+      socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
       await chat.sendMessage('unsent');
 
       repository.history = [encrypted('m1', 'from the server', from: peer)];

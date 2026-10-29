@@ -1,7 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/utils/property_format.dart';
+import 'package:tilomnov/features/property/data/models/property_details.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/utils/property_format.dart';
 
 PropertyModel _property({
   String price = '105400',
@@ -11,6 +14,8 @@ PropertyModel _property({
   double? landSize,
   double? unitSize,
   double? buildingSize,
+  double? totalProjectArea,
+  String? listingType,
   DateTime? createdAt,
 }) {
   return PropertyModel(
@@ -18,6 +23,7 @@ PropertyModel _property({
     title: 'Test property',
     price: price,
     propertyType: propertyType,
+    listingType: listingType,
     status: 'Active',
     createdAt: createdAt ?? DateTime(2026, 1, 1),
     bedrooms: bedrooms,
@@ -25,8 +31,12 @@ PropertyModel _property({
     landSize: landSize,
     unitSize: unitSize,
     buildingSize: buildingSize,
+    details: PropertyDetails(totalProjectArea: totalProjectArea),
   );
 }
+
+final _en = lookupAppLocalizations(const Locale('en'));
+final _km = lookupAppLocalizations(const Locale('km'));
 
 void main() {
   group('price', () {
@@ -52,52 +62,146 @@ void main() {
   group('cardSpecLine', () {
     test('shows size and type for land', () {
       final line = PropertyFormat.cardSpecLine(
+        _en,
         _property(landSize: 1670, propertyType: 'Land'),
       );
 
       expect(line, '1670 m² | Land for sale');
     });
 
-    test('includes beds and baths for built property', () {
+    test('shows beds, baths and floor area for a house', () {
       final line = PropertyFormat.cardSpecLine(
+        _en,
         _property(
           propertyType: 'House',
           bedrooms: 4,
           bathrooms: 5,
-          landSize: 115.5,
+          landSize: 300,
+          buildingSize: 115.5,
         ),
       );
 
       expect(line, '4 bds | 5 ba | 115.5 m² | House for sale');
     });
 
-    test('omits zero and missing values', () {
+    test('never shows rooms for a warehouse, even ones saved before', () {
       final line = PropertyFormat.cardSpecLine(
-        _property(propertyType: 'Condo', bedrooms: 0),
+        _en,
+        _property(
+          propertyType: 'Warehouse',
+          bedrooms: 3,
+          bathrooms: 2,
+          landSize: 2000,
+          buildingSize: 1200,
+        ),
       );
 
-      expect(line, 'Condo for sale');
+      expect(line, '1200 m² | Warehouse for sale');
+    });
+
+    test('shows a condo with no bedroom as a studio', () {
+      final line = PropertyFormat.cardSpecLine(
+        _en,
+        _property(propertyType: 'Condo', bedrooms: 0, unitSize: 42),
+      );
+
+      expect(line, 'Studio | 42 m² | Condo for sale');
+    });
+
+    test('omits missing values', () {
+      expect(
+        PropertyFormat.cardSpecLine(_en, _property(propertyType: 'Condo')),
+        'Condo for sale',
+      );
+    });
+
+    test('says for rent for a rental', () {
+      final line = PropertyFormat.cardSpecLine(
+        _en,
+        _property(landSize: 500, listingType: 'To Let'),
+      );
+
+      expect(line, '500 m² | Land for rent');
+    });
+
+    test('is in the user language, while the stored type stays English', () {
+      final line = PropertyFormat.cardSpecLine(
+        _km,
+        _property(landSize: 1670, propertyType: 'Land'),
+      );
+
+      expect(line, '1670 m² | ដី សម្រាប់លក់');
     });
   });
 
   group('displaySize', () {
-    test('prefers land size, then unit, then building', () {
-      expect(_property(landSize: 100, unitSize: 50).displaySize, 100);
-      expect(_property(unitSize: 50, buildingSize: 25).displaySize, 50);
-      expect(_property(buildingSize: 25).displaySize, 25);
-      expect(_property().displaySize, isNull);
+    test('is the one size the type is measured by', () {
+      expect(_property(landSize: 2000, buildingSize: 1200).displaySize, 2000);
+      for (final type in ['House', 'Building', 'Warehouse']) {
+        expect(
+          _property(
+            propertyType: type,
+            landSize: 2000,
+            buildingSize: 1200,
+          ).displaySize,
+          1200,
+        );
+      }
+      expect(
+        _property(propertyType: 'Business for Sale', landSize: 80).displaySize,
+        80,
+      );
+      expect(
+        _property(propertyType: 'Condo', unitSize: 50, landSize: 9).displaySize,
+        50,
+      );
+      expect(
+        _property(propertyType: 'Borey', totalProjectArea: 50000).displaySize,
+        50000,
+      );
+    });
+
+    test("is null when the type's size is missing or zero", () {
+      expect(
+        _property(propertyType: 'House', landSize: 300).displaySize,
+        isNull,
+      );
+      expect(_property(landSize: 0).displaySize, isNull);
+    });
+  });
+
+  group('cardPrice', () {
+    test('is the price for a sale', () {
+      expect(PropertyFormat.cardPrice(_en, _property()), r'$ 105,400');
+    });
+
+    test('is per month for a rental', () {
+      expect(
+        PropertyFormat.cardPrice(
+          _en,
+          _property(price: '500', listingType: 'Rent'),
+        ),
+        r'$ 500 / month',
+      );
+    });
+
+    test('starts from the price for a Borey', () {
+      expect(
+        PropertyFormat.cardPrice(_en, _property(propertyType: 'Borey')),
+        r'From $ 105,400',
+      );
     });
   });
 
   group('bed and bath labels', () {
     test('singularise for one', () {
-      expect(PropertyFormat.bedroomLabel(1), '1 Bed');
-      expect(PropertyFormat.bathroomLabel(1), '1 Bath');
+      expect(_en.propertyBedroomCount(1), '1 Bed');
+      expect(_en.propertyBathroomCount(1), '1 Bath');
     });
 
     test('pluralise beyond one', () {
-      expect(PropertyFormat.bedroomLabel(2), '2 Beds');
-      expect(PropertyFormat.bathroomLabel(3), '3 Baths');
+      expect(_en.propertyBedroomCount(2), '2 Beds');
+      expect(_en.propertyBathroomCount(3), '3 Baths');
     });
   });
 

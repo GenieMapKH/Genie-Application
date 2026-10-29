@@ -1,33 +1,63 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/media/image_upload_policy.dart';
-import 'package:genie/shared/utils/image_rejection_message.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/presentation/widgets/account_password_prompt.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_conversation_header.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_image_picker.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_input_bar.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_key_changed_banner.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_message_bubble.dart';
-import 'package:genie/features/chat/presentation/widgets/chat_participant_sheet.dart';
-import 'package:genie/features/chat/presentation/widgets/pin_prompt_dialog.dart';
-import 'package:genie/features/chat/providers/active_chat_provider.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/device/microphone_permission.dart';
+import 'package:tilomnov/core/media/image_upload_policy.dart';
+import 'package:tilomnov/shared/utils/image_rejection_message.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_pin_setup_page.dart';
+import 'package:tilomnov/features/chat/models/chat_composer_mode.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_composer_banner.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_image_picker.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_input_bar.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_key_changed_banner.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_message_action_problem_text.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_message_tile.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_notice.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_send_problem_text.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_participant_sheet.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_check_dialog.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/chat_voice_recorder_bar.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_hold_panel.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_recording_problem_text.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
+import 'package:tilomnov/features/chat/models/chat_timeline.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_history_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_starter.dart';
+import 'package:tilomnov/features/chat/providers/chat_composer_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/chat/providers/visible_conversation.dart';
+import 'package:tilomnov/features/chat/providers/voice_playback_provider.dart';
+import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/safety/presentation/view_models/block_providers.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/blocked_conversation_bar.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_listing_offer_bar.dart';
 
 class ChatConversationPage extends ConsumerWidget {
   final String participantId;
   final String participantName;
 
+  /// The listing the chat was opened from: offered above the message bar,
+  /// to send so the owner knows which one is meant.
+  final ChatListing? listingToOffer;
+
   const ChatConversationPage({
     super.key,
     required this.participantId,
     required this.participantName,
+    this.listingToOffer,
   });
 
   @override
@@ -38,6 +68,9 @@ class ChatConversationPage extends ConsumerWidget {
     final chat = userId == null
         ? null
         : (userId: userId, participantId: participantId);
+    final startCall = ref.watch(chatCallStarterProvider);
+    final canCall =
+        startCall != null && chat != null && userId != participantId;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -57,6 +90,9 @@ class ChatConversationPage extends ConsumerWidget {
           centerTitle: true,
           actions: [
             IconButton(
+              tooltip: context.l10n.callVoice,
+              // Larger than the circle it draws, so a tap beside it still calls.
+              constraints: const BoxConstraints.tightFor(width: 56, height: 56),
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -69,21 +105,30 @@ class ChatConversationPage extends ConsumerWidget {
                   size: 18,
                 ),
               ),
-              onPressed: () {},
+              onPressed: canCall
+                  ? () => startCall(participantId, participantName)
+                  : null,
             ),
-            const SizedBox(width: 8),
+            if (chat != null && userId != participantId)
+              SafetyMenuButton(userId: participantId, userName: participantName)
+            else
+              const SizedBox(width: 8),
           ],
         ),
       ),
       body: userId == participantId
-          ? _ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)
+          ? ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)
           : chat != null
-          ? _Conversation(chat: chat, participantName: participantName)
+          ? _Conversation(
+              chat: chat,
+              participantName: participantName,
+              listingToOffer: listingToOffer,
+            )
           : profile.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _ChatNotice(
+          : ChatNotice(
               message: context.l10n.chatSignInToChatOrCheck,
-              onRetry: () => ref.invalidate(userProfileProvider),
+              onAction: () => ref.invalidate(userProfileProvider),
             ),
     );
   }
@@ -92,29 +137,82 @@ class ChatConversationPage extends ConsumerWidget {
 class _Conversation extends ConsumerStatefulWidget {
   final ChatParticipants chat;
   final String participantName;
+  final ChatListing? listingToOffer;
 
-  const _Conversation({required this.chat, required this.participantName});
+  const _Conversation({
+    required this.chat,
+    required this.participantName,
+    this.listingToOffer,
+  });
 
   @override
   ConsumerState<_Conversation> createState() => _ConversationState();
 }
 
 class _ConversationState extends ConsumerState<_Conversation> {
-  /// What the user was last asked for, so a refusal is explained in the
-  /// same terms (PIN or account password).
-  BackupLock _askedFor = BackupLock.pin;
+  late final VisibleConversation _visible;
+
+  /// The microphone is held down: the message bar stays (the finger is on
+  /// its button) and shows the recording in place of the field.
+  bool _holdingVoice = false;
+
+  /// Still offered above the message bar: not sent nor closed yet.
+  late ChatListing? _offeredListing = widget.listingToOffer;
+
+  void _sendOfferedListing() {
+    final listing = _offeredListing;
+    if (listing == null) return;
+    setState(() => _offeredListing = null);
+    ref.read(activeChatProvider(widget.chat).notifier).sendListing(listing);
+  }
 
   @override
   void initState() {
     super.initState();
+    // Its new-message notifications are not shown while it is open.
+    _visible = ref.read(visibleConversationProvider)
+      ..show(widget.chat.participantId);
     WidgetsBinding.instance.addPostFrameCallback((_) => _open());
   }
 
-  void _open({bool takeOver = false}) {
+  @override
+  void dispose() {
+    _visible.hide(widget.chat.participantId);
+    super.dispose();
+  }
+
+  void _open() {
     if (!mounted) return;
-    ref
-        .read(activeChatProvider(widget.chat).notifier)
-        .open(askPin: _askPin, takeOver: takeOver);
+    ref.read(activeChatProvider(widget.chat).notifier).open(askPin: _askPin);
+  }
+
+  /// Only on a device without the account's keys. The dialog stays open
+  /// while each PIN is checked, and says what went wrong.
+  Future<bool> _askPin(PinCheck check) async {
+    if (!mounted) return false;
+    return showPinCheckDialog(
+      context,
+      title: context.l10n.chatPinRestoreTitle,
+      helper: context.l10n.chatPinRestoreHelp,
+      check: check,
+    );
+  }
+
+  /// The account still has to create its chat PIN (or move its chats from
+  /// the account password to one): then chat opens.
+  Future<void> _createPin({required bool fromPassword}) async {
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => ChatPinSetupPage(
+          userId: widget.chat.userId,
+          fromPassword: fromPassword,
+          onDone: () => Navigator.of(context).pop(true),
+        ),
+      ),
+    );
+    if (created != true || !mounted) return;
+    ref.invalidate(chatPinStatusProvider);
+    _open();
   }
 
   Future<void> _sendPicture() async {
@@ -147,78 +245,140 @@ class _ConversationState extends ConsumerState<_Conversation> {
         );
   }
 
-  /// Only on a device without the account's keys, when a backup PIN or the
-  /// account password locks them. Anyone else is never asked.
-  Future<String?> _askPin(BackupLock lock) async {
-    if (!mounted) return null;
-    _askedFor = lock;
-    return switch (lock) {
-      BackupLock.password => showAccountPasswordPrompt(
-        context,
-        title: context.l10n.chatPasswordTitle,
-        helper: context.l10n.chatPasswordHelp,
-      ),
-      BackupLock.pin => showPinPrompt(
-        context,
-        title: context.l10n.chatPinRestoreTitle,
-        helper: context.l10n.chatPinRestoreHelp,
-      ),
-    };
+  /// Sends a new message, a reply, or the new text of the message being
+  /// edited, then goes back to writing new messages.
+  Future<void> _send(String text) async {
+    final composer = ref.read(chatComposerProvider(widget.chat).notifier);
+    final mode = composer.state;
+    composer.state = null;
+    final chat = ref.read(activeChatProvider(widget.chat).notifier);
+
+    switch (mode) {
+      case EditingMessage(:final message):
+        final problem = await chat.editMessage(message.id, text);
+        if (problem == null || !mounted) return;
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                chatMessageActionProblemText(context.l10n, problem),
+              ),
+            ),
+          );
+      case ReplyingTo(:final message):
+        await chat.sendMessage(text, replyTo: message);
+      case null:
+        await chat.sendMessage(text);
+    }
   }
 
-  /// Why chat cannot open here, in terms of what locks the keys.
-  String _unavailableMessage(E2eeSetupResult? result) {
+  /// "Replying to Dara" / "Editing message", with a button to stop.
+  Widget? _composerBanner(ChatComposerMode? mode) {
+    if (mode == null) return null;
+    return ChatComposerBanner(
+      mode: mode,
+      authorName: mode.message.senderId == widget.chat.userId
+          ? context.l10n.chatYou
+          : widget.participantName,
+      onCancel: () =>
+          ref.read(chatComposerProvider(widget.chat).notifier).state = null,
+    );
+  }
+
+  Future<void> _recordVoice() async {
+    // A message playing aloud would be recorded too.
+    await ref.read(voicePlaybackProvider.notifier).stop();
+    await ref.read(voiceRecordingProvider(widget.chat).notifier).start();
+  }
+
+  /// Records while the microphone is held down.
+  Future<void> _holdVoiceStart() async {
+    setState(() => _holdingVoice = true);
+    await _recordVoice();
+    // Let go (or interrupted, as by the permission question) before the
+    // microphone was ready: nothing worth sending was said.
+    if (mounted && !_holdingVoice) {
+      await ref.read(voiceRecordingProvider(widget.chat).notifier).discard();
+    }
+  }
+
+  /// The microphone was let go: send, unless the finger slid away.
+  void _holdVoiceEnd({required bool cancelled}) {
+    setState(() => _holdingVoice = false);
+    final recording = ref.read(voiceRecordingProvider(widget.chat).notifier);
+    unawaited(cancelled ? recording.discard() : recording.finish());
+  }
+
+  void _showRecordingProblem(VoiceRecordingProblem problem) {
     final l10n = context.l10n;
-    final byPassword = _askedFor == BackupLock.password;
-    return switch (result) {
-      E2eeSetupResult.wrongPassword => l10n.chatPasswordWrong,
-      E2eeSetupResult.wrongPin => '${l10n.pinWrong}\n\n${l10n.pinForgotHint}',
-      E2eeSetupResult.rateLimited when byPassword =>
-        l10n.chatPasswordTooManyTries,
-      E2eeSetupResult.rateLimited =>
-        '${l10n.pinLocked}\n\n${l10n.pinForgotHint}',
-      E2eeSetupResult.cancelled when byPassword => l10n.chatPasswordHelp,
-      E2eeSetupResult.cancelled =>
-        '${l10n.chatPinNeeded}\n\n${l10n.pinForgotHint}',
-      _ => l10n.chatOpenFailed,
-    };
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(voiceRecordingProblemText(l10n, problem)),
+          // Only the phone's settings can turn the microphone back on.
+          action: problem == VoiceRecordingProblem.microphoneBlocked
+              ? SnackBarAction(
+                  label: l10n.openSystemSettings,
+                  onPressed: MicrophonePermission.openSettings,
+                )
+              : null,
+        ),
+      );
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = activeChatProvider(widget.chat);
     final chatState = ref.watch(provider);
+    final recordingProvider = voiceRecordingProvider(widget.chat);
+    // Only whether a recording is on: its level and time change many times
+    // a second, and only the recording bar shows them.
+    final isRecording = ref.watch(
+      recordingProvider.select((recording) => recording.isActive),
+    );
+    final composerMode = ref.watch(chatComposerProvider(widget.chat));
+    final blockStatus = ref
+        .watch(blockStatusProvider(widget.chat.participantId))
+        .valueOrNull;
+    // Voice messages keep playing while their bubbles scroll out of view,
+    // and stop when this screen closes.
+    ref.watch(voicePlaybackProvider.notifier);
 
     ref.listen(provider.select((state) => state.sendError), (_, error) {
       if (error == null) return;
+      // Blocked since the conversation opened: the bar below says so.
+      if (error == ChatSendProblem.blocked) {
+        ref
+            .read(blockStatusProvider(widget.chat.participantId).notifier)
+            .refresh();
+      }
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(error)));
+        ..showSnackBar(
+          SnackBar(content: Text(chatSendProblemText(context.l10n, error))),
+        );
+    });
+    // The message being replied to or edited was deleted meanwhile.
+    ref.listen(provider.select((state) => state.messages), (_, messages) {
+      final mode = ref.read(chatComposerProvider(widget.chat));
+      if (mode != null && !messages.any((m) => m.id == mode.message.id)) {
+        ref.read(chatComposerProvider(widget.chat).notifier).state = null;
+      }
+    });
+    ref.listen(recordingProvider, (previous, next) {
+      final problem = next.problem;
+      if (problem != null && !identical(previous, next)) {
+        _showRecordingProblem(problem);
+      }
     });
 
     return switch (chatState.status) {
       ActiveChatStatus.loading => const Center(
         child: CircularProgressIndicator(),
       ),
-      ActiveChatStatus.unavailable
-          when chatState.setupResult == E2eeSetupResult.usedOnAnotherDevice =>
-        _ChatNotice(
-          message: context.l10n.chatUsedOnAnotherDevice,
-          actionLabel: context.l10n.chatUseOnThisDevice,
-          onRetry: () => _open(takeOver: true),
-        ),
-      ActiveChatStatus.unavailable
-          when chatState.setupResult ==
-              E2eeSetupResult.lockedWithEarlierPassword =>
-        _ChatNotice(
-          message: context.l10n.chatPasswordChangedElsewhere,
-          actionLabel: context.l10n.chatUseOnThisDevice,
-          onRetry: () => _open(takeOver: true),
-        ),
-      ActiveChatStatus.unavailable => _ChatNotice(
-        message: _unavailableMessage(chatState.setupResult),
-        onRetry: _open,
-      ),
+      ActiveChatStatus.unavailable => _unavailableNotice(chatState.setupResult),
       ActiveChatStatus.ready => Column(
         children: [
           Expanded(child: _buildMessages(chatState)),
@@ -232,84 +392,127 @@ class _ConversationState extends ConsumerState<_Conversation> {
                 participantName: widget.participantName,
               ),
             )
-          else
+          else if (blockStatus != null && !blockStatus.canMessage)
+            BlockedConversationBar(
+              status: blockStatus,
+              participantId: widget.chat.participantId,
+              participantName: widget.participantName,
+            )
+          else if (isRecording && !_holdingVoice)
+            Consumer(
+              builder: (context, ref, _) => ChatVoiceRecorderBar(
+                recording: ref.watch(recordingProvider),
+                onDiscard: () => ref.read(recordingProvider.notifier).discard(),
+                onSend: () => ref.read(recordingProvider.notifier).finish(),
+              ),
+            )
+          else ...[
+            if (_offeredListing case final listing?)
+              ChatListingOfferBar(
+                listing: listing,
+                onSend: _sendOfferedListing,
+                onDismiss: () => setState(() => _offeredListing = null),
+              ),
             ChatInputBar(
-              onSend: (text) => ref.read(provider.notifier).sendMessage(text),
+              onSend: _send,
+              mode: composerMode,
+              banner: _composerBanner(composerMode),
               onAttach: _sendPicture,
+              onRecordVoice: _recordVoice,
+              onHoldVoiceStart: _holdVoiceStart,
+              onHoldVoiceEnd: _holdVoiceEnd,
+              recordingPanel: _holdingVoice
+                  ? Consumer(
+                      builder: (context, ref, _) => VoiceHoldPanel(
+                        recording: ref.watch(recordingProvider),
+                      ),
+                    )
+                  : null,
             ),
+          ],
         ],
       ),
     };
   }
 
+  /// Why chat cannot open here, and the one thing to do about it.
+  Widget _unavailableNotice(E2eeSetupResult? result) {
+    final l10n = context.l10n;
+    return switch (result) {
+      E2eeSetupResult.pinNotSet => ChatNotice(
+        icon: Icons.shield_outlined,
+        title: l10n.chatPinCreateTitle,
+        message: l10n.chatPinRequiredMessage,
+        actionLabel: l10n.chatPinCreateAction,
+        onAction: () => _createPin(fromPassword: false),
+      ),
+      E2eeSetupResult.lockedWithPassword => ChatNotice(
+        icon: Icons.shield_outlined,
+        title: l10n.chatPinMoveTitle,
+        message: l10n.chatPinMoveHelp,
+        actionLabel: l10n.chatPinCreateAction,
+        onAction: () => _createPin(fromPassword: true),
+      ),
+      E2eeSetupResult.cancelled => ChatNotice(
+        icon: Icons.lock_outline,
+        title: l10n.chatLockedTitle,
+        message: l10n.chatPinNeeded,
+        actionLabel: l10n.chatEnterPinAction,
+        onAction: _open,
+        footnote: l10n.pinForgotHint,
+      ),
+      E2eeSetupResult.rateLimited => ChatNotice(
+        icon: Icons.lock_clock_outlined,
+        isWarning: true,
+        title: l10n.chatPinLockedTitle,
+        message: l10n.chatPinLockedMessage,
+        onAction: _open,
+        footnote: l10n.pinForgotHint,
+      ),
+      _ => ChatNotice(
+        icon: Icons.cloud_off_outlined,
+        message: l10n.chatOpenFailed,
+        onAction: _open,
+      ),
+    };
+  }
+
   Widget _buildMessages(ActiveChatState chatState) {
-    final messages = chatState.messages;
-    if (messages.isEmpty) {
-      return _ChatNotice(
-        message: context.l10n.chatMessagesAreEndToEndEncrypted,
-      );
+    final calls = ref.watch(chatCallHistoryProvider(widget.chat));
+    final items = mergeTimeline(chatState.messages, calls);
+    if (items.isEmpty) {
+      return ChatNotice(message: context.l10n.chatMessagesAreEndToEndEncrypted);
     }
+    // "Sent" goes under the user's newest message while no reply follows it.
+    final newest = items.whereType<ChatMessageItem>().lastOrNull?.message;
+    final sentStatusId = newest?.senderId == widget.chat.userId
+        ? newest!.id
+        : null;
 
     // Reversed, so the list stays anchored to the newest message.
     return ListView.builder(
       reverse: true,
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-      itemCount: messages.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final message = messages[messages.length - 1 - index];
+        final item = items[items.length - 1 - index];
         return Padding(
-          key: ValueKey(message.id),
+          key: ValueKey(item.key),
           padding: const EdgeInsets.only(bottom: 16.0),
-          child: ChatMessageBubble(
-            message: message,
-            isMine: message.senderId == widget.chat.userId,
-            onRetry: () => ref
-                .read(activeChatProvider(widget.chat).notifier)
-                .retry(message.id),
-          ),
+          child: switch (item) {
+            ChatMessageItem(:final message) => ChatMessageTile(
+              chat: widget.chat,
+              message: message,
+              participantName: widget.participantName,
+              showSentStatus: message.id == sentStatusId,
+            ),
+            ChatCallItem(:final call) => ChatCallEntryTile(
+              call: call,
+              userId: widget.chat.userId,
+            ),
+          },
         );
       },
-    );
-  }
-}
-
-/// A centred message, with a retry button when there is something to retry.
-class _ChatNotice extends StatelessWidget {
-  final String message;
-  final VoidCallback? onRetry;
-
-  /// The button's label; "Try again" when null.
-  final String? actionLabel;
-
-  const _ChatNotice({required this.message, this.onRetry, this.actionLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 15,
-                color: context.colors.textMuted,
-                height: 1.5,
-              ),
-            ),
-            if (onRetry != null) ...[
-              const SizedBox(height: 16),
-              OutlinedButton(
-                onPressed: onRetry,
-                child: Text(actionLabel ?? context.l10n.chatTryAgain),
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }

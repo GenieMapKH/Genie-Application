@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/profile/data/repositories/avatar_repository.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/profile/data/repositories/avatar_repository.dart';
 
 /// How a change of profile picture ended. The screen turns this into a message.
 enum AvatarResult {

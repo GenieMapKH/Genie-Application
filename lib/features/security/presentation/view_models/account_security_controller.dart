@@ -1,5 +1,5 @@
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/security/data/repositories/account_repository.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
 
 /// How a change that needs proof of identity ended. The screen turns this
 /// into a message.
@@ -13,6 +13,9 @@ enum AccountActionResult {
   /// This device signed in less than a day ago and may not do this yet.
   deviceTooNew,
 
+  /// Another account already uses the email.
+  emailTaken,
+
   /// The server could not be reached or failed.
   failed,
 }
@@ -20,23 +23,15 @@ enum AccountActionResult {
 /// Why a new password was refused before it was sent anywhere.
 enum PasswordProblem { currentMissing, tooShort, mismatch, sameAsCurrent }
 
-/// Hands a password the user just typed to chat, which locks the chat keys
-/// with it. Never throws.
-typedef ChatKeyLock = Future<void> Function(String password);
-
-/// The account's password, and deactivating or deleting the account. No UI.
+/// The account's password and email, and deactivating or deleting the
+/// account. No UI.
 class AccountSecurityController {
   /// Same rule as the server.
   static const minPasswordLength = 8;
 
   final AccountRepository _repository;
 
-  /// The chat keys are locked with the account password, so they follow it
-  /// when it changes or is first created.
-  final ChatKeyLock? _lockChatKeys;
-
-  AccountSecurityController(this._repository, {ChatKeyLock? lockChatKeys})
-    : _lockChatKeys = lockChatKeys;
+  AccountSecurityController(this._repository);
 
   /// The first thing wrong with what the user typed, or null when it can be
   /// sent to the server.
@@ -62,22 +57,17 @@ class AccountSecurityController {
     return null;
   }
 
-  /// The chat keys are first made sure to be here (with [current]), then
-  /// locked with [next] once the server took it, so no chat history is lost.
   Future<AccountActionResult> changePassword({
     required String current,
     required String next,
-  }) async {
-    await _lockChatKeys?.call(current);
-    final result = await _attempt(
+  }) {
+    return _attempt(
       'change password',
       () => _repository.changePassword(
         currentPassword: current,
         newPassword: next,
       ),
     );
-    if (result == AccountActionResult.done) await _lockChatKeys?.call(next);
-    return result;
   }
 
   /// The first password of an account that signs in with Google, confirmed
@@ -85,17 +75,28 @@ class AccountSecurityController {
   Future<AccountActionResult> createPassword({
     required String googleIdToken,
     required String password,
-  }) async {
-    final result = await _attempt(
+  }) {
+    return _attempt(
       'create password',
       () => _repository.createPassword(
         googleIdToken: googleIdToken,
         newPassword: password,
       ),
     );
-    // From now on the password, not a backup PIN, protects the chats.
-    if (result == AccountActionResult.done) await _lockChatKeys?.call(password);
-    return result;
+  }
+
+  /// Adds [email] to an account that has none, confirmed with [password].
+  Future<AccountActionResult> addEmail({
+    required String email,
+    required String password,
+  }) {
+    return _attempt(
+      'add email',
+      () => _repository.addEmail(
+        email: email.trim().toLowerCase(),
+        password: password,
+      ),
+    );
   }
 
   /// Asks the server to confirm the account password in [proof]. With
@@ -130,6 +131,8 @@ class AccountSecurityController {
       return AccountActionResult.tooManyAttempts;
     } on DeviceTooNewException {
       return AccountActionResult.deviceTooNew;
+    } on EmailTakenException {
+      return AccountActionResult.emailTaken;
     } catch (e) {
       AppLogger.error('Could not $what', e);
       return AccountActionResult.failed;

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
-import 'package:genie/features/home/utils/map/map_measurements.dart';
-import 'package:genie/features/home/utils/map/markers/label_markers.dart';
-import 'package:genie/features/home/utils/map/markers/vertex_markers.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/home/utils/map/layers/boundary_measurement_markers.dart';
+import 'package:tilomnov/features/home/utils/map/markers/vertex_markers.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// The tapped listing's real shape: its boundary polygon with vertex numbers,
-/// edge lengths and area. Drawn at every zoom level, under its price tag.
+/// edge lengths and area. Drawn at every zoom level; numbers and lengths
+/// with no room on screen are left out (see [BoundaryMeasurementMarkers]).
 abstract final class DetailedPropertyLayer {
   // Gold reads on both the default and the satellite map.
   static final _boundaryColor = AppColors.light.highlight;
@@ -18,6 +17,7 @@ abstract final class DetailedPropertyLayer {
     required List<LatLng> points,
     required PropertyModel? property,
     required bool isOwned,
+    required bool hasCenterMarker,
     required double zoom,
     required Set<Polygon> polygons,
     required Set<Marker> markers,
@@ -37,7 +37,13 @@ abstract final class DetailedPropertyLayer {
       ),
     );
 
-    await _addMeasurements(index, points, zoom, markers);
+    await BoundaryMeasurementMarkers.add(
+      index: index,
+      points: points,
+      zoom: zoom,
+      markers: markers,
+      hasCenterMarker: hasCenterMarker,
+    );
 
     if (isOwned) {
       markers.add(
@@ -51,63 +57,5 @@ abstract final class DetailedPropertyLayer {
         ),
       );
     }
-  }
-
-  static Future<void> _addMeasurements(
-    int index,
-    List<LatLng> points,
-    double currentZoom,
-    Set<Marker> markers,
-  ) async {
-    final measurements = calculateMeasurements(points);
-    if (measurements == null) return;
-
-    final area = measurements.area;
-
-    for (var i = 0; i < points.length; i++) {
-      markers.add(
-        Marker(
-          markerId: MarkerId('vertex_${index}_$i'),
-          position: points[i],
-          icon: await VertexMarkers.numbered(i + 1),
-          anchor: const Offset(0.5, 0.5),
-          zIndexInt: 3,
-        ),
-      );
-    }
-
-    if (measurements.sides.isEmpty) return;
-
-    final edgeFontSize = labelFontSize(area, currentZoom, isArea: false);
-    for (var i = 0; i < points.length; i++) {
-      final next = points[(i + 1) % points.length];
-      markers.add(
-        Marker(
-          markerId: MarkerId('length_${index}_$i'),
-          position: midpointOf(points[i], next),
-          icon: await LabelMarkers.text(
-            '${measurements.sides[i].toStringAsFixed(0)} m',
-            fontSize: edgeFontSize,
-          ),
-          anchor: const Offset(0.5, 0.5),
-          zIndexInt: 2,
-        ),
-      );
-    }
-
-    markers.add(
-      Marker(
-        markerId: MarkerId('area_marker_$index'),
-        position: centroidOf(points),
-        icon: await LabelMarkers.text(
-          formatArea(area),
-          isArea: true,
-          fontSize: labelFontSize(area, currentZoom, isArea: true),
-        ),
-        // The price tag sits on the centroid, so the area goes just below it.
-        anchor: const Offset(0.5, -0.9),
-        zIndexInt: 1,
-      ),
-    );
   }
 }

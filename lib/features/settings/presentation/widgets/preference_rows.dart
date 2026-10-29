@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/settings/providers/app_settings_providers.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/option_sheet.dart';
-import 'package:genie/shared/widgets/settings_list.dart';
+import 'package:tilomnov/core/device/glass_capability.dart';
+import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/lists/option_sheet.dart';
+import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
 
-/// Settings row that shows the theme in use and opens the picker for it.
+/// Settings row that shows the theme in use and opens the picker for it, with
+/// the glass navigation switch under the choices on phones that have it.
 class AppearanceRow extends ConsumerWidget {
   const AppearanceRow({super.key});
 
@@ -30,6 +32,10 @@ class AppearanceRow extends ConsumerWidget {
           title: l10n.appearanceTitle,
           options: options,
           selected: current,
+          // Only phones whose own interface is glass have it to switch.
+          footer: ref.read(glassCapableDeviceProvider)
+              ? const GlassNavigationRow()
+              : null,
         );
         if (picked != null) {
           await ref.read(themeModeProvider.notifier).select(picked.value);
@@ -67,6 +73,25 @@ class LanguageRow extends ConsumerWidget {
           await ref.read(localeProvider.notifier).select(picked.value);
         }
       },
+    );
+  }
+}
+
+/// Settings switch for the glass navigation bar. Shown only on phones whose
+/// own interface is glass ([glassCapableDeviceProvider]).
+class GlassNavigationRow extends ConsumerWidget {
+  const GlassNavigationRow({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    return SettingsSwitchRow(
+      icon: Icons.blur_on_outlined,
+      title: l10n.glassNavigationTitle,
+      subtitle: l10n.glassNavigationSubtitle,
+      value: ref.watch(glassNavigationProvider),
+      onChanged: (enabled) =>
+          ref.read(glassNavigationProvider.notifier).select(enabled),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// Grey placeholder rows shown while the first answer loads, shaped like the
 /// rows that will replace them, so the layout does not jump.

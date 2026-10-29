@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/data/chat_backup_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
 
 class _StubAdapter implements HttpClientAdapter {
   final int status;
@@ -93,6 +93,43 @@ void main() {
       throwsA(isA<DioException>()),
     );
   });
+
+  test(
+    'a refusal carries what the server says: tries left, or the wait',
+    () async {
+      await expectLater(
+        _repositoryWith(
+          _StubAdapter(403, '{"message":"Wrong PIN","attemptsLeft":2}'),
+        ).unlockBackup('proof'),
+        throwsA(
+          isA<WrongPinException>().having((e) => e.attemptsLeft, 'left', 2),
+        ),
+      );
+      await expectLater(
+        _repositoryWith(
+          _StubAdapter(429, '{"retryAfterSeconds":900}'),
+        ).unlockBackup('proof'),
+        throwsA(
+          isA<BackupRateLimitedException>().having(
+            (e) => e.retryAfter,
+            'wait',
+            const Duration(minutes: 15),
+          ),
+        ),
+      );
+      // A plain refusal, e.g. from the lookup limit, still says what it is.
+      await expectLater(
+        _repositoryWith(_StubAdapter(429, '"Too Many Requests"')).fetchBackup(),
+        throwsA(
+          isA<BackupRateLimitedException>().having(
+            (e) => e.retryAfter,
+            'wait',
+            isNull,
+          ),
+        ),
+      );
+    },
+  );
 
   test('fetchBackup returns null when the user has no backup yet', () async {
     final repository = _repositoryWith(_StubAdapter(404));

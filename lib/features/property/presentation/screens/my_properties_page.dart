@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/shared/widgets/app_header_bar.dart';
-import 'package:genie/features/property/presentation/screens/add_property_page.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
+import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
 
-import 'package:genie/features/property/presentation/widgets/my_properties/property_card.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/empty_properties_state.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/property_options_sheet.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/property_tabs.dart';
-import 'package:genie/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_card.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/empty_properties_state.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_edit_route.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_options_sheet.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_tabs.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
+import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 class MyPropertiesPage extends ConsumerWidget {
   final bool isEmbedded;
@@ -25,8 +31,13 @@ class MyPropertiesPage extends ConsumerWidget {
     this.onBackPressed,
   });
 
+  /// Kept while another tab is shown: changes to the listings redraw it
+  /// only once it is shown again.
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      PausedWhileHidden(builder: _buildShown);
+
+  Widget _buildShown(BuildContext context, WidgetRef ref) {
     final propertiesAsync = ref.watch(propertiesProvider);
 
     return Scaffold(
@@ -52,12 +63,12 @@ class MyPropertiesPage extends ConsumerWidget {
                 child: propertiesAsync.when(
                   skipLoadingOnReload: true,
                   skipError: true,
-                  data: (properties) => Column(
+                  data: (listings) => Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      PropertyTabs(properties: properties),
+                      PropertyTabs(countByStatus: listings.countByStatus),
                       const SizedBox(height: 24),
-                      Expanded(child: _buildBody(context, ref, properties)),
+                      Expanded(child: _buildBody(context, ref, listings)),
                     ],
                   ),
                   loading: () => Center(
@@ -80,17 +91,13 @@ class MyPropertiesPage extends ConsumerWidget {
           width: 140,
           height: 44,
           child: ElevatedButton(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AddPropertyPage(
-                    boundaryPoints: [],
-                    propertyArea: 0,
-                  ),
-                ),
-              );
-              ref.read(propertiesProvider.notifier).refresh();
-            },
+            // Saving it reloads the list (see `ownListingsChanged`).
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const AddPropertyPage(boundaryPoints: [], propertyArea: 0),
+              ),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: context.colors.accent,
               shape: RoundedRectangleBorder(
@@ -112,11 +119,8 @@ class MyPropertiesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    WidgetRef ref,
-    List<PropertyModel> properties,
-  ) {
+  Widget _buildBody(BuildContext context, WidgetRef ref, OwnListings listings) {
+    final properties = listings.items;
     if (properties.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -124,26 +128,75 @@ class MyPropertiesPage extends ConsumerWidget {
       );
     }
 
-    return ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      itemCount: properties.length,
-      itemBuilder: (context, index) {
-        final property = properties[index];
-        return PropertyCard(
-          property: property,
-          onTap: () async {
-            await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => AddPropertyPage.edit(property),
-              ),
-            );
-            ref.read(propertiesProvider.notifier).refresh();
-          },
-          onOptionsTapped: () =>
-              PropertyOptionsSheet.show(context, ref, property),
+    final page = listings.page;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Phones keep one card per row; tablets fit as many as they can.
+        final columns = PropertyListLayout.isTablet(context)
+            ? PropertyListLayout.columnCount(
+                constraints.maxWidth - 32,
+                PropertyListLayout.ownCardMaxWidth,
+              )
+            : 1;
+        final rowCount = (properties.length / columns).ceil();
+        return LoadMoreOnScroll(
+          enabled: page.hasMore && !page.loadingMore,
+          onLoadMore: () => ref.read(propertiesProvider.notifier).loadMore(),
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            itemCount: rowCount + (page.loadingMore ? 1 : 0),
+            itemBuilder: (context, row) {
+              if (row == rowCount) return const LoadingMoreIndicator();
+              return _buildCardRow(context, ref, properties, row, columns);
+            },
+          ),
         );
       },
+    );
+  }
+
+  /// One row of [columns] cards; the last row keeps empty slots so its cards
+  /// are as wide as the ones above.
+  Widget _buildCardRow(
+    BuildContext context,
+    WidgetRef ref,
+    List<PropertyModel> properties,
+    int row,
+    int columns,
+  ) {
+    if (columns == 1) return _buildCard(context, ref, properties[row]);
+    final start = row * columns;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var column = 0; column < columns; column++) ...[
+          if (column > 0)
+            const SizedBox(width: PropertyListLayout.columnSpacing),
+          Expanded(
+            child: start + column < properties.length
+                ? _buildCard(context, ref, properties[start + column])
+                : const SizedBox.shrink(),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCard(
+    BuildContext context,
+    WidgetRef ref,
+    PropertyModel property,
+  ) {
+    return PropertyCard(
+      property: property,
+      onTap: (cardRect) => Navigator.of(context).push(
+        PropertyEditRoute(
+          origin: cardRect,
+          page: AddPropertyPage.edit(property),
+        ),
+      ),
+      onOptionsTapped: () => PropertyOptionsSheet.show(context, ref, property),
     );
   }
 

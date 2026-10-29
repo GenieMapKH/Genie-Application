@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/data/google_sign_in_service.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/security/presentation/view_models/account_security_controller.dart';
-import 'package:genie/features/security/presentation/view_models/security_providers.dart';
-import 'package:genie/features/security/presentation/widgets/info_note.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/shared/widgets/app_button.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
-import 'package:genie/shared/widgets/app_text_field.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
+import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
+import 'package:tilomnov/features/security/presentation/widgets/info_note.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
 
 /// Gives an account that signs in with Google a password of its own.
 ///

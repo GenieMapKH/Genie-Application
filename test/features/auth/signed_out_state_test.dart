@@ -2,15 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/data/repositories/user_repository.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/data/repositories/property_repository.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
-import 'package:genie/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/repositories/favorites_repository.dart';
+import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_properties_provider.dart';
+import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Profiles extends UserRepository {
@@ -30,19 +33,33 @@ final _listing = PropertyModel.fromJson({
   'createdAt': '2026-10-01T00:00:00.000Z',
 });
 
-/// The owner's listings and favourites; counts what is asked of the server.
+/// The owner's listings.
 class _Listings extends PropertyRepository {
-  int favoriteCalls = 0;
-
   _Listings() : super(Dio());
 
   @override
-  Future<List<PropertyModel>> fetchAll({bool forceRefresh = false}) async => [
-    _listing,
-  ];
+  Future<OwnListingsPage> fetchOwnPage({
+    required int offset,
+    int limit = PropertyRepository.ownPageSize,
+  }) async =>
+      (items: [_listing], nextOffset: null, countByStatus: {'Active': 1});
+}
+
+/// The owner's favourites; counts what is asked of the server.
+class _Favorites extends FavoritesRepository {
+  int favoriteCalls = 0;
+
+  _Favorites() : super(Dio());
 
   @override
-  Future<List<PropertyModel>> fetchFavorites() async => [_listing];
+  Future<List<String>> fetchIds() async => [_listing.id];
+
+  @override
+  Future<FavoritesPage> fetchPage({
+    required int offset,
+    required FavoriteSort sort,
+    int limit = FavoritesRepository.pageSize,
+  }) async => (items: [_listing], nextOffset: null);
 
   @override
   Future<void> favorite(String id) async => favoriteCalls++;
@@ -52,7 +69,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late ProviderContainer container;
-  late _Listings listings;
+  late _Favorites favorites;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -61,11 +78,12 @@ void main() {
       'refresh_token': 'owner-refresh',
     });
     await AuthStorage.load();
-    listings = _Listings();
+    favorites = _Favorites();
     container = ProviderContainer(
       overrides: [
         userRepositoryProvider.overrideWithValue(_Profiles()),
-        propertyRepositoryProvider.overrideWithValue(listings),
+        propertyRepositoryProvider.overrideWithValue(_Listings()),
+        favoritesRepositoryProvider.overrideWithValue(favorites),
       ],
     );
     addTearDown(container.dispose);
@@ -73,13 +91,24 @@ void main() {
     container.listen(userProfileProvider, (_, _) {});
     container.listen(propertiesProvider, (_, _) {});
     container.listen(savedPropertiesProvider, (_, _) {});
+    container.listen(savedPropertyIdsProvider, (_, _) {});
   });
 
-  test('a signed-in owner has their profile, listings and favourites', () async {
-    expect((await container.read(userProfileProvider.future))?.id, 'owner-1');
-    expect(await container.read(propertiesProvider.future), [_listing]);
-    expect(await container.read(savedPropertiesProvider.future), [_listing]);
-  });
+  test(
+    'a signed-in owner has their profile, listings and favourites',
+    () async {
+      expect((await container.read(userProfileProvider.future))?.id, 'owner-1');
+      expect((await container.read(propertiesProvider.future)).items, [
+        _listing,
+      ]);
+      expect((await container.read(savedPropertiesProvider.future)).items, [
+        _listing,
+      ]);
+      expect(await container.read(savedPropertyIdsProvider.future), {
+        _listing.id,
+      });
+    },
+  );
 
   test(
     'after signing out nothing of the owner is left for the guest',
@@ -87,6 +116,7 @@ void main() {
       await container.read(userProfileProvider.future);
       await container.read(propertiesProvider.future);
       await container.read(savedPropertiesProvider.future);
+      await container.read(savedPropertyIdsProvider.future);
 
       await AuthStorage.clearTokens();
       await Future<void>.delayed(Duration.zero);
@@ -96,8 +126,12 @@ void main() {
       // Visibility.
       expect(container.read(userProfileProvider).valueOrNull, isNull);
       // No edit markers on the map, and no filled hearts.
-      expect(container.read(propertiesProvider).valueOrNull, isEmpty);
-      expect(container.read(savedPropertiesProvider).valueOrNull, isEmpty);
+      expect(container.read(propertiesProvider).valueOrNull?.items, isEmpty);
+      expect(
+        container.read(savedPropertiesProvider).valueOrNull?.items,
+        isEmpty,
+      );
+      expect(container.read(savedPropertyIdsProvider).valueOrNull, isEmpty);
     },
   );
 
@@ -105,11 +139,10 @@ void main() {
     await AuthStorage.clearTokens();
     await Future<void>.delayed(Duration.zero);
 
-    await container
-        .read(savedPropertiesProvider.notifier)
-        .toggleFavorite(_listing);
+    await container.read(savedPropertyIdsProvider.future);
+    await container.read(savedPropertyIdsProvider.notifier).toggle(_listing.id);
 
-    expect(listings.favoriteCalls, 0);
-    expect(container.read(savedPropertiesProvider).valueOrNull, isEmpty);
+    expect(favorites.favoriteCalls, 0);
+    expect(container.read(savedPropertyIdsProvider).valueOrNull, isEmpty);
   });
 }

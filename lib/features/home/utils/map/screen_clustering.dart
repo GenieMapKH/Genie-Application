@@ -1,7 +1,7 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
-import 'package:genie/features/home/utils/map/map_camera_focus.dart';
+import 'package:tilomnov/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 
 /// Map items close enough on screen to be drawn as a single marker.
 class ScreenCluster {

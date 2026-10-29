@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/shared/widgets/app_text_field.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 class ResetPasswordPage extends ConsumerStatefulWidget {
   final String email;
@@ -64,20 +65,20 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
     setState(() {
       if (_passwordController.text.isEmpty) {
-        _passwordError = 'Please enter a new password';
+        _passwordError = context.l10n.authErrEnterNewPassword;
         isValid = false;
       } else if (_passwordController.text.length < 8) {
-        _passwordError = 'Password must be at least 8 characters';
+        _passwordError = context.l10n.authErrPasswordMin8;
         isValid = false;
       } else {
         _passwordError = null;
       }
 
       if (_confirmPasswordController.text.isEmpty) {
-        _confirmPasswordError = 'Please re-enter your password';
+        _confirmPasswordError = context.l10n.authErrReEnterPassword;
         isValid = false;
       } else if (_confirmPasswordController.text != _passwordController.text) {
-        _confirmPasswordError = 'Passwords do not match';
+        _confirmPasswordError = context.l10n.authErrPasswordsDontMatch;
         isValid = false;
       } else {
         _confirmPasswordError = null;
@@ -104,7 +105,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       context.go('/login');
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(context, e.toString());
+      AppPopup.showError(context, authErrorMessage(context.l10n, e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -194,10 +195,11 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                           if (_passwordError != null) {
                             setState(() {
                               if (val.isEmpty) {
-                                _passwordError = 'Please enter a new password';
+                                _passwordError =
+                                    context.l10n.authErrEnterNewPassword;
                               } else if (val.length < 8) {
                                 _passwordError =
-                                    'Password must be at least 8 characters';
+                                    context.l10n.authErrPasswordMin8;
                               } else {
                                 _passwordError = null;
                               }
@@ -235,7 +237,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                             setState(() {
                               if (val != _passwordController.text) {
                                 _confirmPasswordError =
-                                    'Passwords do not match';
+                                    context.l10n.authErrPasswordsDontMatch;
                               } else {
                                 _confirmPasswordError = null;
                               }

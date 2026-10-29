@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 class PropertyBottomBar extends StatelessWidget {
   const PropertyBottomBar({super.key});
@@ -23,17 +24,32 @@ class PropertyBottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(context, 'assets/icons/home.svg', 'Home', false),
-          _buildNavItem(context, 'assets/icons/chat.svg', 'Messages', false),
+          _buildNavItem(
+            context,
+            'assets/icons/home.svg',
+            context.l10n.navExplore,
+            false,
+          ),
+          _buildNavItem(
+            context,
+            'assets/icons/chat.svg',
+            context.l10n.navChat,
+            false,
+          ),
           const SizedBox(width: 48), // Space for FAB
           _buildNavItem(
             context,
             'assets/icons/heart.svg',
-            'Favorites',
+            context.l10n.navSaved,
             false,
             hasBadge: true,
           ),
-          _buildNavItem(context, 'assets/icons/user.svg', 'Profile', true),
+          _buildNavItem(
+            context,
+            'assets/icons/user.svg',
+            context.l10n.navUser,
+            true,
+          ),
         ],
       ),
     );
@@ -52,12 +68,9 @@ class PropertyBottomBar extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            SvgPicture.asset(
+            TintedSvg(
               iconPath,
-              colorFilter: ColorFilter.mode(
-                isActive ? context.colors.accent : context.colors.textHint,
-                BlendMode.srcIn,
-              ),
+              color: isActive ? context.colors.accent : context.colors.textHint,
               width: 24,
               height: 24,
             ),

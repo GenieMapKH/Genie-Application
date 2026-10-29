@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Optional discount, offered for every property type: a number and whether
 /// it is a percentage of the price or USD off it.

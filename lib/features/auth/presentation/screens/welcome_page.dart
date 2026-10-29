@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/shared/widgets/app_button.dart';
-import 'package:genie/shared/widgets/app_logo.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/welcome_preference_bar.dart';
+import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
+import 'package:tilomnov/shared/widgets/media/app_logo.dart';
 import 'package:go_router/go_router.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Optimized, high-performance Welcome / Auth landing screen.
 ///
@@ -178,6 +179,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
+              const WelcomePreferenceBar(),
               const Spacer(flex: 2),
 
               // Hardware-isolated Logo & Headline Section

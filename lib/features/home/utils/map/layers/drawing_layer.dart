@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/utils/map/layers/boundary_edit_layer.dart';
-import 'package:genie/features/home/utils/map/layers/drawing_callbacks.dart';
-import 'package:genie/features/home/utils/map/layers/layer_geometry.dart';
-import 'package:genie/features/home/utils/map/map_measurements.dart';
-import 'package:genie/features/home/utils/map/markers/label_markers.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/utils/map/layers/boundary_edit_layer.dart';
+import 'package:tilomnov/features/home/utils/map/layers/drawing_callbacks.dart';
+import 'package:tilomnov/features/home/utils/map/layers/layer_geometry.dart';
+import 'package:tilomnov/features/home/utils/map/map_measurements.dart';
+import 'package:tilomnov/features/home/utils/map/markers/label_markers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// The boundary the user is drawing on the map, or (via [BoundaryEditLayer])

@@ -1,5 +1,7 @@
-import 'package:genie/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:intl/intl.dart';
+import 'package:tilomnov/features/property/presentation/property_labels.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Shared display formatting for property price, size and spec lines so the
 /// map card, detail sheet and similar-property tiles stay consistent.
@@ -9,6 +11,9 @@ class PropertyFormat {
     decimalDigits: 0,
   );
   static final NumberFormat _compact = NumberFormat.decimalPattern();
+  static final NumberFormat _shortMoney = NumberFormat.compactCurrency(
+    symbol: '\$',
+  );
 
   /// `$ 105,400`
   static String price(String raw) {
@@ -17,6 +22,9 @@ class PropertyFormat {
 
   /// `$ 105,400` from a number, e.g. a listing's discounted price.
   static String money(double value) => _price.format(value);
+
+  /// `$500K`, `$1.2M`: a price where space is short.
+  static String shortMoney(double value) => _shortMoney.format(value);
 
   /// Trims the trailing `.0` so 1670.0 renders as `1670` but 83.5 stays `83.5`.
   static String size(double value) {
@@ -28,38 +36,49 @@ class PropertyFormat {
   /// `1,688` — used for view/save/contact counters.
   static String count(int value) => _compact.format(value);
 
-  /// The map card's middle line: `1670 m² | Land for sale` for land, or
-  /// `4 bds | 5 ba | 115.5 m² | House for sale` for built property.
-  static String cardSpecLine(PropertyModel property) {
-    final parts = <String>[];
-
-    if (property.bedrooms != null && property.bedrooms! > 0) {
-      parts.add('${property.bedrooms} bds');
-    }
-    if (property.bathrooms != null && property.bathrooms! > 0) {
-      parts.add('${property.bathrooms} ba');
-    }
-
-    final displaySize = property.displaySize;
-    if (displaySize != null) {
-      parts.add('${size(displaySize)} m²');
-    }
-
-    parts.add('${property.propertyType} for sale');
-    return parts.join(' | ');
+  /// A card's price: `$ 105,400`, `$ 500 / month` for a rental, or
+  /// `From $ 45,000` for a Borey, whose price is its cheapest unit.
+  static String cardPrice(AppLocalizations l10n, PropertyModel property) {
+    final amount = money(property.finalPrice);
+    if (property.propertyType == 'Borey') return l10n.propertyPriceFrom(amount);
+    if (property.isRental) return l10n.propertyFactPerMonth(amount);
+    return amount;
   }
 
-  /// The detail sheet's spec row uses long labels: `2 Beds`, `2 Baths`.
-  static String bedroomLabel(int count) =>
-      '$count ${count == 1 ? 'Bed' : 'Beds'}';
+  /// The bedrooms a card shows: `Studio` for a condo with none, or null
+  /// when the type has no rooms or none were given.
+  static String? cardBedrooms(AppLocalizations l10n, PropertyModel property) {
+    final bedrooms = property.bedrooms;
+    if (!property.hasRooms || bedrooms == null) return null;
+    if (bedrooms == 0) {
+      return property.propertyType == 'Condo'
+          ? l10n.propertyOptionStudio
+          : null;
+    }
+    return l10n.propertySpecBeds(bedrooms);
+  }
 
-  static String bathroomLabel(int count) =>
-      '$count ${count == 1 ? 'Bath' : 'Baths'}';
+  /// `House for sale` or `House for rent`, in the user's language.
+  static String typeAndListing(AppLocalizations l10n, PropertyModel property) {
+    final type = propertyValueLabel(l10n, property.propertyType);
+    return property.isRental
+        ? l10n.propertyTypeForRent(type)
+        : l10n.propertyTypeForSale(type);
+  }
 
-  /// `165 days` on the detail sheet's stat row.
-  static String daysListed(PropertyModel property) {
-    final days = property.daysListed;
-    return '$days ${days == 1 ? 'day' : 'days'}';
+  /// The map card's middle line: `1670 m² | Land for sale` for land, or
+  /// `4 bds | 5 ba | 115.5 m² | House for sale` for a house, in the user's
+  /// language. Only what the type's form asks for is shown.
+  static String cardSpecLine(AppLocalizations l10n, PropertyModel property) {
+    final bathrooms = property.bathrooms;
+    final displaySize = property.displaySize;
+    return [
+      ?cardBedrooms(l10n, property),
+      if (property.hasRooms && bathrooms != null && bathrooms > 0)
+        l10n.propertySpecBaths(bathrooms),
+      if (displaySize != null) '${size(displaySize)} m²',
+      typeAndListing(l10n, property),
+    ].join(' | ');
   }
 
   /// The SVG used for the property-type pill on cards and tiles.

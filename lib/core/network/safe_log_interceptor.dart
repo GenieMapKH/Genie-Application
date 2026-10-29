@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 
 /// Logs one line per request and response: method, path, status and duration.
 ///

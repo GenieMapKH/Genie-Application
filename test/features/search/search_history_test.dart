@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/search/data/search_history_repository.dart';
-import 'package:genie/features/search/data/search_repository.dart';
-import 'package:genie/features/search/presentation/screens/search_page.dart';
-import 'package:genie/features/search/presentation/view_models/search_history_controller.dart';
-import 'package:genie/features/search/presentation/view_models/search_providers.dart';
+import 'package:tilomnov/features/search/data/search_history_repository.dart';
+import 'package:tilomnov/features/search/data/search_repository.dart';
+import 'package:tilomnov/features/search/presentation/screens/search_page.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_history_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
 
 import '../../support/test_app.dart';
 

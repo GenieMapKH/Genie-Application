@@ -71,12 +71,14 @@ jobs:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           # Android Maps key, restricted to this app (see android/app/build.gradle.kts).
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+          # Optional: without it the release build reports no errors.
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           if [ -z "$MAPS_API_KEY" ]; then
             echo "::error::MAPS_API_KEY is not set; the released app would show a blank map."
             exit 1
           fi
-          flutter build apk --release --split-per-abi --dart-define=API_BASE_URL="$API_BASE_URL"
+          flutter build apk --release --split-per-abi --dart-define=API_BASE_URL="$API_BASE_URL" --dart-define=SENTRY_DSN="$SENTRY_DSN"
 
       - name: Prepare Telegram Message
         env:
@@ -84,7 +86,7 @@ jobs:
         run: |
           EOF="EOF-$(date +%s)"
           echo "FULL_MESSAGE<<$EOF" >> $GITHUB_ENV
-          echo "🚀 *New Genie App Release!*" >> $GITHUB_ENV
+          echo "🚀 *New Tilomnov App Release!*" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "*Changelog:*" >> $GITHUB_ENV
           echo "$COMMIT_MSG" >> $GITHUB_ENV

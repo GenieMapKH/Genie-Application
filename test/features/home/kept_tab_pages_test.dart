@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/home/presentation/widgets/kept_tab_pages.dart';
+import 'package:tilomnov/features/home/presentation/widgets/layout/kept_tab_pages.dart';
 
 /// Counts how often it was built from scratch, and keeps a counter as state.
 class _CountingPage extends StatefulWidget {

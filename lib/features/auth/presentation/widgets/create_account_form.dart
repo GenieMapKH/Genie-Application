@@ -1,43 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../shared/widgets/app_text_field.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import '../../../../shared/widgets/forms/app_text_field.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
+/// The sign-up fields: name, phone number (required), email (optional),
+/// password, and agreeing to the terms. Shows what it is given; the page
+/// decides what is wrong.
 class CreateAccountForm extends StatelessWidget {
   final TextEditingController nameController;
-  final TextEditingController identifierController;
+  final TextEditingController phoneController;
+  final TextEditingController emailController;
   final TextEditingController passwordController;
   final String? nameError;
-  final String? identifierError;
+  final String? phoneError;
+  final String? emailError;
   final String? passwordError;
   final String? termsError;
   final bool obscurePassword;
   final bool agreeToTerms;
-  final Function(String) onNameChanged;
-  final Function(String) onIdentifierChanged;
-  final Function(String) onPasswordChanged;
+
+  /// Any field was edited.
+  final VoidCallback onChanged;
   final VoidCallback onTogglePasswordVisibility;
-  final Function(bool?) onTermsChanged;
-  final VoidCallback onTermsTextTapped;
+  final ValueChanged<bool> onTermsChanged;
+
+  /// Opens the terms to read. Agreeing does not need it.
+  final VoidCallback onTermsLinkTapped;
 
   const CreateAccountForm({
     super.key,
     required this.nameController,
-    required this.identifierController,
+    required this.phoneController,
+    required this.emailController,
     required this.passwordController,
     this.nameError,
-    this.identifierError,
+    this.phoneError,
+    this.emailError,
     this.passwordError,
     this.termsError,
     required this.obscurePassword,
     required this.agreeToTerms,
-    required this.onNameChanged,
-    required this.onIdentifierChanged,
-    required this.onPasswordChanged,
+    required this.onChanged,
     required this.onTogglePasswordVisibility,
     required this.onTermsChanged,
-    required this.onTermsTextTapped,
+    required this.onTermsLinkTapped,
   });
 
   @override
@@ -45,32 +52,39 @@ class CreateAccountForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Name Field
         AppTextField(
           key: const Key('name_field'),
           label: context.l10n.personalInfoName,
           hintText: context.l10n.personalInfoUsername,
           errorText: nameError,
           controller: nameController,
+          keyboardType: TextInputType.name,
           textInputAction: TextInputAction.next,
-          onChanged: onNameChanged,
+          onChanged: (_) => onChanged(),
         ),
         const SizedBox(height: 20),
-
-        // Email Address or Phone number Field
         AppTextField(
-          key: const Key('identifier_field'),
-          label: context.l10n.authEmailAddressOrPhoneNumber,
+          key: const Key('phone_field'),
+          label: context.l10n.authPhoneNumber,
+          hintText: context.l10n.authPhoneHint,
+          errorText: phoneError,
+          controller: phoneController,
+          keyboardType: TextInputType.phone,
+          textInputAction: TextInputAction.next,
+          onChanged: (_) => onChanged(),
+        ),
+        const SizedBox(height: 20),
+        AppTextField(
+          key: const Key('email_field'),
+          label: context.l10n.authEmailOptional,
           hintText: context.l10n.authExampleGmailCom,
-          errorText: identifierError,
-          controller: identifierController,
+          errorText: emailError,
+          controller: emailController,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
-          onChanged: onIdentifierChanged,
+          onChanged: (_) => onChanged(),
         ),
         const SizedBox(height: 20),
-
-        // Password Field
         AppTextField(
           key: const Key('password_field'),
           label: context.l10n.identityConfirmPassword,
@@ -79,7 +93,7 @@ class CreateAccountForm extends StatelessWidget {
           controller: passwordController,
           obscureText: obscurePassword,
           textInputAction: TextInputAction.done,
-          onChanged: onPasswordChanged,
+          onChanged: (_) => onChanged(),
           suffixIcon: IconButton(
             icon: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
@@ -97,69 +111,16 @@ class CreateAccountForm extends StatelessWidget {
             onPressed: onTogglePasswordVisibility,
           ),
         ),
-        const SizedBox(height: 16),
-
-        // Terms of Service Checkbox
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: Checkbox(
-                value: agreeToTerms,
-                activeColor: context.colors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                side: BorderSide(
-                  color: termsError != null
-                      ? const Color(0xFFDC2626)
-                      : context.colors.iconSubtle,
-                  width: 1.5,
-                ),
-                onChanged: onTermsChanged,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 2.0),
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: onTermsTextTapped,
-                      child: Text(
-                        context.l10n.authByContinuingYouAgreeToOut,
-                        style: GoogleFonts.inter(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w400,
-                          color: context.colors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: onTermsTextTapped,
-                      child: Text(
-                        context.l10n.authTermsOfServices,
-                        style: GoogleFonts.inter(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          color: context.colors.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        const SizedBox(height: 12),
+        _TermsAgreement(
+          agreed: agreeToTerms,
+          hasError: termsError != null,
+          onChanged: onTermsChanged,
+          onLinkTapped: onTermsLinkTapped,
         ),
-
         if (termsError != null)
           Padding(
-            padding: const EdgeInsets.only(top: 6.0, left: 4.0),
+            padding: const EdgeInsets.only(top: 2.0, left: 4.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -185,6 +146,81 @@ class CreateAccountForm extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// A large tick box: tapping anywhere on the row agrees (or un-agrees).
+/// Only the underlined words open the terms, for whoever wants to read them.
+class _TermsAgreement extends StatelessWidget {
+  final bool agreed;
+  final bool hasError;
+  final ValueChanged<bool> onChanged;
+  final VoidCallback onLinkTapped;
+
+  const _TermsAgreement({
+    required this.agreed,
+    required this.hasError,
+    required this.onChanged,
+    required this.onLinkTapped,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = GoogleFonts.inter(
+      fontSize: 15,
+      color: context.colors.textSecondary,
+    );
+    return InkWell(
+      key: const Key('terms_agreement'),
+      onTap: () => onChanged(!agreed),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        child: Row(
+          children: [
+            Transform.scale(
+              scale: 1.3,
+              child: Checkbox(
+                value: agreed,
+                activeColor: context.colors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                side: BorderSide(
+                  color: hasError
+                      ? const Color(0xFFDC2626)
+                      : context.colors.iconSubtle,
+                  width: 1.5,
+                ),
+                onChanged: (value) => onChanged(value ?? false),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(context.l10n.authAgreeToTermsPrefix, style: textStyle),
+                  GestureDetector(
+                    key: const Key('terms_link'),
+                    onTap: onLinkTapped,
+                    child: Text(
+                      context.l10n.authTermsOfServices,
+                      style: textStyle.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.primary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: context.colors.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

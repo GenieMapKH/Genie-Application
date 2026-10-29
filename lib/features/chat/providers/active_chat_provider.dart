@@ -1,27 +1,34 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/data/chat_attachment_service.dart';
-import 'package:genie/features/chat/data/chat_repository.dart';
-import 'package:genie/features/chat/data/chat_socket_service.dart';
-import 'package:genie/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:genie/features/chat/e2ee/message_cipher.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/conversation_change.dart';
-import 'package:genie/features/chat/providers/active_chat_state.dart';
-import 'package:genie/features/chat/providers/chat_provider.dart';
-import 'package:genie/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
+import 'package:tilomnov/features/chat/data/chat_message_changes.dart';
+import 'package:tilomnov/features/chat/data/chat_repository.dart';
+import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
+import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/e2ee/message_reader.dart';
+import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/models/chat_message_action_problem.dart';
+import 'package:tilomnov/features/chat/models/chat_message_list.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/models/chat_voice.dart';
+import 'package:tilomnov/features/chat/models/conversation_change.dart';
+import 'package:tilomnov/features/chat/models/message_deletion.dart';
+import 'package:tilomnov/features/chat/providers/active_chat_state.dart';
+import 'package:tilomnov/features/chat/providers/chat_provider.dart';
+import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/shared/utils/random_uuid.dart';
+import 'package:tilomnov/features/chat/models/chat_listing.dart';
 
 export 'active_chat_state.dart';
 
 /// Loads, receives and sends the messages of one conversation.
 class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
-  static const undecryptableText =
-      'This message cannot be read on this device.';
+  static const undecryptableText = ChatMessage.undecryptableText;
 
   /// An unreadable live message triggers a key check at most this often.
   static const _keyCheckCooldown = Duration(seconds: 30);
@@ -34,9 +41,11 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   final MessageCipher cipher;
   final ChatAttachmentService attachments;
   final ConversationsNotifier conversations;
+  final ChatMessageReader _reader;
+  final ChatMessageChanges _changes;
 
-  /// Name and type of pictures still being sent, by message id.
-  final _outgoingFiles = <String, ({String name, String mimeType})>{};
+  /// Files (pictures, voice messages) still being sent, by message id.
+  final _outgoingFiles = <String, _OutgoingFile>{};
 
   final _subscriptions = <StreamSubscription<void>>[];
 
@@ -56,26 +65,25 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     required this.cipher,
     required this.attachments,
     required this.conversations,
-  }) : super(const ActiveChatState()) {
+  }) : _reader = ChatMessageReader(cipher),
+       _changes = ChatMessageChanges(cipher: cipher, repository: repository),
+       super(const ActiveChatState()) {
     _subscriptions
       ..add(socketService.onMessage.listen(_queueIncoming))
+      ..add(socketService.onMessageEdited.listen(_queueEdit))
+      ..add(socketService.onMessageDeleted.listen(_onMessageDeleted))
       ..add(socketService.onConnected.listen((_) => _reloadAfterReconnect()))
       ..add(socketService.onConversationChanged.listen(_onConversationChanged));
   }
 
   /// Makes encryption ready, then loads the conversation. [askPin] is used
-  /// only for an account with a backup PIN on a device without its keys.
-  /// [takeOver] is the user's answer to [E2eeSetupResult.usedOnAnotherDevice]
-  /// or [E2eeSetupResult.lockedWithEarlierPassword].
-  Future<void> open({required PinPrompt askPin, bool takeOver = false}) async {
+  /// only on a device without the account's keys: they come back with the
+  /// chat PIN.
+  Future<void> open({required PinPrompt askPin}) async {
     _keysReady = false;
     state = const ActiveChatState();
     try {
-      final result = await setupService.initialize(
-        userId,
-        askPin: askPin,
-        takeOver: takeOver,
-      );
+      final result = await setupService.initialize(userId, askPin: askPin);
       if (!mounted) return;
       if (result != E2eeSetupResult.ready) {
         state = ActiveChatState(
@@ -109,7 +117,8 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     }
   }
 
-  Future<void> sendMessage(String text) async {
+  /// Sends [text], as a reply to [replyTo] when given.
+  Future<void> sendMessage(String text, {ChatMessage? replyTo}) async {
     if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
 
     final message = ChatMessage(
@@ -119,6 +128,26 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       text: text,
       createdAt: DateTime.now(),
       status: ChatMessageStatus.sending,
+      replyToId: replyTo?.id,
+      replyTo: replyTo?.asReplyPreview,
+    );
+    state = state.copyWith(messages: [...state.messages, message]);
+    await _deliver(message);
+  }
+
+  /// Sends [listing] as a card. Its text says what it is, for an app that
+  /// cannot draw the card and for the notification.
+  Future<void> sendListing(ChatListing listing) async {
+    if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
+
+    final message = ChatMessage(
+      id: _newMessageId(),
+      senderId: userId,
+      recipientId: participantId,
+      text: listing.fallbackText,
+      createdAt: DateTime.now(),
+      status: ChatMessageStatus.sending,
+      listing: listing,
     );
     state = state.copyWith(messages: [...state.messages, message]);
     await _deliver(message);
@@ -131,6 +160,32 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     required String name,
     required String mimeType,
   }) async {
+    await _sendFile((
+      bytes: bytes,
+      name: name,
+      mimeType: mimeType,
+      voice: null,
+    ), localImage: bytes);
+  }
+
+  /// Sends a voice message recorded on this device, the same way as a
+  /// picture: shown at once, then encrypted, uploaded and announced.
+  Future<void> sendVoice(RecordedVoiceNote note) async {
+    await _sendFile((
+      bytes: note.bytes,
+      name: note.fileName,
+      mimeType: note.mimeType,
+      voice: note.details,
+    ), localVoice: note);
+  }
+
+  /// Shows a message carrying [file] at once (as its local copy), then
+  /// uploads the file and sends the message.
+  Future<void> _sendFile(
+    _OutgoingFile file, {
+    Uint8List? localImage,
+    RecordedVoiceNote? localVoice,
+  }) async {
     if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
 
     final message = ChatMessage(
@@ -140,9 +195,10 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       text: '',
       createdAt: DateTime.now(),
       status: ChatMessageStatus.sending,
-      localImage: bytes,
+      localImage: localImage,
+      localVoice: localVoice,
     );
-    _outgoingFiles[message.id] = (name: name, mimeType: mimeType);
+    _outgoingFiles[message.id] = file;
     state = state.copyWith(messages: [...state.messages, message]);
     await _deliver(message);
   }
@@ -175,9 +231,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     } catch (e, stackTrace) {
       AppLogger.error('Failed to accept the new key', e, stackTrace);
       if (!mounted) return;
-      state = state.copyWith(
-        sendError: 'Could not reach the server. Check your connection.',
-      );
+      state = state.copyWith(sendError: ChatSendProblem.noConnection);
     }
   }
 
@@ -189,44 +243,121 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
         id: message.id,
         peerId: participantId,
         attachment: message.attachment,
+        replyToId: message.replyToId,
+        listing: message.listing,
       );
       await socketService.send(
         id: message.id,
         recipientId: participantId,
         ciphertext: sealed.ciphertext,
         nonce: sealed.nonce,
+        replyToId: message.replyToId,
       );
       if (!mounted) return;
       _outgoingFiles.remove(message.id);
       _replace(message.copyWith(status: ChatMessageStatus.sent));
-      unawaited(conversations.refresh());
+      _showInConversationList(message, sealed);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to send message', e, stackTrace);
       if (!mounted) return;
       _replace(
         message.copyWith(status: ChatMessageStatus.failed),
         peerKeyChanged: e is PeerKeyChangedException ? true : null,
-        sendError: e is AppException
-            ? e.message
-            : 'Message not sent. Please try again.',
+        sendError: switch (e) {
+          ChatSendException(:final problem) => problem,
+          ChatEncryptionException(:final problem) => problem,
+          _ => ChatSendProblem.failed,
+        },
       );
     }
   }
 
-  /// Uploads the picture of a message that has one and is not stored yet.
-  /// A retry after a later failure does not upload it a second time.
-  Future<ChatMessage> _uploadPendingFile(ChatMessage message) async {
-    final bytes = message.localImage;
-    final file = _outgoingFiles[message.id];
-    if (message.attachment != null || bytes == null || file == null) {
-      return message;
+  /// Makes the message just sent the conversation's last one in the list,
+  /// unless a newer one is already stored there (sent or received since).
+  void _showInConversationList(
+    ChatMessage message,
+    ({String ciphertext, String nonce}) sealed,
+  ) {
+    final newestStored = state.messages.lastWhere(
+      (m) => m.status == ChatMessageStatus.sent,
+      orElse: () => message,
+    );
+    if (newestStored.id != message.id) return;
+    conversations.recordSent(
+      EncryptedMessage(
+        id: message.id,
+        senderId: userId,
+        recipientId: participantId,
+        ciphertext: sealed.ciphertext,
+        nonce: sealed.nonce,
+        createdAt: message.createdAt,
+      ),
+      preview: ChatConversation.previewOf(message.text, message.attachment),
+    );
+  }
+
+  /// Replaces the text of the user's own message, sealed again for the
+  /// other person. Null when done, otherwise why not. The conversation list
+  /// follows the server's `messageEdited` event, which every device of the
+  /// user receives.
+  Future<ChatMessageActionProblem?> editMessage(
+    String messageId,
+    String text,
+  ) async {
+    final message = _find(messageId);
+    if (message == null || !message.canBeEditedBy(userId, DateTime.now())) {
+      return ChatMessageActionProblem.editTooLate;
+    }
+    if (text == message.text) return null;
+
+    final result = await _changes.edit(message, text, peerId: participantId);
+    final editedAt = result.editedAt;
+    if (!mounted || editedAt == null) return result.problem;
+    state = state.copyWith(
+      messages: state.messages.withEdit(message.id, text, editedAt),
+    );
+    return null;
+  }
+
+  /// Deletes a message for this user, or with [forEveryone] (their own
+  /// message) for both people. Nothing is left in its place. A message that
+  /// was never sent is only taken off this screen. The conversation list
+  /// follows the server's `messageDeleted` event, as for an edit.
+  Future<ChatMessageActionProblem?> deleteMessage(
+    String messageId, {
+    required bool forEveryone,
+  }) async {
+    final message = _find(messageId);
+    if (message == null || message.status == ChatMessageStatus.sending) {
+      return null;
+    }
+    if (message.status == ChatMessageStatus.failed) {
+      _outgoingFiles.remove(messageId);
+      state = state.copyWith(messages: state.messages.without(messageId));
+      return null;
     }
 
+    final problem = await _changes.delete(
+      message,
+      forEveryone: forEveryone && message.senderId == userId,
+    );
+    if (problem != null || !mounted) return problem;
+    state = state.copyWith(messages: state.messages.without(messageId));
+    return null;
+  }
+
+  /// Uploads the file of a message that has one and is not stored yet.
+  /// A retry after a later failure does not upload it a second time.
+  Future<ChatMessage> _uploadPendingFile(ChatMessage message) async {
+    final file = _outgoingFiles[message.id];
+    if (message.attachment != null || file == null) return message;
+
     final attachment = await attachments.send(
-      bytes,
+      file.bytes,
       recipientId: participantId,
       name: file.name,
       mimeType: file.mimeType,
+      voice: file.voice,
     );
     final uploaded = message.copyWith(attachment: attachment);
     if (mounted) _replace(uploaded);
@@ -240,10 +371,9 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   Future<void> _receive(EncryptedMessage encrypted) async {
     if (!_keysReady || encrypted.peerOf(userId) != participantId) return;
     try {
-      final opened = await cipher.decrypt(encrypted);
+      final message = await _reader.read(encrypted);
       if (!mounted || !_keysReady) return;
 
-      final message = _toMessage(encrypted, opened);
       final known = state.messages.any((m) => m.id == message.id);
       if (known) {
         _replace(message, sendError: state.sendError);
@@ -257,10 +387,42 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
         unawaited(conversations.markAsRead(participantId));
       }
       // Unreadable may mean the other person now uses a different key.
-      if (opened == null) await _recheckPeerKeyAfterUnreadable();
+      if (!message.isReadable) await _recheckPeerKeyAfterUnreadable();
     } catch (e, stackTrace) {
       AppLogger.error('Failed to show an incoming message', e, stackTrace);
     }
+  }
+
+  /// Edits are handled in turn with new messages, so an edit never comes
+  /// before the message it changes.
+  void _queueEdit(EncryptedMessage encrypted) {
+    _incoming = _incoming.then((_) => _receiveEdit(encrypted));
+  }
+
+  Future<void> _receiveEdit(EncryptedMessage encrypted) async {
+    if (!_keysReady || encrypted.peerOf(userId) != participantId) return;
+    try {
+      final edited = await _reader.read(encrypted);
+      if (!mounted || _find(edited.id) == null) return;
+      state = state.copyWith(
+        messages: state.messages.withEdit(
+          edited.id,
+          edited.text,
+          edited.editedAt ?? DateTime.now(),
+        ),
+        sendError: state.sendError,
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to show an edited message', e, stackTrace);
+    }
+  }
+
+  void _onMessageDeleted(MessageDeletion deletion) {
+    if (deletion.participantId != participantId) return;
+    state = state.copyWith(
+      messages: state.messages.without(deletion.messageId),
+      sendError: state.sendError,
+    );
   }
 
   Future<void> _recheckPeerKeyAfterUnreadable() async {
@@ -318,7 +480,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     final encrypted = await repository.fetchMessages(participantId);
     final messages = <String, ChatMessage>{};
     for (final stored in encrypted) {
-      final message = _toMessage(stored, await cipher.decrypt(stored));
+      final message = await _reader.read(stored);
       // A message has one id inside its sealed text: a stored copy of an
       // old message cannot show up a second time.
       messages.putIfAbsent(message.id, () => message);
@@ -326,16 +488,8 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     return messages.values.toList();
   }
 
-  ChatMessage _toMessage(EncryptedMessage encrypted, OpenedMessage? opened) {
-    return ChatMessage(
-      id: opened?.id ?? encrypted.id,
-      senderId: encrypted.senderId,
-      recipientId: encrypted.recipientId,
-      text: opened?.text ?? undecryptableText,
-      createdAt: encrypted.createdAt,
-      attachment: opened?.attachment,
-    );
-  }
+  ChatMessage? _find(String messageId) =>
+      state.messages.where((m) => m.id == messageId).firstOrNull;
 
   /// The server's history, followed by what only this screen knows about:
   /// messages still sending or failed, and ones that arrived live meanwhile.
@@ -350,7 +504,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   void _replace(
     ChatMessage message, {
     bool? peerKeyChanged,
-    String? sendError,
+    ChatSendProblem? sendError,
   }) {
     state = state.copyWith(
       messages: [
@@ -371,16 +525,16 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   }
 }
 
-/// A random (version 4) UUID, which the server accepts as a message id.
-String _newMessageId() {
-  final random = Random.secure();
-  final bytes = List<int>.generate(16, (_) => random.nextInt(256));
-  bytes[6] = (bytes[6] & 0x0f) | 0x40;
-  bytes[8] = (bytes[8] & 0x3f) | 0x80;
-  final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-  return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
-      '${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}';
-}
+/// A file waiting to be uploaded with its message.
+typedef _OutgoingFile = ({
+  Uint8List bytes,
+  String name,
+  String mimeType,
+  ChatVoiceDetails? voice,
+});
+
+/// The id of a new message: the server stores one id once.
+String _newMessageId() => randomUuid();
 
 /// One notifier per open conversation, disposed when its screen closes.
 final activeChatProvider = StateNotifierProvider.autoDispose

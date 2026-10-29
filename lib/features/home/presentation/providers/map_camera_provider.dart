@@ -6,7 +6,18 @@ class MapCamera {
   final LatLng center;
   final double zoom;
 
-  const MapCamera({required this.center, required this.zoom});
+  /// Rotation and tilt, in degrees; both 0 for a flat, north-up map.
+  final double bearing;
+  final double tilt;
+
+  const MapCamera({
+    required this.center,
+    required this.zoom,
+    this.bearing = 0,
+    this.tilt = 0,
+  });
+
+  bool get isFlatNorthUp => bearing == 0 && tilt == 0;
 }
 
 /// Live camera position of the main map.

@@ -36,6 +36,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are offline. Connect to the internet for updates.';
 
   @override
+  String get offlineDialogTitle => 'No internet connection';
+
+  @override
+  String get offlineDialogMessage =>
+      'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.';
+
+  @override
+  String get offlineKeepBrowsing => 'Keep browsing';
+
+  @override
   String get navExplore => 'Explore';
 
   @override
@@ -46,6 +56,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navMyProperties => 'My Properties';
+
+  @override
+  String get navListings => 'Listings';
 
   @override
   String get navUser => 'User';
@@ -127,6 +140,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageTitle => 'Language';
 
   @override
+  String get glassNavigationTitle => 'Glass navigation';
+
+  @override
+  String get glassNavigationSubtitle => 'Match your phone\'s see-through bars';
+
+  @override
   String get personalInfoTitle => 'Personal information';
 
   @override
@@ -190,7 +209,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personalInfoPhoneInvalid =>
-      'Enter a phone number of at most 20 characters.';
+      'Enter a valid phone number, for example 012 345 678.';
 
   @override
   String get personalInfoEmail => 'Email';
@@ -216,7 +235,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securitySectionAccount => 'Account';
 
   @override
-  String get securityChangePin => 'Change backup PIN';
+  String get securityChangePin => 'Change chat PIN';
 
   @override
   String get securityResetKeys => 'Reset encryption keys';
@@ -263,14 +282,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'This PIN will protect your new keys. You need it to read your chats on another device.';
 
   @override
-  String get pinChanged => 'Backup PIN changed.';
+  String get pinChanged => 'Chat PIN changed.';
 
   @override
-  String get pinNoBackup => 'You have no backup PIN.';
+  String get pinNoBackup => 'You have no chat PIN yet.';
 
   @override
   String get pinLocked =>
-      'Too many wrong PINs. The backup is locked; try again later.';
+      'Too many wrong PINs. Your PIN is locked for a while; try again later.';
 
   @override
   String get pinFetchFailed =>
@@ -278,7 +297,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinWrong =>
-      'Incorrect PIN. After 5 wrong tries the backup locks for a while.';
+      'Incorrect PIN. After 5 wrong tries your PIN locks for a while.';
 
   @override
   String get pinSaveFailed =>
@@ -289,7 +308,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetKeysConfirmMessage =>
-      'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nIf you have a backup PIN, you will be asked for it first.';
+      'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current chat PIN first.';
 
   @override
   String get resetKeysConfirmAction => 'Reset keys';
@@ -585,14 +604,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authContinueWithGoogle => 'Continue with Google';
 
   @override
-  String get authByContinuingYouAgreeToOut =>
-      'By continuing, you agree to out ';
-
-  @override
-  String get authTermsOfServices => 'terms of services.';
-
-  @override
-  String get authEmailAddressOrPhoneNumber => 'Email Address or Phone number';
+  String get authTermsOfServices => 'terms of service';
 
   @override
   String get authForgetPassword => 'Forget Password?';
@@ -610,15 +622,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatTryAgain => 'Try again';
 
   @override
-  String get resetKeysPasswordHelp =>
-      'Your new chat keys will be locked with your account password.';
-
-  @override
   String get chatPasswordTitle => 'Enter your account password';
-
-  @override
-  String get chatPasswordHelp =>
-      'Your chats are locked with your account password. Enter it to read and send messages on this device.';
 
   @override
   String get chatPasswordLabel => 'Account password';
@@ -629,21 +633,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get chatPasswordTooManyTries =>
       'Too many tries. Wait a few minutes and try again.';
-
-  @override
-  String get chatPasswordChangedElsewhere =>
-      'Your chats are locked with an earlier password. Sign in once on a phone you used before to keep your earlier messages, or use chat here now: earlier messages cannot be read on this phone.';
-
-  @override
-  String get chatPinLastTimeTitle => 'Enter your chat PIN one last time';
-
-  @override
-  String get chatPinLastTimeHelp =>
-      'From now on your account password protects your chats, so you will not need this PIN again.';
-
-  @override
-  String get securityChatsUsePassword =>
-      'Your chats are always end-to-end encrypted and locked with your account password, so signing in on any device brings them back. No PIN is needed.';
 
   @override
   String get chatMoreOptions => 'More options';
@@ -835,6 +824,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyMapPreview => 'Map Preview';
 
   @override
+  String get propertyViewOnMap => 'View on map';
+
+  @override
   String get propertyAddProperty => 'Add Property';
 
   @override
@@ -919,6 +911,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyCallNow => 'Call Now';
 
   @override
+  String get propertyNoPhoneNumber =>
+      'No phone number was shared for this listing. Try chatting with the owner instead.';
+
+  @override
+  String get propertyCallFailed => 'The phone app could not be opened.';
+
+  @override
+  String get profileSignInForContact => 'Sign in to see their phone and email.';
+
+  @override
   String get propertyCannotChatOwnerInformationMissing =>
       'Cannot chat: owner information missing.';
 
@@ -932,13 +934,86 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyPropertyHighlights => 'Property Highlights';
 
   @override
-  String get propertyGenie => 'Tilomnov';
+  String get propertyTilomnov => 'Tilomnov';
 
   @override
   String get propertyViews => 'Views';
 
   @override
   String get propertySaves => 'Saves';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsLoadFailed =>
+      'Couldn\'t load the insights. Check your connection.';
+
+  @override
+  String get insightsTotalViews => 'People viewed';
+
+  @override
+  String get insightsTotalSaves => 'Saved it';
+
+  @override
+  String get insightsTotalCalls => 'Tapped Call';
+
+  @override
+  String get insightsTotalChats => 'Started a chat';
+
+  @override
+  String get insightsLast14Days => 'Last 14 days';
+
+  @override
+  String get insightsMeasureViews => 'Viewers';
+
+  @override
+  String get insightsMeasureSaves => 'Saves';
+
+  @override
+  String get insightsMeasureLeads => 'Leads';
+
+  @override
+  String insightsViewers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new viewers',
+      one: '1 new viewer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsSaves(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new saves',
+      one: '1 new save',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsLeads(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new leads',
+      one: '1 new lead',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insightsThisWeek(String thisWeek, int lastWeek) {
+    return 'This week: $thisWeek. The week before: $lastWeek.';
+  }
+
+  @override
+  String get insightsEmptyHint =>
+      'Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.';
 
   @override
   String get propertyShareThisProperty => 'Share This Property';
@@ -952,6 +1027,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertyDownload => 'Download';
+
+  @override
+  String get propertyShareSheetTitle => 'Share this listing';
+
+  @override
+  String get propertyShareScanToView => 'Scan to view this listing';
+
+  @override
+  String get propertyShareCopyLink => 'Copy link';
+
+  @override
+  String get propertyShareLinkCopied => 'Link copied';
+
+  @override
+  String get propertyShareSaveImage => 'Save image';
+
+  @override
+  String get propertyShareImageSaved => 'Saved to your photos';
+
+  @override
+  String get propertyShareImageSaveFailed => 'Couldn\'t save the image';
+
+  @override
+  String get propertySharePhotosDenied =>
+      'Allow Tilomnov to add photos in Settings to save the image.';
+
+  @override
+  String get propertyShareFailed => 'Couldn\'t share this listing';
+
+  @override
+  String get propertyShareMessageSeeOnMap =>
+      'See the photos and exact location on the map:';
+
+  @override
+  String get propertyShareMessageFooter =>
+      'Shared from Tilomnov, land and homes on the map.';
+
+  @override
+  String get propertyShareCaptionCopied =>
+      'Caption copied: paste it if the app leaves it out';
+
+  @override
+  String get propertyShareNotPublicDraft =>
+      'Only you can see this listing until it is published. Publish it to share its link and QR code.';
+
+  @override
+  String get propertyShareNotPublicPending =>
+      'This listing goes public once its payment is complete. You can share it then.';
+
+  @override
+  String get propertyShareNotPublicEnded =>
+      'This listing is no longer public, so its link and QR code cannot be shared.';
 
   @override
   String get propertyTitleType => 'Title Type';
@@ -1159,7 +1286,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionEnded => 'You were signed out of this device.';
 
   @override
-  String get securityForgotPin => 'Forgot backup PIN';
+  String get updateRequiredTitle => 'Update required';
+
+  @override
+  String get updateRequiredMessage =>
+      'This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.';
+
+  @override
+  String get securityForgotPin => 'Forgot chat PIN';
 
   @override
   String get securityCreatePassword => 'Create password';
@@ -1175,93 +1309,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createPasswordDone => 'Password created.';
 
   @override
-  String get forgotPinTitle => 'Forgot your backup PIN?';
+  String get forgotPinTitle => 'Forgot your chat PIN?';
 
   @override
   String get forgotPinKeepsHistory =>
-      'This device still has your chat keys, so nothing is lost. Create an account password: from then on it protects your chats instead of a PIN.';
+      'This phone still has your chat keys, so nothing is lost. Confirm it is you with your account password, then choose a new PIN.';
 
   @override
   String get forgotPinLosesHistory =>
-      'This device does not have your chat keys, and without the PIN they cannot be recovered. After you create an account password, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your devices can still open your chats, do this there instead to keep your history.';
+      'This phone does not have your chat keys, and without the PIN they cannot be recovered. After you confirm with your account password and choose a new PIN, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your phones can still open your chats, do this there instead to keep your history.';
 
   @override
   String get forgotPinNeedsPassword =>
-      'You sign in with Google, so create an account password. It protects your chats from now on, instead of a PIN.';
-
-  @override
-  String get forgotPinNowPassword =>
-      'Done. Your chats are now protected by your account password.';
+      'You sign in with Google, so create an account password first. It confirms it is you when you choose a new chat PIN.';
 
   @override
   String get pinForgotHint =>
-      'Forgot your PIN? Go to User > Security > Forgot backup PIN to choose a new one or turn it off.';
+      'Forgot your PIN? Go to User > Security > Forgot chat PIN.';
 
   @override
   String get chatPinNeeded =>
-      'Your chats are protected with a backup PIN. Enter it to read and send messages on this phone.';
+      'Enter your chat PIN to read and send messages on this phone.';
 
   @override
   String get chatOpenFailed =>
       'Could not open this chat. Check your connection.';
 
   @override
-  String get securitySetUpPin => 'Set up backup PIN';
-
-  @override
-  String get securityTurnOffPin => 'Turn off backup PIN';
-
-  @override
-  String get securityPinOptionalNote =>
-      'Your chats are always end-to-end encrypted. A backup PIN is optional: with one, you can read your earlier chats on a new phone, and nobody can replace your chat keys without it.';
-
-  @override
-  String get pinSetUpTitle => 'Create a backup PIN';
-
-  @override
   String get pinSetUpHelp =>
       'You will need this PIN to read your chats on a new phone. Choose one you will remember.';
 
   @override
-  String get pinSetUpDone => 'Backup PIN set.';
-
-  @override
-  String get pinAlreadySet => 'You already have a backup PIN.';
-
-  @override
-  String get pinKeysNotReady =>
-      'Open a chat on this phone first, then set up the PIN.';
-
-  @override
-  String get pinTurnOffConfirmTitle => 'Turn off backup PIN?';
-
-  @override
-  String get pinTurnOffConfirmMessage =>
-      'Your chats stay end-to-end encrypted. Without a PIN, a new phone cannot read your earlier messages.\n\nYou will be asked for your current PIN first.';
-
-  @override
-  String get pinTurnOffAction => 'Turn off';
-
-  @override
-  String get pinTurnedOff => 'Backup PIN turned off.';
-
-  @override
-  String get pinTurnOffFailed =>
-      'Could not turn off the PIN. Nothing was changed.';
-
-  @override
-  String get chatPinRestoreTitle => 'Enter your backup PIN';
+  String get chatPinRestoreTitle => 'Enter your chat PIN';
 
   @override
   String get chatPinRestoreHelp =>
-      'You protected your chats with a backup PIN. Enter it to read them on this phone.';
-
-  @override
-  String get chatUsedOnAnotherDevice =>
-      'Your chat is now set up on another device. Use it on this phone instead? Earlier messages cannot be read here, and the other device will need to switch back the same way.\n\nTo use chat on several devices, set up a backup PIN in User > Security.';
-
-  @override
-  String get chatUseOnThisDevice => 'Use chat on this phone';
+      'Your chats are protected by your 6-digit chat PIN. Enter it to read them on this phone.';
 
   @override
   String get devicesImmediateNote =>
@@ -1457,6 +1540,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileFollow => 'Follow';
 
   @override
+  String get profileFollowing => 'Following';
+
+  @override
+  String get profileFollowersStat => 'Followers';
+
+  @override
+  String get profileFollowingStat => 'Following';
+
+  @override
+  String profileFollowLimit(int count) {
+    return 'You can follow up to $count people. Unfollow someone to follow more.';
+  }
+
+  @override
+  String get profileFollowFailed =>
+      'Following could not be changed. Please try again.';
+
+  @override
+  String get navFeed => 'Feed';
+
+  @override
+  String get feedTitle => 'Feed';
+
+  @override
+  String get feedEmptyTitle => 'Your feed is empty';
+
+  @override
+  String get feedEmptyHint =>
+      'Follow people from their profile to see their new listings here.';
+
+  @override
+  String get feedExplore => 'Explore listings';
+
+  @override
+  String get feedLoadFailed => 'Your feed could not be loaded.';
+
+  @override
+  String feedListedOn(String date) {
+    return 'Listed $date';
+  }
+
+  @override
   String get profileContactTitle => 'Contact';
 
   @override
@@ -1553,17 +1678,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String propertyDriveMinutes(int minutes) {
-    return '$minutes min drive';
-  }
-
-  @override
   String propertyStraightLine(String distance) {
     return '$distance straight line';
   }
 
   @override
   String get propertyNearbyCouldNotLoad => 'Couldn\'t load nearby places.';
+
+  @override
+  String get propertyNearbyRouteCouldNotLoad =>
+      'Couldn\'t load the road to this place.';
 
   @override
   String get propertyDiscount => 'Discount (optional)';
@@ -1619,4 +1743,1482 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get propertyDrawBoundaryFirst =>
       'Draw the property on the map first to measure it.';
+
+  @override
+  String get forgotPinPasswordHelp =>
+      'Enter your account password to confirm it is you. Then choose a new chat PIN.';
+
+  @override
+  String get forgotPinRecovered =>
+      'Done. Your new chat PIN protects your chats.';
+
+  @override
+  String get securityPinRequiredNote =>
+      'Your chats are always end-to-end encrypted and protected by your 6-digit chat PIN. You need it to read your chats on a new phone.';
+
+  @override
+  String get pinUnlock => 'Unlock';
+
+  @override
+  String get pinChecking => 'Checking your PIN...';
+
+  @override
+  String pinWrongTriesLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Incorrect PIN. $count tries left.',
+      one: 'Incorrect PIN. 1 try left before your PIN locks for a while.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pinWrongNoCount => 'Incorrect PIN. Please try again.';
+
+  @override
+  String pinLockedFor(String time) {
+    return 'Too many wrong PINs. Try again in $time.';
+  }
+
+  @override
+  String get pinLockedLater => 'Too many wrong PINs. Please try again later.';
+
+  @override
+  String get pinCheckFailed =>
+      'Could not check your PIN. Check your connection and try again.';
+
+  @override
+  String get chatPinSaving => 'Saving your PIN...';
+
+  @override
+  String get chatPasswordChecking => 'Checking your password...';
+
+  @override
+  String get chatPinSetupSignOut => 'Sign out';
+
+  @override
+  String get chatPinCreateTitle => 'Create your chat PIN';
+
+  @override
+  String get chatPinCreateHelp =>
+      'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.';
+
+  @override
+  String get chatPinConfirmTitle => 'Confirm your chat PIN';
+
+  @override
+  String get chatPinConfirmHelp => 'Type the same 6 digits again.';
+
+  @override
+  String get chatPinMismatch =>
+      'The PINs did not match. Choose your PIN again.';
+
+  @override
+  String get chatPinSaveFailed =>
+      'Could not save your PIN. Check your connection and try again.';
+
+  @override
+  String get chatPinChooseAnother => 'Choose a different PIN';
+
+  @override
+  String get chatPinMoveTitle => 'Protect your chats with a PIN';
+
+  @override
+  String get chatPinMoveHelp =>
+      'Your chats are now protected by a 6-digit chat PIN instead of your account password. Enter your account password once, then choose your PIN.';
+
+  @override
+  String get chatPinStartOverLink => 'Can\'t unlock? Start over';
+
+  @override
+  String get chatPinStartOverTitle => 'Start over with new chat keys?';
+
+  @override
+  String get chatPinStartOverMessage =>
+      'If your password was reset, your old chats cannot be unlocked. Starting over keeps your account, but your earlier messages can no longer be read. This cannot be undone.';
+
+  @override
+  String get chatPinStartOverAction => 'Start over';
+
+  @override
+  String get chatPinRequiredMessage =>
+      'Your messages are end-to-end encrypted. Create a 6-digit chat PIN to protect them before you start chatting.';
+
+  @override
+  String get chatPinCreateAction => 'Create PIN';
+
+  @override
+  String get chatLockedTitle => 'Chats are locked on this phone';
+
+  @override
+  String get chatEnterPinAction => 'Enter PIN';
+
+  @override
+  String get chatPinLockedTitle => 'Too many wrong PINs';
+
+  @override
+  String get chatPinLockedMessage =>
+      'For your security, entering your chat PIN is paused for a while. Please try again later.';
+
+  @override
+  String get authErrEnterName => 'Please enter your name';
+
+  @override
+  String get authErrEnterPassword => 'Enter a valid password';
+
+  @override
+  String get authErrPasswordMin8 => 'Password must be at least 8 characters';
+
+  @override
+  String get authErrAgreeTerms =>
+      'Please agree to the terms of services to continue.';
+
+  @override
+  String get authErrEnterEmail => 'Please enter a valid email address';
+
+  @override
+  String get authErrEnterNewPassword => 'Please enter a new password';
+
+  @override
+  String get authErrReEnterPassword => 'Please re-enter your password';
+
+  @override
+  String get authErrPasswordsDontMatch => 'Passwords do not match';
+
+  @override
+  String get termsTitle => 'Terms of Service for Tilomnov';
+
+  @override
+  String get termsLastUpdated => 'Last updated: 14 February 2026';
+
+  @override
+  String get termsWelcome =>
+      'Welcome to Tilomnov. By accessing or using the Tilomnov application and services, you agree to comply with and be bound by the following Terms of Service.';
+
+  @override
+  String get termsDisagree =>
+      'If you do not agree with these terms, please do not use the application.';
+
+  @override
+  String get termsAboutTitle => '1. About Tilomnov';
+
+  @override
+  String get termsAboutIntro =>
+      'Tilomnov is a map-based property platform that allows users to:';
+
+  @override
+  String get termsAboutView =>
+      'View property listings with accurate map locations and boundaries';
+
+  @override
+  String get termsAboutManage => 'Add, manage, and share property information';
+
+  @override
+  String get termsAboutConnect =>
+      'Connect buyers, sellers, agents, and developers';
+
+  @override
+  String get termsAboutTools =>
+      'Use coordinate tools such as UTM input and map measurement';
+
+  @override
+  String get termsAboutPlatformOnly =>
+      'Tilomnov acts only as a platform and does not own, sell, or broker any property.';
+
+  @override
+  String get termsAccountsTitle => '2. User Accounts';
+
+  @override
+  String get termsAccountsIntro =>
+      'To use certain features, users must register using a valid phone number or email address.\nYou agree that:';
+
+  @override
+  String get termsAccountsAccurate => 'The information you provide is accurate';
+
+  @override
+  String get termsAccountsConfidential =>
+      'You are responsible for maintaining the confidentiality of your account';
+
+  @override
+  String get termsAccountsNoImpersonation =>
+      'You will not impersonate another person';
+
+  @override
+  String get termsAccountsSuspend =>
+      'Tilomnov reserves the right to suspend accounts that provide false information.';
+
+  @override
+  String get termsListingsTitle => '3. Property Listings';
+
+  @override
+  String get termsListingsIntro =>
+      'Users who post properties (owners, agents, developers) agree that:';
+
+  @override
+  String get termsListingsTruthful =>
+      'All information, boundaries, prices, and details are truthful';
+
+  @override
+  String get termsListingsRight =>
+      'You have the legal right to share and advertise the property';
+
+  @override
+  String get termsListingsCoordinates =>
+      'The map boundary or UTM coordinates you provide are accurate to the best of your knowledge';
+
+  @override
+  String get termsListingsNotResponsible =>
+      'Tilomnov is not responsible for incorrect property data submitted by users.';
+
+  @override
+  String get termsMapTitle => '4. Map and Coordinate Accuracy';
+
+  @override
+  String get termsMapIntro =>
+      'Tilomnov provides tools for map visualization, UTM conversion, and distance measurement.';
+
+  @override
+  String get termsMapGuidanceOnly =>
+      'Map boundaries are for visual guidance only and do not replace official cadastral surveys or land titles.';
+
+  @override
+  String get termsMapVerify =>
+      'Users should verify all land borders and titles with relevant authorities before financial transactions.';
+
+  @override
+  String get termsAgree => 'Agree terms of services';
+
+  @override
+  String get authErrEnterValidEmail => 'Enter a valid email address';
+
+  @override
+  String get authErrEnterValidPhone => 'Enter a valid phone number';
+
+  @override
+  String get authErrPasswordMin6 => 'Password must be at least 6 characters';
+
+  @override
+  String get authErrorWrongCredentials =>
+      'Incorrect email, phone number or password.';
+
+  @override
+  String get authErrorAccountExists =>
+      'An account with this email or phone number already exists.';
+
+  @override
+  String get authErrorCheckDetails =>
+      'Please check what you entered and try again.';
+
+  @override
+  String get authErrorInvalidCode => 'The code is wrong or has expired.';
+
+  @override
+  String get authErrorTooManyTries =>
+      'Too many tries. Please wait a few minutes and try again.';
+
+  @override
+  String get authErrorNoConnection =>
+      'Could not reach the server. Check your connection.';
+
+  @override
+  String get authErrorServer =>
+      'Something went wrong on our side. Please try again later.';
+
+  @override
+  String get authErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String authResendOtpIn(int seconds) {
+    return 'Resend OTP in ${seconds}s';
+  }
+
+  @override
+  String get chatPhotoUnavailable => 'Photo unavailable. Tap to retry.';
+
+  @override
+  String get chatPictureCannotBeShown => 'This picture cannot be shown.';
+
+  @override
+  String get chatMessageNotSent => 'Not sent. Tap to retry.';
+
+  @override
+  String get chatMessageSending => 'Sending…';
+
+  @override
+  String get chatMessageSent => 'Sent';
+
+  @override
+  String chatMessageTimeYesterday(String time) {
+    return 'Yesterday $time';
+  }
+
+  @override
+  String get chatDeliveredJustNow => 'Delivered just now';
+
+  @override
+  String chatDeliveredMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes ago',
+      one: '1 minute ago',
+    );
+    return 'Delivered $_temp0';
+  }
+
+  @override
+  String chatDeliveredHours(int hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours hours ago',
+      one: '1 hour ago',
+    );
+    return 'Delivered $_temp0';
+  }
+
+  @override
+  String chatDeliveredOn(String day) {
+    return 'Delivered $day';
+  }
+
+  @override
+  String get chatAttachPicture => 'Attach a picture';
+
+  @override
+  String get chatShowEmojis => 'Emoji';
+
+  @override
+  String get chatShowKeyboard => 'Keyboard';
+
+  @override
+  String get chatSendMessage => 'Send message';
+
+  @override
+  String get chatReply => 'Reply';
+
+  @override
+  String get chatCopy => 'Copy';
+
+  @override
+  String get chatEdit => 'Edit';
+
+  @override
+  String get chatCopied => 'Copied';
+
+  @override
+  String get chatYou => 'You';
+
+  @override
+  String chatReplyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get chatEditingMessage => 'Editing message';
+
+  @override
+  String get chatEdited => 'Edited';
+
+  @override
+  String get chatAskAboutListing => 'Asking about this listing?';
+
+  @override
+  String get chatSendListing => 'Send';
+
+  @override
+  String get chatDismissListing => 'Not now';
+
+  @override
+  String get chatViewListing => 'View listing';
+
+  @override
+  String get chatListingUnavailable => 'This listing is no longer available.';
+
+  @override
+  String get chatDeleteMessageQuestion => 'Delete this message?';
+
+  @override
+  String get chatDeleteMessageForEveryone => 'Delete for everyone';
+
+  @override
+  String get chatDeleteMessageForMe => 'Delete for me';
+
+  @override
+  String chatDeleteOwnMessageExplained(String name) {
+    return 'For everyone: it is removed for you and $name, with nothing left in its place. For me: only you stop seeing it.';
+  }
+
+  @override
+  String chatDeleteMessageForMeExplained(String name) {
+    return 'It is removed for you only. $name still sees it.';
+  }
+
+  @override
+  String get chatEditTooLate =>
+      'A message can only be edited within an hour of sending it.';
+
+  @override
+  String get chatPresenceOnline => 'Online';
+
+  @override
+  String get chatLastSeenJustNow => 'Last seen just now';
+
+  @override
+  String chatLastSeenMinutes(int minutes) {
+    return 'Last seen $minutes min ago';
+  }
+
+  @override
+  String chatLastSeenToday(String time) {
+    return 'Last seen today at $time';
+  }
+
+  @override
+  String chatLastSeenYesterday(String time) {
+    return 'Last seen yesterday at $time';
+  }
+
+  @override
+  String chatLastSeenOn(String date) {
+    return 'Last seen $date';
+  }
+
+  @override
+  String chatKeyChangedTitle(String name) {
+    return '$name\'s security key has changed';
+  }
+
+  @override
+  String get chatEmojiSmileys => 'Smileys';
+
+  @override
+  String get chatEmojiGestures => 'Gestures';
+
+  @override
+  String get chatEmojiHearts => 'Hearts';
+
+  @override
+  String get chatEmojiPlaces => 'Places';
+
+  @override
+  String get chatPreviewEncrypted => 'Encrypted message';
+
+  @override
+  String get chatPreviewPhoto => 'Photo';
+
+  @override
+  String get chatUndecryptable => 'This message cannot be read on this device.';
+
+  @override
+  String get ownerFallbackName => 'Property Owner';
+
+  @override
+  String get chatSendSignedOut => 'You are signed out.';
+
+  @override
+  String get chatSendNoConnection =>
+      'Could not reach the server. Check your connection.';
+
+  @override
+  String get chatSendRejected =>
+      'The server did not accept this message. Please try again.';
+
+  @override
+  String get chatSendTooFast =>
+      'You are sending messages too quickly. Wait a moment.';
+
+  @override
+  String get chatSendPinRequired =>
+      'Create your chat PIN before sending messages.';
+
+  @override
+  String get chatSendBlocked => 'You can\'t message this person.';
+
+  @override
+  String chatYouBlocked(String name) {
+    return 'You blocked $name. They can\'t message or call you.';
+  }
+
+  @override
+  String get chatCannotReply => 'You can\'t reply to this conversation.';
+
+  @override
+  String get safetyMore => 'More';
+
+  @override
+  String get blockAction => 'Block';
+
+  @override
+  String get unblockAction => 'Unblock';
+
+  @override
+  String blockConfirmTitle(String name) {
+    return 'Block $name?';
+  }
+
+  @override
+  String get blockConfirmMessage =>
+      'They won\'t be able to message or call you, and you\'ll stop following each other. They won\'t be told.';
+
+  @override
+  String unblockConfirmTitle(String name) {
+    return 'Unblock $name?';
+  }
+
+  @override
+  String get unblockConfirmMessage =>
+      'You\'ll be able to message each other again. Follows removed by the block don\'t come back.';
+
+  @override
+  String blockDone(String name) {
+    return '$name is blocked.';
+  }
+
+  @override
+  String unblockDone(String name) {
+    return '$name is unblocked.';
+  }
+
+  @override
+  String get blockFailed =>
+      'That didn\'t work. Check your connection and try again.';
+
+  @override
+  String get blockedAccountsTitle => 'Blocked accounts';
+
+  @override
+  String get blockedAccountsEmpty => 'You haven\'t blocked anyone.';
+
+  @override
+  String get blockedAccountsLoadFailed =>
+      'Couldn\'t load the accounts you blocked.';
+
+  @override
+  String get reportListingAction => 'Report listing';
+
+  @override
+  String get reportUserAction => 'Report account';
+
+  @override
+  String get reportListingTitle => 'Report this listing';
+
+  @override
+  String get reportUserTitle => 'Report this account';
+
+  @override
+  String get reportHelp =>
+      'Tell us what\'s wrong. The owner won\'t know who reported it.';
+
+  @override
+  String get reportReasonScam => 'Scam or fraud';
+
+  @override
+  String get reportReasonMisleading => 'Wrong price, photos or details';
+
+  @override
+  String get reportReasonUnavailable => 'Already sold or rented';
+
+  @override
+  String get reportReasonDuplicate => 'Posted more than once';
+
+  @override
+  String get reportReasonHarassment => 'Harassment or threats';
+
+  @override
+  String get reportReasonImpersonation => 'Pretending to be someone else';
+
+  @override
+  String get reportReasonInappropriate => 'Offensive or inappropriate';
+
+  @override
+  String get reportReasonSpam => 'Spam';
+
+  @override
+  String get reportReasonOther => 'Something else';
+
+  @override
+  String get reportDetailsHint => 'Anything else we should know (optional)';
+
+  @override
+  String get reportSend => 'Send report';
+
+  @override
+  String get reportSent => 'Thanks. We\'ll review your report.';
+
+  @override
+  String get reportTooMany => 'You\'ve sent a lot of reports. Try again later.';
+
+  @override
+  String get reportTargetGone => 'This has already been removed.';
+
+  @override
+  String get reportFailed =>
+      'The report wasn\'t sent. Check your connection and try again.';
+
+  @override
+  String get chatSendKeyChanged =>
+      'Their security key has changed. Accept the new key to continue.';
+
+  @override
+  String get chatSendNotSetUp => 'Secure chat is not set up on this device.';
+
+  @override
+  String get chatSendPeerNotReady =>
+      'This person has not set up secure chat yet. They can receive messages once they open the app again.';
+
+  @override
+  String chatSendFileTooLarge(int megabytes) {
+    return 'This file is too large (limit $megabytes MB).';
+  }
+
+  @override
+  String get chatSendUploadFailed =>
+      'Could not upload the file. Check your connection.';
+
+  @override
+  String get chatSendFailed => 'Message not sent. Please try again.';
+
+  @override
+  String get mapNewListing => 'New';
+
+  @override
+  String homeExtractedCoordinates(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Found $count coordinates.',
+      one: 'Found 1 coordinate.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeScanFailed => 'Could not read the document. Please try again.';
+
+  @override
+  String get homeInvalidUtm =>
+      'These UTM coordinates are not valid. Please check them.';
+
+  @override
+  String get homeScanProcessing => 'Processing...';
+
+  @override
+  String get homeScanFinished => 'Finished';
+
+  @override
+  String get homeLocationServicesOff =>
+      'Location services are disabled. Please enable them.';
+
+  @override
+  String get homeLocationDenied => 'Location permission was denied.';
+
+  @override
+  String get homeLocationDeniedForever =>
+      'Location permission is permanently denied. You can allow it in the phone\'s settings.';
+
+  @override
+  String get homeLocationFailed =>
+      'Could not get your location. Please try again.';
+
+  @override
+  String get propertyMaintenanceFeeHint => 'Monthly maintenance fee (USD)';
+
+  @override
+  String get propertyDuration => 'Duration';
+
+  @override
+  String get propertySelectUnit => 'Select unit';
+
+  @override
+  String get propertySizeTitle => 'Size';
+
+  @override
+  String get propertyLandSizeTitle => 'Land Size';
+
+  @override
+  String get propertySizeAreaHint => 'Size area (m²)';
+
+  @override
+  String get propertyEnterLandSize => 'Enter land size (m²)';
+
+  @override
+  String get propertyEnterBuildingSize => 'Enter building size';
+
+  @override
+  String get propertyEnterUnitSize => 'Enter unit size';
+
+  @override
+  String get propertyProjectNameInfo =>
+      'Official name of the development project';
+
+  @override
+  String get propertyProjectAreaInfo => 'Total land area of entire project';
+
+  @override
+  String get propertyStartingPriceInfo => 'Lowest available unit price';
+
+  @override
+  String get propertyMonthlyRentInfo => 'Lower rent = higher profit potential';
+
+  @override
+  String get propertyEquipmentInfo => 'Describe assets included in sale';
+
+  @override
+  String get propertySelectHint => 'Select';
+
+  @override
+  String get propertyPublishedTitle => 'Property Published\nSuccessfully!';
+
+  @override
+  String get propertyShowLess => 'Show less';
+
+  @override
+  String get propertyShowMore => 'Show more';
+
+  @override
+  String get propertyNoListingsYet => 'You haven\'t listed any\nproperty yet';
+
+  @override
+  String get propertyPublishedToast => 'Property published';
+
+  @override
+  String get propertyMovedToDraft => 'Property moved to draft';
+
+  @override
+  String get propertyPublish => 'Publish';
+
+  @override
+  String get propertyArchive => 'Archive';
+
+  @override
+  String get propertyArchivedPrivately =>
+      'Saved privately. Only you can see this listing.';
+
+  @override
+  String get propertySaveFailed =>
+      'Could not save the property. Please try again.';
+
+  @override
+  String get propertyUpdateFailed =>
+      'Could not update the property. Please try again.';
+
+  @override
+  String get propertyDeleteFailed =>
+      'Could not delete the property. Please try again.';
+
+  @override
+  String propertyListingBy(String name) {
+    return 'Listing by: $name';
+  }
+
+  @override
+  String propertyTabActive(int count) {
+    return 'Active ($count)';
+  }
+
+  @override
+  String propertyTabPending(int count) {
+    return 'Pending ($count)';
+  }
+
+  @override
+  String propertyTabDraft(int count) {
+    return 'Draft ($count)';
+  }
+
+  @override
+  String propertyTabSold(int count) {
+    return 'Sold ($count)';
+  }
+
+  @override
+  String get propertyContacts => 'Contacts';
+
+  @override
+  String propertySavedCount(int count) {
+    return '$count Saved';
+  }
+
+  @override
+  String propertySpecBeds(int count) {
+    return '$count bds';
+  }
+
+  @override
+  String propertySpecBaths(int count) {
+    return '$count ba';
+  }
+
+  @override
+  String propertyTypeForSale(String type) {
+    return '$type for sale';
+  }
+
+  @override
+  String propertyTypeForRent(String type) {
+    return '$type for rent';
+  }
+
+  @override
+  String propertyPriceFrom(String price) {
+    return 'From $price';
+  }
+
+  @override
+  String propertyBedroomCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Beds',
+      one: '1 Bed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String propertyBathroomCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Baths',
+      one: '1 Bath',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String propertyDaysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortPropertyForYou => 'Property for You';
+
+  @override
+  String get sortRecentlyPosted => 'Recently Posted';
+
+  @override
+  String get sortNewest => 'Newest';
+
+  @override
+  String get sortPriceHighToLow => 'Price: High to Low';
+
+  @override
+  String get sortPriceLowToHigh => 'Price: Low to High';
+
+  @override
+  String get listingTypeTitle => 'Listing Type';
+
+  @override
+  String get listingTypeSale => 'Sale';
+
+  @override
+  String get listingTypeRent => 'Rent';
+
+  @override
+  String get listingTypeToLet => 'To Let';
+
+  @override
+  String get propertyTypeLand => 'Land';
+
+  @override
+  String get propertyTypeHouse => 'House';
+
+  @override
+  String get propertyTypeBuilding => 'Building';
+
+  @override
+  String get propertyTypeCondo => 'Condo';
+
+  @override
+  String get propertyTypeBorey => 'Borey';
+
+  @override
+  String get propertyTypeBusiness => 'Business for Sale';
+
+  @override
+  String get propertyTypeBusinessShort => 'Business';
+
+  @override
+  String get propertyTypeWarehouse => 'Warehouse';
+
+  @override
+  String get propertyStatusActive => 'Active';
+
+  @override
+  String get propertyStatusPending => 'Pending';
+
+  @override
+  String get propertyStatusDraft => 'Draft';
+
+  @override
+  String get propertyStatusSold => 'Sold';
+
+  @override
+  String get propertyStatusExpired => 'Expired';
+
+  @override
+  String get propertyOptionHardTitle => 'Hard Title';
+
+  @override
+  String get propertyOptionSoftTitle => 'Soft Title';
+
+  @override
+  String get propertyOptionOther => 'Other';
+
+  @override
+  String get propertyOptionStudio => 'Studio';
+
+  @override
+  String get propertyOptionYes => 'Yes';
+
+  @override
+  String get propertyOptionNo => 'No';
+
+  @override
+  String get propertyOptionUnfurnished => 'Unfurnished';
+
+  @override
+  String get propertyOptionFullyFurnished => 'Fully Furnished';
+
+  @override
+  String get propertyOptionElectricalAppliances => 'Electrical appliances';
+
+  @override
+  String get propertyOptionCommercialBuilding => 'Commercial Building';
+
+  @override
+  String get propertyOptionOfficeBuilding => 'Office Building';
+
+  @override
+  String get propertyOptionMixedUse => 'Mixed-use';
+
+  @override
+  String get propertyOptionRetailBuilding => 'Retail Building';
+
+  @override
+  String get propertyOptionOffPlan => 'Off-plan';
+
+  @override
+  String get propertyOptionUnderConstruction => 'Under Construction';
+
+  @override
+  String get propertyOptionCompleted => 'Completed';
+
+  @override
+  String get propertyOptionCityView => 'City View';
+
+  @override
+  String get propertyOptionRiverView => 'River View';
+
+  @override
+  String get propertyOptionGardenView => 'Garden View';
+
+  @override
+  String get propertyOptionPoolView => 'Pool View';
+
+  @override
+  String get propertyOptionNoView => 'No View';
+
+  @override
+  String get propertyOptionCommercial => 'Commercial';
+
+  @override
+  String get propertyOptionLandSubdivision => 'Land Subdivision';
+
+  @override
+  String get propertyOptionPreLaunch => 'Pre-launch';
+
+  @override
+  String get propertyOptionCompleted50 => '50% Completed';
+
+  @override
+  String get propertyOptionCompleted80 => '80% Completed';
+
+  @override
+  String get propertyOptionMonths => 'Months';
+
+  @override
+  String get propertyOptionYears => 'Years';
+
+  @override
+  String get keywordRoadAccess => 'Road Access';
+
+  @override
+  String get keywordCornerLand => 'Corner Land';
+
+  @override
+  String get keywordNearMarket => 'Near Market';
+
+  @override
+  String get keywordNearSchool => 'Near School';
+
+  @override
+  String get keywordNearHospital => 'Near Hospital';
+
+  @override
+  String get keywordRiverLakeNearby => 'River / Lake Nearby';
+
+  @override
+  String get keywordElectricityReady => 'Electricity Ready';
+
+  @override
+  String get keywordWaterSupply => 'Water Supply';
+
+  @override
+  String get keywordResidentialArea => 'Residential Area';
+
+  @override
+  String get keywordCommercialArea => 'Commercial Area';
+
+  @override
+  String get chatPreviewVoice => 'Voice message';
+
+  @override
+  String get chatVoiceMessage => 'Voice message';
+
+  @override
+  String get chatRecordVoice => 'Record a voice message';
+
+  @override
+  String get chatRecordingVoice => 'Recording';
+
+  @override
+  String get chatSendVoice => 'Send voice message';
+
+  @override
+  String get chatDiscardVoice => 'Delete recording';
+
+  @override
+  String get chatSlideToCancel => 'Slide to cancel';
+
+  @override
+  String get chatCallOutgoing => 'Outgoing call';
+
+  @override
+  String get chatCallIncoming => 'Incoming call';
+
+  @override
+  String get chatCallLost => 'Call lost';
+
+  @override
+  String get chatCallNoAnswer => 'No answer';
+
+  @override
+  String get chatCallCancelled => 'Cancelled call';
+
+  @override
+  String get chatCallDeclined => 'Call declined';
+
+  @override
+  String get chatCallYouDeclined => 'You declined the call';
+
+  @override
+  String get chatCallMissed => 'Missed call';
+
+  @override
+  String get chatVoiceTooShort => 'Voice message too short.';
+
+  @override
+  String get chatVoiceRecordFailed => 'Could not record. Try again.';
+
+  @override
+  String get chatVoiceUnavailable => 'Voice message unavailable. Tap to retry.';
+
+  @override
+  String get chatPlayVoice => 'Play';
+
+  @override
+  String get chatPauseVoice => 'Pause';
+
+  @override
+  String get chatVoiceSpeed => 'Playback speed';
+
+  @override
+  String get microphoneDenied =>
+      'Allow microphone access to record your voice.';
+
+  @override
+  String get microphoneBlocked =>
+      'Microphone access is turned off. Turn it on in Settings.';
+
+  @override
+  String get openSystemSettings => 'Settings';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsChatTitle => 'Chat messages';
+
+  @override
+  String get notificationsChatHelp => 'When someone sends you a message.';
+
+  @override
+  String get notificationsPromotionsTitle => 'Offers and news';
+
+  @override
+  String get notificationsPromotionsHelp => 'Deals and updates from our team.';
+
+  @override
+  String get notificationsSavedSearchTitle => 'Saved search alerts';
+
+  @override
+  String get notificationsSavedSearchHelp =>
+      'New listings that match a search you saved.';
+
+  @override
+  String get notificationsFollowedTitle => 'People you follow';
+
+  @override
+  String get notificationsFollowedHelp =>
+      'When someone you follow posts a new listing.';
+
+  @override
+  String get notificationsSavedUpdatesTitle => 'Saved listings';
+
+  @override
+  String get notificationsSavedUpdatesHelp =>
+      'Price drops, and when a listing you saved is sold.';
+
+  @override
+  String get feedPriceDropped => 'Price dropped';
+
+  @override
+  String get savedSearchesTitle => 'Saved searches';
+
+  @override
+  String get savedSearchesEmpty =>
+      'No saved searches yet. Set a filter on the map and tap the bookmark to save it.';
+
+  @override
+  String get savedSearchesLoadFailed => 'Couldn\'t load your saved searches.';
+
+  @override
+  String get savedSearchSaveTitle => 'Save this search';
+
+  @override
+  String get savedSearchSaveHelp =>
+      'We\'ll tell you when a new listing in this map area matches your filter.';
+
+  @override
+  String get savedSearchName => 'Name';
+
+  @override
+  String get savedSearchSaved =>
+      'Search saved. We\'ll let you know about new listings.';
+
+  @override
+  String savedSearchLimit(int count) {
+    return 'You can save up to $count searches. Delete one first.';
+  }
+
+  @override
+  String get savedSearchFailed =>
+      'That didn\'t work. Check your connection and try again.';
+
+  @override
+  String get savedSearchNoArea =>
+      'The map is still loading. Try again in a moment.';
+
+  @override
+  String get savedSearchAnyListing => 'Any listing in this area';
+
+  @override
+  String savedSearchKeywords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count keywords',
+      one: '1 keyword',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get savedSearchAlerts => 'Alerts';
+
+  @override
+  String get savedSearchRename => 'Rename';
+
+  @override
+  String get savedSearchDelete => 'Delete';
+
+  @override
+  String get savedSearchDeleted => 'Saved search deleted.';
+
+  @override
+  String get notificationsAlwaysOn =>
+      'Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.';
+
+  @override
+  String get notificationsBlockedTitle => 'Notifications are off for this app';
+
+  @override
+  String get notificationsBlockedHelp =>
+      'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.';
+
+  @override
+  String get chatPreviewNewMessage => 'New message';
+
+  @override
+  String get notificationsShowTextTitle => 'Show message text';
+
+  @override
+  String get notificationsShowTextHelp =>
+      'Show what a message says in its notification. Anyone who can see your lock screen can read it.';
+
+  @override
+  String get notificationsLoadFailed =>
+      'Could not load your notification settings.';
+
+  @override
+  String get notificationsSaveFailed =>
+      'Could not save. Check your connection and try again.';
+
+  @override
+  String get callVoice => 'Voice call';
+
+  @override
+  String get callCalling => 'Calling…';
+
+  @override
+  String get callIncoming => 'Incoming voice call';
+
+  @override
+  String get callConnecting => 'Connecting…';
+
+  @override
+  String get callEnded => 'Call ended';
+
+  @override
+  String get callDeclined => 'Call declined';
+
+  @override
+  String get callNoAnswer => 'No answer';
+
+  @override
+  String get callBusy => 'On another call';
+
+  @override
+  String get callUnavailable => 'Can\'t be called right now';
+
+  @override
+  String get callMicrophoneNeeded =>
+      'Calls need the microphone. Allow it in Settings.';
+
+  @override
+  String get callConnectionLost => 'Connection lost';
+
+  @override
+  String get callFailed => 'Call failed';
+
+  @override
+  String get callAnsweredElsewhere => 'Answered on another device';
+
+  @override
+  String get callAccept => 'Accept';
+
+  @override
+  String get callDecline => 'Decline';
+
+  @override
+  String get callHangUp => 'End call';
+
+  @override
+  String get callMute => 'Mute';
+
+  @override
+  String get callUnmute => 'Unmute';
+
+  @override
+  String get callSpeaker => 'Speaker';
+
+  @override
+  String callIncomingFrom(String name) {
+    return '$name is calling';
+  }
+
+  @override
+  String callMissedFrom(String name) {
+    return 'Missed call from $name';
+  }
+
+  @override
+  String get filterTitle => 'Filters';
+
+  @override
+  String get filterForSale => 'For sale';
+
+  @override
+  String get filterForRent => 'For rent';
+
+  @override
+  String get filterPriceRange => 'Price range';
+
+  @override
+  String filterPriceLabel(String range) {
+    return 'Price: $range';
+  }
+
+  @override
+  String get filterPriceAny => 'Any';
+
+  @override
+  String filterPerMonth(String price) {
+    return '$price/month';
+  }
+
+  @override
+  String get filterMinPrice => 'Min Price';
+
+  @override
+  String get filterMaxPrice => 'Max Price';
+
+  @override
+  String get filterNoMin => 'No min';
+
+  @override
+  String get filterNoMax => 'No max';
+
+  @override
+  String get filterDownPayment => 'Down payment';
+
+  @override
+  String get filterNoDownPayment => 'No down payment';
+
+  @override
+  String get filterLandSize => 'Land size';
+
+  @override
+  String get filterPropertySize => 'Property size';
+
+  @override
+  String get filterMinArea => 'Min m²';
+
+  @override
+  String get filterMaxArea => 'Max m²';
+
+  @override
+  String get filterMinAboveMax => 'The minimum is above the maximum';
+
+  @override
+  String get filterPropertyType => 'Property Type';
+
+  @override
+  String get filterKeywords => 'Keywords / Features';
+
+  @override
+  String get filterReset => 'Reset';
+
+  @override
+  String get filterSeeResults => 'See results';
+
+  @override
+  String get propertyFactsTitle => 'Property Details';
+
+  @override
+  String get propertyFactsOverview => 'Overview';
+
+  @override
+  String get propertyFactsSize => 'Size';
+
+  @override
+  String get propertyFactsBuilding => 'Rooms & Building';
+
+  @override
+  String get propertyFactsProject => 'Project';
+
+  @override
+  String get propertyFactsCosts => 'Costs & Business';
+
+  @override
+  String get propertyFactsFeatures => 'Features';
+
+  @override
+  String get propertyFactPricePerSquareMetre => 'Price per m²';
+
+  @override
+  String propertyFactPerMonth(String amount) {
+    return '$amount / month';
+  }
+
+  @override
+  String propertyFactMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get propertyPublisherTitle => 'Listed by';
+
+  @override
+  String get propertyPublisherViewProfile => 'View Profile';
+
+  @override
+  String get authPhoneHint => '012 345 678';
+
+  @override
+  String get authEmailOptional => 'Email (optional)';
+
+  @override
+  String get authAgreeToTermsPrefix => 'I agree to the ';
+
+  @override
+  String get personalInfoAddEmail => 'Add email';
+
+  @override
+  String get addEmailTitle => 'Add email';
+
+  @override
+  String get addEmailIntro =>
+      'Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.';
+
+  @override
+  String get addEmailDone => 'Email added';
+
+  @override
+  String get addEmailTaken => 'This email is already used by another account.';
+
+  @override
+  String get closestTitleNearYou => 'Listings near you';
+
+  @override
+  String get closestTitleNearMap => 'Listings near the map centre';
+
+  @override
+  String get closestSubtitle => 'Nearest first, then further away';
+
+  @override
+  String closestAway(String distance) {
+    return '$distance away';
+  }
+
+  @override
+  String get closestEmptyTitle => 'No listings found';
+
+  @override
+  String get closestEmptyHint => 'Try clearing some filters.';
+
+  @override
+  String get closestLoadFailed => 'Listings could not be loaded.';
+
+  @override
+  String get closestRefresh => 'Measure from where I am now';
+
+  @override
+  String get closestShowList => 'Show listings near you';
 }

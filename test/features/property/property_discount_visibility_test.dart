@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/view_models/add_property_controller.dart';
-import 'package:genie/features/property/presentation/view_models/property_form_input.dart';
-import 'package:genie/features/property/presentation/view_models/property_visibility.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_summary.dart';
-import 'package:genie/l10n/generated/app_localizations.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_form_input.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_visibility.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
+import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 PropertyModel _listing({
   String? type,

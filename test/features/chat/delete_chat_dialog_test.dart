@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/presentation/widgets/delete_chat_dialog.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/delete_chat_dialog.dart';
 
 import '../../support/test_app.dart';
 
 void main() {
   /// Opens the dialog, lets [act] answer it, and returns its answer.
-  Future<bool?> answer(
-    WidgetTester tester,
-    Future<void> Function() act,
-  ) async {
+  Future<bool?> answer(WidgetTester tester, Future<void> Function() act) async {
     bool? result;
     var closed = false;
     await pumpTestApp(

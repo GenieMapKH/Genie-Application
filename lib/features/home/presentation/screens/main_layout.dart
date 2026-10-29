@@ -3,26 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_camera_provider.dart';
-import 'package:genie/features/home/presentation/providers/map_state_provider.dart';
-import 'package:genie/features/home/presentation/providers/property_carousel_provider.dart';
-import 'package:genie/features/home/presentation/widgets/main_map_view.dart';
-import 'package:genie/features/home/presentation/widgets/main_map_controls.dart';
-import 'package:genie/features/home/presentation/widgets/main_bottom_nav.dart';
-import 'package:genie/features/home/presentation/widgets/property_carousel.dart';
-import 'package:genie/features/home/presentation/widgets/main_layout_pages.dart';
-import 'package:genie/features/home/presentation/widgets/home_search_panel.dart';
-import 'package:genie/features/home/utils/map/map_camera_focus.dart';
-import 'package:genie/features/home/utils/map/map_overlay_builder.dart';
-import 'package:genie/features/home/utils/map/map_location_service.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/property/presentation/widgets/detail/property_detail_sheet.dart';
-import 'package:genie/features/search/presentation/search_layout.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/security/presentation/widgets/new_sign_in_alert.dart';
-import 'package:genie/shared/utils/app_popup.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/features/closest_listings/presentation/closest_sheet_layout.dart';
+import 'package:tilomnov/features/closest_listings/presentation/widgets/closest_listings_sheet.dart';
+import 'package:tilomnov/features/home/presentation/providers/glass_navigation_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_camera_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/drawing_controls_panel.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/main_map_view.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/main_map_controls.dart';
+import 'package:tilomnov/features/home/presentation/widgets/layout/glass_bottom_nav.dart';
+import 'package:tilomnov/features/home/presentation/widgets/layout/main_bottom_nav.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/property_carousel.dart';
+import 'package:tilomnov/features/home/presentation/widgets/layout/main_layout_pages.dart';
+import 'package:tilomnov/features/home/presentation/widgets/search/home_search_panel.dart';
+import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
+import 'package:tilomnov/features/home/utils/map/map_overlay_builder.dart';
+import 'package:tilomnov/features/home/utils/map/map_location_service.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
+import 'package:tilomnov/features/search/presentation/search_layout.dart';
+import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
+import 'package:tilomnov/features/search/data/models/saved_search.dart';
+import 'package:tilomnov/features/search/presentation/view_models/saved_searches_provider.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/security/presentation/widgets/new_sign_in_alert.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
   const MainLayout({super.key});
@@ -45,11 +54,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   Future<void> _checkAuthNavState() async {
     final token = await AuthStorage.getAccessToken();
     if ((token == null || token.isEmpty) && mounted) {
-      final currentIdx = ref.read(mainNavProvider).currentIndex;
-      if (currentIdx == 1 ||
-          currentIdx == 2 ||
-          currentIdx == 3 ||
-          currentIdx == 4) {
+      // Every tab but Explore shows the user's own data.
+      if (ref.read(mainNavProvider).currentIndex != MainTab.explore) {
         ref.read(mainNavProvider.notifier).resetToHome();
       }
     }
@@ -60,7 +66,13 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     if (!mounted) return;
 
     if (!result.isSuccess) {
-      AppPopup.showError(context, result.error!);
+      final l10n = context.l10n;
+      AppPopup.showError(context, switch (result.error!) {
+        LocationProblem.servicesOff => l10n.homeLocationServicesOff,
+        LocationProblem.denied => l10n.homeLocationDenied,
+        LocationProblem.deniedForever => l10n.homeLocationDeniedForever,
+        LocationProblem.failed => l10n.homeLocationFailed,
+      });
       return;
     }
 
@@ -70,12 +82,25 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     );
   }
 
+  /// Scanned corners: the whole boundary, in the map left visible above the
+  /// drawing buttons, close enough to drag its corners.
   Future<void> _animateToCoordinates(List<LatLng> coords) async {
     if (coords.isEmpty) return;
-    await MapLocationService.animateTo(
-      _mapControllerCompleter,
-      coords.first,
-      zoom: 21.5,
+    final size = MediaQuery.sizeOf(context);
+    final covered = EdgeInsets.only(
+      top: MediaQuery.paddingOf(context).top,
+      bottom: DrawingControlsPanel.coveredBottomOf(context) + _mapFrameOverflow,
+    );
+    final controller = await _mapControllerCompleter.future;
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        MapCameraFocus.frame(
+          MapCameraFocus.boundsOf(coords),
+          Size(size.width, size.height + _mapFrameOverflow),
+          covered,
+          maxZoom: 20,
+        ),
+      ),
     );
   }
 
@@ -109,19 +134,29 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   /// and the card underneath always describe the same property.
   void _openPropertyDetail(PropertyModel property) {
     ref.read(propertyCarouselProvider.notifier).select(property);
-    Navigator.of(context).push(
-      PropertyDetailSheet.route(
-        property,
-        onOpenProperty: (next) {
-          Navigator.of(context).pop();
-          _openPropertyDetail(next);
-        },
-      ),
+    Navigator.of(context).push(_detailRoute(property));
+  }
+
+  /// A recommendation was tapped: its sheet takes the place of this one, and
+  /// grows out of the tapped tile.
+  Route<void> _detailRoute(PropertyModel property, {Rect? origin}) {
+    return PropertyDetailSheet.route(
+      property,
+      origin: origin,
+      onOpenProperty: (next, tileRect) {
+        ref.read(propertyCarouselProvider.notifier).select(next);
+        Navigator.of(
+          context,
+        ).pushReplacement(_detailRoute(next, origin: tileRect));
+      },
     );
   }
 
   /// The map extends this far below the screen (see `MainMapView`).
   static const double _mapFrameOverflow = 40.0;
+
+  /// Space between the glass capsule and the list's resting handle above it.
+  static const double _glassHandleGap = 6.0;
 
   /// A new place or person was picked: make room for its panel, and frame its
   /// area on the map once it is known.
@@ -133,6 +168,27 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final bounds = next.area.valueOrNull?.framing;
     final justLoaded = previous?.area is! AsyncData || isNewTarget;
     if (bounds != null && justLoaded) _frameOnMap(bounds);
+  }
+
+  /// A saved search was opened: back to the map, showing its filter over
+  /// its area.
+  Future<void> _openSavedSearch(SavedSearch? search) async {
+    if (search == null) return;
+    ref.read(savedSearchToOpenProvider.notifier).state = null;
+    ref.read(searchAreaControllerProvider.notifier).clear();
+    ref.read(propertyCarouselProvider.notifier).clear();
+    ref.read(mapPropertyFilterProvider.notifier).state = search.filter;
+    ref.read(mainNavProvider.notifier).resetToHome();
+    final controller = await _mapControllerCompleter.future;
+    await controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(search.area.minLat, search.area.minLng),
+          northeast: LatLng(search.area.maxLat, search.area.maxLng),
+        ),
+        0,
+      ),
+    );
   }
 
   Future<void> _frameOnMap(LatLngBounds bounds) async {
@@ -157,7 +213,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   @override
   Widget build(BuildContext context) {
     final navState = ref.watch(mainNavProvider);
-    final isHome = navState.currentIndex == 0;
+    final isHome = navState.currentIndex == MainTab.explore;
     final isCardVisible = ref.watch(propertyCarouselProvider).isVisible;
     final hasSearch = ref.watch(
       searchAreaControllerProvider.select((state) => state != null),
@@ -166,20 +222,29 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       mapStateProvider.select((state) => state.isDrawing),
     );
     final showSearchPanel = hasSearch && isHome && !isCardVisible && !isDrawing;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final showClosestSheet =
+        isHome && !isCardVisible && !showSearchPanel && !isDrawing;
     final searchSheetHeight =
-        showSearchPanel &&
-            !SearchLayout.isWide(MediaQuery.sizeOf(context).width)
+        showSearchPanel && !SearchLayout.isWide(screenWidth)
         ? HomeSearchPanel.coveredInsets(context).bottom
+        // The pull-up list's handle rests under the buttons on phones.
+        : showClosestSheet && !ClosestSheetLayout.isDocked(screenWidth)
+        ? PropertyCarousel.bottomNavHeight + ClosestSheetLayout.peekHeight + 16
         : 0.0;
     ref.listen<SearchAreaState?>(
       searchAreaControllerProvider,
       _onSearchAreaChanged,
     );
-    final bool overlayPage =
-        navState.currentIndex == 1 ||
-        navState.currentIndex == 2 ||
-        navState.currentIndex == 3 ||
-        navState.currentIndex == 4;
+    ref.listen<SavedSearch?>(
+      savedSearchToOpenProvider,
+      (_, search) => _openSavedSearch(search),
+    );
+    final bool overlayPage = !isHome;
+    final glassNav = watchGlassNavigation(ref, context);
+    final closestSheetBottom = glassNav
+        ? GlassBottomNav.capsuleTopOf(context) + _glassHandleGap
+        : PropertyCarousel.bottomNavHeight;
 
     return PopScope(
       canPop: isHome && !isCardVisible && !hasSearch,
@@ -194,57 +259,88 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
           ref.read(mainNavProvider.notifier).resetToHome();
         }
       },
-      child: Scaffold(
-        extendBody: true,
-        body: Stack(
-          children: [
-            MainMapView(
-              mapControllerCompleter: _mapControllerCompleter,
-              bottomInset: isCardVisible ? PropertyCarousel.mapInset : 0,
-            ),
-            HomeSearchPanel(
-              aboveControls: false,
-              visible: showSearchPanel,
-              onOpenProperty: _openPropertyDetail,
-            ),
-            IgnorePointer(
-              ignoring: overlayPage,
-              child: MainMapControls(
-                onGoToCurrentPosition: _goToCurrentPosition,
-                onAnimateToCoordinates: _animateToCoordinates,
-                onAddPinToCenter: _addPinToCenter,
-                onSavePropertySuccess: () {
-                  ref.read(mainNavProvider.notifier).setIndex(3);
-                },
+      // The glass bar and the map's glass buttons share one read of the
+      // screen behind them instead of one each.
+      child: BackdropGroup(
+        child: Scaffold(
+          extendBody: true,
+          body: Stack(
+            children: [
+              MainMapView(
+                mapControllerCompleter: _mapControllerCompleter,
+                bottomInset: isCardVisible ? PropertyCarousel.mapInset : 0,
+              ),
+              HomeSearchPanel(
+                aboveControls: false,
+                visible: showSearchPanel,
                 onOpenProperty: _openPropertyDetail,
-                searchSheetHeight: searchSheetHeight,
               ),
-            ),
-
-            // Property card carousel, sitting directly on the bottom nav.
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: PropertyCarousel.bottomNavHeight - 8,
-              child: IgnorePointer(
-                ignoring: !isHome,
-                child: PropertyCarousel(onOpenDetail: _openPropertyDetail),
+              IgnorePointer(
+                ignoring: overlayPage,
+                child: MainMapControls(
+                  onGoToCurrentPosition: _goToCurrentPosition,
+                  onAnimateToCoordinates: _animateToCoordinates,
+                  onAddPinToCenter: _addPinToCenter,
+                  onSavePropertySuccess: () {
+                    ref
+                        .read(mainNavProvider.notifier)
+                        .setIndex(MainTab.myProperties);
+                  },
+                  onOpenProperty: _openPropertyDetail,
+                  searchSheetHeight: searchSheetHeight,
+                ),
               ),
+
+              // Property card carousel, sitting directly on the bottom nav.
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: PropertyCarousel.bottomNavHeight - 8,
+                child: IgnorePointer(
+                  ignoring: !isHome,
+                  child: PropertyCarousel(onOpenDetail: _openPropertyDetail),
+                ),
+              ),
+
+              // Every listing, nearest first: pulled up from the bottom nav.
+              Positioned(
+                left: 0,
+                right: 0,
+                top: MediaQuery.paddingOf(context).top + 8,
+                bottom: closestSheetBottom,
+                child: ClosestListingsSheet(
+                  visible: showClosestSheet,
+                  glass: glassNav,
+                  // The glass bar floats: pulled up, the sheet carries on
+                  // behind it instead of showing the map there.
+                  underNavHeight: glassNav ? closestSheetBottom : 0,
+                ),
+              ),
+
+              HomeSearchPanel(
+                aboveControls: true,
+                visible: showSearchPanel,
+                onOpenProperty: _openPropertyDetail,
+              ),
+
+              MainLayoutPages(navState: navState),
+
+              // Draws nothing: speaks up when another device signs in.
+              const NewSignInAlert(),
+            ],
+          ),
+          // Slid away while drawing a boundary so a stray tap near the drawing
+          // controls cannot switch tabs. It keeps its slot, so nothing moves.
+          bottomNavigationBar: IgnorePointer(
+            ignoring: isHome && isDrawing,
+            child: AnimatedSlide(
+              offset: isHome && isDrawing ? const Offset(0, 1) : Offset.zero,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              child: const MainBottomNav(),
             ),
-
-            HomeSearchPanel(
-              aboveControls: true,
-              visible: showSearchPanel,
-              onOpenProperty: _openPropertyDetail,
-            ),
-
-            MainLayoutPages(navState: navState),
-
-            // Draws nothing: speaks up when another device signs in.
-            const NewSignInAlert(),
-          ],
+          ),
         ),
-        bottomNavigationBar: const MainBottomNav(),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 class EmptyPropertiesState extends StatelessWidget {
   const EmptyPropertiesState({super.key});
@@ -53,7 +54,7 @@ class EmptyPropertiesState extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                "You haven't listed any\nproperty yet",
+                context.l10n.propertyNoListingsYet,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   color: context.colors.textHint,

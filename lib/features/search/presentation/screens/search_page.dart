@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/search/data/models/publisher_summary.dart';
-import 'package:genie/features/search/data/models/search_history_entry.dart';
-import 'package:genie/features/search/presentation/screens/publisher_profile_page.dart';
-import 'package:genie/features/search/presentation/search_layout.dart';
-import 'package:genie/features/search/presentation/view_models/search_history_controller.dart';
-import 'package:genie/features/search/presentation/widgets/search_history_list.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/features/search/presentation/view_models/search_query_controller.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
-import 'package:genie/features/search/presentation/widgets/search_input_bar.dart';
-import 'package:genie/features/search/presentation/widgets/search_message_view.dart';
-import 'package:genie/features/search/presentation/widgets/search_results_list.dart';
-import 'package:genie/features/search/presentation/widgets/search_skeleton_list.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/transitions/app_page_route.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
+import 'package:tilomnov/features/search/data/models/search_history_entry.dart';
+import 'package:tilomnov/features/search/presentation/screens/publisher_profile_page.dart';
+import 'package:tilomnov/features/search/presentation/search_layout.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_history_controller.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_history_list.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_query_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_input_bar.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_message_view.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/search_results_list.dart';
+import 'package:tilomnov/features/search/presentation/widgets/search_skeleton_list.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/transitions/app_page_route.dart';
 
 /// Full-screen search: places, listings and people for what is typed.
 /// Closes with the picked result as a [SearchSelection], or null.

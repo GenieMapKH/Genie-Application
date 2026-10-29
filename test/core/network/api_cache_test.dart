@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/core/network/api_cache_manager.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
 
 /// Answers every request itself and counts what reached "the server".
 class _FakeServer extends Interceptor {
@@ -85,10 +85,9 @@ void main() {
     server.version = 2;
     await dio.post('/properties/42/favorite');
 
-    expect(
-      (await dio.get('/public/properties/map', options: fresh)).data,
-      {'version': 2},
-    );
+    expect((await dio.get('/public/properties/map', options: fresh)).data, {
+      'version': 2,
+    });
     expect((await dio.get('/properties/my/favorites')).data, {'version': 2});
     // Another resource is untouched.
     expect((await dio.get('/users/me', options: fresh)).data, {'version': 1});
@@ -120,7 +119,10 @@ void main() {
         ApiCacheManager.resourceOf('/public/properties/map?minLat=1'),
         'properties',
       );
-      expect(ApiCacheManager.resourceOf('/properties/42/favorite'), 'properties');
+      expect(
+        ApiCacheManager.resourceOf('/properties/42/favorite'),
+        'properties',
+      );
       expect(ApiCacheManager.resourceOf('/users/me'), 'users');
       expect(ApiCacheManager.resourceOf('/'), isNull);
     });

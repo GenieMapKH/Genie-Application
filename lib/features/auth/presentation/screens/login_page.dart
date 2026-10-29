@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:genie/features/auth/presentation/view_models/login_controller.dart';
-import 'package:genie/features/auth/presentation/view_models/login_form_provider.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/shared/utils/app_popup.dart';
-import 'package:genie/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/login_controller.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/login_form_provider.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 import '../widgets/login_header.dart';
 import '../widgets/login_form.dart';
 import '../widgets/social_login_buttons.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/auth/presentation/view_models/after_password_sign_in.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// Login screen supporting Email and Phone Number authentication methods,
 /// Google OAuth login, "Keep me signed in" preference, and custom error states.
@@ -132,15 +131,19 @@ class _LoginPageState extends ConsumerState<LoginPage>
     }
   }
 
+  String? _fieldError(LoginFieldError? error) {
+    final l10n = context.l10n;
+    return switch (error) {
+      LoginFieldError.invalidEmail => l10n.authErrEnterValidEmail,
+      LoginFieldError.invalidPhone => l10n.authErrEnterValidPhone,
+      LoginFieldError.missingPassword => l10n.authErrEnterPassword,
+      LoginFieldError.shortPassword => l10n.authErrPasswordMin6,
+      null => null,
+    };
+  }
+
   Future<void> _handleLogin() async {
-    final afterSignIn = ref.read(afterPasswordSignInProvider);
-    final success = await ref
-        .read(loginFormProvider.notifier)
-        .submit(
-          afterSignIn: afterSignIn == null
-              ? null
-              : (password) => afterSignIn(context, password),
-        );
+    final success = await ref.read(loginFormProvider.notifier).submit();
     if (success && mounted) widget.onLoginPressed?.call();
   }
 
@@ -236,10 +239,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
       if (next.hasError) {
         if (!mounted) return;
-        final errorMessage = next.error is AppException
-            ? (next.error as AppException).message
-            : context.l10n.authLoginFailedPleaseCheckYourCredentials;
-        AppPopup.showError(context, errorMessage);
+        AppPopup.showError(
+          context,
+          authErrorMessage(context.l10n, next.error!),
+        );
       } else if (next.hasValue && next.value == true) {
         if (!mounted) return;
         _onAuthSuccess();
@@ -276,9 +279,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       emailController: _emailController,
                       phoneController: _phoneController,
                       passwordController: _passwordController,
-                      emailError: formState.emailError,
-                      phoneError: formState.phoneError,
-                      passwordError: formState.passwordError,
+                      emailError: _fieldError(formState.emailError),
+                      phoneError: _fieldError(formState.phoneError),
+                      passwordError: _fieldError(formState.passwordError),
                       obscurePassword: formState.obscurePassword,
                       keepMeSignedIn: formState.keepMeSignedIn,
                       onEmailChanged: (val) {

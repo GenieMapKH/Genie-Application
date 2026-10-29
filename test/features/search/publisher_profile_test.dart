@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/app/navigation/chat_profile_navigation.dart';
-import 'package:genie/features/chat/presentation/screens/chat_conversation_page.dart';
-import 'package:genie/features/chat/providers/chat_profile_opener.dart';
-import 'package:genie/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:genie/features/profile/data/models/user_profile.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/search/presentation/view_models/search_area_controller.dart';
-import 'package:genie/features/search/data/search_history_repository.dart';
-import 'package:genie/features/search/data/search_repository.dart';
-import 'package:genie/features/search/presentation/screens/search_page.dart';
-import 'package:genie/features/search/presentation/view_models/search_providers.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/app/navigation/chat_profile_navigation.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/providers/chat_profile_opener.dart';
+import 'package:tilomnov/features/follow/data/follow_repository.dart';
+import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
+import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/data/search_history_repository.dart';
+import 'package:tilomnov/features/search/data/search_repository.dart';
+import 'package:tilomnov/features/search/presentation/screens/publisher_profile_page.dart';
+import 'package:tilomnov/features/search/presentation/screens/search_page.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
 
 import '../../support/test_app.dart';
 
@@ -36,13 +39,27 @@ String _listing(String id, String title) =>
 
 final _searchAnswer = '{"places": [], "properties": [], "people": [$_person]}';
 
-/// Search, then the profile, from one stub API.
+/// Search, then the profile and its follow counts, from one stub API. The
+/// person starts with 12 followers; following answers [followStatus].
 StubServer _api({
   int profileStatus = 200,
   String? listings,
   String person = _profilePerson,
+  int followStatus = 200,
 }) {
+  var following = false;
+  String follow() =>
+      '{"followerCount": ${following ? 13 : 12}, "followingCount": 4, '
+      '"isFollowing": $following}';
   return StubServer((request) {
+    if (request.path == '/users/u-1/follow') {
+      if (request.method == 'PUT') {
+        if (followStatus != 200) return (followStatus, '{}');
+        following = true;
+      }
+      if (request.method == 'DELETE') following = false;
+      return (200, follow());
+    }
     if (request.path == '/public/search') return (200, _searchAnswer);
     if (request.path == '/public/search/people/u-1') {
       if (profileStatus != 200) return (profileStatus, '{}');
@@ -93,6 +110,7 @@ Future<SearchSelection? Function()> _openProfile(
         SearchHistoryRepository(server.dio),
       ),
       searchHasSessionProvider.overrideWithValue(() async => false),
+      followRepositoryProvider.overrideWithValue(FollowRepository(server.dio)),
       _signedInAs(signedInAs),
       signedInOverride(signedIn: hasSession ?? signedInAs != null),
     ],
@@ -216,15 +234,6 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 
-  testWidgets('has a follow button (following comes later)', (tester) async {
-    await _openProfile(tester, _api());
-
-    expect(find.text('Follow'), findsOneWidget);
-    await tester.tap(find.text('Follow'));
-    await tester.pumpAndSettle();
-    expect(find.text('Follow'), findsOneWidget, reason: 'nothing happens yet');
-  });
-
   testWidgets('leaves out the contact card when there is nothing to show', (
     tester,
   ) async {
@@ -263,11 +272,109 @@ void main() {
     expect(find.byType(ChatConversationPage), findsNothing);
   });
 
-  testWidgets('your own profile has no "Chat"', (tester) async {
+  testWidgets('your own profile has no "Chat" and no "Follow"', (tester) async {
     await _openProfile(tester, _api(), signedInAs: 'u-1');
 
-    expect(find.text('Follow'), findsOneWidget);
+    expect(find.text('Follow'), findsNothing);
     expect(find.text('Chat'), findsNothing);
+    // Your own counts are still shown.
+    expect(find.text('12 Followers'), findsOneWidget);
+  });
+
+  group('following', () {
+    testWidgets('shows the counts, then follows and unfollows', (tester) async {
+      final server = _api();
+      await _openProfile(tester, server);
+
+      expect(find.text('12 Followers'), findsOneWidget);
+      expect(find.text('4 Following'), findsOneWidget);
+
+      await tester.tap(find.text('Follow'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('13 Followers'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Following'), findsOneWidget);
+      expect(
+        server.requests.where((r) => r.method == 'PUT').single.path,
+        '/users/u-1/follow',
+      );
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Following'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('12 Followers'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Follow'), findsOneWidget);
+      expect(server.requests.where((r) => r.method == 'DELETE'), hasLength(1));
+    });
+
+    testWidgets('opened again, shows "Following" at once and checks behind', (
+      tester,
+    ) async {
+      final server = _api();
+      await _openProfile(tester, server);
+      await tester.tap(find.text('Follow'));
+      await tester.pumpAndSettle();
+
+      Navigator.of(tester.element(find.byType(PublisherProfilePage))).pop();
+      await tester.pumpAndSettle();
+      final fetches = server.requests
+          .where((r) => r.method == 'GET' && r.path == '/users/u-1/follow')
+          .length;
+      await tester.tap(find.textContaining('Sokha Realty'));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.widgetWithText(FilledButton, 'Following'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Follow'), findsNothing);
+      await tester.pumpAndSettle();
+      expect(
+        server.requests.where(
+          (r) => r.method == 'GET' && r.path == '/users/u-1/follow',
+        ),
+        hasLength(fetches + 1),
+      );
+      expect(find.widgetWithText(FilledButton, 'Following'), findsOneWidget);
+    });
+
+    testWidgets('at the limit, says so and stays unfollowed', (tester) async {
+      await _openProfile(tester, _api(followStatus: 409));
+
+      await tester.tap(find.text('Follow'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('up to 500 people'), findsOneWidget);
+      expect(find.text('12 Followers'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Follow'), findsOneWidget);
+    });
+
+    testWidgets('when the server fails, says so and puts it back', (
+      tester,
+    ) async {
+      await _openProfile(tester, _api(followStatus: 500));
+
+      await tester.tap(find.text('Follow'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Following could not be changed. Please try again.'),
+        findsOneWidget,
+      );
+      expect(find.text('12 Followers'), findsOneWidget);
+    });
+
+    testWidgets('a guest sees no counts and is asked to sign in', (
+      tester,
+    ) async {
+      final server = _api();
+      await _openProfile(tester, server, signedInAs: null);
+
+      expect(find.textContaining('Followers'), findsNothing);
+      await tester.tap(find.text('Follow'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Account Required'), findsOneWidget);
+      expect(server.requests.where((r) => r.path.contains('/follow')), isEmpty);
+    });
   });
 
   group('opened from a chat', () {
@@ -316,7 +423,7 @@ void main() {
       final container = ProviderScope.containerOf(
         tester.element(find.text('map')),
       );
-      container.read(mainNavProvider.notifier).setIndex(2); // the chat tab
+      container.read(mainNavProvider.notifier).setIndex(MainTab.chat);
       await tester.tap(find.text('map'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('chat header'));

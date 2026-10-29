@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/chat/e2ee/crypto_service.dart';
-import 'package:genie/features/chat/e2ee/key_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
 import 'package:sodium_libs/sodium_libs.dart';
 
 class _FakeCrypto extends Fake implements CryptoService {}
@@ -16,10 +16,8 @@ class _FakeSecretKey extends Fake implements SecureKey {
 
 class _GeneratingCrypto extends Fake implements CryptoService {
   @override
-  KeyPair generateKeyPair() => KeyPair(
-    publicKey: Uint8List.fromList([9]),
-    secretKey: _FakeSecretKey(),
-  );
+  KeyPair generateKeyPair() =>
+      KeyPair(publicKey: Uint8List.fromList([9]), secretKey: _FakeSecretKey());
 }
 
 /// Answers `GET /chat/keys/:id` with the public key the server lists, and
@@ -158,21 +156,18 @@ void main() {
       expect(server.uploads, 0);
     });
 
-    test(
-      'never replaces a key another device published since',
-      () async {
-        FlutterSecureStorage.setMockInitialValues({...aliceKeys});
-        // Without a backup PIN the server would take it: two devices would
-        // then keep replacing each other's key.
-        final server = _KeyServer({'alice': 'newer-public'});
+    test('never replaces a key another device published since', () async {
+      FlutterSecureStorage.setMockInitialValues({...aliceKeys});
+      // Without a backup PIN the server would take it: two devices would
+      // then keep replacing each other's key.
+      final server = _KeyServer({'alice': 'newer-public'});
 
-        expect(
-          await serviceOn(server).publishPublicKeyIfMissing('alice'),
-          isFalse,
-        );
-        expect(server.uploads, 0);
-      },
-    );
+      expect(
+        await serviceOn(server).publishPublicKeyIfMissing('alice'),
+        isFalse,
+      );
+      expect(server.uploads, 0);
+    });
 
     test('a server failure is not mistaken for replaced keys', () async {
       FlutterSecureStorage.setMockInitialValues({...aliceKeys});

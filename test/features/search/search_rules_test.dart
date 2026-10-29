@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genie/features/property/data/models/property_model.dart';
-import 'package:genie/features/search/data/models/search_area.dart';
-import 'package:genie/features/search/data/models/search_results.dart';
-import 'package:genie/features/search/data/search_results_cache.dart';
-import 'package:genie/features/search/data/search_session_token.dart';
-import 'package:genie/features/search/data/search_text.dart';
-import 'package:genie/features/search/presentation/widgets/highlighted_text.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/models/search_area.dart';
+import 'package:tilomnov/features/search/data/models/search_results.dart';
+import 'package:tilomnov/features/search/data/search_results_cache.dart';
+import 'package:tilomnov/features/search/data/search_session_token.dart';
+import 'package:tilomnov/features/search/data/search_text.dart';
+import 'package:tilomnov/features/search/presentation/widgets/results/highlighted_text.dart';
 
 PropertyModel _at(String id, double? lat, double? lng) => PropertyModel(
   id: id,

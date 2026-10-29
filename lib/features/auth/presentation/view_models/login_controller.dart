@@ -1,7 +1,7 @@
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/data/google_sign_in_service.dart';
-import 'package:genie/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 
 final loginControllerProvider =
     StateNotifierProvider<LoginController, AsyncValue<bool>>((ref) {
@@ -22,23 +22,10 @@ class LoginController extends StateNotifier<AsyncValue<bool>> {
     state = const AsyncData(false);
   }
 
-  /// [afterSignIn] runs once the server accepted the password, before the
-  /// sign-in counts as done (the page is still showing): it gets the
-  /// password, e.g. to unlock the chat keys. Its own problems never fail
-  /// the sign-in.
-  Future<bool> login(
-    String identifier,
-    String password, {
-    Future<void> Function(String password)? afterSignIn,
-  }) async {
+  Future<bool> login(String identifier, String password) async {
     state = const AsyncLoading();
     try {
       await _authService.login(identifier, password);
-      try {
-        await afterSignIn?.call(password);
-      } catch (e, st) {
-        AppLogger.error('After sign-in step failed', e, st);
-      }
       state = const AsyncData(true);
       return true;
     } catch (e, st) {

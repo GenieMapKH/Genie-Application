@@ -2,12 +2,13 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:genie/core/logging/app_logger.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genie/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/core/network/api_client.dart';
-import 'package:genie/core/network/api_cache_manager.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/core/network/api_client.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/core/network/api_version_interceptor.dart';
 
 /// Goes up by one each time the server ends this device's session: it was
 /// signed out from another device, the password changed, or the account was
@@ -38,6 +39,8 @@ class SignedInNotifier extends Notifier<bool> {
 final apiClientProvider = Provider<Dio>((ref) {
   return createApiClient(
     onSessionEnded: () => ref.read(sessionEndedProvider.notifier).state++,
+    onApiVersionRetired: () =>
+        ref.read(apiVersionRetiredProvider.notifier).state = true,
   );
 });
 
@@ -92,13 +95,23 @@ class AuthService {
     }
   }
 
-  // 1. Standard Registration
-  Future<void> register(String identifier, String password) async {
-    final isEmail = _isEmail(identifier);
+  // 1. Standard Registration. The phone number is required; [email] and
+  // [name] are optional (null leaves them out).
+  Future<void> register({
+    required String phone,
+    String? email,
+    String? name,
+    required String password,
+  }) async {
     try {
       await dio.post(
         '/auth/register',
-        data: {isEmail ? 'email' : 'phone': identifier, 'password': password},
+        data: {
+          'phone': phone,
+          'email': ?email,
+          'name': ?name,
+          'password': password,
+        },
       );
     } catch (e) {
       throw _handleError(e);

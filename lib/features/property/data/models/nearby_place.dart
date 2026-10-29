@@ -7,28 +7,31 @@ class NearbyPlace {
   /// 0 is the closest by road.
   final int rank;
   final String name;
+  final double lat;
+  final double lng;
   final int straightMeters;
 
   /// Null when no road to it was found.
   final int? roadMeters;
-  final int? driveSeconds;
 
   const NearbyPlace({
     required this.category,
     required this.rank,
     required this.name,
+    required this.lat,
+    required this.lng,
     required this.straightMeters,
     this.roadMeters,
-    this.driveSeconds,
   });
 
   factory NearbyPlace.fromJson(Map<String, dynamic> json) => NearbyPlace(
     category: json['category'] as String,
     rank: json['rank'] as int,
     name: json['name'] as String,
+    lat: (json['lat'] as num).toDouble(),
+    lng: (json['lng'] as num).toDouble(),
     straightMeters: json['straightMeters'] as int,
     roadMeters: json['roadMeters'] as int?,
-    driveSeconds: json['driveSeconds'] as int?,
   );
 
   /// The categories, in display order, with the keyword that asks for each.

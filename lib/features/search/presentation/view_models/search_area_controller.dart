@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/features/search/data/models/search_area.dart';
-import 'package:genie/features/search/presentation/view_models/search_providers.dart';
-import 'package:genie/features/search/presentation/view_models/search_selection.dart';
+import 'package:tilomnov/features/search/data/models/search_area.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
 
 /// The place or person the map currently shows, and their listings.
 class SearchAreaState {

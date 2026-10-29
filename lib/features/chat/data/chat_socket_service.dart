@@ -1,21 +1,46 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:genie/core/config/app_config.dart';
-import 'package:genie/core/errors/app_exceptions.dart';
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/features/chat/models/chat_models.dart';
-import 'package:genie/features/chat/models/chat_participant.dart';
-import 'package:genie/features/chat/models/conversation_change.dart';
+import 'package:tilomnov/core/config/app_config.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/api_version_interceptor.dart';
+import 'package:tilomnov/features/chat/models/chat_models.dart';
+import 'package:tilomnov/features/chat/models/chat_participant.dart';
+import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
+import 'package:tilomnov/features/chat/models/conversation_change.dart';
+import 'package:tilomnov/features/chat/models/message_deletion.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
-/// Thrown when a message could not be handed to the server.
+/// Thrown when a message could not be handed to the server. [message] is
+/// for logs; the user is told [problem] in their language.
 class ChatSendException extends AppException {
-  const ChatSendException(super.message);
+  final ChatSendProblem problem;
+
+  const ChatSendException(this.problem, [String? message])
+    : super(message ?? 'Message not sent');
+
+  /// Names a refusal by its [code], else by what the server said, which is
+  /// English.
+  factory ChatSendException.rejected(Object? reason, {Object? code}) {
+    final text = reason is String ? reason : '';
+    final problem = code == 'blocked'
+        ? ChatSendProblem.blocked
+        : text.contains('chat PIN')
+        ? ChatSendProblem.pinRequired
+        : text.contains('too quickly')
+        ? ChatSendProblem.tooFast
+        : ChatSendProblem.rejected;
+    return ChatSendException(problem, text.isEmpty ? null : text);
+  }
 }
 
+/// A call event the server sent: its name and payload.
+typedef CallSocketEvent = ({String event, Map<String, dynamic> data});
+
 /// The real-time connection of one signed-in user. It carries ciphertext
-/// both ways and never sees a readable message.
+/// both ways and never sees a readable message. Voice calls are signalled
+/// over it too (see [onCallEvent]).
 class ChatSocketService {
   static const _ackTimeout = Duration(seconds: 10);
   static const _maxRetryDelay = Duration(seconds: 60);
@@ -26,6 +51,9 @@ class ChatSocketService {
   /// Reads the current access token; null when signed out. [afterRejection]
   /// is set when the server refused the previous one.
   final Future<String?> Function({bool afterRejection}) readAccessToken;
+
+  /// Called when the server no longer serves this build's API version.
+  final void Function()? onApiVersionRetired;
   final String _url;
 
   io.Socket? _socket;
@@ -39,9 +67,24 @@ class ChatSocketService {
   final _connections = StreamController<void>.broadcast();
   final _presence = StreamController<ChatPresence>.broadcast();
   final _conversationChanges = StreamController<ConversationChange>.broadcast();
+  final _editedMessages = StreamController<EncryptedMessage>.broadcast();
+  final _deletedMessages = StreamController<MessageDeletion>.broadcast();
+  final _callEvents = StreamController<CallSocketEvent>.broadcast();
 
-  ChatSocketService({required this.readAccessToken, String? baseUrl})
-    : _url = '${baseUrl ?? AppConfig.apiBaseUrl}/chat';
+  /// What the server sends about calls; the call feature reads them.
+  static const callEventNames = [
+    'call:incoming',
+    'call:accepted',
+    'call:answered-elsewhere',
+    'call:ended',
+    'call:signal',
+  ];
+
+  ChatSocketService({
+    required this.readAccessToken,
+    this.onApiVersionRetired,
+    String? baseUrl,
+  }) : _url = '${baseUrl ?? AppConfig.apiBaseUrl}/chat';
 
   /// Messages delivered live: from the other person, or sent by this user
   /// on another device.
@@ -57,6 +100,38 @@ class ChatSocketService {
   /// Conversations archived, restored or deleted elsewhere.
   Stream<ConversationChange> get onConversationChanged =>
       _conversationChanges.stream;
+
+  /// Messages whose sender changed the text, here or on another device.
+  Stream<EncryptedMessage> get onMessageEdited => _editedMessages.stream;
+
+  /// Messages deleted for this user: by them on any device, or by the
+  /// sender for everyone.
+  Stream<MessageDeletion> get onMessageDeleted => _deletedMessages.stream;
+
+  /// Call events: someone calling, answering, hanging up, or signalling.
+  Stream<CallSocketEvent> get onCallEvent => _callEvents.stream;
+
+  /// Sends a call event and returns the server's answer as it is, refusals
+  /// included: the call feature reads why. Throws a [ChatSendException]
+  /// only when there is no connection or no answer.
+  Future<Map<String, dynamic>> sendCallEvent(
+    String event,
+    Map<String, dynamic> payload,
+  ) async {
+    final socket = await connect() ? _socket : null;
+    if (socket == null) {
+      throw const ChatSendException(ChatSendProblem.signedOut);
+    }
+    try {
+      final ack = await socket
+          .timeout(_ackTimeout.inMilliseconds)
+          .emitWithAckAsync(event, payload);
+      return ack is Map ? Map<String, dynamic>.from(ack) : const {};
+    } catch (e) {
+      AppLogger.error('$event was not acknowledged', e);
+      throw const ChatSendException(ChatSendProblem.noConnection);
+    }
+  }
 
   /// Opens the connection, or re-opens it when the session token changed.
   /// Returns false when there is no session to connect with.
@@ -78,17 +153,20 @@ class ChatSocketService {
 
   /// Sends one encrypted message and returns it as the server stored it.
   /// [id] makes a retry safe: the server stores the same id only once.
+  /// [replyToId] is the message it replies to.
   Future<EncryptedMessage> send({
     required String id,
     required String recipientId,
     required String ciphertext,
     required String nonce,
+    String? replyToId,
   }) async {
     final ack = await _request('sendMessage', {
       'id': id,
       'recipientId': recipientId,
       'ciphertext': ciphertext,
       'nonce': nonce,
+      'replyToId': ?replyToId,
     });
     return EncryptedMessage.fromJson(_asJson(ack['message']));
   }
@@ -116,7 +194,7 @@ class ChatSocketService {
   ) async {
     final socket = await connect() ? _socket : null;
     if (socket == null) {
-      throw const ChatSendException('You are signed out.');
+      throw const ChatSendException(ChatSendProblem.signedOut);
     }
 
     final dynamic ack;
@@ -127,15 +205,13 @@ class ChatSocketService {
           .emitWithAckAsync(event, payload);
     } catch (e) {
       AppLogger.error('$event was not acknowledged', e);
-      throw const ChatSendException(
-        'Could not reach the server. Check your connection.',
-      );
+      throw const ChatSendException(ChatSendProblem.noConnection);
     }
 
     if (ack is! Map || ack['status'] != 'ok') {
-      final reason = ack is Map ? ack['message'] : null;
-      throw ChatSendException(
-        reason is String ? reason : 'The server rejected the request.',
+      throw ChatSendException.rejected(
+        ack is Map ? ack['message'] : null,
+        code: ack is Map ? ack['code'] : null,
       );
     }
     return ack;
@@ -143,7 +219,10 @@ class ChatSocketService {
 
   Map<String, dynamic> _asJson(dynamic json) {
     if (json is! Map) {
-      throw const ChatSendException('The server sent an unexpected reply.');
+      throw const ChatSendException(
+        ChatSendProblem.failed,
+        'The server sent an unexpected reply',
+      );
     }
     return Map<String, dynamic>.from(json);
   }
@@ -157,6 +236,9 @@ class ChatSocketService {
     _connections.close();
     _presence.close();
     _conversationChanges.close();
+    _editedMessages.close();
+    _deletedMessages.close();
+    _callEvents.close();
   }
 
   io.Socket _createSocket() {
@@ -167,7 +249,13 @@ class ChatSocketService {
           .disableAutoConnect()
           .enableForceNew()
           // Asked on every (re)connection, so a renewed token is picked up.
-          .setAuthFn((callback) => callback({'token': _handshakeToken}))
+          // The API version decides which events and payloads are spoken.
+          .setAuthFn(
+            (callback) => callback({
+              'token': _handshakeToken,
+              'apiVersion': AppConfig.apiVersion,
+            }),
+          )
           .build(),
     );
 
@@ -180,11 +268,20 @@ class ChatSocketService {
     socket.on('newMessage', _onNewMessage);
     socket.on('presence', _onPresence);
     socket.on('conversationChanged', _onConversationChanged);
+    socket.on('messageEdited', _onMessageEdited);
+    socket.on('messageDeleted', _onMessageDeleted);
+    for (final event in callEventNames) {
+      socket.on(event, (data) => _onCallEvent(event, data));
+    }
 
     // A refused handshake. Network failures are retried by the socket itself.
     socket.onConnectError((error) {
-      if (error is Map && error['message'] == 'unauthorized') {
+      final message = error is Map ? error['message'] : null;
+      if (message == 'unauthorized') {
         _reconnectAfterRejection();
+      } else if (message == ApiVersionInterceptor.retiredCode) {
+        AppLogger.debug('Chat socket refused: this API version is retired');
+        onApiVersionRetired?.call();
       }
     });
 
@@ -227,6 +324,33 @@ class ChatSocketService {
     } catch (e, stackTrace) {
       AppLogger.error('Ignored a malformed conversation change', e, stackTrace);
     }
+  }
+
+  void _onMessageEdited(dynamic data) {
+    try {
+      final message = EncryptedMessage.fromJson(
+        Map<String, dynamic>.from(data as Map),
+      );
+      if (!_editedMessages.isClosed) _editedMessages.add(message);
+    } catch (e, stackTrace) {
+      AppLogger.error('Ignored a malformed message edit', e, stackTrace);
+    }
+  }
+
+  void _onMessageDeleted(dynamic data) {
+    try {
+      final deletion = MessageDeletion.fromJson(
+        Map<String, dynamic>.from(data as Map),
+      );
+      if (!_deletedMessages.isClosed) _deletedMessages.add(deletion);
+    } catch (e, stackTrace) {
+      AppLogger.error('Ignored a malformed message deletion', e, stackTrace);
+    }
+  }
+
+  void _onCallEvent(String event, dynamic data) {
+    if (data is! Map || _callEvents.isClosed) return;
+    _callEvents.add((event: event, data: Map<String, dynamic>.from(data)));
   }
 
   /// The server turned this connection away, usually because the token

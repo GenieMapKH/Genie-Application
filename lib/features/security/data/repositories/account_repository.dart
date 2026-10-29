@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:genie/core/errors/app_exceptions.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
 
 /// How the user shows they own the account before a change that cannot be
 /// undone: their password, or a Google sign-in made a moment ago.
@@ -33,6 +33,11 @@ class IdentityRejectedException extends AppException {
 /// that someone who just got in cannot take the account from its owner.
 class DeviceTooNewException extends AppException {
   const DeviceTooNewException() : super('Device too new', code: '403');
+}
+
+/// Another account already uses this email, or this account has one.
+class EmailTakenException extends AppException {
+  const EmailTakenException() : super('Email taken', code: '409');
 }
 
 /// Too many wrong passwords in a row; the server refuses more for a while.
@@ -74,6 +79,16 @@ class AccountRepository {
     });
   }
 
+  /// Adds an email to an account made with only a phone number, so a
+  /// forgotten password can be reset. Throws [EmailTakenException] when the
+  /// email belongs to another account.
+  Future<void> addEmail({
+    required String email,
+    required String password,
+  }) async {
+    await _post('/auth/account/email', {'email': email, 'password': password});
+  }
+
   /// A token, good for a few minutes, that proves the account password was
   /// just typed. The chat server accepts it in place of a forgotten backup
   /// PIN. [proof] must be a password: Google does not count here.
@@ -106,6 +121,7 @@ class AccountRepository {
       }
       throw switch (e.response?.statusCode) {
         403 => const IdentityRejectedException(),
+        409 => const EmailTakenException(),
         429 => const TooManyAttemptsException(),
         _ => e,
       };

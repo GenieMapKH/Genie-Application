@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:genie/core/theme/app_colors.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'marker_renderer.dart';

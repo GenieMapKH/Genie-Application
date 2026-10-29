@@ -1,9 +1,9 @@
-import 'package:genie/shared/widgets/app_network_image.dart';
+import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 /// The photos a listing already has, shown above the picker while it is being
 /// edited: each can be taken off, and new photos are added after them.

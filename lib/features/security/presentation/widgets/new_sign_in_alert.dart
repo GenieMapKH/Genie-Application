@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:genie/core/logging/app_logger.dart';
-import 'package:genie/core/theme/app_colors.dart';
-import 'package:genie/features/profile/presentation/view_models/user_providers.dart';
-import 'package:genie/features/security/data/models/device_session.dart';
-import 'package:genie/features/security/presentation/screens/devices_page.dart';
-import 'package:genie/features/security/presentation/view_models/security_providers.dart';
-import 'package:genie/features/security/presentation/widgets/device_session_tile.dart';
-import 'package:genie/l10n/l10n.dart';
-import 'package:genie/shared/widgets/app_page_scaffold.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/security/data/models/device_session.dart';
+import 'package:tilomnov/features/security/presentation/screens/devices_page.dart';
+import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
+import 'package:tilomnov/features/security/presentation/widgets/device_session_tile.dart';
+import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 
 /// Tells the user when another device has signed in to their account.
 ///

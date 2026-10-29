@@ -4,20 +4,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Genie (debug, .env)",
+      "name": "Tilomnov (debug, .env)",
       "request": "launch",
       "type": "dart",
       "toolArgs": ["--dart-define-from-file=.env", "--web-port=5555"]
     },
     {
-      "name": "Genie (profile, .env)",
+      "name": "Tilomnov (profile, .env)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile",
       "toolArgs": ["--dart-define-from-file=.env"]
     },
     {
-      "name": "Genie (release, .env.production)",
+      "name": "Tilomnov (release, .env.production)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release",

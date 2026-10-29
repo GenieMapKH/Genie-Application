@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppSettingsStorage {
   static const _themeModeKey = 'settings.theme_mode';
   static const _languageKey = 'settings.language';
+  static const _showNotificationTextKey = 'settings.show_notification_text';
+  static const _glassNavigationKey = 'settings.glass_navigation';
 
   final SharedPreferences _preferences;
 
@@ -32,4 +34,20 @@ class AppSettingsStorage {
 
   Future<void> writeLocale(Locale locale) =>
       _preferences.setString(_languageKey, locale.languageCode);
+
+  /// Whether a chat notification shows what the message says. On until the
+  /// user turns it off: anyone who can see the lock screen can read it.
+  bool readShowNotificationText() =>
+      _preferences.getBool(_showNotificationTextKey) ?? true;
+
+  Future<void> writeShowNotificationText(bool show) =>
+      _preferences.setBool(_showNotificationTextKey, show);
+
+  /// Whether a phone whose own interface is glass shows the app's navigation
+  /// in glass too. On until the user turns it off.
+  bool readGlassNavigation() =>
+      _preferences.getBool(_glassNavigationKey) ?? true;
+
+  Future<void> writeGlassNavigation(bool enabled) =>
+      _preferences.setBool(_glassNavigationKey, enabled);
 }

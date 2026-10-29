@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:genie/features/property/presentation/widgets/property_form_inputs.dart';
-import 'package:genie/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 class TitleTypeFieldWidget extends StatelessWidget {
   final String? value;
