@@ -8,7 +8,7 @@ import 'package:tilomnov/features/profile/presentation/view_models/user_provider
 import 'package:tilomnov/features/profile/presentation/widgets/profile_field_editor.dart';
 import 'package:tilomnov/features/security/presentation/screens/add_email_page.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:tilomnov/shared/widgets/lists/option_sheet.dart';
 import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
@@ -171,6 +171,6 @@ class _PersonalInfoList extends ConsumerWidget {
         .read(profileEditControllerProvider)
         .save(ProfileField.sex, picked.value?.name);
     if (!context.mounted || result == ProfileSaveResult.saved) return;
-    AppPopup.showError(context, l10n.commonSomethingWentWrong);
+    showFailure(context, fallback: l10n.commonSomethingWentWrong);
   }
 }

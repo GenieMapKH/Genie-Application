@@ -63,11 +63,19 @@ class AuthService {
         }
       }
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
-        return AuthException(message, code: e.response?.statusCode.toString());
+        return AuthException(
+          message,
+          code: e.response?.statusCode.toString(),
+          cause: e,
+        );
       }
-      return NetworkException(message, code: e.response?.statusCode.toString());
+      return NetworkException(
+        message,
+        code: e.response?.statusCode.toString(),
+        cause: e,
+      );
     }
-    return UnknownException(e.toString());
+    return UnknownException(e.toString(), cause: e);
   }
 
   bool _isEmail(String value) {
@@ -162,7 +170,9 @@ class AuthService {
       try {
         await dio.post('/auth/logout', data: {'refreshToken': refreshToken});
       } catch (e) {
-        // Ignore errors, force local logout
+        // Signed out on this phone anyway; the server ends the session
+        // when its refresh token expires.
+        AppLogger.error('Ending the session on the server failed', e);
       }
     }
     await AuthStorage.clearTokens();

@@ -15,7 +15,7 @@ import 'package:tilomnov/features/home/utils/map/map_measurements.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 class MainMapControls extends ConsumerWidget {
   final VoidCallback onGoToCurrentPosition;
@@ -176,7 +176,11 @@ class MainMapControls extends ConsumerWidget {
     } catch (e, stack) {
       AppLogger.error('Opening the listing editor failed', e, stack);
       if (context.mounted) {
-        AppPopup.showError(context, context.l10n.propertyCouldNotOpenEditor);
+        showFailure(
+          context,
+          error: e,
+          fallback: context.l10n.propertyCouldNotOpenEditor,
+        );
       }
       return;
     }

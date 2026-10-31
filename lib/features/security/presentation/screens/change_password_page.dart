@@ -6,6 +6,7 @@ import 'package:tilomnov/features/security/presentation/view_models/account_secu
 import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
@@ -69,7 +70,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
         AccountActionResult.identityRejected => l10n.passwordIncorrect,
         AccountActionResult.tooManyAttempts => l10n.commonTooManyAttempts,
         AccountActionResult.deviceTooNew => l10n.accountDeviceTooNew,
-        _ => l10n.commonSomethingWentWrong,
+        _ => failureMessage(l10n, fallback: l10n.commonSomethingWentWrong),
       };
     });
   }

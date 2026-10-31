@@ -146,23 +146,83 @@ abstract class AppLocalizations {
   /// **'You are offline. Connect to the internet for updates.'**
   String get commonOffline;
 
-  /// No description provided for @offlineDialogTitle.
+  /// No description provided for @connectionOffline.
   ///
   /// In en, this message translates to:
   /// **'No internet connection'**
-  String get offlineDialogTitle;
+  String get connectionOffline;
 
-  /// No description provided for @offlineDialogMessage.
+  /// No description provided for @connectionWaiting.
   ///
   /// In en, this message translates to:
-  /// **'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.'**
-  String get offlineDialogMessage;
+  /// **'Waiting for network…'**
+  String get connectionWaiting;
 
-  /// No description provided for @offlineKeepBrowsing.
+  /// No description provided for @connectionWeak.
   ///
   /// In en, this message translates to:
-  /// **'Keep browsing'**
-  String get offlineKeepBrowsing;
+  /// **'Slow connection'**
+  String get connectionWeak;
+
+  /// No description provided for @connectionWeakDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading may take longer'**
+  String get connectionWeakDetail;
+
+  /// No description provided for @connectionRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Back online'**
+  String get connectionRestored;
+
+  /// No description provided for @loadFailureOfflineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get loadFailureOfflineTitle;
+
+  /// No description provided for @loadFailureOfflineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your Wi-Fi or mobile data. This page will load by itself when you are back online.'**
+  String get loadFailureOfflineBody;
+
+  /// No description provided for @loadFailureSlowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your connection is too slow'**
+  String get loadFailureSlowTitle;
+
+  /// No description provided for @loadFailureSlowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This page took too long to load. Your signal may be weak: move to a better spot or try again.'**
+  String get loadFailureSlowBody;
+
+  /// No description provided for @loadFailureServerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Our server is having trouble right now. Please try again in a moment.'**
+  String get loadFailureServerBody;
+
+  /// No description provided for @failureOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Check your Wi-Fi or mobile data and try again.'**
+  String get failureOffline;
+
+  /// No description provided for @failureSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your connection is too slow. Move to a better spot and try again.'**
+  String get failureSlow;
+
+  /// No description provided for @failureServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Our server is having trouble right now. Please try again in a moment.'**
+  String get failureServer;
 
   /// No description provided for @navExplore.
   ///
@@ -3553,12 +3613,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not reach the server. Check your connection.'**
   String get authErrorNoConnection;
-
-  /// No description provided for @authErrorServer.
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong on our side. Please try again later.'**
-  String get authErrorServer;
 
   /// No description provided for @authErrorGeneric.
   ///

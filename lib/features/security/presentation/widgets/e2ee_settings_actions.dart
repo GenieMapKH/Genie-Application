@@ -7,6 +7,7 @@ import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 import 'package:tilomnov/features/security/presentation/widgets/security_confirm_dialog.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// UI side of the encryption settings: shows the dialogs and messages.
 /// The actual key work is done by [E2eeKeyManager]. A forgotten PIN is
@@ -40,11 +41,11 @@ abstract final class E2eeSettingsActions {
       case ChangePinResult.rateLimited:
         AppPopup.showError(context, l10n.pinLocked);
       case ChangePinResult.fetchFailed:
-        AppPopup.showError(context, l10n.pinFetchFailed);
+        showFailure(context, fallback: l10n.pinFetchFailed);
       case ChangePinResult.wrongPin:
         AppPopup.showError(context, l10n.pinWrong);
       case ChangePinResult.saveFailed:
-        AppPopup.showError(context, l10n.pinSaveFailed);
+        showFailure(context, fallback: l10n.pinSaveFailed);
     }
   }
 
@@ -89,9 +90,9 @@ abstract final class E2eeSettingsActions {
       case ResetKeysResult.rateLimited:
         AppPopup.showError(context, l10n.pinLocked);
       case ResetKeysResult.fetchFailed:
-        AppPopup.showError(context, l10n.pinFetchFailed);
+        showFailure(context, fallback: l10n.pinFetchFailed);
       case ResetKeysResult.saveFailed:
-        AppPopup.showError(context, l10n.resetKeysFailed);
+        showFailure(context, fallback: l10n.resetKeysFailed);
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/connection_restored_provider.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/feed/data/feed_repository.dart';
 import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
@@ -22,7 +23,8 @@ final feedClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 ///
 /// Opens on the first page kept from last time, read again behind it. Read
 /// again, keeping what is shown, after each follow or unfollow, and when the
-/// tab is shown or the app comes back after [staleAfter]. None for a guest.
+/// tab is shown or the app comes back after [staleAfter], and when the
+/// internet comes back. None for a guest.
 class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
   /// How old what is shown may get before showing the tab reads it again.
   static const staleAfter = Duration(minutes: 5);
@@ -45,6 +47,7 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
     if (!ref.watch(isSignedInProvider)) return const PagedList();
 
     ref.listen(followChangesProvider, (_, _) => _reloadQuietly());
+    ref.listen(connectionRestoredProvider, (_, _) => _reloadQuietly());
     ref.listen(
       mainNavProvider.select((nav) => nav.currentIndex == MainTab.feed),
       (_, shown) {

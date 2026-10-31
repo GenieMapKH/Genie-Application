@@ -1,5 +1,7 @@
 import Flutter
+import GoogleMaps
 import UIKit
+import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -7,7 +9,19 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    provideMapsApiKey()
+    UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  /// The key comes from ios/Flutter/Secrets.xcconfig (never committed). Without
+  /// one the map stays blank, as on Android; not providing any would crash.
+  private func provideMapsApiKey() {
+    let key = Bundle.main.object(forInfoDictionaryKey: "GMSApiKey") as? String ?? ""
+    if key.isEmpty {
+      NSLog("MAPS_API_KEY is not set: the map will stay blank.")
+    }
+    GMSServices.provideAPIKey(key.isEmpty ? "missing" : key)
   }
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {

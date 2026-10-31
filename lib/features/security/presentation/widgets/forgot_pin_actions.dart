@@ -10,6 +10,7 @@ import 'package:tilomnov/features/security/presentation/screens/create_password_
 import 'package:tilomnov/features/security/presentation/widgets/security_confirm_dialog.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 
 /// The way back in for someone who forgot the chat PIN: the account
@@ -84,7 +85,7 @@ abstract final class ForgotPinActions {
       case RecoverPinResult.rateLimited:
         AppPopup.showError(context, l10n.chatPasswordTooManyTries);
       case RecoverPinResult.failed:
-        AppPopup.showError(context, l10n.pinSaveFailed);
+        showFailure(context, fallback: l10n.pinSaveFailed);
     }
   }
 }

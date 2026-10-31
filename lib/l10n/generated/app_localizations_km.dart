@@ -35,14 +35,49 @@ class AppLocalizationsKm extends AppLocalizations {
       'អ្នកមិនមានអ៊ីនធឺណិតទេ។ សូមភ្ជាប់អ៊ីនធឺណិតដើម្បីទទួលព័ត៌មានថ្មី។';
 
   @override
-  String get offlineDialogTitle => 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត';
+  String get connectionOffline => 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត';
 
   @override
-  String get offlineDialogMessage =>
-      'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទរបស់អ្នក។ អ្នកនៅតែអាចមើលអ្វីដែលបានរក្សាទុកក្នុងទូរសព្ទនេះ។';
+  String get connectionWaiting => 'កំពុងរង់ចាំបណ្តាញ…';
 
   @override
-  String get offlineKeepBrowsing => 'បន្តមើល';
+  String get connectionWeak => 'ការតភ្ជាប់យឺត';
+
+  @override
+  String get connectionWeakDetail => 'ការផ្ទុកអាចចំណាយពេលយូរ';
+
+  @override
+  String get connectionRestored => 'បានភ្ជាប់អ៊ីនធឺណិតវិញ';
+
+  @override
+  String get loadFailureOfflineTitle => 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត';
+
+  @override
+  String get loadFailureOfflineBody =>
+      'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទរបស់អ្នក។ ទំព័រនេះនឹងផ្ទុកដោយស្វ័យប្រវត្តិ នៅពេលអ្នកភ្ជាប់អ៊ីនធឺណិតវិញ។';
+
+  @override
+  String get loadFailureSlowTitle => 'ការតភ្ជាប់របស់អ្នកយឺតពេក';
+
+  @override
+  String get loadFailureSlowBody =>
+      'ទំព័រនេះចំណាយពេលយូរពេកក្នុងការផ្ទុក។ សញ្ញារបស់អ្នកប្រហែលជាខ្សោយ៖ សូមទៅកន្លែងដែលមានសញ្ញាល្អជាង ឬព្យាយាមម្តងទៀត។';
+
+  @override
+  String get loadFailureServerBody =>
+      'ម៉ាស៊ីនមេរបស់យើងកំពុងមានបញ្ហា។ សូមព្យាយាមម្តងទៀតក្នុងពេលបន្តិចទៀត។';
+
+  @override
+  String get failureOffline =>
+      'គ្មានការតភ្ជាប់អ៊ីនធឺណិត។ សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទរបស់អ្នក ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get failureSlow =>
+      'ការតភ្ជាប់របស់អ្នកយឺតពេក។ សូមទៅកន្លែងដែលមានសញ្ញាល្អជាង ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get failureServer =>
+      'ម៉ាស៊ីនមេរបស់យើងកំពុងមានបញ្ហា។ សូមព្យាយាមម្តងទៀតក្នុងពេលបន្តិចទៀត។';
 
   @override
   String get navExplore => 'ស្វែងរក';
@@ -2013,10 +2048,6 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get authErrorNoConnection =>
       'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។ សូមពិនិត្យការតភ្ជាប់របស់អ្នក។';
-
-  @override
-  String get authErrorServer =>
-      'មានបញ្ហាពីខាងយើង។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
 
   @override
   String get authErrorGeneric => 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។';

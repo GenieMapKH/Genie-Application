@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -132,6 +133,27 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Sokha Chan'), findsOneWidget);
+    });
+
+    testWidgets('offline, it says there is no internet connection', (
+      tester,
+    ) async {
+      await pumpTestApp(
+        tester,
+        const UserProfilePage(),
+        overrides: [
+          userProfileProvider.overrideWith(
+            (ref) async => throw DioException(
+              requestOptions: RequestOptions(path: '/users/me'),
+              type: DioExceptionType.connectionError,
+            ),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('No internet connection'), findsOneWidget);
+      expect(find.text('Could not load profile'), findsNothing);
     });
 
     testWidgets('choosing Dark repaints the app and is remembered', (

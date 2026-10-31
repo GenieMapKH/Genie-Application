@@ -11,6 +11,8 @@ import 'package:tilomnov/features/security/presentation/widgets/device_session_t
 import 'package:tilomnov/features/security/presentation/widgets/info_note.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 
 /// The devices signed in to the account, with a way to sign out one of them
@@ -31,8 +33,11 @@ class DevicesPage extends ConsumerWidget {
         child: sessions.when(
           skipLoadingOnRefresh: true,
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, _) =>
-              _LoadError(onRetry: () => ref.invalidate(deviceSessionsProvider)),
+          error: (error, _) => PageLoadFailure(
+            error: error,
+            message: l10n.devicesLoadFailed,
+            onRetry: () => ref.invalidate(deviceSessionsProvider),
+          ),
           data: (devices) => _DeviceList(devices: devices),
         ),
       ),
@@ -74,7 +79,7 @@ class _DeviceListState extends ConsumerState<_DeviceList> {
     if (signedOut) {
       AppPopup.showSuccess(context, l10n.devicesSignedOut);
     } else {
-      AppPopup.showError(context, l10n.devicesSignOutFailed);
+      showFailure(context, fallback: l10n.devicesSignOutFailed);
     }
   }
 
@@ -94,7 +99,7 @@ class _DeviceListState extends ConsumerState<_DeviceList> {
     if (!mounted) return;
     if (!signedOut) {
       setState(() => _isBusy = false);
-      AppPopup.showError(context, l10n.devicesSignOutFailed);
+      showFailure(context, fallback: l10n.devicesSignOutFailed);
       return;
     }
 
@@ -195,40 +200,5 @@ class _DeviceListState extends ConsumerState<_DeviceList> {
       Localizations.localeOf(context).languageCode,
     ).add_jm().format(allowedFrom.toLocal());
     return l10n.devicesTooNewUntil(when);
-  }
-}
-
-/// Scrollable, so pull-to-refresh still works while the error is shown.
-class _LoadError extends StatelessWidget {
-  final VoidCallback onRetry;
-
-  const _LoadError({required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final l10n = context.l10n;
-
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 48, color: colors.textHint),
-              const SizedBox(height: 16),
-              Text(
-                l10n.devicesLoadFailed,
-                style: TextStyle(fontSize: 16, color: colors.textMuted),
-              ),
-              const SizedBox(height: 8),
-              TextButton(onPressed: onRetry, child: Text(l10n.commonRetry)),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }

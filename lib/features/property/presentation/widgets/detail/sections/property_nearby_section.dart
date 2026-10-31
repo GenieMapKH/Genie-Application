@@ -11,6 +11,7 @@ import 'package:tilomnov/features/property/presentation/screens/nearby_route_pag
 import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
 import 'package:tilomnov/features/property/utils/nearby_distance_format.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// "What's nearby": the closest markets, hospitals and schools by road, for
@@ -31,6 +32,7 @@ class PropertyNearbySection extends ConsumerWidget {
       error: (error, stack) {
         AppLogger.error('Nearby places failed to load', error, stack);
         return _CouldNotLoad(
+          error: error,
           onRetry: () => ref.invalidate(propertyDetailProvider(propertyId)),
         );
       },
@@ -217,9 +219,10 @@ class _NearbyPlaceRow extends StatelessWidget {
 }
 
 class _CouldNotLoad extends StatelessWidget {
+  final Object error;
   final VoidCallback onRetry;
 
-  const _CouldNotLoad({required this.onRetry});
+  const _CouldNotLoad({required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +232,11 @@ class _CouldNotLoad extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              context.l10n.propertyNearbyCouldNotLoad,
+              failureMessage(
+                context.l10n,
+                error: error,
+                fallback: context.l10n.propertyNearbyCouldNotLoad,
+              ),
               style: GoogleFonts.inter(
                 fontSize: 13,
                 color: context.colors.textMuted,

@@ -11,7 +11,7 @@ class NetworkStatusInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    status.reachable();
+    status.reachable(status: response.statusCode);
     handler.next(response);
   }
 
@@ -19,7 +19,7 @@ class NetworkStatusInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (err.response != null) {
       // The server answered, even if with an error.
-      status.reachable();
+      status.reachable(status: err.response!.statusCode);
     } else if (isUnreachable(err)) {
       status.unreachable();
     }

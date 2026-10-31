@@ -7,6 +7,7 @@ import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
 import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
 import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Asks the user to show they own the account, then runs [action] with that
 /// proof. The dialog stays open and says what went wrong until the action
@@ -124,7 +125,7 @@ class _IdentityConfirmDialogState
         AccountActionResult.identityRejected => rejected,
         AccountActionResult.tooManyAttempts => l10n.commonTooManyAttempts,
         AccountActionResult.deviceTooNew => l10n.accountDeviceTooNew,
-        _ => l10n.commonSomethingWentWrong,
+        _ => failureMessage(l10n, fallback: l10n.commonSomethingWentWrong),
       };
     });
   }

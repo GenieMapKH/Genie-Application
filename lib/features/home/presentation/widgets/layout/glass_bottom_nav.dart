@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,9 +41,12 @@ class GlassBottomNav extends ConsumerStatefulWidget {
     return (safeBottom - 10).clamp(10.0, roomLeft - 4);
   }
 
-  /// How far the capsule's top edge is above the bottom of the screen.
-  static double capsuleTopOf(BuildContext context) =>
-      _capsuleHeight + _bottomGap(context);
+  /// How far the capsule's bottom edge is above the bottom of the screen.
+  static double capsuleBottomOf(BuildContext context) => _bottomGap(context);
+
+  /// The capsule's size on a screen [screenWidth] wide; it is centred.
+  static Size capsuleSizeFor(double screenWidth) =>
+      Size(math.min(screenWidth - 2 * _sideMargin, _maxWidth), _capsuleHeight);
 
   @override
   ConsumerState<GlassBottomNav> createState() => _GlassBottomNavState();

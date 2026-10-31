@@ -1,61 +1,64 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/l10n/l10n.dart';
 
 import 'dart:async';
 
+/// The look of a popup: green, red, or the brand's navy and gold.
+enum AppPopupTone { success, error, info }
+
 class AppPopup {
-  static void showSuccess(BuildContext context, String message) {
-    _showCustomSnackBar(
-      context: context,
-      message: message,
-      icon: Icons.check_circle_rounded,
-      iconColor: const Color(0xFF10B981), // Emerald Green
-      backgroundColor: const Color(0xFF064E3B), // Very dark emerald
-      borderColor: const Color(0xFF059669).withValues(alpha: 0.3),
-    );
-  }
+  static void showSuccess(BuildContext context, String message) =>
+      _show(context, message, AppPopupTone.success);
 
-  static void showError(BuildContext context, String message) {
-    _showCustomSnackBar(
-      context: context,
-      message: message,
-      icon: Icons.error_rounded,
-      iconColor: const Color(0xFFEF4444), // Rose Red
-      backgroundColor: const Color(0xFF4C0519), // Very dark rose
-      borderColor: const Color(0xFFE11D48).withValues(alpha: 0.3),
-    );
-  }
+  static void showError(BuildContext context, String message) =>
+      _show(context, message, AppPopupTone.error);
 
-  static void showInfo(BuildContext context, String message) {
-    _showCustomSnackBar(
-      context: context,
-      message: message,
-      icon: Icons.info_rounded,
-      iconColor: AppColors.light.highlight, // Brand gold
-      backgroundColor: AppColors.light.primary, // Brand navy
-      borderColor: AppColors.light.highlight.withValues(alpha: 0.3),
-    );
-  }
+  static void showInfo(BuildContext context, String message) =>
+      _show(context, message, AppPopupTone.info);
 
-  static void _showCustomSnackBar({
-    required BuildContext context,
-    required String message,
-    required IconData icon,
-    required Color iconColor,
-    required Color backgroundColor,
-    required Color borderColor,
+  /// The red "No internet connection", with a retry button calling
+  /// [onRetry]. [message] is that sentence in the user's language.
+  static void showOffline(
+    BuildContext context,
+    String message, {
+    required VoidCallback onRetry,
   }) {
-    final overlay = Overlay.of(context, rootOverlay: true);
+    showOn(
+      Overlay.of(context, rootOverlay: true),
+      message,
+      tone: AppPopupTone.error,
+      icon: Icons.wifi_off_rounded,
+      onRetry: onRetry,
+    );
+  }
+
+  /// Shows on [overlay] itself, for the app shell: it sits above the
+  /// Navigator, so it has no overlay to find from its own context. [icon]
+  /// replaces the tone's own; with [onRetry] it has a retry button, which
+  /// also closes it. Returns a call that hides the popup early.
+  static VoidCallback showOn(
+    OverlayState overlay,
+    String message, {
+    required AppPopupTone tone,
+    IconData? icon,
+    VoidCallback? onRetry,
+  }) {
+    final hide = ValueNotifier(false);
     late OverlayEntry overlayEntry;
+    final (toneIcon, iconColor, backgroundColor, borderColor) = _style(tone);
 
     overlayEntry = OverlayEntry(
       builder: (context) => _TopToastWidget(
         message: message,
-        icon: icon,
+        icon: icon ?? toneIcon,
         iconColor: iconColor,
         backgroundColor: backgroundColor,
         borderColor: borderColor,
+        hideRequest: hide,
+        onRetry: onRetry,
         onDismiss: () {
           if (overlayEntry.mounted) {
             overlayEntry.remove();
@@ -65,7 +68,35 @@ class AppPopup {
     );
 
     overlay.insert(overlayEntry);
+    return () => hide.value = true;
   }
+
+  static void _show(BuildContext context, String message, AppPopupTone tone) {
+    showOn(Overlay.of(context, rootOverlay: true), message, tone: tone);
+  }
+
+  /// Icon, icon colour, background and border of each tone.
+  static (IconData, Color, Color, Color) _style(AppPopupTone tone) =>
+      switch (tone) {
+        AppPopupTone.success => (
+          Icons.check_circle_rounded,
+          const Color(0xFF10B981), // Emerald Green
+          const Color(0xFF064E3B), // Very dark emerald
+          const Color(0xFF059669).withValues(alpha: 0.3),
+        ),
+        AppPopupTone.error => (
+          Icons.error_rounded,
+          const Color(0xFFEF4444), // Rose Red
+          const Color(0xFF4C0519), // Very dark rose
+          const Color(0xFFE11D48).withValues(alpha: 0.3),
+        ),
+        AppPopupTone.info => (
+          Icons.info_rounded,
+          AppColors.light.highlight, // Brand gold
+          AppColors.light.primary, // Brand navy
+          AppColors.light.highlight.withValues(alpha: 0.3),
+        ),
+      };
 }
 
 class _TopToastWidget extends StatefulWidget {
@@ -74,6 +105,12 @@ class _TopToastWidget extends StatefulWidget {
   final Color iconColor;
   final Color backgroundColor;
   final Color borderColor;
+
+  /// Turns true when the popup should leave before its time is up.
+  final ValueListenable<bool> hideRequest;
+
+  /// When set, a retry button at the end; tapping it closes the popup too.
+  final VoidCallback? onRetry;
   final VoidCallback onDismiss;
 
   const _TopToastWidget({
@@ -82,7 +119,9 @@ class _TopToastWidget extends StatefulWidget {
     required this.iconColor,
     required this.backgroundColor,
     required this.borderColor,
+    required this.hideRequest,
     required this.onDismiss,
+    this.onRetry,
   });
 
   @override
@@ -94,10 +133,12 @@ class _TopToastWidgetState extends State<_TopToastWidget>
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
   Timer? _timer;
+  bool _dismissing = false;
 
   @override
   void initState() {
     super.initState();
+    widget.hideRequest.addListener(_dismiss);
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
@@ -113,15 +154,18 @@ class _TopToastWidgetState extends State<_TopToastWidget>
   }
 
   void _dismiss() {
-    if (mounted) {
-      _controller.reverse().then((_) {
-        widget.onDismiss();
-      });
-    }
+    // A tap, a swipe, the timer and [hideRequest] may all ask: leave once.
+    if (!mounted || _dismissing) return;
+    _dismissing = true;
+    _timer?.cancel();
+    _controller.reverse().then((_) {
+      widget.onDismiss();
+    });
   }
 
   @override
   void dispose() {
+    widget.hideRequest.removeListener(_dismiss);
     _timer?.cancel();
     _controller.dispose();
     super.dispose();
@@ -175,6 +219,18 @@ class _TopToastWidgetState extends State<_TopToastWidget>
                       ),
                     ),
                   ),
+                  if (widget.onRetry case final onRetry?)
+                    IconButton(
+                      tooltip: context.l10n.commonRetry,
+                      icon: Icon(
+                        Icons.refresh_rounded,
+                        color: widget.iconColor,
+                      ),
+                      onPressed: () {
+                        _dismiss();
+                        onRetry();
+                      },
+                    ),
                 ],
               ),
             ),

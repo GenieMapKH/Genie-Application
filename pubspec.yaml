@@ -113,6 +113,12 @@ flutter_launcher_icons:
 # The following section is specific to Flutter packages.
 flutter:
 
+  # iOS uses CocoaPods only. google_maps_flutter_ios, google_mlkit_* and
+  # image_cropper have no Swift package, and mixing the two package managers
+  # risks linking Firebase's and ML Kit's shared Google libraries twice.
+  config:
+    enable-swift-package-manager: false
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

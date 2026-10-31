@@ -155,9 +155,6 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   /// The map extends this far below the screen (see `MainMapView`).
   static const double _mapFrameOverflow = 40.0;
 
-  /// Space between the glass capsule and the list's resting handle above it.
-  static const double _glassHandleGap = 6.0;
-
   /// A new place or person was picked: make room for its panel, and frame its
   /// area on the map once it is known.
   void _onSearchAreaChanged(SearchAreaState? previous, SearchAreaState? next) {
@@ -243,7 +240,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final bool overlayPage = !isHome;
     final glassNav = watchGlassNavigation(ref, context);
     final closestSheetBottom = glassNav
-        ? GlassBottomNav.capsuleTopOf(context) + _glassHandleGap
+        ? GlassBottomNav.capsuleBottomOf(context)
         : PropertyCarousel.bottomNavHeight;
 
     return PopScope(
@@ -310,10 +307,12 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 bottom: closestSheetBottom,
                 child: ClosestListingsSheet(
                   visible: showClosestSheet,
-                  glass: glassNav,
-                  // The glass bar floats: pulled up, the sheet carries on
-                  // behind it instead of showing the map there.
-                  underNavHeight: glassNav ? closestSheetBottom : 0,
+                  // The glass bar floats: the sheet grows out of it.
+                  glassNav: glassNav
+                      ? GlassBottomNav.capsuleSizeFor(
+                          MediaQuery.sizeOf(context).width,
+                        )
+                      : null,
                 ),
               ),
 

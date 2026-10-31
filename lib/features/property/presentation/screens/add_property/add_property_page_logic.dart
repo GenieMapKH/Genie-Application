@@ -6,6 +6,7 @@ import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'add_property_page.dart';
 import 'add_property_page_form_binding.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -96,7 +97,11 @@ extension AddPropertyPageLogic on AddPropertyPageState {
     } catch (e) {
       AppLogger.error('Saving property changes failed', e);
       if (!mounted) return;
-      AppPopup.showError(context, context.l10n.propertyCouldNotSaveChanges);
+      showFailure(
+        context,
+        error: e,
+        fallback: context.l10n.propertyCouldNotSaveChanges,
+      );
     }
   }
 
@@ -118,10 +123,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       Navigator.of(context).pop(property);
     } catch (e, stackTrace) {
       AppLogger.error('Could not archive the property', e, stackTrace);
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.propertySaveFailed)));
+      _showSaveFailed(e);
     } finally {
       if (mounted) setState(() => isArchiving = false);
     }
@@ -143,11 +145,20 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       }
     } catch (e, stackTrace) {
       AppLogger.error('Could not publish the property', e, stackTrace);
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.propertySaveFailed)));
+      _showSaveFailed(e);
     }
+  }
+
+  void _showSaveFailed(Object error) {
+    if (!mounted) return;
+    final message = failureMessage(
+      context.l10n,
+      error: error,
+      fallback: context.l10n.propertySaveFailed,
+    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void showErrorDialog(GlobalKey firstErrorKey) {

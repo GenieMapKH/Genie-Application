@@ -44,7 +44,7 @@ void main() {
 
   setUp(() {
     ApiCacheManager().clearAll();
-    status.reachable();
+    status.reset();
     server = _FlakyServer();
     dio = Dio(BaseOptions(baseUrl: 'https://api.test'));
     dio.interceptors.addAll([
@@ -52,6 +52,7 @@ void main() {
       CacheInterceptor(),
       RetryInterceptor(
         dio,
+        status: status,
         delays: const [Duration(milliseconds: 1), Duration(milliseconds: 1)],
         random: Random(1),
       ),
@@ -59,7 +60,7 @@ void main() {
     ]);
   });
 
-  tearDown(status.reachable);
+  tearDown(status.reset);
 
   test('a read that could not connect is repeated until it works', () async {
     server.failures = 2;
@@ -68,7 +69,7 @@ void main() {
 
     expect(answer.data, 'ok');
     expect(server.calls, hasLength(3));
-    expect(status.online.value, isTrue);
+    expect(status.connection.value, ConnectionQuality.good);
   });
 
   test('gives up after the last repeat and reports offline', () async {
@@ -85,7 +86,7 @@ void main() {
       ),
     );
     expect(server.calls, hasLength(3));
-    expect(status.online.value, isFalse);
+    expect(status.connection.value, ConnectionQuality.offline);
   });
 
   test('repeats a read the gateway could not pass on (503)', () async {
@@ -114,7 +115,7 @@ void main() {
 
     await expectLater(dio.get('/properties/1'), throwsA(isA<DioException>()));
     expect(server.calls, hasLength(1));
-    expect(status.online.value, isTrue);
+    expect(status.connection.value, ConnectionQuality.good);
   });
 
   test('noRetry fails at once', () async {
@@ -139,7 +140,7 @@ void main() {
 
     expect(answer.data, 'ok');
     expect(server.calls, hasLength(1));
-    expect(status.online.value, isFalse);
+    expect(status.connection.value, ConnectionQuality.offline);
   });
 
   test('a cancelled read is not repeated', () async {
@@ -149,5 +150,24 @@ void main() {
 
     await expectLater(dio.get('/properties/1'), throwsA(isA<DioException>()));
     expect(server.calls, hasLength(1));
+  });
+
+  test('a read sent while already offline fails at once', () async {
+    status.unreachable();
+    server.failures = 5;
+
+    await expectLater(dio.get('/properties/1'), throwsA(isA<DioException>()));
+    expect(server.calls, hasLength(1));
+  });
+
+  test('while offline, a gateway error is still repeated', () async {
+    status.unreachable();
+    server
+      ..failures = 1
+      ..failStatus = 503;
+
+    expect((await dio.get('/properties/1')).data, 'ok');
+    expect(server.calls, hasLength(2));
+    expect(status.connection.value, ConnectionQuality.good);
   });
 }

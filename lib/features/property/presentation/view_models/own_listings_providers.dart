@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/connection_restored_provider.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
@@ -21,7 +24,9 @@ void ownListingsChangedFrom(WidgetRef ref) =>
     ref.read(ownListingsRevisionProvider.notifier).state++;
 
 /// The signed-in user's own listings, newest first, a page at a time, with
-/// their count per status: the My Properties screen. None for a guest.
+/// their count per status: the My Properties screen. Opens on the first
+/// page kept from last time (so offline too), read again behind it and
+/// whenever the internet comes back. None for a guest.
 class PropertiesNotifier extends AsyncNotifier<OwnListings> {
   int? _nextOffset;
 
@@ -38,11 +43,21 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
     _nextOffset = null;
     if (!ref.watch(isSignedInProvider)) return const OwnListings();
     ref.listen(ownListingsRevisionProvider, (_, _) => _reloadQuietly());
+    ref.listen(connectionRestoredProvider, (_, _) => _reloadQuietly());
+
+    final kept = await repo.keptOwnFirstPage();
+    if (kept != null) {
+      // Shown at once; the server's page replaces it when it arrives.
+      unawaited(Future.microtask(_reloadQuietly));
+      return _listingsOf(kept);
+    }
     return _firstPage(repo, PropertyRepository.ownPageSize);
   }
 
-  Future<OwnListings> _firstPage(PropertyRepository repo, int limit) async {
-    final page = await repo.fetchOwnPage(offset: 0, limit: limit);
+  Future<OwnListings> _firstPage(PropertyRepository repo, int limit) async =>
+      _listingsOf(await repo.fetchOwnPage(offset: 0, limit: limit));
+
+  OwnListings _listingsOf(OwnListingsPage page) {
     _nextOffset = page.nextOffset;
     return OwnListings(
       page: PagedList(items: page.items, hasMore: page.nextOffset != null),
@@ -108,8 +123,9 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
     }
   }
 
-  /// Reads the pages already shown again, without a loading state.
-  Future<void> _reloadQuietly() async {
+  /// Reads the pages already shown again, without a loading state. False
+  /// when they could not be read: what is shown stays.
+  Future<bool> _reloadQuietly() async {
     final shown = state.valueOrNull?.items.length ?? 0;
     final generation = ++_generation;
     try {
@@ -118,14 +134,19 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
         shown.clamp(PropertyRepository.ownPageSize, _maxReload),
       );
       if (generation == _generation) state = AsyncData(reloaded);
+      return true;
     } catch (e) {
       // The listings already shown stay; the next change or pull reloads.
       AppLogger.error('Reloading your listings failed', e);
+      return false;
     }
   }
 
-  /// Pull to refresh: the first page again, with a loading state.
-  Future<void> refresh() async {
+  /// Pull to refresh, or Retry. Shown listings stay until the new ones
+  /// arrive; with none shown, it shows the loading state. False when they
+  /// could not be read.
+  Future<bool> refresh() async {
+    if (state.hasValue && !state.hasError) return _reloadQuietly();
     _generation++;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
@@ -134,6 +155,7 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
         PropertyRepository.ownPageSize,
       ),
     );
+    return !state.hasError;
   }
 }
 

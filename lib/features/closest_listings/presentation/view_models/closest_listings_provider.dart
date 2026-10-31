@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/connection_restored_provider.dart';
+import 'package:tilomnov/core/network/load_failure.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/closest_listings/data/closest_listing.dart';
 import 'package:tilomnov/features/closest_listings/data/closest_listings_repository.dart';
@@ -53,6 +55,8 @@ class ClosestListingsState {
 /// Every published listing, nearest first, a page at a time, passing the
 /// map filter. Read when first shown and again when the filter changes,
 /// from the same origin; [refresh] measures from where the user is now.
+/// Without internet it is the list kept from last time (for the same
+/// filter), read again once the internet is back.
 class ClosestListingsNotifier extends AsyncNotifier<ClosestListingsState> {
   /// Kept across filter changes, so the list does not jump to a new origin.
   ClosestOrigin? _origin;
@@ -66,14 +70,28 @@ class ClosestListingsNotifier extends AsyncNotifier<ClosestListingsState> {
     final generation = ++_generation;
     final filter = ref.watch(mapPropertyFilterProvider);
     final origin = _origin ??= await ref.read(closestOriginProvider)();
-    final page = await ref
-        .read(closestListingsRepositoryProvider)
-        .fetchPage(origin: origin.point, filter: filter);
+    final page = await _firstPage(origin, filter);
     if (generation == _generation) _nextOffset = page.nextOffset;
     return ClosestListingsState(
       listings: PagedList(items: page.items, hasMore: page.nextOffset != null),
       nearUser: origin.isUser,
     );
+  }
+
+  Future<ClosestListingsPage> _firstPage(
+    ClosestOrigin origin,
+    MapPropertyFilter filter,
+  ) async {
+    final repository = ref.read(closestListingsRepositoryProvider);
+    try {
+      return await repository.fetchPage(origin: origin.point, filter: filter);
+    } catch (e) {
+      if (!LoadFailure.of(e).isConnection) rethrow;
+      final kept = await repository.keptFirstPage(filter);
+      if (kept == null) rethrow;
+      ref.listen(connectionRestoredProvider, (_, _) => ref.invalidateSelf());
+      return kept;
+    }
   }
 
   /// The next page, added after those already shown.

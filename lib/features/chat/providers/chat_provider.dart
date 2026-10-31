@@ -37,17 +37,23 @@ class ConversationsNotifier
   int _generation = 0;
 
   /// [signInPending] keeps the list loading while it is not yet known who,
-  /// if anyone, is signed in.
+  /// if anyone, is signed in; [signInError] is why that could not be found
+  /// out (offline), shown instead of an empty list.
   ConversationsNotifier({
     required this.repository,
     required this.socketService,
     required this.cipher,
     this.archived = false,
     bool signInPending = false,
+    Object? signInError,
   }) : _previews = cipher == null ? null : ConversationPreviews(cipher),
        super(const AsyncValue.loading()) {
     if (cipher == null) {
-      if (!signInPending) state = const AsyncValue.data(ConversationList());
+      if (signInError != null) {
+        state = AsyncValue.error(signInError, StackTrace.current);
+      } else if (!signInPending) {
+        state = const AsyncValue.data(ConversationList());
+      }
       return;
     }
     _subscriptions
@@ -64,7 +70,28 @@ class ConversationsNotifier
       )
       // Messages may have been missed while disconnected.
       ..add(socketService.onConnected.listen((_) => refresh()));
+    if (!archived) _showKept();
     refresh();
+  }
+
+  /// The main list as last read on this device, shown until the server's
+  /// arrives, or instead of it while offline.
+  Future<void> _showKept() async {
+    try {
+      final page = await repository.keptFirstPage();
+      if (page == null || !mounted || state.hasValue) return;
+      final items = await Future.wait(page.items.map(_previews!.shown));
+      if (!mounted || state.hasValue) return;
+      _nextCursor = page.nextCursor;
+      state = AsyncValue.data(
+        ConversationList(
+          page: PagedList(items: items, hasMore: page.nextCursor != null),
+          unreadTotal: page.unreadTotal,
+        ),
+      );
+    } catch (e) {
+      AppLogger.error('The kept chat list could not be shown', e);
+    }
   }
 
   /// Updates the one conversation [message] belongs to, instead of loading
@@ -339,6 +366,11 @@ final conversationsProvider =
         signInPending:
             userId == null &&
             ref.watch(userProfileProvider.select((p) => p.isLoading)),
+        signInError: userId == null
+            ? ref.watch(
+                userProfileProvider.select((p) => p.isLoading ? null : p.error),
+              )
+            : null,
       );
     });
 

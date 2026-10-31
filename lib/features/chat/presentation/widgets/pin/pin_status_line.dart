@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// The line under a PIN field: "Checking...", or what went wrong with the
 /// last PIN (tries left, the wait after too many, no connection). Keeps its
@@ -86,7 +87,7 @@ class PinStatusLine extends StatelessWidget {
       PinRejected(attemptsLeft: final left?) => l10n.pinWrongTriesLeft(left),
       PinRejected() => l10n.pinWrongNoCount,
       PinLockedOut() => _lockedMessage(l10n),
-      PinCheckFailed() => l10n.pinCheckFailed,
+      PinCheckFailed() => failureMessage(l10n, fallback: l10n.pinCheckFailed),
       PinAccepted() || null => null,
     };
   }

@@ -13,6 +13,7 @@ import 'package:tilomnov/features/property/presentation/widgets/detail/actions/p
 import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_visibility_sheet.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Takes the place of Chat / Call Now when the owner opens their own
 /// listing: Edit opens the edit form, Visibility makes it public, a draft
@@ -57,7 +58,11 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
     } catch (e, stack) {
       AppLogger.error('Opening the listing editor failed', e, stack);
       if (mounted) {
-        AppPopup.showError(context, context.l10n.propertyCouldNotOpenEditor);
+        showFailure(
+          context,
+          error: e,
+          fallback: context.l10n.propertyCouldNotOpenEditor,
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -80,9 +85,10 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
     } catch (e, stack) {
       AppLogger.error('Changing listing visibility failed', e, stack);
       if (mounted) {
-        AppPopup.showError(
+        showFailure(
           context,
-          context.l10n.propertyCouldNotChangeVisibility,
+          error: e,
+          fallback: context.l10n.propertyCouldNotChangeVisibility,
         );
       }
     } finally {

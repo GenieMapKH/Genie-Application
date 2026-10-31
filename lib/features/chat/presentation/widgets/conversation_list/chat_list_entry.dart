@@ -9,6 +9,7 @@ import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/ch
 import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/delete_chat_dialog.dart';
 import 'package:tilomnov/features/chat/providers/conversation_actions.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/shared/widgets/lists/swipe_action_tile.dart';
 
 /// A conversation in the chat list or the archive: tap to open it; swipe it
@@ -109,7 +110,7 @@ class ChatListEntry extends ConsumerWidget {
 
     final done = await _attempt(
       messenger,
-      l10n.chatActionFailed,
+      l10n,
       () => isArchived ? actions.unarchive(id) : actions.archive(id),
     );
     if (!done) return;
@@ -122,7 +123,7 @@ class ChatListEntry extends ConsumerWidget {
           label: l10n.chatUndo,
           onPressed: () => _attempt(
             messenger,
-            l10n.chatActionFailed,
+            l10n,
             () => isArchived ? actions.archive(id) : actions.unarchive(id),
           ),
         ),
@@ -143,7 +144,7 @@ class ChatListEntry extends ConsumerWidget {
 
     final done = await _attempt(
       messenger,
-      l10n.chatActionFailed,
+      l10n,
       () => actions.delete(
         chat.participantId,
         forEveryone: forEveryone,
@@ -158,7 +159,7 @@ class ChatListEntry extends ConsumerWidget {
   /// Runs [action]; on failure logs it and tells the user. True on success.
   static Future<bool> _attempt(
     ScaffoldMessengerState messenger,
-    String failureMessage,
+    AppLocalizations l10n,
     Future<void> Function() action,
   ) async {
     try {
@@ -166,7 +167,12 @@ class ChatListEntry extends ConsumerWidget {
       return true;
     } catch (e, stackTrace) {
       AppLogger.error('Chat list action failed', e, stackTrace);
-      messenger.showSnackBar(SnackBar(content: Text(failureMessage)));
+      final message = failureMessage(
+        l10n,
+        error: e,
+        fallback: l10n.chatActionFailed,
+      );
+      messenger.showSnackBar(SnackBar(content: Text(message)));
       return false;
     }
   }

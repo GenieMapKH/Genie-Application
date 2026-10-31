@@ -7,7 +7,7 @@ import 'package:tilomnov/features/home/presentation/providers/map_camera_provide
 import 'package:tilomnov/features/home/presentation/widgets/map/liquid/drop_on_screen.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/liquid/liquid_labels.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/liquid/liquid_necks.dart';
-import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_label.dart';
 import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
 import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 import 'package:tilomnov/features/home/utils/map/markers/price_tag_pin.dart';
@@ -67,10 +67,12 @@ class LiquidClusterPainter extends CustomPainter {
       PriceTagPin.paint(canvas, d.outline, d.tail, d.border, d.color);
     }
 
-    Offset centerOf(ClusterSpot spot) =>
-        _toScreen(spot.position, camera, size) - Offset(0, spot.lift);
-    LiquidLabels.paintOutgoing(canvas, transition.outgoingLabels, p, centerOf);
-    LiquidLabels.paintIncoming(canvas, transition.incomingLabels, p, centerOf);
+    Offset centerOf(ClusterLabel label) {
+      final place = label.placeAt(p, transition.drops);
+      return _toScreen(place.position, camera, size) - Offset(0, place.lift);
+    }
+
+    LiquidLabels.paint(canvas, transition.labels, p, centerOf);
   }
 
   /// The drops at linear progress [p] near the screen. Listings travelling

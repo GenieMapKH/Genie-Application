@@ -13,6 +13,8 @@ import 'package:tilomnov/features/security/presentation/screens/security_page.da
 import 'package:tilomnov/features/notifications/presentation/notification_settings_page.dart';
 import 'package:tilomnov/features/settings/presentation/widgets/preference_rows.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
+import 'package:tilomnov/shared/widgets/feedback/refresh_outcome.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
 import 'package:tilomnov/features/search/presentation/screens/saved_searches_page.dart';
@@ -61,34 +63,44 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     });
   }
 
+  /// Pull-to-refresh. A profile shown stays; says so when there is no
+  /// internet (it is then the one kept from before) or it failed.
+  Future<void> _refresh() async {
+    final shownBefore = ref.read(userProfileProvider).hasValue;
+    ref.invalidate(userProfileProvider);
+    var ok = true;
+    try {
+      await ref.read(userProfileProvider.future);
+    } catch (e) {
+      // The error state is rendered from the provider itself.
+      AppLogger.error('Profile refresh failed', e);
+      ok = false;
+    }
+    if (!shownBefore || !mounted) return;
+    showRefreshOutcome(
+      context,
+      ok: ok,
+      failedMessage: context.l10n.accountLoadFailed,
+      onRetry: _refresh,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(userProfileProvider);
     final profile = profileAsync.valueOrNull;
-    // A refresh failed but the profile from before is still shown.
-    final showsStaleProfile =
-        profileAsync.hasError &&
-        profileAsync.hasValue &&
-        !profileAsync.isLoading;
 
     return AppPageScaffold(
       title: context.l10n.accountTitle,
       onBackPressed: widget.onBackPressed,
+      // The menu carries on behind a floating navigation bar.
+      extendsToBottom: true,
       child: Column(
         children: [
-          if (showsStaleProfile) const _OfflineWarning(),
           Expanded(
             child: RefreshIndicator(
               color: context.colors.accent,
-              onRefresh: () async {
-                ref.invalidate(userProfileProvider);
-                try {
-                  await ref.read(userProfileProvider.future);
-                } catch (e) {
-                  // The error state is rendered from the provider itself.
-                  AppLogger.error('Profile refresh failed', e);
-                }
-              },
+              onRefresh: _refresh,
               // A profile from before stays up while it is refreshed; with
               // none, a retry shows the spinner rather than the old error.
               // No profile and no error: signing out, about to leave.
@@ -97,7 +109,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                   : profileAsync.hasError &&
                         !profileAsync.isLoading &&
                         !_retryingOnOpen
-                  ? _LoadError(
+                  ? PageLoadFailure(
+                      error: profileAsync.error,
+                      message: context.l10n.accountLoadFailed,
                       onRetry: () => ref.invalidate(userProfileProvider),
                     )
                   : const Center(child: CircularProgressIndicator()),
@@ -120,7 +134,12 @@ class _AccountMenu extends ConsumerWidget {
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        16,
+        16,
+        40 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         ProfileHeader(profile: profile),
         const SizedBox(height: 28),
@@ -180,88 +199,6 @@ class _AccountMenu extends ConsumerWidget {
               },
             ),
           ],
-        ),
-      ],
-    );
-  }
-}
-
-class _OfflineWarning extends StatelessWidget {
-  const _OfflineWarning();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(
-        color: colors.dangerSoft,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colors.dangerBorder),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.wifi_off, size: 16, color: colors.danger),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              context.l10n.commonOffline,
-              style: TextStyle(fontSize: 12, color: colors.onDangerSoft),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Scrollable, so pull-to-refresh still works while the error is shown.
-class _LoadError extends StatelessWidget {
-  final VoidCallback onRetry;
-
-  const _LoadError({required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final l10n = context.l10n;
-
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error_outline, size: 48, color: colors.textHint),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.accountLoadFailed,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: colors.textMuted,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: onRetry,
-                  child: Text(
-                    l10n.commonRetry,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: colors.accent,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ],
     );

@@ -59,15 +59,15 @@ class DefaultFirebaseOptions {
   );
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAlSRnOsBVWpZ_oJ-fG2vkAr6t6vJvPMFg',
-    appId: '1:67344886415:ios:5f05618b2272865360defa',
+    appId: '1:67344886415:ios:d5ac512f0724bc7060defa',
     messagingSenderId: '67344886415',
     projectId: 'genie-a0c66',
     storageBucket: 'genie-a0c66.firebasestorage.app',
     androidClientId:
         '67344886415-7hfaneh8s0pjmn6s03f0ups5v74k1ef6.apps.googleusercontent.com',
     iosClientId:
-        '67344886415-d4oo5ehf5up4elfrsubeg9q07pgs54ib.apps.googleusercontent.com',
-    iosBundleId: 'com.example.genie',
+        '67344886415-g26d87aetcsfci6fauc8t87ba94k64gs.apps.googleusercontent.com',
+    iosBundleId: 'com.sparkbytekh.tilomnov',
   );
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAlSRnOsBVWpZ_oJ-fG2vkAr6t6vJvPMFg',

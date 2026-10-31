@@ -19,6 +19,8 @@ import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
 import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
+import 'package:tilomnov/shared/widgets/feedback/refresh_outcome.dart';
 import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 class MyPropertiesPage extends ConsumerWidget {
@@ -39,10 +41,15 @@ class MyPropertiesPage extends ConsumerWidget {
 
   Widget _buildShown(BuildContext context, WidgetRef ref) {
     final propertiesAsync = ref.watch(propertiesProvider);
+    // With nothing loaded before, the failure takes the page's place.
+    final failed = propertiesAsync.hasError && !propertiesAsync.hasValue;
 
     return Scaffold(
       backgroundColor: context.colors.background,
+      // The list carries on behind a floating navigation bar, padded to end
+      // above it.
       body: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -50,16 +57,12 @@ class MyPropertiesPage extends ConsumerWidget {
               title: context.l10n.navMyProperties,
               onBackPressed: onBackPressed,
             ),
-            if (propertiesAsync.hasError &&
-                propertiesAsync.hasValue &&
-                !propertiesAsync.isLoading)
-              _buildOfflineWarning(context),
-            const SizedBox(height: 16),
+            // The failure sits right under the header, as on every tab.
+            if (!failed) const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
                 color: context.colors.accent,
-                onRefresh: () =>
-                    ref.read(propertiesProvider.notifier).refresh(),
+                onRefresh: () => _refresh(context, ref),
                 child: propertiesAsync.when(
                   skipLoadingOnReload: true,
                   skipError: true,
@@ -76,7 +79,8 @@ class MyPropertiesPage extends ConsumerWidget {
                       color: context.colors.accent,
                     ),
                   ),
-                  error: (error, stack) => _buildErrorState(context, ref),
+                  error: (error, stack) =>
+                      _buildErrorState(context, ref, error),
                 ),
               ),
             ),
@@ -124,6 +128,7 @@ class MyPropertiesPage extends ConsumerWidget {
     if (properties.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         children: const [EmptyPropertiesState()],
       );
     }
@@ -144,7 +149,12 @@ class MyPropertiesPage extends ConsumerWidget {
           onLoadMore: () => ref.read(propertiesProvider.notifier).loadMore(),
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: EdgeInsets.fromLTRB(
+              16,
+              0,
+              16,
+              MediaQuery.paddingOf(context).bottom,
+            ),
             itemCount: rowCount + (page.loadingMore ? 1 : 0),
             itemBuilder: (context, row) {
               if (row == rowCount) return const LoadingMoreIndicator();
@@ -200,78 +210,25 @@ class MyPropertiesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildOfflineWarning(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(
-        color: context.colors.dangerSoft,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: context.colors.dangerBorder),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.wifi_off, size: 16, color: Color(0xFFEF4444)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              context.l10n.propertyYouAreOfflinePleaseConnectTo,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: context.colors.onDangerSoft,
-              ),
-            ),
-          ),
-        ],
-      ),
+  /// Pull-to-refresh: the listings shown stay; says so when there is no
+  /// internet or they could not be read.
+  Future<void> _refresh(BuildContext context, WidgetRef ref) async {
+    final shownBefore = ref.read(propertiesProvider).hasValue;
+    final ok = await ref.read(propertiesProvider.notifier).refresh();
+    if (!shownBefore || !context.mounted) return;
+    showRefreshOutcome(
+      context,
+      ok: ok,
+      failedMessage: context.l10n.propertyCouldNotLoadProperties,
+      onRetry: () => _refresh(context, ref),
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref) {
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: context.colors.textHint,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    context.l10n.propertyCouldNotLoadProperties,
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: context.colors.textMuted,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () =>
-                        ref.read(propertiesProvider.notifier).refresh(),
-                    child: Text(
-                      context.l10n.commonRetry,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: context.colors.accent,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object error) {
+    return PageLoadFailure(
+      error: error,
+      message: context.l10n.propertyCouldNotLoadProperties,
+      onRetry: () => ref.read(propertiesProvider.notifier).refresh(),
     );
   }
 }

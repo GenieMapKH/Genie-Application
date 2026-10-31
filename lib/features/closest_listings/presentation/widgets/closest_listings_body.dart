@@ -11,6 +11,7 @@ import 'package:tilomnov/features/feed/presentation/widgets/feed_message_view.da
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/load_failure_view.dart';
 import 'package:tilomnov/shared/utils/paged_list.dart';
 import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
@@ -48,12 +49,11 @@ class ClosestListingsBody extends ConsumerWidget {
           ),
         ),
       ),
-      error: (_, _) => _message(
-        FeedMessageView(
-          icon: Icons.cloud_off_rounded,
-          title: l10n.closestLoadFailed,
-          actionLabel: l10n.commonRetry,
-          onAction: retry,
+      error: (error, _) => _message(
+        LoadFailureView(
+          error: error,
+          message: l10n.closestLoadFailed,
+          onRetry: retry,
         ),
       ),
       data: (state) => state.listings.items.isEmpty

@@ -9,6 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
 import 'package:tilomnov/shared/widgets/menus/app_menu_item.dart';
 
@@ -33,7 +35,10 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.background,
+      // The list carries on behind a floating navigation bar; it pads itself
+      // to end above it.
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             AppHeaderBar(
@@ -60,7 +65,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
                       },
                       loading: () =>
                           const Center(child: CircularProgressIndicator()),
-                      error: (err, stack) => _buildErrorState(),
+                      error: (err, stack) => _buildErrorState(err),
                     ),
               ),
             ),
@@ -132,25 +137,21 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
     );
   }
 
-  Widget _buildErrorState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            context.l10n.chatCouldNotLoadYourChats,
-            style: GoogleFonts.inter(
-              fontSize: 15,
-              color: context.colors.textMuted,
-            ),
-          ),
-          const SizedBox(height: 16),
-          OutlinedButton(
-            onPressed: () => ref.read(conversationsProvider.notifier).refresh(),
-            child: Text(context.l10n.chatTryAgain),
-          ),
-        ],
-      ),
+  Widget _buildErrorState(Object error) {
+    return PageLoadFailure(
+      error: error,
+      message: context.l10n.chatCouldNotLoadYourChats,
+      onRetry: _retry,
     );
+  }
+
+  /// Without the profile it is not known whose chats to load: that is read
+  /// again first.
+  void _retry() {
+    if (ref.read(userProfileProvider).hasError) {
+      ref.invalidate(userProfileProvider);
+    } else {
+      ref.read(conversationsProvider.notifier).refresh();
+    }
   }
 }

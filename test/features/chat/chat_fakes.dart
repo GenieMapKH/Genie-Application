@@ -280,6 +280,12 @@ class FakeChatRepository extends Fake implements ChatRepository {
   final conversationCursors = <String?>[];
 
   /// Serves [conversations] (or [archivedConversations]) a page at a time,
+  /// The main list as kept on the device, when a test keeps one.
+  ConversationPage? kept;
+
+  @override
+  Future<ConversationPage?> keptFirstPage() async => kept;
+
   /// in their order; the cursor is the index the next page starts at.
   @override
   Future<ConversationPage> fetchConversationPage({

@@ -16,7 +16,7 @@ import 'package:tilomnov/features/notifications/providers/notification_providers
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
-import 'package:tilomnov/shared/widgets/feedback/offline_banner.dart';
+import 'package:tilomnov/shared/widgets/feedback/connection_popups.dart';
 
 class AppScrollBehavior extends ScrollBehavior {
   @override
@@ -71,7 +71,7 @@ class MyApp extends ConsumerWidget {
       routerConfig: router,
       builder: (context, child) => updateRequired
           ? const UpdateRequiredPage()
-          : OfflineBanner(
+          : ConnectionPopups(
               navigatorKey: router.routerDelegate.navigatorKey,
               child: child ?? const SizedBox.shrink(),
             ),

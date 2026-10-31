@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 
-/// What the feed shows instead of listings: empty, or failed to load. One
+/// What the feed shows when the user follows no one with listings. One
 /// card hugging its content, like the empty Saved page.
 class FeedMessageView extends StatelessWidget {
   final IconData icon;

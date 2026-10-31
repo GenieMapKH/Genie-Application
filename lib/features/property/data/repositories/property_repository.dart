@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tilomnov/core/network/api_cache_manager.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/storage/kept_copy_store.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/map_property_filter.dart';
 import '../models/property_insights.dart';
@@ -22,8 +24,17 @@ class PropertyRepository {
   /// client sends no session token to the storage host.
   final Dio storageDio;
 
-  PropertyRepository(this.dio, {Dio? storageDio})
-    : storageDio = storageDio ?? Dio();
+  /// The first page of the user's own listings, kept for the signed-in
+  /// account by default ([keptOwnFirstPage]).
+  final KeptCopyStore _kept;
+  static const _keptOwnName = 'own_listings.first_page.v1';
+
+  PropertyRepository(
+    this.dio, {
+    Dio? storageDio,
+    Future<String?> Function()? accountId,
+  }) : storageDio = storageDio ?? Dio(),
+       _kept = KeptCopyStore(account: accountId ?? AuthStorage.signedInUserId);
 
   /// Public listings may be reused for a short while without asking the
   /// server; any change the user makes to a property drops them at once.
@@ -47,15 +58,8 @@ class PropertyRepository {
         queryParameters: {'limit': limit, 'offset': offset},
       );
       final data = response.data as Map<String, dynamic>;
-      return (
-        items: await compute(
-          PropertyModel.listFromJson,
-          data['items'] as List<dynamic>,
-        ),
-        nextOffset: data['nextOffset'] as int?,
-        countByStatus: (data['countByStatus'] as Map<String, dynamic>? ?? {})
-            .map((status, count) => MapEntry(status, count as int)),
-      );
+      if (offset == 0) await _kept.write(_keptOwnName, data);
+      return await _ownPageOf(data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         return (
@@ -67,6 +71,22 @@ class PropertyRepository {
       rethrow;
     }
   }
+
+  /// The first page of the user's own listings as last read on this
+  /// device, or null.
+  Future<OwnListingsPage?> keptOwnFirstPage() =>
+      _kept.read(_keptOwnName, parse: _ownPageOf);
+
+  static Future<OwnListingsPage> _ownPageOf(Map<String, dynamic> data) async =>
+      (
+        items: await compute(
+          PropertyModel.listFromJson,
+          data['items'] as List<dynamic>,
+        ),
+        nextOffset: data['nextOffset'] as int?,
+        countByStatus: (data['countByStatus'] as Map<String, dynamic>? ?? {})
+            .map((status, count) => MapEntry(status, count as int)),
+      );
 
   /// The user's own listings (drafts too) inside a map area, so the map can
   /// mark them for editing: at most the newest 500.

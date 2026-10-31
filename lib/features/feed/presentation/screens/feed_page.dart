@@ -14,8 +14,9 @@ import 'package:tilomnov/features/search/presentation/screens/publisher_profile_
 import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/shared/utils/paged_list.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
+import 'package:tilomnov/shared/widgets/feedback/refresh_outcome.dart';
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
 import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
 import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
@@ -74,13 +75,18 @@ class FeedPage extends ConsumerWidget {
     }
   }
 
-  /// Pull-to-refresh: says so when it failed and the old listings stay.
+  /// Pull-to-refresh: says so when there is no internet or it failed, and
+  /// the old listings stay.
   Future<void> _refresh(BuildContext context, WidgetRef ref) async {
     final shownBefore = ref.read(feedProvider).hasValue;
     final ok = await ref.read(feedProvider.notifier).refresh();
-    if (!ok && shownBefore && context.mounted) {
-      AppPopup.showError(context, context.l10n.feedLoadFailed);
-    }
+    if (!shownBefore || !context.mounted) return;
+    showRefreshOutcome(
+      context,
+      ok: ok,
+      failedMessage: context.l10n.feedLoadFailed,
+      onRetry: () => _refresh(context, ref),
+    );
   }
 
   void _explore(WidgetRef ref) =>
@@ -97,7 +103,10 @@ class FeedPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: context.colors.background,
+      // The list carries on behind a floating navigation bar, padded to end
+      // above it.
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             AppHeaderBar(title: l10n.feedTitle, onBackPressed: onBackPressed),
@@ -111,16 +120,14 @@ class FeedPage extends ConsumerWidget {
                       color: context.colors.accent,
                     ),
                   ),
-                  error: (_, _) => _message(
-                    FeedMessageView(
-                      icon: Icons.cloud_off_rounded,
-                      title: l10n.feedLoadFailed,
-                      actionLabel: l10n.commonRetry,
-                      onAction: () => ref.read(feedProvider.notifier).refresh(),
-                    ),
+                  error: (error, _) => PageLoadFailure(
+                    error: error,
+                    message: l10n.feedLoadFailed,
+                    onRetry: () => ref.read(feedProvider.notifier).refresh(),
                   ),
                   data: (page) => page.items.isEmpty
                       ? _message(
+                          context,
                           FeedMessageView(
                             icon: Icons.dynamic_feed_rounded,
                             title: l10n.feedEmptyTitle,
@@ -140,10 +147,15 @@ class FeedPage extends ConsumerWidget {
   }
 
   /// Scrollable even when short, so pull-to-refresh works on it too.
-  Widget _message(Widget message) {
+  Widget _message(BuildContext context, Widget message) {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        16,
+        16,
+        16 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [message],
     );
   }
@@ -160,7 +172,12 @@ class FeedPage extends ConsumerWidget {
       onLoadMore: () => ref.read(feedProvider.notifier).loadMore(),
       child: ListView.separated(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+        padding: EdgeInsets.fromLTRB(
+          16,
+          4,
+          16,
+          24 + MediaQuery.paddingOf(context).bottom,
+        ),
         itemCount: page.items.length + (page.loadingMore ? 1 : 0),
         separatorBuilder: (_, _) => const SizedBox(height: 24),
         itemBuilder: (context, index) {

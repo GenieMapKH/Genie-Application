@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,7 @@ import 'package:tilomnov/features/closest_listings/presentation/view_models/clos
 import 'package:tilomnov/features/closest_listings/presentation/widgets/closest_glass_handle.dart';
 import 'package:tilomnov/features/closest_listings/presentation/widgets/closest_listing_tile.dart';
 import 'package:tilomnov/features/closest_listings/presentation/widgets/closest_listings_sheet.dart';
+import 'package:tilomnov/features/closest_listings/presentation/widgets/liquid_rise_border.dart';
 import 'package:tilomnov/features/property/data/repositories/favorites_repository.dart';
 import 'package:tilomnov/features/property/presentation/view_models/map_property_filter.dart';
 import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
@@ -62,6 +65,9 @@ class _Origin {
   }
 }
 
+/// The glass nav capsule on a 390 wide phone.
+const _capsule = Size(366, 62);
+
 /// The map screen's arrangement: the sheet between the top and the nav.
 Future<ProviderContainer> _pump(
   WidgetTester tester,
@@ -70,6 +76,7 @@ Future<ProviderContainer> _pump(
   double textScale = 1,
   _Origin? origin,
   bool glass = false,
+  Size capsule = _capsule,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -87,8 +94,12 @@ Future<ProviderContainer> _pump(
             left: 0,
             right: 0,
             top: 8,
-            bottom: 98,
-            child: ClosestListingsSheet(visible: true, glass: glass),
+            // With glass the sheet's box ends at the capsule's bottom edge.
+            bottom: glass ? 24 : 98,
+            child: ClosestListingsSheet(
+              visible: true,
+              glassNav: glass ? capsule : null,
+            ),
           ),
         ],
       ),
@@ -247,10 +258,10 @@ void main() {
     await _pump(tester, _Api(3), glass: true);
 
     double pillOpacity() => tester
-        .widget<AnimatedOpacity>(
+        .widget<Opacity>(
           find.descendant(
             of: find.byType(ClosestGlassHandle),
-            matching: find.byType(AnimatedOpacity),
+            matching: find.byType(Opacity),
           ),
         )
         .opacity;
@@ -261,7 +272,46 @@ void main() {
     // Touches go through the pill to the sheet's own handle.
     await _pullUp(tester);
     expect(find.byType(ClosestListingTile).hitTestable(), findsWidgets);
-    expect(pillOpacity(), 0);
+    // Fully risen it has become the panel's top edge.
+    expect(find.byType(ClosestGlassHandle), findsNothing);
+  });
+
+  testWidgets('with glass the sheet is as wide as the capsule, behind it', (
+    tester,
+  ) async {
+    await _pump(tester, _Api(3), glass: true);
+
+    final sheet = tester.getRect(find.byType(DraggableScrollableSheet));
+    expect(sheet.width, _capsule.width);
+    expect(sheet.center.dx, 195);
+    // Its foot ends at the capsule's bottom edge; the handle rests above it.
+    expect(sheet.bottom, 844 - 24);
+    final handle = tester.getRect(_handle);
+    expect(handle.bottom, closeTo(844 - 24 - _capsule.height, 0.5));
+  });
+
+  testWidgets('with glass on a tablet the pill is centred on the capsule', (
+    tester,
+  ) async {
+    const tabletCapsule = Size(480, 62);
+    await _pump(
+      tester,
+      _Api(3),
+      size: const Size(1024, 768),
+      glass: true,
+      capsule: tabletCapsule,
+    );
+
+    final sheet = tester.getRect(find.byType(DraggableScrollableSheet));
+    expect(sheet.width, tabletCapsule.width);
+    expect(sheet.center.dx, 512);
+    expect(
+      tester.getCenter(find.byType(ClosestGlassHandle)).dx,
+      closeTo(512, 0.5),
+    );
+
+    await _pullUp(tester);
+    expect(find.byType(ClosestListingTile).hitTestable(), findsWidgets);
   });
 
   testWidgets('without glass navigation there is no glass pill', (
@@ -341,6 +391,77 @@ void main() {
       );
       await _settle(tester);
       expect(panelTop(tester), lessThan(middle));
+    });
+
+    testWidgets('let go of slowly, it glides on to the stop without a jump', (
+      tester,
+    ) async {
+      await _pump(tester, _Api(8));
+      final rest = panelTop(tester);
+      final finger = await tester.startGesture(tester.getCenter(_handle));
+      // A slow pull: 20 px every 50 ms, 400 px a second.
+      for (var step = 0; step < 8; step++) {
+        await finger.moveBy(const Offset(0, -20));
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await finger.up();
+
+      var previous = panelTop(tester);
+      var biggestStep = 0.0;
+      for (var frame = 0; frame < 60; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        final top = panelTop(tester);
+        // Never back down, never more than a slow finger's pace per frame
+        // at first.
+        expect(top, lessThanOrEqualTo(previous + 0.01), reason: '$frame');
+        if (frame < 3) biggestStep = math.max(biggestStep, previous - top);
+        previous = top;
+      }
+      expect(biggestStep, lessThan(25));
+      await _settle(tester);
+      expect(panelTop(tester), lessThan(rest - 250));
+    });
+
+    testWidgets('with glass the panel swells out of the handle as pulled', (
+      tester,
+    ) async {
+      await _pump(tester, _Api(8), glass: true);
+      LiquidRiseBorder outline() =>
+          (tester
+                          .widget<ClipPath>(
+                            find.descendant(
+                              of: find.byType(DraggableScrollableSheet),
+                              matching: find.byType(ClipPath),
+                            ),
+                          )
+                          .clipper!
+                      as ShapeBorderClipper)
+                  .shape
+              as LiquidRiseBorder;
+      expect(outline().rise, 0);
+
+      // Held off to the right of the handle, pulled up a little.
+      final grab = tester.getCenter(_handle) + const Offset(60, 0);
+      final finger = await tester.startGesture(grab);
+      for (var step = 0; step < 4; step++) {
+        await finger.moveBy(const Offset(0, -20));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      final partway = outline();
+      expect(partway.rise, inExclusiveRange(0, 1));
+      // Centred under the handle, wherever it was held.
+      expect(
+        partway,
+        LiquidRiseBorder(rise: partway.rise, footHeight: _capsule.height),
+      );
+
+      for (var step = 0; step < 10; step++) {
+        await finger.moveBy(const Offset(0, -20));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      expect(outline().rise, 1);
+      await finger.up();
+      await _settle(tester);
     });
 
     testWidgets('swiping down lets it back to the handle', (tester) async {

@@ -59,15 +59,24 @@ abstract final class ClosestSheetLayout {
   static double middleExtent(double availableHeight) =>
       math.max(0.5, math.min(1.0, 320 / availableHeight));
 
-  /// The resting share of [availableHeight]: just the handle.
-  static double peekExtent(double availableHeight) =>
-      math.min(1.0, peekHeight / availableHeight);
+  /// The resting share of [availableHeight]: just the handle, above a
+  /// [foot] hidden behind the nav.
+  static double peekExtent(double availableHeight, {double foot = 0}) =>
+      math.min(1.0, (peekHeight + foot) / availableHeight);
 
   /// How far, as a share of the way to the next stop, a released sheet must
   /// have travelled in its direction to carry on to it. The built-in snap
   /// picks the nearest stop, which sent a slow, half-hearted pull from the
   /// bottom back down; this commits to the direction the finger went.
   static const double commitShare = 0.2;
+
+  /// A released sheet is judged from where its speed would take it in this
+  /// many seconds: a flick reaches past the next stop, a slow pull does not.
+  static const double releaseProjection = 0.12;
+
+  /// How far, in logical pixels, the glass handle is pulled before the drop
+  /// swelling out of it has become the whole panel.
+  static const double liquidRiseDistance = 140;
 
   /// The stop (an extent, from [stops] in ascending order) a sheet released
   /// at [extent] comes to rest at, having last moved up or down.

@@ -11,6 +11,7 @@ import 'package:tilomnov/features/safety/presentation/widgets/report_reason_text
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// The longest note the server keeps.
 const _maxDetails = 1000;
@@ -76,7 +77,7 @@ class _ReportSheetState extends ConsumerState<_ReportSheet> {
     AppPopup.showError(context, switch (failure) {
       ReportFailure.tooMany => l10n.reportTooMany,
       ReportFailure.notFound => l10n.reportTargetGone,
-      ReportFailure.failed => l10n.reportFailed,
+      ReportFailure.failed => failureMessage(l10n, fallback: l10n.reportFailed),
     });
   }
 

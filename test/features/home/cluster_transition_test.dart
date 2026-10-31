@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_label.dart';
 import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
 import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
 import 'package:tilomnov/features/home/utils/map/markers/property_markers.dart';
@@ -36,6 +37,16 @@ const _merged = ClusterLayout(
 
 final _start = DateTime(2026, 10, 18, 12);
 
+/// The labels of [transition] fading in, and fading out.
+List<ClusterLabel> _fadingIn(ClusterTransition transition) => [
+  for (final label in transition.labels)
+    if (label.toOpacity > label.fromOpacity) label,
+];
+List<ClusterLabel> _fadingOut(ClusterTransition transition) => [
+  for (final label in transition.labels)
+    if (label.toOpacity < label.fromOpacity) label,
+];
+
 void main() {
   test('merging: each dot flows into the bubble', () {
     final merge = ClusterTransition.between(
@@ -51,8 +62,8 @@ void main() {
     expect(merge.drops['a']!.liftAt(1), 2);
     // The bubble's own marker waits until the drops have arrived.
     expect(merge.hiddenMarkerIds, {'cluster_0'});
-    expect(merge.outgoingLabels, isEmpty);
-    expect(merge.incomingLabels.single.count, 2);
+    expect(_fadingOut(merge), isEmpty);
+    expect(_fadingIn(merge).single.spot.count, 2);
   });
 
   test('splitting: the bubble pulls apart into dots', () {
@@ -66,8 +77,10 @@ void main() {
     expect(split.drops['a']!.to, _a);
     expect(split.drops['b']!.to, _b);
     expect(split.hiddenMarkerIds, {'dot_0', 'dot_1'});
-    expect(split.outgoingLabels.single.count, 2);
-    expect(split.incomingLabels, isEmpty);
+    expect(_fadingOut(split).single.spot.count, 2);
+    expect(_fadingIn(split), isEmpty);
+    // The drops part ways: the count stays where the bubble was.
+    expect(_fadingOut(split).single.placeAt(1, split.drops).position, _middle);
   });
 
   test('nothing to animate when no dot moves', () {
@@ -95,8 +108,96 @@ void main() {
 
     expect(split.drops['a']!.from, merge.drops['a']!.positionAt(0.5));
     expect(split.drops['a']!.to, _a);
-    // Its labels were mid-fade; they are not restarted.
-    expect(split.outgoingLabels, isEmpty);
+    // The bubble's count had not started to show: nothing to fade out.
+    expect(split.labels, isEmpty);
+  });
+
+  test('a count half faded in fades out from there when interrupted', () {
+    final merge = ClusterTransition.between(
+      from: _apart,
+      to: _merged,
+      now: _start,
+    )!;
+    // The count fades in over the last 40 %: halfway through it at 80 %.
+    final late = _start.add(ClusterTransition.glideDuration * 0.8);
+
+    final split = ClusterTransition.between(
+      from: _merged,
+      to: _apart,
+      now: late,
+      running: merge,
+    )!;
+
+    final count = _fadingOut(split).single;
+    expect(count.fromOpacity, closeTo(0.5, 0.01));
+    expect(count.opacityAt(0), closeTo(0.5, 0.01));
+    expect(count.opacityAt(1), 0);
+  });
+
+  test('a bubble there before and after keeps its count showing', () {
+    const far = LatLng(11.60, 104.99);
+    const steady = ClusterSpot(
+      markerId: 'cluster_9',
+      position: far,
+      count: 2,
+      radius: 17,
+      ring: 2.5,
+      lift: 2,
+    );
+    final from = ClusterLayout(
+      zoomLevel: 13,
+      spotOf: {..._apart.spotOf, 'c': steady, 'd': steady},
+    );
+    const to = ClusterLayout(
+      zoomLevel: 12,
+      spotOf: {'a': _bubble, 'b': _bubble, 'c': steady, 'd': steady},
+    );
+
+    final merge = ClusterTransition.between(from: from, to: to, now: _start)!;
+
+    final kept = merge.labels.singleWhere((l) => l.spot.position == far);
+    for (final p in [0.0, 0.3, 0.5, 0.7, 1.0]) {
+      expect(kept.opacityAt(p), 1, reason: 'at $p');
+    }
+    expect(_fadingIn(merge).single.spot.count, 2);
+  });
+
+  test("a bubble's count travels with it into a bigger one", () {
+    const pair = ClusterSpot(
+      markerId: 'cluster_1',
+      position: _a,
+      count: 2,
+      radius: 17,
+      ring: 2.5,
+      lift: 2,
+    );
+    const three = ClusterSpot(
+      markerId: 'cluster_2',
+      position: _middle,
+      count: 3,
+      radius: 17,
+      ring: 2.5,
+      lift: 2,
+    );
+    final from = ClusterLayout(
+      zoomLevel: 13,
+      spotOf: {'a': pair, 'b': pair, 'c': _dot('dot_2', _b)},
+    );
+    const to = ClusterLayout(
+      zoomLevel: 12,
+      spotOf: {'a': three, 'b': three, 'c': three},
+    );
+
+    final merge = ClusterTransition.between(from: from, to: to, now: _start)!;
+
+    final leaving = _fadingOut(merge).single;
+    expect(leaving.placeAt(0, merge.drops).position, _a);
+    expect(
+      leaving.placeAt(0.3, merge.drops).position,
+      merge.drops['a']!.positionAt(0.3),
+    );
+    // The count of three waits where the drops meet.
+    expect(_fadingIn(merge).single.placeAt(0.3, merge.drops).position, _middle);
   });
 
   test('a finished animation is not continued', () {
@@ -115,7 +216,7 @@ void main() {
     )!;
 
     expect(split.drops['a']!.from, _middle);
-    expect(split.outgoingLabels, hasLength(1));
+    expect(_fadingOut(split), hasLength(1));
   });
 
   test('too many dots switch without animating', () {
@@ -162,7 +263,7 @@ void main() {
       expect(split.duration, ClusterTransition.reshapeDuration);
       expect(split.hiddenMarkerIds, {'city_dot_0', 'city_dot_1'});
       // The prices fade in where the tags form.
-      expect(split.incomingLabels.map((s) => s.markerId), hasLength(2));
+      expect(_fadingIn(split), hasLength(2));
       // Round while it travels, a tag once it has arrived.
       expect(a.tagnessAt(0.5), 0);
       expect(a.positionAt(0.7), _a);
@@ -177,7 +278,7 @@ void main() {
       )!;
       final a = merge.drops['a']!;
 
-      expect(merge.outgoingLabels, hasLength(2));
+      expect(_fadingOut(merge), hasLength(2));
       expect(a.tagnessAt(0), 1);
       expect(a.positionAt(0.3), _a);
       expect(a.tagnessAt(0.45), 0);

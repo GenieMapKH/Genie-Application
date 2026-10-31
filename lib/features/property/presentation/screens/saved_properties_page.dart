@@ -15,6 +15,7 @@ import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
 import 'package:tilomnov/shared/utils/paged_list.dart';
 import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 /// The Saved Properties tab page matching Screenshots 1 & 2.
@@ -67,7 +68,10 @@ class SavedPropertiesPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: context.colors.background,
+      // The list carries on behind a floating navigation bar, padded to end
+      // above it.
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // Top App Bar Header
@@ -87,48 +91,51 @@ class SavedPropertiesPage extends ConsumerWidget {
               ),
             ),
 
-            // Sort By Filter Pill Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(SortOrderPage.route());
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: context.colors.divider,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.tune,
-                          size: 16,
-                          color: context.colors.textSecondary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          context.l10n.propertySortBy,
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+            // Sort By Filter Pill Button. Not while the list failed to load:
+            // the failure then sits right under the header, as on every tab.
+            if (!savedAsync.hasError) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(SortOrderPage.route());
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: context.colors.divider,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.tune,
+                            size: 16,
                             color: context.colors.textSecondary,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 6),
+                          Text(
+                            context.l10n.propertySortBy,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ],
 
             // Main Content Area
             Expanded(
@@ -138,26 +145,11 @@ class SavedPropertiesPage extends ConsumerWidget {
                     color: context.colors.accent,
                   ),
                 ),
-                error: (err, stack) => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        context.l10n.propertyFailedToLoadSavedProperties,
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          color: context.colors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          ref.read(savedPropertiesProvider.notifier).refresh();
-                        },
-                        child: Text(context.l10n.commonRetry),
-                      ),
-                    ],
-                  ),
+                error: (err, stack) => PageLoadFailure(
+                  error: err,
+                  message: context.l10n.propertyFailedToLoadSavedProperties,
+                  onRetry: () =>
+                      ref.read(savedPropertiesProvider.notifier).refresh(),
                 ),
                 data: (page) {
                   if (page.items.isEmpty) return _buildEmptyState(context);
@@ -286,6 +278,9 @@ class SavedPropertiesPage extends ConsumerWidget {
             child: page.loadingMore
                 ? const LoadingMoreIndicator()
                 : const SizedBox(height: 24),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
           ),
         ],
       ),

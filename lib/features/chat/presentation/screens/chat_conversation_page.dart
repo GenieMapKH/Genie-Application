@@ -42,6 +42,7 @@ import 'package:tilomnov/features/safety/presentation/widgets/blocked_conversati
 import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/features/chat/models/chat_listing.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_listing_offer_bar.dart';
 
@@ -471,7 +472,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
       ),
       _ => ChatNotice(
         icon: Icons.cloud_off_outlined,
-        message: l10n.chatOpenFailed,
+        message: failureMessage(l10n, fallback: l10n.chatOpenFailed),
         onAction: _open,
       ),
     };

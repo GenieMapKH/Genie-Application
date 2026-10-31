@@ -13,11 +13,17 @@ class AppPageScaffold extends StatelessWidget {
   /// What the back arrow does. Defaults to leaving the screen.
   final VoidCallback? onBackPressed;
 
+  /// Whether [child] reaches the bottom of the screen, behind a floating
+  /// navigation bar. It then pads its own scrolling content by the bottom
+  /// inset (`MediaQuery.paddingOf(context).bottom`) to end above the bar.
+  final bool extendsToBottom;
+
   const AppPageScaffold({
     super.key,
     required this.title,
     required this.child,
     this.onBackPressed,
+    this.extendsToBottom = false,
   });
 
   @override
@@ -25,6 +31,7 @@ class AppPageScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.colors.background,
       body: SafeArea(
+        bottom: !extendsToBottom,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

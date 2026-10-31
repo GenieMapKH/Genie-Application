@@ -4,6 +4,7 @@ import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/screens/property_insights_page.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
@@ -120,7 +121,11 @@ class PropertyOptionsSheet {
     } catch (e, stackTrace) {
       AppLogger.error('Could not change the property status', e, stackTrace);
       if (context.mounted) {
-        AppPopup.showError(context, context.l10n.propertyUpdateFailed);
+        showFailure(
+          context,
+          error: e,
+          fallback: context.l10n.propertyUpdateFailed,
+        );
       }
     }
   }
@@ -138,7 +143,11 @@ class PropertyOptionsSheet {
     } catch (e, stackTrace) {
       AppLogger.error('Could not delete the property', e, stackTrace);
       if (context.mounted) {
-        AppPopup.showError(context, context.l10n.propertyDeleteFailed);
+        showFailure(
+          context,
+          error: e,
+          fallback: context.l10n.propertyDeleteFailed,
+        );
       }
     }
   }

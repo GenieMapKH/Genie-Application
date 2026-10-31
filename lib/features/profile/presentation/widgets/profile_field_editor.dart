@@ -9,6 +9,7 @@ import 'package:tilomnov/features/profile/presentation/view_models/profile_edit_
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Opens the dialog that edits one text [field] of the profile.
 ///
@@ -169,7 +170,10 @@ class _ProfileFieldEditorState extends ConsumerState<_ProfileFieldEditor> {
         ProfileSaveResult.invalid => widget.invalidMessage,
         ProfileSaveResult.taken =>
           widget.takenMessage ?? context.l10n.commonSomethingWentWrong,
-        _ => context.l10n.commonSomethingWentWrong,
+        _ => failureMessage(
+          context.l10n,
+          fallback: context.l10n.commonSomethingWentWrong,
+        ),
       };
     });
   }

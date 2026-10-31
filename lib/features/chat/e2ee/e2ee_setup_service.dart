@@ -124,6 +124,8 @@ class E2eeSetupService {
 
   Future<T> _serialized<T>(Future<T> Function() step) {
     final result = _running.then((_) => step());
+    // Only the queue ignores a failed step: [result] still carries it to
+    // the caller, and the next step must run anyway.
     _running = result.then((_) {}, onError: (_) {});
     return result;
   }

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/connection_restored_provider.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/data/repositories/favorites_repository.dart';
@@ -29,8 +32,9 @@ FavoriteSort favoriteSortOf(SortOption option) => switch (option) {
 
 /// The signed-in user's saved listings, a page at a time, in the chosen
 /// order: the Saved screen. Follows the hearts: an unsaved listing leaves at
-/// once, a newly saved one is read in quietly once the server has it. None
-/// for a guest.
+/// once, a newly saved one is read in quietly once the server has it. Opens
+/// on the first page kept from last time (so offline too), read again
+/// behind it and whenever the internet comes back. None for a guest.
 class SavedPropertiesNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
   int? _nextOffset;
 
@@ -52,6 +56,17 @@ class SavedPropertiesNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
       if (saved != null) _dropUnsaved(saved);
     });
     ref.listen(savedListingsAddedProvider, (_, _) => _reloadQuietly());
+    ref.listen(connectionRestoredProvider, (_, _) => _reloadQuietly());
+
+    final kept = await ref
+        .read(favoritesRepositoryProvider)
+        .keptFirstPage(_sort);
+    if (kept != null) {
+      // Shown at once; the server's page replaces it when it arrives.
+      _nextOffset = kept.nextOffset;
+      unawaited(Future.microtask(_reloadQuietly));
+      return PagedList(items: kept.items, hasMore: kept.nextOffset != null);
+    }
     return _firstPage(FavoritesRepository.pageSize);
   }
 

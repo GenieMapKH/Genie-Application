@@ -9,6 +9,7 @@ import 'package:tilomnov/features/property/presentation/view_models/property_ins
 import 'package:tilomnov/features/property/presentation/widgets/insights/insights_day_chart.dart';
 import 'package:tilomnov/features/property/presentation/widgets/insights/insights_totals.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 
 /// How one of the owner's listings is doing: everyone who opened, saved,
@@ -40,8 +41,9 @@ class _PropertyInsightsPageState extends ConsumerState<PropertyInsightsPage> {
         child: insights.when(
           skipLoadingOnRefresh: true,
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, _) => _Message(
-            text: l10n.insightsLoadFailed,
+          error: (error, _) => PageLoadFailure(
+            error: error,
+            message: l10n.insightsLoadFailed,
             onRetry: () => ref.invalidate(provider),
           ),
           data: (data) => ListView(
@@ -157,29 +159,6 @@ class _Trend extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Message extends StatelessWidget {
-  final String text;
-  final VoidCallback onRetry;
-
-  const _Message({required this.text, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    // Scrollable, so pulling down tries again too.
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 120, 24, 24),
-      children: [
-        Text(
-          text,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.inter(color: context.colors.textMuted),
-        ),
-        TextButton(onPressed: onRetry, child: Text(context.l10n.commonRetry)),
-      ],
     );
   }
 }

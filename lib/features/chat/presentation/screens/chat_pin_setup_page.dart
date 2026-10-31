@@ -9,6 +9,7 @@ import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_code_field.d
 import 'package:tilomnov/features/chat/presentation/widgets/pin/pin_status_line.dart';
 import 'package:tilomnov/features/chat/providers/chat_pin_setup_provider.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Creates the account's chat PIN, which every account has: without it no
 /// other phone could read the chats. [fromPassword] first asks the account
@@ -159,7 +160,10 @@ class _ChatPinSetupPageState extends ConsumerState<ChatPinSetupPage> {
       switch (problem) {
         ChatPinSetupProblem.tooGuessable => l10n.pinTooGuessable,
         ChatPinSetupProblem.mismatch => l10n.chatPinMismatch,
-        ChatPinSetupProblem.saveFailed => l10n.chatPinSaveFailed,
+        ChatPinSetupProblem.saveFailed => failureMessage(
+          l10n,
+          fallback: l10n.chatPinSaveFailed,
+        ),
         null => null,
       };
 
@@ -167,7 +171,7 @@ class _ChatPinSetupPageState extends ConsumerState<ChatPinSetupPage> {
       switch (result) {
         PinRejected() => l10n.chatPasswordWrong,
         PinLockedOut() => l10n.chatPasswordTooManyTries,
-        PinCheckFailed() => l10n.pinCheckFailed,
+        PinCheckFailed() => failureMessage(l10n, fallback: l10n.pinCheckFailed),
         PinAccepted() || null => null,
       };
 }

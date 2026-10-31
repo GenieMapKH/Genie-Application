@@ -8,7 +8,8 @@ import 'package:tilomnov/features/notifications/models/notification_preferences.
 import 'package:tilomnov/features/notifications/providers/notification_preferences_provider.dart';
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
 
@@ -27,7 +28,9 @@ class NotificationSettingsPage extends ConsumerWidget {
       title: l10n.notificationsTitle,
       child: preferences.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => _LoadError(
+        error: (error, _) => PageLoadFailure(
+          error: error,
+          message: l10n.notificationsLoadFailed,
           onRetry: () =>
               ref.read(notificationPreferencesProvider.notifier).load(),
         ),
@@ -78,7 +81,7 @@ class _Switches extends ConsumerWidget {
           savedListingUpdates: savedListingUpdates,
         );
     if (!saved && context.mounted) {
-      AppPopup.showError(context, context.l10n.notificationsSaveFailed);
+      showFailure(context, fallback: context.l10n.notificationsSaveFailed);
     }
   }
 
@@ -182,33 +185,6 @@ class _BlockedNotice extends StatelessWidget {
             onPressed: openAppSystemSettings,
             child: Text(l10n.openSystemSettings),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LoadError extends StatelessWidget {
-  final VoidCallback onRetry;
-
-  const _LoadError({required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: colors.textHint),
-          const SizedBox(height: 16),
-          Text(
-            context.l10n.notificationsLoadFailed,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: colors.textMuted),
-          ),
-          const SizedBox(height: 8),
-          TextButton(onPressed: onRetry, child: Text(context.l10n.commonRetry)),
         ],
       ),
     );

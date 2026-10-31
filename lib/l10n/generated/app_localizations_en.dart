@@ -36,14 +36,49 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are offline. Connect to the internet for updates.';
 
   @override
-  String get offlineDialogTitle => 'No internet connection';
+  String get connectionOffline => 'No internet connection';
 
   @override
-  String get offlineDialogMessage =>
-      'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.';
+  String get connectionWaiting => 'Waiting for network…';
 
   @override
-  String get offlineKeepBrowsing => 'Keep browsing';
+  String get connectionWeak => 'Slow connection';
+
+  @override
+  String get connectionWeakDetail => 'Loading may take longer';
+
+  @override
+  String get connectionRestored => 'Back online';
+
+  @override
+  String get loadFailureOfflineTitle => 'No internet connection';
+
+  @override
+  String get loadFailureOfflineBody =>
+      'Check your Wi-Fi or mobile data. This page will load by itself when you are back online.';
+
+  @override
+  String get loadFailureSlowTitle => 'Your connection is too slow';
+
+  @override
+  String get loadFailureSlowBody =>
+      'This page took too long to load. Your signal may be weak: move to a better spot or try again.';
+
+  @override
+  String get loadFailureServerBody =>
+      'Our server is having trouble right now. Please try again in a moment.';
+
+  @override
+  String get failureOffline =>
+      'No internet connection. Check your Wi-Fi or mobile data and try again.';
+
+  @override
+  String get failureSlow =>
+      'Your connection is too slow. Move to a better spot and try again.';
+
+  @override
+  String get failureServer =>
+      'Our server is having trouble right now. Please try again in a moment.';
 
   @override
   String get navExplore => 'Explore';
@@ -2020,10 +2055,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authErrorNoConnection =>
       'Could not reach the server. Check your connection.';
-
-  @override
-  String get authErrorServer =>
-      'Something went wrong on our side. Please try again later.';
 
   @override
   String get authErrorGeneric => 'Something went wrong. Please try again.';
