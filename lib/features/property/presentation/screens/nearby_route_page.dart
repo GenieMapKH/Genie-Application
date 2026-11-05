@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 import 'package:tilomnov/features/property/data/models/nearby_place.dart';
@@ -33,7 +35,16 @@ class NearbyRoutePage extends ConsumerWidget {
     final route = ref.watch(nearbyRouteProvider(_key));
 
     return Scaffold(
-      appBar: AppBar(title: Text(place.name, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        leading: GlassScope.of(context)
+            ? Center(
+                child: GlassIconButton.back(
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              )
+            : null,
+        title: Text(place.name, overflow: TextOverflow.ellipsis),
+      ),
       body: route.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => PageLoadFailure(

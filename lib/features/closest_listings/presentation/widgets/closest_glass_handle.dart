@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/closest_listings/presentation/closest_liquid_shape.dart';
-import 'package:tilomnov/features/home/presentation/widgets/glass/glass_surface.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 
 /// The pull-up list's resting handle as a small pane of glass, drawn over
 /// the sheet's top while the glass navigation bar is on. As the sheet is
@@ -45,6 +45,9 @@ class ClosestGlassHandle extends StatelessWidget {
               opacity: 1 - filled,
               child: filled < 1
                   ? GlassSurface(
+                      // Right above the nav: its shadow, blurred by the
+                      // nav's glass, showed as a smudge in the bar.
+                      shadow: false,
                       borderRadius: BorderRadius.only(
                         topLeft: shape.tlRadius,
                         topRight: shape.trRadius,

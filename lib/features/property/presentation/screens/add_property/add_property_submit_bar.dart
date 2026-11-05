@@ -28,7 +28,7 @@ class AddPropertySubmitBar extends StatelessWidget {
               left: 16.0,
               right: 16.0,
               top: 8.0,
-              bottom: 70.0,
+              bottom: 0.0,
             ),
             child: Row(
               children: [

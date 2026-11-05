@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:tilomnov/features/property/presentation/widgets/property_type_pill.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_card_hero_flight.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:tilomnov/features/property/utils/property_format.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
-import 'package:tilomnov/features/property/presentation/property_labels.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/owner_display_name.dart';
-import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 import 'package:tilomnov/features/property/presentation/widgets/favorite_heart_button.dart';
+import 'package:tilomnov/features/property/presentation/widgets/card_map_button.dart';
 import 'package:tilomnov/core/theme/app_shapes.dart';
 
 /// Item card for Saved Properties screen matching Screenshot 1.
@@ -20,6 +20,9 @@ class SavedPropertyCard extends StatelessWidget {
   final VoidCallback onTap;
   final bool isFavorite;
   final VoidCallback? onFavoriteToggled;
+
+  /// Shows the listing on the home map; no map button when null.
+  final VoidCallback? onViewOnMap;
 
   /// The [Hero] tag its detail sheet grows out of. Cards of one listing on
   /// two pages need different tags, or opening the second page flies the
@@ -32,6 +35,7 @@ class SavedPropertyCard extends StatelessWidget {
     required this.onTap,
     this.isFavorite = true,
     this.onFavoriteToggled,
+    this.onViewOnMap,
     this.heroTag,
   });
 
@@ -81,8 +85,9 @@ class SavedPropertyCard extends StatelessWidget {
                           Positioned(
                             top: 10,
                             left: 10,
-                            child: _TypePill(
+                            child: PropertyTypePill(
                               propertyType: property.propertyType,
+                              compact: true,
                             ),
                           ),
                           Positioned(
@@ -95,6 +100,12 @@ class SavedPropertyCard extends StatelessWidget {
                               idleColor: context.colors.textMuted,
                             ),
                           ),
+                          if (onViewOnMap case final onViewOnMap?)
+                            Positioned(
+                              bottom: 6,
+                              right: 10,
+                              child: CardMapButton(onPressed: onViewOnMap),
+                            ),
                         ],
                       ),
                     ),
@@ -160,50 +171,6 @@ class SavedPropertyCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _TypePill extends StatelessWidget {
-  final String propertyType;
-
-  const _TypePill({required this.propertyType});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TintedSvg(
-            PropertyFormat.typeIconPath(propertyType),
-            width: 12,
-            height: 12,
-            color: context.colors.textSecondary,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            propertyValueLabel(context.l10n, propertyType),
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: context.colors.textPrimary,
-            ),
-          ),
-        ],
       ),
     );
   }

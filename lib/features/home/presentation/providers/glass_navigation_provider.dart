@@ -20,3 +20,7 @@ final glassNavigationOnProvider = Provider<bool>(
 /// text over glass is then harder to read than over a solid surface.
 bool watchGlassNavigation(WidgetRef ref, BuildContext context) =>
     ref.watch(glassNavigationOnProvider) && !MediaQuery.highContrastOf(context);
+
+/// [watchGlassNavigation] outside of build, without listening.
+bool readGlassNavigation(WidgetRef ref, BuildContext context) =>
+    ref.read(glassNavigationOnProvider) && !MediaQuery.highContrastOf(context);

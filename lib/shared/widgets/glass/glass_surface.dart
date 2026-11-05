@@ -1,19 +1,25 @@
 import 'dart:ui' show ImageFilter;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
-import 'package:tilomnov/features/home/presentation/widgets/glass/glass_style.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_style.dart';
 
-/// A pane of glass floating over the map, in the manner of iOS 26 and
-/// HyperOS: what is behind it is blurred and tinted, light catches its top
-/// edge, and a thin rim separates it from the map.
+/// A pane of glass floating over the map or a page, in the manner of iOS 26
+/// and HyperOS: what is behind it is blurred and tinted, and a thin rim
+/// catching the light separates it from what is behind. Only on phones whose
+/// interface is glass: see `GlassScope`.
 ///
-/// Built to stay cheap over the map: one blur ([BackdropFilter.grouped], so
-/// every pane under one [BackdropGroup] shares a single read of the screen),
-/// a plain blur only (iOS cannot apply anything else over the map), and the
-/// tint, highlight and rim painted directly rather than through extra
-/// layers. Nothing here animates, so the glass costs nothing while still.
+/// Built to stay cheap over the map: one filter ([BackdropFilter.grouped],
+/// so every pane under one [BackdropGroup] shares a single read of the
+/// screen; without a group, each pane reads it on its own), and the tint,
+/// highlight and rim painted directly rather than through extra layers.
+/// Nothing here animates, so the glass costs nothing while still.
+///
+/// On iOS the filter is a plain blur: iOS can apply nothing else over the
+/// map. Elsewhere the blur also makes the colours behind more vivid
+/// ([GlassStyle.saturation]), as Apple's glass does.
 class GlassSurface extends StatelessWidget {
   /// A fully rounded capsule or circle: the shapes iOS draws glass in, and
   /// the clip iOS can apply to the blurred map.
@@ -30,9 +36,34 @@ class GlassSurface extends StatelessWidget {
     this.shadow = true,
   });
 
-  /// Strong enough to turn map labels into colour, light enough to keep the
-  /// map's shapes readable through the glass.
+  /// Light, as Apple's glass is: what is behind stays recognisable, only
+  /// softened; small text behind it no longer reads.
   static const blurSigma = 12.0;
+
+  static ImageFilter _filterFor(GlassStyle style) {
+    final blur = ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma);
+    if (defaultTargetPlatform == TargetPlatform.iOS || style.saturation == 1) {
+      return blur;
+    }
+    return ImageFilter.compose(
+      outer: ColorFilter.matrix(saturationMatrix(style.saturation)),
+      inner: blur,
+    );
+  }
+
+  /// A colour matrix making colours [s] times as saturated, keeping their
+  /// brightness (Rec. 709 weights).
+  @visibleForTesting
+  static List<double> saturationMatrix(double s) {
+    const r = 0.2126, g = 0.7152, b = 0.0722;
+    final i = 1 - s;
+    return [
+      r * i + s, g * i, b * i, 0, 0, //
+      r * i, g * i + s, b * i, 0, 0, //
+      r * i, g * i, b * i + s, 0, 0, //
+      0, 0, 0, 1, 0, //
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +92,7 @@ class GlassSurface extends StatelessWidget {
       child: ClipRRect(
         borderRadius: borderRadius,
         child: BackdropFilter.grouped(
-          filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+          filter: _filterFor(style),
           child: CustomPaint(
             painter: GlassPainter(borderRadius: borderRadius, style: style),
             child: child,
@@ -84,13 +115,13 @@ class GlassPainter extends CustomPainter {
     final rect = Offset.zero & size;
     final shape = borderRadius.toRRect(rect);
 
-    // Enough of the tint to keep small labels readable over a busy map.
+    // Only a breath of tint: what is behind keeps its own colours.
     canvas.drawRRect(
       shape,
       Paint()..color = style.tint.withValues(alpha: style.tintAlpha),
     );
 
-    // Light from above: brightest at the top edge, gone by the middle.
+    // A faint light from above, gone by the middle.
     canvas.drawRRect(
       shape,
       Paint()
@@ -104,7 +135,8 @@ class GlassPainter extends CustomPainter {
         ).createShader(rect),
     );
 
-    // The rim: bright where the light strikes it, fading round the far side.
+    // The rim: bright at the corner the light strikes and glinting at the
+    // opposite one, a fine line along the sides between.
     const rim = 1.0;
     canvas.drawRRect(
       shape.deflate(rim / 2),
@@ -116,8 +148,11 @@ class GlassPainter extends CustomPainter {
           end: Alignment.bottomRight,
           colors: [
             Colors.white.withValues(alpha: style.rimStartAlpha),
+            Colors.white.withValues(alpha: style.rimSideAlpha),
+            Colors.white.withValues(alpha: style.rimSideAlpha),
             Colors.white.withValues(alpha: style.rimEndAlpha),
           ],
+          stops: const [0, 0.4, 0.6, 1],
         ).createShader(rect),
     );
   }

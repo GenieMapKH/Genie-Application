@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/home/presentation/providers/show_property_on_map.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
 import 'package:tilomnov/features/property/presentation/screens/sort_order_page.dart';
@@ -102,15 +105,7 @@ class SavedPropertiesPage extends ConsumerWidget {
                     onTap: () {
                       Navigator.of(context).push(SortOrderPage.route());
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.colors.divider,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                    child: _SortPill(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -270,6 +265,9 @@ class SavedPropertiesPage extends ConsumerWidget {
                   onFavoriteToggled: () => ref
                       .read(savedPropertyIdsProvider.notifier)
                       .toggle(property.id),
+                  onViewOnMap: canShowPropertyOnMap(property)
+                      ? () => showPropertyOnMap(context, ref, property)
+                      : null,
                 );
               },
             ),
@@ -284,6 +282,35 @@ class SavedPropertiesPage extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// The pill around "Sort by": glass on phones whose interface is glass.
+class _SortPill extends StatelessWidget {
+  final Widget child;
+
+  const _SortPill({required this.child});
+
+  static const _radius = BorderRadius.all(Radius.circular(20));
+  static const _padding = EdgeInsets.symmetric(horizontal: 14, vertical: 8);
+
+  @override
+  Widget build(BuildContext context) {
+    if (GlassScope.of(context)) {
+      return GlassSurface(
+        borderRadius: _radius,
+        shadow: false,
+        child: Padding(padding: _padding, child: child),
+      );
+    }
+    return Container(
+      padding: _padding,
+      decoration: BoxDecoration(
+        color: context.colors.divider,
+        borderRadius: _radius,
+      ),
+      child: child,
     );
   }
 }

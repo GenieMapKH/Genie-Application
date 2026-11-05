@@ -464,6 +464,26 @@ void main() {
       await _settle(tester);
     });
 
+    testWidgets(
+      'once moved, it stays on its resting place when its room changes',
+      (tester) async {
+        await _pump(tester, _Api(3), glass: true);
+        await _pullUp(tester);
+        await tester.binding.handlePopRoute();
+        await _settle(tester);
+        final restGap = tester.view.physicalSize.height - panelTop(tester);
+
+        // The room shrinks and grows back, as when the keyboard closes.
+        tester.view.physicalSize = const Size(390, 600);
+        await tester.pumpAndSettle();
+        tester.view.physicalSize = const Size(390, 844);
+        await tester.pump();
+        await tester.pumpAndSettle();
+
+        expect(844 - panelTop(tester), closeTo(restGap, 0.5));
+      },
+    );
+
     testWidgets('swiping down lets it back to the handle', (tester) async {
       await _pump(tester, _Api(8));
       final rest = panelTop(tester);

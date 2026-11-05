@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/core/theme/app_motion.dart';
 import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
-import 'package:tilomnov/features/home/presentation/widgets/glass/glass_surface.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 import 'package:tilomnov/features/home/presentation/widgets/glass/selection_droplet_painter.dart';
 import 'package:tilomnov/features/home/presentation/widgets/layout/nav_tabs.dart';
 import 'package:tilomnov/l10n/l10n.dart';

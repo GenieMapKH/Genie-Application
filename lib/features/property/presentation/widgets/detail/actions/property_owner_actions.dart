@@ -80,7 +80,7 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
           .read(ownListingActionsProvider)
           .changeVisibility(widget.property.id, _status, target);
       if (!mounted) return;
-      setState(() => _status = _statusOf(target));
+      setState(() => _status = target.status);
       AppPopup.showSuccess(context, context.l10n.propertyVisibilityChanged);
     } catch (e, stack) {
       AppLogger.error('Changing listing visibility failed', e, stack);
@@ -95,13 +95,6 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
       if (mounted) setState(() => _busy = false);
     }
   }
-
-  static String _statusOf(PropertyVisibility visibility) =>
-      switch (visibility) {
-        PropertyVisibility.public => 'Active',
-        PropertyVisibility.draft => 'Draft',
-        PropertyVisibility.sold => 'Sold',
-      };
 
   String _visibilityLabel(BuildContext context) {
     final l10n = context.l10n;

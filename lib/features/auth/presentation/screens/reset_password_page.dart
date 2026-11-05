@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/auth_back_button.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/password_reset_flow.dart';
 import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -10,10 +11,10 @@ import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
 class ResetPasswordPage extends ConsumerStatefulWidget {
-  final String email;
-  final String otp;
+  /// The code the user received, by email or by SMS.
+  final PasswordResetProof proof;
 
-  const ResetPasswordPage({super.key, required this.email, required this.otp});
+  const ResetPasswordPage({super.key, required this.proof});
 
   @override
   ConsumerState<ResetPasswordPage> createState() => _ResetPasswordPageState();
@@ -95,8 +96,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
 
     try {
       await ref
-          .read(authServiceProvider)
-          .resetPassword(widget.email, widget.otp, _passwordController.text);
+          .read(passwordResetFlowProvider)
+          .setNewPassword(widget.proof, _passwordController.text);
       if (!mounted) return;
       AppPopup.showSuccess(
         context,
@@ -105,7 +106,12 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       context.go('/login');
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(context, authErrorMessage(context.l10n, e));
+      AppPopup.showError(
+        context,
+        widget.proof is PhoneCodeProof
+            ? phoneResetErrorMessage(context.l10n, e)
+            : authErrorMessage(context.l10n, e),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -131,22 +137,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Back button
-                      GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: context.colors.border),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 20,
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
+                      const AuthBackButton(),
                       const SizedBox(height: 32),
 
                       // Title

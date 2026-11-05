@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
@@ -10,6 +11,9 @@ import 'package:tilomnov/features/property/presentation/widgets/existing_propert
 import 'package:tilomnov/features/property/presentation/widgets/forms/fields/property_discount_field.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_image_picker.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/features/property/presentation/widgets/publishing_plan_selector.dart';
+import 'package:tilomnov/features/subscription/domain/subscription_plan.dart';
+import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
 import 'add_property_page.dart';
 import 'add_property_page_forms_dynamic.dart';
 import 'add_property_page_logic.dart';
@@ -20,6 +24,10 @@ import 'package:tilomnov/l10n/l10n.dart';
 extension AddPropertyPageLayout on AddPropertyPageState {
   Widget buildAddPropertyLayout(BuildContext context) {
     final formState = ref.watch(addPropertyControllerProvider);
+    // A new listing past the user's plan needs a way to be published.
+    final showsPublishingPlan =
+        !isEditing &&
+        ref.watch(publishingAllowanceProvider).valueOrNull?.hasRoom == false;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -151,6 +159,24 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                           });
                         },
                       ),
+                      if (showsPublishingPlan) ...[
+                        const SizedBox(height: 24),
+                        PropertySectionTitle(
+                          title: context.l10n.publishPlanTitle,
+                          required: true,
+                        ),
+                        const SizedBox(height: 12),
+                        PublishingPlanSelector(
+                          key: publishingPlanKey,
+                          selected: selectedPublishingPlan,
+                          oneTimeFee: PlanCatalog.oneTimePublishFeeUsd,
+                          hasError: publishingPlanMissing,
+                          onChanged: (plan) => setState(() {
+                            selectedPublishingPlan = plan;
+                            publishingPlanMissing = false;
+                          }),
+                        ),
+                      ],
                       const SizedBox(height: 24),
                       PropertyTextField(
                         label: context.l10n.propertyContactInformation,
@@ -169,8 +195,7 @@ extension AddPropertyPageLayout on AddPropertyPageState {
           ],
         ),
       ),
-      bottomNavigationBar: buildBottomBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _submitBar(context, formState.isLoading),
     );
   }

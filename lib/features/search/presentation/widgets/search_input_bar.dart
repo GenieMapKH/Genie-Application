@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/search/data/search_text.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -39,11 +41,20 @@ class SearchInputBar extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(4, 8, 12, 8),
           child: Row(
             children: [
-              IconButton(
-                onPressed: onBack,
-                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                icon: Icon(Icons.arrow_back_rounded, color: colors.textPrimary),
-              ),
+              if (GlassScope.of(context))
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 4, 0),
+                  child: GlassIconButton.back(onPressed: onBack),
+                )
+              else
+                IconButton(
+                  onPressed: onBack,
+                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                  icon: Icon(
+                    Icons.arrow_back_rounded,
+                    color: colors.textPrimary,
+                  ),
+                ),
               Expanded(
                 child: Container(
                   height: 48,

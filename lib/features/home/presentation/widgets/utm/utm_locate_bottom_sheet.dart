@@ -305,7 +305,7 @@ class _UtmLocateBottomSheetState extends State<UtmLocateBottomSheet>
                     uploadProgress: _uploadProgress,
                     onScanDocument: _scanDocument,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   UtmManualEntry(
                     fadeAnimation: _fadeAnimation3,
                     slideAnimation: _slideAnimation3,

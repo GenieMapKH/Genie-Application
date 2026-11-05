@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tilomnov/features/auth/presentation/view_models/login_controller.dart';
@@ -8,6 +7,7 @@ import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 
 import '../widgets/login_header.dart';
+import '../widgets/auth_method_tabs.dart';
 import '../widgets/login_form.dart';
 import '../widgets/social_login_buttons.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -147,84 +147,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
     if (success && mounted) widget.onLoginPressed?.call();
   }
 
-  Widget _buildAnimatedTabBar(AuthMethod selectedMethod) {
-    final isEmail = selectedMethod == AuthMethod.email;
-
-    return SizedBox(
-      height: 34,
-      child: Stack(
-        alignment: Alignment.bottomLeft,
-        children: [
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  ref
-                      .read(loginFormProvider.notifier)
-                      .setMethod(AuthMethod.email);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 6.0),
-                  child: AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOutCubic,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: isEmail ? FontWeight.w600 : FontWeight.w500,
-                      color: isEmail
-                          ? context.colors.primary
-                          : context.colors.textMuted,
-                    ),
-                    child: Text(context.l10n.personalInfoEmail),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 24),
-              GestureDetector(
-                onTap: () {
-                  ref
-                      .read(loginFormProvider.notifier)
-                      .setMethod(AuthMethod.phone);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 6.0),
-                  child: AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOutCubic,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: !isEmail ? FontWeight.w600 : FontWeight.w500,
-                      color: !isEmail
-                          ? context.colors.primary
-                          : context.colors.textMuted,
-                    ),
-                    child: Text(context.l10n.authPhoneNumber),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Sliding Underline Indicator
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 240),
-            curve: Curves.easeOutCubic,
-            left: isEmail ? 0 : 64.0,
-            bottom: 0,
-            width: isEmail ? 40.0 : 110.0,
-            height: 2.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: context.colors.primary,
-                borderRadius: BorderRadius.circular(1.0),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final loginState = ref.watch(loginControllerProvider);
@@ -270,7 +192,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       fadeAnimation: _headerFade,
                     ),
                     const SizedBox(height: 32),
-                    _buildAnimatedTabBar(formState.selectedMethod),
+                    AuthMethodTabs(
+                      selected: formState.selectedMethod,
+                      onSelected: formNotifier.setMethod,
+                    ),
                     const SizedBox(height: 24),
                     LoginForm(
                       slideAnimation: _formSlide,
@@ -303,7 +228,11 @@ class _LoginPageState extends ConsumerState<LoginPage>
                         if (widget.onForgotPasswordPressed != null) {
                           widget.onForgotPasswordPressed!();
                         } else {
-                          context.push('/forgot-password');
+                          context.push(
+                            formState.selectedMethod == AuthMethod.phone
+                                ? '/forgot-password?method=phone'
+                                : '/forgot-password',
+                          );
                         }
                       },
                     ),

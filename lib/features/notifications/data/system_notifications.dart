@@ -66,13 +66,16 @@ abstract interface class SystemNotifications {
   /// Prepares the channels; [onTap] receives the data of a tapped one.
   Future<void> initialize(void Function(Map<String, dynamic> data) onTap);
 
-  /// Shows a notification. One with the same [tag] replaces it.
+  /// Shows a notification. One with the same [tag] replaces it, including
+  /// one the system showed from a push with that tag. [quiet] when it only
+  /// replaces one already announced: no second sound.
   Future<void> show({
     required String title,
     required String body,
     required NotificationChannel channel,
     required Map<String, dynamic> data,
     String? tag,
+    bool quiet = false,
   });
 
   /// The data of the notification tapped to start the app, if any.
@@ -127,13 +130,11 @@ class LocalSystemNotifications implements SystemNotifications {
     required NotificationChannel channel,
     required Map<String, dynamic> data,
     String? tag,
+    bool quiet = false,
   }) async {
     if (!_ready) return;
     await _plugin.show(
-      // The same tag gets the same id, so a newer one replaces it.
-      id:
-          (tag ?? '${DateTime.now().microsecondsSinceEpoch}').hashCode &
-          0x7fffffff,
+      id: notificationIdOf(tag),
       title: title,
       body: body,
       notificationDetails: NotificationDetails(
@@ -143,11 +144,26 @@ class LocalSystemNotifications implements SystemNotifications {
           importance: channel.importance,
           priority: Priority.high,
           tag: tag,
+          onlyAlertOnce: quiet,
         ),
         iOS: DarwinNotificationDetails(threadIdentifier: tag),
       ),
       payload: jsonEncode(data),
     );
+  }
+
+  /// Android tells notifications apart by tag and id, and Firebase shows a
+  /// push's notification with its tag and id 0: a tagged one uses id 0 too,
+  /// so it replaces the one the system showed. Elsewhere the id alone counts,
+  /// so it comes from the tag.
+  static int notificationIdOf(String? tag) {
+    if (tag != null &&
+        !kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.android) {
+      return 0;
+    }
+    return (tag ?? '${DateTime.now().microsecondsSinceEpoch}').hashCode &
+        0x7fffffff;
   }
 
   @override

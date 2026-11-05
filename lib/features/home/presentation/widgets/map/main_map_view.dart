@@ -12,6 +12,7 @@ import 'package:tilomnov/features/home/presentation/providers/map_state_provider
 import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 import 'package:tilomnov/features/home/utils/map/map_overlay_builder.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -264,6 +265,10 @@ class MainMapViewState extends ConsumerState<MainMapView> {
       },
     );
     ref.listen(mapStateProvider, _overlays.onMapStateChanged);
+    ref.listen(
+      searchAreaControllerProvider.select((state) => state?.focused?.id),
+      (_, _) => _overlays.rebuildListings(),
+    );
     ref.listen(propertyCarouselProvider, (previous, next) {
       if (previous?.selected?.id == next.selected?.id) return;
       _overlays.rebuildListings();

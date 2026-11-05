@@ -1,3 +1,5 @@
+import 'package:tilomnov/features/auth/presentation/view_models/login_form_provider.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/password_reset_flow.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/auth/presentation/screens/welcome_page.dart';
@@ -57,18 +59,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/forgot-password',
         pageBuilder: (context, state) => AppTransitionPage(
-          child: const ForgotPasswordPage(),
+          child: ForgotPasswordPage(
+            initialMethod: state.uri.queryParameters['method'] == 'phone'
+                ? AuthMethod.phone
+                : AuthMethod.email,
+          ),
           key: state.pageKey,
         ),
       ),
       GoRoute(
         path: '/verify-otp',
         pageBuilder: (context, state) {
-          final email = Uri.decodeComponent(
-            state.uri.queryParameters['email'] ?? '',
-          );
+          // An SMS reset carries its Firebase session in `extra`; an email
+          // one can also come as `?email=` (older links).
+          final target = state.extra is PasswordResetTarget
+              ? state.extra! as PasswordResetTarget
+              : EmailResetTarget(
+                  Uri.decodeComponent(state.uri.queryParameters['email'] ?? ''),
+                );
           return AppTransitionPage(
-            child: OtpVerificationPage(email: email),
+            child: OtpVerificationPage(target: target),
             key: state.pageKey,
           );
         },
@@ -76,14 +86,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/reset-password',
         pageBuilder: (context, state) {
-          final email = Uri.decodeComponent(
-            state.uri.queryParameters['email'] ?? '',
-          );
-          final otp = Uri.decodeComponent(
-            state.uri.queryParameters['otp'] ?? '',
-          );
+          final proof = state.extra is PasswordResetProof
+              ? state.extra! as PasswordResetProof
+              : EmailCodeProof(
+                  Uri.decodeComponent(state.uri.queryParameters['email'] ?? ''),
+                  Uri.decodeComponent(state.uri.queryParameters['otp'] ?? ''),
+                );
           return AppTransitionPage(
-            child: ResetPasswordPage(email: email, otp: otp),
+            child: ResetPasswordPage(proof: proof),
             key: state.pageKey,
           );
         },

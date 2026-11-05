@@ -6,6 +6,7 @@ import 'package:tilomnov/features/feed/presentation/view_models/feed_provider.da
 import 'package:tilomnov/features/feed/presentation/widgets/feed_listing_card.dart';
 import 'package:tilomnov/features/feed/presentation/widgets/feed_message_view.dart';
 import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
+import 'package:tilomnov/features/home/presentation/providers/show_property_on_map.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
@@ -190,6 +191,9 @@ class FeedPage extends ConsumerWidget {
             onOpenOwner: (origin) => _openOwner(context, ref, property, origin),
             onFavoriteToggled: () =>
                 ref.read(savedPropertyIdsProvider.notifier).toggle(property.id),
+            onViewOnMap: canShowPropertyOnMap(property)
+                ? () => showPropertyOnMap(context, ref, property)
+                : null,
           );
         },
       ),

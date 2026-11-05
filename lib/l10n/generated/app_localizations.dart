@@ -344,12 +344,6 @@ abstract class AppLocalizations {
   /// **'Subscription Plan'**
   String get accountSubscription;
 
-  /// No description provided for @accountSubscriptionFree.
-  ///
-  /// In en, this message translates to:
-  /// **'Free'**
-  String get accountSubscriptionFree;
-
   /// No description provided for @accountSignOut.
   ///
   /// In en, this message translates to:
@@ -2744,6 +2738,12 @@ abstract class AppLocalizations {
   /// **'This person has no published listings right now.'**
   String get searchPersonEmpty;
 
+  /// No description provided for @searchViewProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'View property'**
+  String get searchViewProperty;
+
   /// No description provided for @searchCloseResults.
   ///
   /// In en, this message translates to:
@@ -2935,6 +2935,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No contact details shared.'**
   String get profileNoContact;
+
+  /// No description provided for @propertySavePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Save photo'**
+  String get propertySavePhoto;
 
   /// No description provided for @propertyPhotoLimit.
   ///
@@ -5659,6 +5665,666 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show listings near you'**
   String get closestShowList;
+
+  /// No description provided for @authEnterYourPhoneNumberToGet.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number and we will text you a code to reset your password.'**
+  String get authEnterYourPhoneNumberToGet;
+
+  /// No description provided for @authVerificationCodeSentToYourPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent to your phone'**
+  String get authVerificationCodeSentToYourPhone;
+
+  /// No description provided for @authEnterTheVerificationCodeWeTexted.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the verification code we just texted to your phone.'**
+  String get authEnterTheVerificationCodeWeTexted;
+
+  /// No description provided for @authErrorNoAccountForPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'No account uses this phone number.'**
+  String get authErrorNoAccountForPhone;
+
+  /// No description provided for @authErrorSmsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Text messages cannot be sent right now. Reset with your email, or try again later.'**
+  String get authErrorSmsUnavailable;
+
+  /// No description provided for @planFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get planFree;
+
+  /// No description provided for @planSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get planSilver;
+
+  /// No description provided for @planGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get planGold;
+
+  /// No description provided for @planDiamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond'**
+  String get planDiamond;
+
+  /// No description provided for @planMember.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} member'**
+  String planMember(String tier);
+
+  /// No description provided for @planAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} Account'**
+  String planAccount(String tier);
+
+  /// No description provided for @planPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'/ month'**
+  String get planPerMonth;
+
+  /// No description provided for @planListingsUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'{used} / {limit} listings used'**
+  String planListingsUsed(int used, int limit);
+
+  /// No description provided for @planCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Plan'**
+  String get planCurrent;
+
+  /// No description provided for @planUpgradeTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to {tier}'**
+  String planUpgradeTo(String tier);
+
+  /// No description provided for @planFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get planFeatures;
+
+  /// No description provided for @planFeatureLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Publish 1 property at a time} other{Publish up to {count} properties}}'**
+  String planFeatureLimit(int count);
+
+  /// No description provided for @planFeatureFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic listing visibility'**
+  String get planFeatureFree;
+
+  /// No description provided for @planFeatureSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Suits small agents'**
+  String get planFeatureSilver;
+
+  /// No description provided for @planFeatureGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher listing capacity'**
+  String get planFeatureGold;
+
+  /// No description provided for @planFeatureDiamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest listing capacity'**
+  String get planFeatureDiamond;
+
+  /// No description provided for @planChooseIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan to publish more properties.'**
+  String get planChooseIntro;
+
+  /// No description provided for @planUpgradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Subscription'**
+  String get planUpgradeTitle;
+
+  /// No description provided for @planUpgradeIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock more property listings with a paid plan.'**
+  String get planUpgradeIntro;
+
+  /// No description provided for @planSubscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get planSubscribe;
+
+  /// No description provided for @paymentSelectMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Payment Method'**
+  String get paymentSelectMethod;
+
+  /// No description provided for @paymentTaxIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Total price includes 10% tax.'**
+  String get paymentTaxIncluded;
+
+  /// No description provided for @paymentAbaPay.
+  ///
+  /// In en, this message translates to:
+  /// **'ABA PAY'**
+  String get paymentAbaPay;
+
+  /// No description provided for @paymentAbaPayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with ABA Mobile'**
+  String get paymentAbaPayHint;
+
+  /// No description provided for @paymentAbaKhqr.
+  ///
+  /// In en, this message translates to:
+  /// **'ABA KHQR'**
+  String get paymentAbaKhqr;
+
+  /// No description provided for @paymentAbaKhqrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to pay with any banking app'**
+  String get paymentAbaKhqrHint;
+
+  /// No description provided for @paymentAwaitingConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for ABA to confirm your payment. This usually takes a minute.'**
+  String get paymentAwaitingConfirmation;
+
+  /// No description provided for @paymentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment was not completed. Please try again.'**
+  String get paymentFailed;
+
+  /// No description provided for @paymentAppNotOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open ABA Mobile or the payment page.'**
+  String get paymentAppNotOpened;
+
+  /// No description provided for @paymentUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Online payment is not available yet. Please try again later.'**
+  String get paymentUnavailable;
+
+  /// No description provided for @paymentCouldNotStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start the payment. Please try again.'**
+  String get paymentCouldNotStart;
+
+  /// No description provided for @paymentBillingSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Summary'**
+  String get paymentBillingSummary;
+
+  /// No description provided for @paymentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get paymentPlan;
+
+  /// No description provided for @paymentPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get paymentPrice;
+
+  /// No description provided for @paymentBillingCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Cycle'**
+  String get paymentBillingCycle;
+
+  /// No description provided for @paymentMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get paymentMonthly;
+
+  /// No description provided for @paymentTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get paymentTotal;
+
+  /// No description provided for @paymentOneTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One-Time Payment'**
+  String get paymentOneTimeTitle;
+
+  /// No description provided for @paymentOneTimeIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your property is ready to be published.'**
+  String get paymentOneTimeIntro;
+
+  /// No description provided for @paymentPropertyInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Property information'**
+  String get paymentPropertyInformation;
+
+  /// No description provided for @paymentOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time payment'**
+  String get paymentOneTime;
+
+  /// No description provided for @paymentPublishProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Property'**
+  String get paymentPublishProperty;
+
+  /// No description provided for @paymentProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property'**
+  String get paymentProperty;
+
+  /// No description provided for @paymentCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get paymentCategory;
+
+  /// No description provided for @publishPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Publishing Plan'**
+  String get publishPlanTitle;
+
+  /// No description provided for @publishPlanOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One-Time Publish'**
+  String get publishPlanOneTime;
+
+  /// No description provided for @publishPlanOneTimeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {price} to publish just this property.'**
+  String publishPlanOneTimeHint(String price);
+
+  /// No description provided for @publishPlanSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Plan'**
+  String get publishPlanSubscription;
+
+  /// No description provided for @publishPlanSubscriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish many properties every month.'**
+  String get publishPlanSubscriptionHint;
+
+  /// No description provided for @publishPlanChooseFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how to publish this property.'**
+  String get publishPlanChooseFirst;
+
+  /// No description provided for @privacyLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: November 4, 2026'**
+  String get privacyLastUpdated;
+
+  /// No description provided for @privacyIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'This page explains what Tilomnov collects when you use the app, why we need it, who else can see it, and the choices you have.'**
+  String get privacyIntro;
+
+  /// No description provided for @privacyCollectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What we collect'**
+  String get privacyCollectTitle;
+
+  /// No description provided for @privacyCollectAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account details: your name, username, phone number, email (if you add one) and profile picture.'**
+  String get privacyCollectAccount;
+
+  /// No description provided for @privacyCollectListings.
+  ///
+  /// In en, this message translates to:
+  /// **'What you publish: photos, descriptions, prices, the location and boundary you draw on the map, and the contact number you add.'**
+  String get privacyCollectListings;
+
+  /// No description provided for @privacyCollectLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location, only when you allow it, to show listings and routes near you.'**
+  String get privacyCollectLocation;
+
+  /// No description provided for @privacyCollectActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Your activity in the app, such as saved listings, saved searches, follows, and views of your listings, so we can show your insights.'**
+  String get privacyCollectActivity;
+
+  /// No description provided for @privacyCollectDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Device details, such as the app version, phone model, a sign-in device key and a notification token, to keep your account safe and deliver notifications.'**
+  String get privacyCollectDevice;
+
+  /// No description provided for @privacyUseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How we use it'**
+  String get privacyUseTitle;
+
+  /// No description provided for @privacyUseRun.
+  ///
+  /// In en, this message translates to:
+  /// **'To run the marketplace: show listings, connect buyers with owners, and deliver chats and calls.'**
+  String get privacyUseRun;
+
+  /// No description provided for @privacyUseProtect.
+  ///
+  /// In en, this message translates to:
+  /// **'To protect accounts: spot suspicious sign-ins, limit misuse and act on reports.'**
+  String get privacyUseProtect;
+
+  /// No description provided for @privacyUseFix.
+  ///
+  /// In en, this message translates to:
+  /// **'To fix problems: crash and error reports help us find bugs.'**
+  String get privacyUseFix;
+
+  /// No description provided for @privacyUseNoSale.
+  ///
+  /// In en, this message translates to:
+  /// **'We do not sell your personal information.'**
+  String get privacyUseNoSale;
+
+  /// No description provided for @privacyChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages and calls'**
+  String get privacyChatTitle;
+
+  /// No description provided for @privacyChatBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat messages are end-to-end encrypted: only you and the person you are talking to can read them. Your chat PIN protects the keys on your devices.'**
+  String get privacyChatBody;
+
+  /// No description provided for @privacyPaymentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get privacyPaymentsTitle;
+
+  /// No description provided for @privacyPaymentsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments are processed by ABA PayWay. We never see or store your card or bank account details. We keep only the transaction reference, amount, status and date, linked to your account.'**
+  String get privacyPaymentsBody;
+
+  /// No description provided for @privacySharingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can see your information'**
+  String get privacySharingTitle;
+
+  /// No description provided for @privacySharingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'We share information only as far as the app needs it:'**
+  String get privacySharingIntro;
+
+  /// No description provided for @privacySharingUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Other users see what you publish, your public profile, and the contact number on your listings.'**
+  String get privacySharingUsers;
+
+  /// No description provided for @privacySharingProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Companies that run parts of the app for us: Google (maps, sign-in, phone verification and notifications), Sentry (error reports) and ABA Bank (payments).'**
+  String get privacySharingProviders;
+
+  /// No description provided for @privacySharingLaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorities, when the law requires it.'**
+  String get privacySharingLaw;
+
+  /// No description provided for @privacyCookiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cookies and storage on your phone'**
+  String get privacyCookiesTitle;
+
+  /// No description provided for @privacyCookiesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The app does not use advertising or tracking cookies. It keeps a few things on your phone so it works well:'**
+  String get privacyCookiesIntro;
+
+  /// No description provided for @privacyCookiesSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sign-in, kept in your phone\'s secure storage.'**
+  String get privacyCookiesSignIn;
+
+  /// No description provided for @privacyCookiesSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Your settings, such as theme and language.'**
+  String get privacyCookiesSettings;
+
+  /// No description provided for @privacyCookiesOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Copies of recently viewed pages and pictures, so the app opens quickly and works offline.'**
+  String get privacyCookiesOffline;
+
+  /// No description provided for @privacyCookiesClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing out removes your sign-in from the phone. Clearing the app\'s storage in your phone\'s settings removes everything else.'**
+  String get privacyCookiesClear;
+
+  /// No description provided for @privacyChoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your choices'**
+  String get privacyChoicesTitle;
+
+  /// No description provided for @privacyChoicesEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'View and change your details at any time in Account > Personal information.'**
+  String get privacyChoicesEdit;
+
+  /// No description provided for @privacyChoicesLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn location access off in your phone\'s settings; the map still works without it.'**
+  String get privacyChoicesLocation;
+
+  /// No description provided for @privacyChoicesNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which notifications you get in Account > Notifications.'**
+  String get privacyChoicesNotifications;
+
+  /// No description provided for @privacyChoicesDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your listings at any time. To close your account, contact us.'**
+  String get privacyChoicesDelete;
+
+  /// No description provided for @privacyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get privacyContactTitle;
+
+  /// No description provided for @privacyContactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have questions about this page or your information, contact the Tilomnov team. When this page changes, we will update the date at the top.'**
+  String get privacyContactBody;
+
+  /// No description provided for @paymentSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get paymentSuccessTitle;
+
+  /// No description provided for @paymentSuccessAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} USD'**
+  String paymentSuccessAmount(String amount);
+
+  /// No description provided for @paymentSuccessTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID  #{id}'**
+  String paymentSuccessTransaction(String id);
+
+  /// No description provided for @paymentSuccessEmailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Order confirmation details sent to your email:'**
+  String get paymentSuccessEmailed;
+
+  /// No description provided for @paymentSuccessNoEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email in Personal information to get receipts by email.'**
+  String get paymentSuccessNoEmail;
+
+  /// No description provided for @paymentDownloadReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Receipt'**
+  String get paymentDownloadReceipt;
+
+  /// No description provided for @paymentBackToHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get paymentBackToHome;
+
+  /// No description provided for @paymentReceiptSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt saved to your photos.'**
+  String get paymentReceiptSaved;
+
+  /// No description provided for @paymentReceiptSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the receipt. Please try again.'**
+  String get paymentReceiptSaveFailed;
+
+  /// No description provided for @paymentReceiptPhotosDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access to your photos to save the receipt.'**
+  String get paymentReceiptPhotosDenied;
+
+  /// No description provided for @paymentReceiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment receipt'**
+  String get paymentReceiptTitle;
+
+  /// No description provided for @paymentReceiptTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get paymentReceiptTransaction;
+
+  /// No description provided for @paymentReceiptDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get paymentReceiptDate;
+
+  /// No description provided for @paymentReceiptItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get paymentReceiptItem;
+
+  /// No description provided for @paymentReceiptMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get paymentReceiptMethod;
+
+  /// No description provided for @paymentReceiptEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get paymentReceiptEmail;
+
+  /// No description provided for @paymentReceiptStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get paymentReceiptStatus;
+
+  /// No description provided for @paymentReceiptPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paymentReceiptPaid;
+
+  /// No description provided for @paymentItemSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} plan · Monthly'**
+  String paymentItemSubscription(String tier);
+
+  /// No description provided for @paymentItemOneTimePublish.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time listing publish'**
+  String get paymentItemOneTimePublish;
 }
 
 class _AppLocalizationsDelegate

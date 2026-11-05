@@ -63,8 +63,9 @@ class PushNotificationsController {
       return;
     }
 
-    // Android gets the sealed message and no notification: write it here.
-    if (message is ChatMessagePush && message.isSealed && push.title == null) {
+    // Android gets the sealed message: write the notification with its
+    // text. (The system shows nothing while the app is open.)
+    if (message is ChatMessagePush && message.isSealed) {
       unawaited(_showSealedMessage(message, push.data));
       return;
     }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 
 /// Standardized, consistent top app header bar used across screens (Account, Saved Properties, My Properties, etc.).
 class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
@@ -38,25 +40,21 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
           if (showBackButton)
             Align(
               alignment: Alignment.centerLeft,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  if (onBackPressed != null) {
-                    onBackPressed!();
-                  } else if (Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: Icon(
-                    Icons.arrow_back,
-                    color: colors.textPrimary,
-                    size: 24,
-                  ),
-                ),
-              ),
+              child: GlassScope.of(context)
+                  ? GlassIconButton.back(onPressed: () => _back(context))
+                  : GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => _back(context),
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: colors.textPrimary,
+                          size: 24,
+                        ),
+                      ),
+                    ),
             ),
 
           // Centered Title. The padding keeps a long (translated) title clear
@@ -82,5 +80,13 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
     );
+  }
+
+  void _back(BuildContext context) {
+    if (onBackPressed != null) {
+      onBackPressed!();
+    } else if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/features/auth/data/phone_verification_service.dart';
 import 'package:tilomnov/l10n/generated/app_localizations.dart';
 import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
@@ -27,4 +28,24 @@ String authErrorMessage(
           : l10n.authErrorGeneric,
     ),
   };
+}
+
+/// What went wrong while resetting a password with a phone number: the SMS
+/// step (Firebase) or the reset itself (our server), in the user's language.
+String phoneResetErrorMessage(AppLocalizations l10n, Object error) {
+  if (error is PhoneVerificationException) {
+    return switch (error.failure) {
+      PhoneVerificationFailure.invalidNumber => l10n.authErrEnterValidPhone,
+      PhoneVerificationFailure.wrongCode ||
+      PhoneVerificationFailure.codeExpired => l10n.authErrorInvalidCode,
+      PhoneVerificationFailure.tooManyAttempts => l10n.authErrorTooManyTries,
+      PhoneVerificationFailure.network => l10n.authErrorNoConnection,
+      PhoneVerificationFailure.unavailable => l10n.authErrorSmsUnavailable,
+      PhoneVerificationFailure.unknown => l10n.authErrorGeneric,
+    };
+  }
+  final code = error is AppException ? error.code : null;
+  if (code == '404') return l10n.authErrorNoAccountForPhone;
+  // A proof that is no longer fresh: the user asks for a new code.
+  return authErrorMessage(l10n, error, badRequest: l10n.authErrorInvalidCode);
 }

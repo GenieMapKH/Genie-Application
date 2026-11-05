@@ -36,6 +36,11 @@ class UserProfile {
   /// a password yet: it has nothing to type where a password is asked for.
   final bool hasPassword;
 
+  /// The subscription tier as the server names it (`subscription.tier`),
+  /// null on Free or from a server without subscriptions. The subscription
+  /// feature reads it.
+  final String? subscriptionTier;
+
   const UserProfile({
     required this.id,
     this.email,
@@ -51,6 +56,7 @@ class UserProfile {
     this.avatarUrl,
     this.avatarFromGoogle = false,
     this.hasPassword = true,
+    this.subscriptionTier,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -71,6 +77,10 @@ class UserProfile {
       // A server that does not say (an older one) is taken at its word
       // that a password exists, as before.
       hasPassword: json['hasPassword'] != false,
+      subscriptionTier: switch (json['subscription']) {
+        {'tier': final String tier} => tier,
+        _ => null,
+      },
     );
   }
 

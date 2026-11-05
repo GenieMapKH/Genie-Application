@@ -6,6 +6,7 @@ import 'package:tilomnov/features/home/presentation/providers/map_camera_provide
 import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
 import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
 import 'package:tilomnov/features/home/utils/map/cluster_transition.dart';
 import 'package:tilomnov/features/home/utils/map/coalesced_rebuild.dart';
@@ -151,7 +152,10 @@ class MainMapOverlays {
       mapState: mapState,
       zoom: _ref.read(mapCameraProvider).zoom,
       mapProperties: _ref.read(mapPropertiesProvider),
-      selectedProperty: _ref.read(propertyCarouselProvider).selected,
+      // A listing picked in the search panel is outlined like a tapped one.
+      selectedProperty:
+          _ref.read(propertyCarouselProvider).selected ??
+          _ref.read(searchAreaControllerProvider)?.focused,
       icons: _icons,
       callbacks: MapOverlayCallbacks(
         // The map view marks the listing visited when the card opens.

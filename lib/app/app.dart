@@ -12,11 +12,13 @@ import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/call/models/call_state.dart';
 import 'package:tilomnov/features/call/providers/call_providers.dart';
 import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/home/presentation/providers/glass_navigation_provider.dart';
 import 'package:tilomnov/features/notifications/providers/notification_providers.dart';
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/shared/widgets/feedback/connection_popups.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 
 class AppScrollBehavior extends ScrollBehavior {
   @override
@@ -71,9 +73,15 @@ class MyApp extends ConsumerWidget {
       routerConfig: router,
       builder: (context, child) => updateRequired
           ? const UpdateRequiredPage()
-          : ConnectionPopups(
-              navigatorKey: router.routerDelegate.navigatorKey,
-              child: child ?? const SizedBox.shrink(),
+          // Every page's floating buttons follow the glass navigation bar.
+          : Consumer(
+              builder: (context, ref, _) => GlassScope(
+                enabled: watchGlassNavigation(ref, context),
+                child: ConnectionPopups(
+                  navigatorKey: router.routerDelegate.navigatorKey,
+                  child: child ?? const SizedBox.shrink(),
+                ),
+              ),
             ),
     );
   }

@@ -33,6 +33,8 @@
 			<array>
 				<!-- REVERSED_CLIENT_ID in GoogleService-Info.plist: Google sign-in returns here. -->
 				<string>com.googleusercontent.apps.67344886415-g26d87aetcsfci6fauc8t87ba94k64gs</string>
+				<!-- Encoded GOOGLE_APP_ID: phone sign-in returns here after its reCAPTCHA check (used while there is no APNs key). -->
+				<string>app-1-67344886415-ios-d5ac512f0724bc7060defa</string>
 			</array>
 		</dict>
 	</array>
@@ -43,6 +45,12 @@
 	</array>
 	<key>GMSApiKey</key>
 	<string>$(MAPS_API_KEY)</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<!-- Plain http only to local-network hosts (the dev gateway on the PC's LAN IP). -->
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Take pictures of your listings, your profile, chat attachments and documents to scan.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

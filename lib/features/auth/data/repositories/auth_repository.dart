@@ -201,6 +201,22 @@ class AuthService {
     }
   }
 
+  /// Sets a new password for the account with the phone number that
+  /// [idToken] proves (a Firebase ID token from an SMS code just typed).
+  Future<void> resetPasswordWithPhone(
+    String idToken,
+    String newPassword,
+  ) async {
+    try {
+      await dio.post(
+        '/auth/reset-password/phone',
+        data: {'idToken': idToken, 'newPassword': newPassword},
+      );
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   // 7. Reset Password
   Future<void> resetPassword(
     String email,

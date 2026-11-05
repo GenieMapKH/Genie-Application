@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 
 /// Top of a profile screen: a coloured cover band behind the status bar,
 /// with the back arrow (and [title]) on it, the round [avatar] overlapping
@@ -183,6 +185,9 @@ class _BannerBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (GlassScope.of(context)) {
+      return GlassIconButton.back(onPressed: onPressed);
+    }
     return Material(
       color: Colors.black.withValues(alpha: 0.18),
       shape: const CircleBorder(),

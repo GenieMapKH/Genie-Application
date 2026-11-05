@@ -175,6 +175,21 @@ class _ClosestListingsSheetState extends ConsumerState<ClosestListingsSheet>
     if ((target - size).abs() > 0.002) _moveTo(target, velocity: velocity);
   }
 
+  /// The sheet's room changed (the keyboard closing, the bars around it):
+  /// a resting sheet keeps its old share of the room, which put the handle
+  /// above or below its place until it next moved. Back onto it.
+  void _keepResting(double previousPeek) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_controller.isAttached) return;
+      if (_finger != null || _spring.isMoving) return;
+      final size = _controller.size;
+      final wasResting = (size - previousPeek).abs() < 0.002;
+      if (wasResting && (size - _peekExtent).abs() > 0.0005) {
+        _controller.jumpTo(_peekExtent);
+      }
+    });
+  }
+
   void _toggle() {
     if (!_controller.isAttached) return;
     _moveTo(_raised.value ? _peekExtent : _middleExtent);
@@ -241,7 +256,9 @@ class _ClosestListingsSheetState extends ConsumerState<ClosestListingsSheet>
     final foot = nav?.height ?? 0.0;
     final height = constraints.maxHeight;
     _sheetHeight = height;
+    final previousPeek = _peekExtent;
     _peekExtent = ClosestSheetLayout.peekExtent(height, foot: foot);
+    if (_peekExtent != previousPeek) _keepResting(previousPeek);
     final middle = ClosestSheetLayout.middleExtent(height);
     // Only a real stop between resting and fully up.
     final hasMiddle = middle > _peekExtent + 0.05 && middle < 0.95;

@@ -30,6 +30,7 @@ import 'package:tilomnov/features/property/presentation/view_models/map_property
 import 'package:tilomnov/features/search/data/models/saved_search.dart';
 import 'package:tilomnov/features/search/presentation/view_models/saved_searches_provider.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
+import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
 import 'package:tilomnov/features/security/presentation/widgets/new_sign_in_alert.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 
@@ -155,16 +156,37 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   /// The map extends this far below the screen (see `MainMapView`).
   static const double _mapFrameOverflow = 40.0;
 
-  /// A new place or person was picked: make room for its panel, and frame its
-  /// area on the map once it is known.
+  /// A new place or person was picked: make room for its panel, and frame a
+  /// place's area on the map once it is known. A person's profile leaves the
+  /// map where it is: the map moves only to the listing picked in the panel,
+  /// framing its whole boundary.
   void _onSearchAreaChanged(SearchAreaState? previous, SearchAreaState? next) {
     if (next == null) return;
     final isNewTarget = previous?.target != next.target;
     if (isNewTarget) ref.read(propertyCarouselProvider.notifier).clear();
 
+    final focused = next.focused;
+    if (focused != null && focused.id != previous?.focused?.id) {
+      _frameListingOnMap(focused);
+      return;
+    }
+
+    if (next.target is PersonTarget) return;
     final bounds = next.area.valueOrNull?.framing;
     final justLoaded = previous?.area is! AsyncData || isNewTarget;
     if (bounds != null && justLoaded) _frameOnMap(bounds);
+  }
+
+  void _frameListingOnMap(PropertyModel property) {
+    final boundary = property.boundaryPoints;
+    final center = PropertyCarouselNotifier.centerOf(property);
+    if (center == null) return;
+    final hasBoundary = boundary.length >= 3;
+    _frameOnMap(
+      MapCameraFocus.boundsOf(hasBoundary ? boundary : [center]),
+      maxZoom: hasBoundary ? 20 : MapCameraFocus.pinZoom,
+      focused: true,
+    );
   }
 
   /// A saved search was opened: back to the map, showing its filter over
@@ -188,10 +210,18 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     );
   }
 
-  Future<void> _frameOnMap(LatLngBounds bounds) async {
+  Future<void> _frameOnMap(
+    LatLngBounds bounds, {
+    double maxZoom = 17,
+    bool focused = false,
+  }) async {
     final size = MediaQuery.sizeOf(context);
     final covered =
-        HomeSearchPanel.coveredInsets(context) +
+        HomeSearchPanel.coveredInsets(
+          context,
+          glassNav: readGlassNavigation(ref, context),
+          focused: focused,
+        ) +
         const EdgeInsets.only(bottom: _mapFrameOverflow);
     final controller = await _mapControllerCompleter.future;
     await controller.animateCamera(
@@ -200,6 +230,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
           bounds,
           Size(size.width, size.height + _mapFrameOverflow),
           covered,
+          maxZoom: maxZoom,
           // Below this the map shows dots instead of price tags.
           minZoom: MapOverlayBuilder.clusterZoomThreshold + 1,
         ),
@@ -215,16 +246,24 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final hasSearch = ref.watch(
       searchAreaControllerProvider.select((state) => state != null),
     );
+    final hasFocusedListing = ref.watch(
+      searchAreaControllerProvider.select((state) => state?.focused != null),
+    );
     final isDrawing = ref.watch(
       mapStateProvider.select((state) => state.isDrawing),
     );
     final showSearchPanel = hasSearch && isHome && !isCardVisible && !isDrawing;
     final screenWidth = MediaQuery.sizeOf(context).width;
+    final glassNav = watchGlassNavigation(ref, context);
     final showClosestSheet =
         isHome && !isCardVisible && !showSearchPanel && !isDrawing;
     final searchSheetHeight =
         showSearchPanel && !SearchLayout.isWide(screenWidth)
-        ? HomeSearchPanel.coveredInsets(context).bottom
+        ? HomeSearchPanel.coveredInsets(
+            context,
+            glassNav: glassNav,
+            focused: hasFocusedListing,
+          ).bottom
         // The pull-up list's handle rests under the buttons on phones.
         : showClosestSheet && !ClosestSheetLayout.isDocked(screenWidth)
         ? PropertyCarousel.bottomNavHeight + ClosestSheetLayout.peekHeight + 16
@@ -238,7 +277,6 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       (_, search) => _openSavedSearch(search),
     );
     final bool overlayPage = !isHome;
-    final glassNav = watchGlassNavigation(ref, context);
     final closestSheetBottom = glassNav
         ? GlassBottomNav.capsuleBottomOf(context)
         : PropertyCarousel.bottomNavHeight;
@@ -270,6 +308,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
               HomeSearchPanel(
                 aboveControls: false,
                 visible: showSearchPanel,
+                glassNav: glassNav,
                 onOpenProperty: _openPropertyDetail,
               ),
               IgnorePointer(
@@ -319,6 +358,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
               HomeSearchPanel(
                 aboveControls: true,
                 visible: showSearchPanel,
+                glassNav: glassNav,
                 onOpenProperty: _openPropertyDetail,
               ),
 

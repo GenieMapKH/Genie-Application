@@ -142,9 +142,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountSubscription => 'Subscription Plan';
 
   @override
-  String get accountSubscriptionFree => 'Free';
-
-  @override
   String get accountSignOut => 'Sign out';
 
   @override
@@ -1542,6 +1539,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'This person has no published listings right now.';
 
   @override
+  String get searchViewProperty => 'View property';
+
+  @override
   String get searchCloseResults => 'Close search results';
 
   @override
@@ -1647,6 +1647,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileNoContact => 'No contact details shared.';
+
+  @override
+  String get propertySavePhoto => 'Save photo';
 
   @override
   String propertyPhotoLimit(int count) {
@@ -3252,4 +3255,397 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get closestShowList => 'Show listings near you';
+
+  @override
+  String get authEnterYourPhoneNumberToGet =>
+      'Enter your phone number and we will text you a code to reset your password.';
+
+  @override
+  String get authVerificationCodeSentToYourPhone =>
+      'Verification code sent to your phone';
+
+  @override
+  String get authEnterTheVerificationCodeWeTexted =>
+      'Enter the verification code we just texted to your phone.';
+
+  @override
+  String get authErrorNoAccountForPhone => 'No account uses this phone number.';
+
+  @override
+  String get authErrorSmsUnavailable =>
+      'Text messages cannot be sent right now. Reset with your email, or try again later.';
+
+  @override
+  String get planFree => 'Free';
+
+  @override
+  String get planSilver => 'Silver';
+
+  @override
+  String get planGold => 'Gold';
+
+  @override
+  String get planDiamond => 'Diamond';
+
+  @override
+  String planMember(String tier) {
+    return '$tier member';
+  }
+
+  @override
+  String planAccount(String tier) {
+    return '$tier Account';
+  }
+
+  @override
+  String get planPerMonth => '/ month';
+
+  @override
+  String planListingsUsed(int used, int limit) {
+    return '$used / $limit listings used';
+  }
+
+  @override
+  String get planCurrent => 'Current Plan';
+
+  @override
+  String planUpgradeTo(String tier) {
+    return 'Upgrade to $tier';
+  }
+
+  @override
+  String get planFeatures => 'Features';
+
+  @override
+  String planFeatureLimit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Publish up to $count properties',
+      one: 'Publish 1 property at a time',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planFeatureFree => 'Basic listing visibility';
+
+  @override
+  String get planFeatureSilver => 'Suits small agents';
+
+  @override
+  String get planFeatureGold => 'Higher listing capacity';
+
+  @override
+  String get planFeatureDiamond => 'Highest listing capacity';
+
+  @override
+  String get planChooseIntro => 'Choose a plan to publish more properties.';
+
+  @override
+  String get planUpgradeTitle => 'Upgrade Subscription';
+
+  @override
+  String get planUpgradeIntro =>
+      'Unlock more property listings with a paid plan.';
+
+  @override
+  String get planSubscribe => 'Subscribe';
+
+  @override
+  String get paymentSelectMethod => 'Select Payment Method';
+
+  @override
+  String get paymentTaxIncluded => 'Total price includes 10% tax.';
+
+  @override
+  String get paymentAbaPay => 'ABA PAY';
+
+  @override
+  String get paymentAbaPayHint => 'Pay with ABA Mobile';
+
+  @override
+  String get paymentAbaKhqr => 'ABA KHQR';
+
+  @override
+  String get paymentAbaKhqrHint => 'Scan to pay with any banking app';
+
+  @override
+  String get paymentAwaitingConfirmation =>
+      'Waiting for ABA to confirm your payment. This usually takes a minute.';
+
+  @override
+  String get paymentFailed =>
+      'The payment was not completed. Please try again.';
+
+  @override
+  String get paymentAppNotOpened =>
+      'Could not open ABA Mobile or the payment page.';
+
+  @override
+  String get paymentUnavailable =>
+      'Online payment is not available yet. Please try again later.';
+
+  @override
+  String get paymentCouldNotStart =>
+      'Could not start the payment. Please try again.';
+
+  @override
+  String get paymentBillingSummary => 'Billing Summary';
+
+  @override
+  String get paymentPlan => 'Plan';
+
+  @override
+  String get paymentPrice => 'Price';
+
+  @override
+  String get paymentBillingCycle => 'Billing Cycle';
+
+  @override
+  String get paymentMonthly => 'Monthly';
+
+  @override
+  String get paymentTotal => 'Total';
+
+  @override
+  String get paymentOneTimeTitle => 'One-Time Payment';
+
+  @override
+  String get paymentOneTimeIntro => 'Your property is ready to be published.';
+
+  @override
+  String get paymentPropertyInformation => 'Property information';
+
+  @override
+  String get paymentOneTime => 'One-time payment';
+
+  @override
+  String get paymentPublishProperty => 'Publish Property';
+
+  @override
+  String get paymentProperty => 'Property';
+
+  @override
+  String get paymentCategory => 'Category';
+
+  @override
+  String get publishPlanTitle => 'Choose Publishing Plan';
+
+  @override
+  String get publishPlanOneTime => 'One-Time Publish';
+
+  @override
+  String publishPlanOneTimeHint(String price) {
+    return 'Pay $price to publish just this property.';
+  }
+
+  @override
+  String get publishPlanSubscription => 'Subscription Plan';
+
+  @override
+  String get publishPlanSubscriptionHint =>
+      'Publish many properties every month.';
+
+  @override
+  String get publishPlanChooseFirst => 'Choose how to publish this property.';
+
+  @override
+  String get privacyLastUpdated => 'Last updated: November 4, 2026';
+
+  @override
+  String get privacyIntro =>
+      'This page explains what Tilomnov collects when you use the app, why we need it, who else can see it, and the choices you have.';
+
+  @override
+  String get privacyCollectTitle => 'What we collect';
+
+  @override
+  String get privacyCollectAccount =>
+      'Account details: your name, username, phone number, email (if you add one) and profile picture.';
+
+  @override
+  String get privacyCollectListings =>
+      'What you publish: photos, descriptions, prices, the location and boundary you draw on the map, and the contact number you add.';
+
+  @override
+  String get privacyCollectLocation =>
+      'Your location, only when you allow it, to show listings and routes near you.';
+
+  @override
+  String get privacyCollectActivity =>
+      'Your activity in the app, such as saved listings, saved searches, follows, and views of your listings, so we can show your insights.';
+
+  @override
+  String get privacyCollectDevice =>
+      'Device details, such as the app version, phone model, a sign-in device key and a notification token, to keep your account safe and deliver notifications.';
+
+  @override
+  String get privacyUseTitle => 'How we use it';
+
+  @override
+  String get privacyUseRun =>
+      'To run the marketplace: show listings, connect buyers with owners, and deliver chats and calls.';
+
+  @override
+  String get privacyUseProtect =>
+      'To protect accounts: spot suspicious sign-ins, limit misuse and act on reports.';
+
+  @override
+  String get privacyUseFix =>
+      'To fix problems: crash and error reports help us find bugs.';
+
+  @override
+  String get privacyUseNoSale => 'We do not sell your personal information.';
+
+  @override
+  String get privacyChatTitle => 'Messages and calls';
+
+  @override
+  String get privacyChatBody =>
+      'Chat messages are end-to-end encrypted: only you and the person you are talking to can read them. Your chat PIN protects the keys on your devices.';
+
+  @override
+  String get privacyPaymentsTitle => 'Payments';
+
+  @override
+  String get privacyPaymentsBody =>
+      'Payments are processed by ABA PayWay. We never see or store your card or bank account details. We keep only the transaction reference, amount, status and date, linked to your account.';
+
+  @override
+  String get privacySharingTitle => 'Who can see your information';
+
+  @override
+  String get privacySharingIntro =>
+      'We share information only as far as the app needs it:';
+
+  @override
+  String get privacySharingUsers =>
+      'Other users see what you publish, your public profile, and the contact number on your listings.';
+
+  @override
+  String get privacySharingProviders =>
+      'Companies that run parts of the app for us: Google (maps, sign-in, phone verification and notifications), Sentry (error reports) and ABA Bank (payments).';
+
+  @override
+  String get privacySharingLaw => 'Authorities, when the law requires it.';
+
+  @override
+  String get privacyCookiesTitle => 'Cookies and storage on your phone';
+
+  @override
+  String get privacyCookiesIntro =>
+      'The app does not use advertising or tracking cookies. It keeps a few things on your phone so it works well:';
+
+  @override
+  String get privacyCookiesSignIn =>
+      'Your sign-in, kept in your phone\'s secure storage.';
+
+  @override
+  String get privacyCookiesSettings =>
+      'Your settings, such as theme and language.';
+
+  @override
+  String get privacyCookiesOffline =>
+      'Copies of recently viewed pages and pictures, so the app opens quickly and works offline.';
+
+  @override
+  String get privacyCookiesClear =>
+      'Signing out removes your sign-in from the phone. Clearing the app\'s storage in your phone\'s settings removes everything else.';
+
+  @override
+  String get privacyChoicesTitle => 'Your choices';
+
+  @override
+  String get privacyChoicesEdit =>
+      'View and change your details at any time in Account > Personal information.';
+
+  @override
+  String get privacyChoicesLocation =>
+      'Turn location access off in your phone\'s settings; the map still works without it.';
+
+  @override
+  String get privacyChoicesNotifications =>
+      'Choose which notifications you get in Account > Notifications.';
+
+  @override
+  String get privacyChoicesDelete =>
+      'Delete your listings at any time. To close your account, contact us.';
+
+  @override
+  String get privacyContactTitle => 'Contact us';
+
+  @override
+  String get privacyContactBody =>
+      'If you have questions about this page or your information, contact the Tilomnov team. When this page changes, we will update the date at the top.';
+
+  @override
+  String get paymentSuccessTitle => 'Success';
+
+  @override
+  String paymentSuccessAmount(String amount) {
+    return '$amount USD';
+  }
+
+  @override
+  String paymentSuccessTransaction(String id) {
+    return 'Transaction ID  #$id';
+  }
+
+  @override
+  String get paymentSuccessEmailed =>
+      'Order confirmation details sent to your email:';
+
+  @override
+  String get paymentSuccessNoEmail =>
+      'Add an email in Personal information to get receipts by email.';
+
+  @override
+  String get paymentDownloadReceipt => 'Download Receipt';
+
+  @override
+  String get paymentBackToHome => 'Back to Home';
+
+  @override
+  String get paymentReceiptSaved => 'Receipt saved to your photos.';
+
+  @override
+  String get paymentReceiptSaveFailed =>
+      'Could not save the receipt. Please try again.';
+
+  @override
+  String get paymentReceiptPhotosDenied =>
+      'Allow access to your photos to save the receipt.';
+
+  @override
+  String get paymentReceiptTitle => 'Payment receipt';
+
+  @override
+  String get paymentReceiptTransaction => 'Transaction ID';
+
+  @override
+  String get paymentReceiptDate => 'Date';
+
+  @override
+  String get paymentReceiptItem => 'Item';
+
+  @override
+  String get paymentReceiptMethod => 'Payment method';
+
+  @override
+  String get paymentReceiptEmail => 'Email';
+
+  @override
+  String get paymentReceiptStatus => 'Status';
+
+  @override
+  String get paymentReceiptPaid => 'Paid';
+
+  @override
+  String paymentItemSubscription(String tier) {
+    return '$tier plan · Monthly';
+  }
+
+  @override
+  String get paymentItemOneTimePublish => 'One-time listing publish';
 }

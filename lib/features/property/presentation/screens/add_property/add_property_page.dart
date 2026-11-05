@@ -16,6 +16,7 @@ import 'package:tilomnov/features/property/utils/property_format.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_form_input.dart';
+import 'package:tilomnov/features/property/presentation/widgets/publishing_plan_selector.dart';
 
 import 'add_property_page_form_binding.dart';
 import 'add_property_page_layout.dart';
@@ -113,6 +114,19 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
 
   /// Whether the Archive button, not Publish, started the running save.
   bool isArchiving = false;
+
+  /// How the listing is published when it does not fit in the user's plan;
+  /// null until chosen.
+  PublishingPlan? selectedPublishingPlan;
+
+  /// Publish was pressed before a publishing plan was chosen.
+  bool publishingPlanMissing = false;
+
+  /// The listing saved privately before paying for it, so a second try
+  /// pays for the same one instead of creating another.
+  PropertyModel? unpaidDraft;
+
+  final GlobalKey publishingPlanKey = GlobalKey();
 
   final GlobalKey titleKey = GlobalKey();
   final GlobalKey priceKey = GlobalKey();

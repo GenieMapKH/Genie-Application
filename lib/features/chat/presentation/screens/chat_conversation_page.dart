@@ -14,7 +14,7 @@ import 'package:tilomnov/features/chat/models/chat_composer_mode.dart';
 import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_composer_banner.dart';
-import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
+import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_conversation_app_bar.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_image_picker.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_input_bar.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_key_changed_banner.dart';
@@ -39,7 +39,6 @@ import 'package:tilomnov/features/chat/providers/voice_recording_provider.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:tilomnov/features/safety/presentation/view_models/block_providers.dart';
 import 'package:tilomnov/features/safety/presentation/widgets/blocked_conversation_bar.dart';
-import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
@@ -75,47 +74,14 @@ class ChatConversationPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: context.colors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0),
-        child: AppBar(
-          backgroundColor: context.colors.surface,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: context.colors.textMuted),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: ChatConversationHeader(
-            participantName: participantName,
-            chat: chat,
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              tooltip: context.l10n.callVoice,
-              // Larger than the circle it draws, so a tap beside it still calls.
-              constraints: const BoxConstraints.tightFor(width: 56, height: 56),
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: context.colors.border),
-                ),
-                child: Icon(
-                  Icons.phone_outlined,
-                  color: context.colors.textMuted,
-                  size: 18,
-                ),
-              ),
-              onPressed: canCall
-                  ? () => startCall(participantId, participantName)
-                  : null,
-            ),
-            if (chat != null && userId != participantId)
-              SafetyMenuButton(userId: participantId, userName: participantName)
-            else
-              const SizedBox(width: 8),
-          ],
-        ),
+      appBar: ChatConversationAppBar(
+        participantId: participantId,
+        participantName: participantName,
+        chat: chat,
+        onCall: canCall
+            ? () => startCall(participantId, participantName)
+            : null,
+        showMenu: chat != null && userId != participantId,
       ),
       body: userId == participantId
           ? ChatNotice(message: context.l10n.chatThisIsYourOwnAccount)

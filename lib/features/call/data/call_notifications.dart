@@ -44,12 +44,13 @@ class CallNotifications {
     required Map<String, dynamic> data,
   }) {
     return plugin.show(
-      id: idOf(callId),
+      id: _firebaseId,
       title: title,
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           NotificationChannel.calls.id,
           NotificationChannel.calls.label,
+          tag: tagOf(callId),
           importance: Importance.max,
           priority: Priority.max,
           category: AndroidNotificationCategory.call,
@@ -73,8 +74,12 @@ class CallNotifications {
     );
   }
 
-  /// The call stopped ringing (answered elsewhere, cancelled, missed).
-  Future<void> cancel(String callId) => plugin.cancel(id: idOf(callId));
+  /// The call stopped ringing (answered elsewhere, or declined).
+  Future<void> cancel(String callId) =>
+      plugin.cancel(id: _firebaseId, tag: tagOf(callId));
+
+  /// Takes the ringing notification's place. The server's own "Missed call"
+  /// usually got there first (same tag), so this one makes no sound.
 
   Future<void> showMissed({
     required String callId,
@@ -82,12 +87,14 @@ class CallNotifications {
     required Map<String, dynamic> data,
   }) {
     return plugin.show(
-      id: idOf(callId),
+      id: _firebaseId,
       title: title,
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           NotificationChannel.missedCalls.id,
           NotificationChannel.missedCalls.label,
+          tag: tagOf(callId),
+          onlyAlertOnce: true,
           importance: NotificationChannel.missedCalls.importance,
           category: AndroidNotificationCategory.missedCall,
         ),
@@ -96,6 +103,12 @@ class CallNotifications {
     );
   }
 
-  /// One notification per call: the missed one replaces the ringing one.
-  static int idOf(String callId) => callId.hashCode & 0x7fffffff;
+  /// One notification per call, the one the server's pushes also name: the
+  /// ringing one replaces the system's "is calling", the missed one replaces
+  /// the ringing one.
+  static String tagOf(String callId) => 'call:$callId';
+
+  /// Firebase shows a tagged push with id 0 (see
+  /// `LocalSystemNotifications.notificationIdOf`).
+  static const _firebaseId = 0;
 }

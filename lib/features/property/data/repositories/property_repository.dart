@@ -46,19 +46,25 @@ class PropertyRepository {
   static const ownPageSize = 20;
 
   /// [limit] of the user's own listings, newest first, from [offset] on,
-  /// with how many of them there are in each status. Empty for a session the
-  /// server no longer accepts.
+  /// only those in [statuses] when given, with how many of them (all, not
+  /// only those in [statuses]) there are in each status. Empty for a session
+  /// the server no longer accepts.
   Future<OwnListingsPage> fetchOwnPage({
     required int offset,
     int limit = ownPageSize,
+    List<String> statuses = const [],
   }) async {
     try {
       final response = await dio.get(
         '/properties',
-        queryParameters: {'limit': limit, 'offset': offset},
+        queryParameters: {
+          'limit': limit,
+          'offset': offset,
+          if (statuses.isNotEmpty) 'status': statuses.join(','),
+        },
       );
       final data = response.data as Map<String, dynamic>;
-      if (offset == 0) await _kept.write(_keptOwnName, data);
+      if (offset == 0) await _kept.write(_keptOwnNameOf(statuses), data);
       return await _ownPageOf(data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
@@ -72,10 +78,27 @@ class PropertyRepository {
     }
   }
 
-  /// The first page of the user's own listings as last read on this
-  /// device, or null.
-  Future<OwnListingsPage?> keptOwnFirstPage() =>
-      _kept.read(_keptOwnName, parse: _ownPageOf);
+  /// How many of the signed-in user's own listings there are in each
+  /// status, read fresh (not kept on the device).
+  Future<Map<String, int>> fetchOwnCountByStatus() async {
+    final response = await dio.get(
+      '/properties',
+      queryParameters: {'limit': 1, 'offset': 0},
+    );
+    final data = response.data as Map<String, dynamic>;
+    return (data['countByStatus'] as Map<String, dynamic>? ?? {}).map(
+      (status, count) => MapEntry(status, (count as num).toInt()),
+    );
+  }
+
+  /// The first page of the user's own listings in [statuses] as last read
+  /// on this device, or null.
+  Future<OwnListingsPage?> keptOwnFirstPage({
+    List<String> statuses = const [],
+  }) => _kept.read(_keptOwnNameOf(statuses), parse: _ownPageOf);
+
+  static String _keptOwnNameOf(List<String> statuses) =>
+      statuses.isEmpty ? _keptOwnName : '$_keptOwnName.${statuses.join(',')}';
 
   static Future<OwnListingsPage> _ownPageOf(Map<String, dynamic> data) async =>
       (

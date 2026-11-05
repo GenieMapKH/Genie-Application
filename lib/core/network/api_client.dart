@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tilomnov/core/config/app_config.dart';
 import 'package:tilomnov/core/device/device_description.dart';
+import 'package:tilomnov/core/device/sign_in_device_key.dart';
 import 'api_cache_manager.dart';
 import 'api_version_interceptor.dart';
 import 'auth_interceptor.dart';
@@ -57,7 +58,7 @@ Dio createApiClient({
   dio.interceptors.add(SlowConnectionInterceptor(status));
   // Not on the web: a browser would need the server to allow these headers.
   if (!kIsWeb) {
-    dio.interceptors.add(DeviceHeadersInterceptor(DeviceDescriptionReader()));
+    dio.interceptors.add(DeviceHeadersInterceptor(DeviceDescriptionReader(), SignInDeviceKey()));
   }
   if (kDebugMode) {
     dio.interceptors.add(SafeLogInterceptor());

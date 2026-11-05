@@ -273,6 +273,24 @@ void main() {
       expect(system.shown.single.tag, 'chat:alice');
     });
 
+    test(
+      'also when the server sent its generic notification with it',
+      () async {
+        await controller.start();
+
+        messaging.foreground.add((
+          data: sealedChat.data,
+          title: 'Alice',
+          body: 'New message',
+        ));
+        await _settle();
+        await _settle();
+
+        expect(written.single.ciphertext, 'sealed');
+        expect(system.shown.single.body, 'see you at 5');
+      },
+    );
+
     test('its sealed text is not kept in the notification', () async {
       await controller.start();
 

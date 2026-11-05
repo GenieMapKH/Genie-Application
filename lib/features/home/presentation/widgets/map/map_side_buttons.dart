@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/home/presentation/providers/glass_navigation_provider.dart';
-import 'package:tilomnov/features/home/presentation/widgets/glass/glass_surface.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/map_button_icon.dart';
 import 'package:tilomnov/features/home/presentation/widgets/utm/utm_locate_bottom_sheet.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -60,7 +60,7 @@ class MapSideButtons extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _MapDiscButton(
-              asset: 'assets/icons/utm.svg',
+              asset: 'assets/icons/icons8-utm-marking-48.png',
               tooltip: context.l10n.homeCoordinates,
               width: buttonSize,
               onPressed: () => _enterCoordinates(context),
@@ -116,12 +116,10 @@ class _MapDiscButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final glass = watchGlassNavigation(ref, context);
-    final glyph = TintedSvg(
-      asset,
-      width: _glyph,
-      height: _glyph,
-      color: glass ? colors.textPrimary : colors.textMuted,
-    );
+    final color = glass ? colors.textPrimary : colors.textMuted;
+    final glyph = asset.endsWith('.png')
+        ? Image.asset(asset, width: _glyph, height: _glyph, color: color)
+        : TintedSvg(asset, width: _glyph, height: _glyph, color: color);
     return Tooltip(
       message: tooltip,
       child: TactileButton(

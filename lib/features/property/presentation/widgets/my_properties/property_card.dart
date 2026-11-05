@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_image_gallery.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_card_actions.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/features/property/presentation/property_labels.dart';
 import 'package:tilomnov/features/property/utils/property_format.dart';
@@ -11,6 +12,9 @@ import 'package:tilomnov/features/property/utils/property_format.dart';
 class PropertyCard extends StatelessWidget {
   final PropertyModel property;
   final VoidCallback onOptionsTapped;
+  final VoidCallback onStatusTapped;
+  final VoidCallback onInsightsTapped;
+  final VoidCallback? onViewOnMap;
 
   /// Given the card's rectangle on screen, which the edit form grows out of.
   final ValueChanged<Rect>? onTap;
@@ -19,6 +23,9 @@ class PropertyCard extends StatelessWidget {
     super.key,
     required this.property,
     required this.onOptionsTapped,
+    required this.onStatusTapped,
+    required this.onInsightsTapped,
+    this.onViewOnMap,
     this.onTap,
   });
 
@@ -274,6 +281,13 @@ class PropertyCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 12),
+                PropertyCardActions(
+                  status: property.status,
+                  onStatusTapped: onStatusTapped,
+                  onInsightsTapped: onInsightsTapped,
+                  onViewOnMap: onViewOnMap,
                 ),
               ],
             ),

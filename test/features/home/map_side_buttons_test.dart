@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tilomnov/core/device/glass_capability.dart';
-import 'package:tilomnov/features/home/presentation/widgets/glass/glass_surface.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 import 'package:tilomnov/core/theme/app_theme.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/map_button_icon.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/map_side_buttons.dart';

@@ -20,6 +20,9 @@ class FeedListingCard extends StatelessWidget {
   final ValueChanged<Rect> onOpenOwner;
   final VoidCallback onFavoriteToggled;
 
+  /// Shows the listing on the home map; no map button when null.
+  final VoidCallback? onViewOnMap;
+
   const FeedListingCard({
     super.key,
     required this.property,
@@ -27,6 +30,7 @@ class FeedListingCard extends StatelessWidget {
     required this.onOpen,
     required this.onOpenOwner,
     required this.onFavoriteToggled,
+    this.onViewOnMap,
   });
 
   /// Tall enough for a wide photo above the price and details.
@@ -46,6 +50,7 @@ class FeedListingCard extends StatelessWidget {
             isFavorite: isFavorite,
             onTap: onOpen,
             onFavoriteToggled: onFavoriteToggled,
+            onViewOnMap: onViewOnMap,
           ),
         ),
       ],

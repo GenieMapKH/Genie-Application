@@ -15,18 +15,23 @@ import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
 import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// Runs when a push arrives while the app is closed or in the background
-/// (a separate isolate, without the app's state). Pushes with a visible
-/// notification are shown by the system; only Android's silent pushes are
-/// handled here: a call (ring, stop ringing, tell of a missed call) and a
-/// chat message sent with its sealed text (open it, show it).
+/// (a separate isolate, without the app's state), when Android lets the app
+/// start. The system has already shown the push's own notification, if it
+/// has one; this replaces it with a better one where it can: a call rings
+/// full screen (and stops, or becomes a missed call), and a chat message
+/// sent with its sealed text shows what it says.
 @pragma('vm:entry-point')
 Future<void> handleBackgroundPush(RemoteMessage message) async {
   if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
   final push = PushMessage.fromData(message.data);
   if (push is ChatMessagePush) {
-    // One with a notification of its own was already shown by the system.
-    if (push.isSealed && message.notification == null) {
-      await _showChatMessage(push, message.data);
+    if (push.isSealed) {
+      await _showChatMessage(
+        push,
+        message.data,
+        // Takes the place of the system's "New message", already announced.
+        quiet: message.notification != null,
+      );
     }
     return;
   }
@@ -52,13 +57,15 @@ Future<void> handleBackgroundPush(RemoteMessage message) async {
         data: message.data,
       );
     case CallEndedPush(:final callId, :final callerName, :final missed):
-      await calls.cancel(callId);
       if (missed) {
+        // Replaces the ringing notification (or the server's missed one).
         await calls.showMissed(
           callId: callId,
           title: l10n.callMissedFrom(callerName),
           data: message.data,
         );
+      } else {
+        await calls.cancel(callId);
       }
     default:
       break;
@@ -73,8 +80,9 @@ Future<CryptoService>? _crypto;
 /// the notification says only that a message arrived.
 Future<void> _showChatMessage(
   ChatMessagePush push,
-  Map<String, dynamic> data,
-) async {
+  Map<String, dynamic> data, {
+  required bool quiet,
+}) async {
   WidgetsFlutterBinding.ensureInitialized();
   final l10n = await _appLanguage();
   final preferences = await SharedPreferences.getInstance();
@@ -101,6 +109,7 @@ Future<void> _showChatMessage(
     // The notification carries no sealed text once shown.
     data: ChatMessagePush.withoutSealedText(data),
     tag: 'chat:${push.senderId}',
+    quiet: quiet,
   );
 }
 

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/home/presentation/providers/show_property_on_map.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
 import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
+import 'package:tilomnov/features/property/presentation/screens/property_insights_page.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_tab.dart';
 
 import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_card.dart';
 import 'package:tilomnov/features/property/presentation/widgets/my_properties/empty_properties_state.dart';
 import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_edit_route.dart';
 import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_options_sheet.dart';
+import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_status_change.dart';
 import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_tabs.dart';
 import 'package:tilomnov/features/property/presentation/widgets/my_properties/property_bottom_bar.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -69,16 +72,24 @@ class MyPropertiesPage extends ConsumerWidget {
                   data: (listings) => Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      PropertyTabs(countByStatus: listings.countByStatus),
+                      PropertyTabs(
+                        countByStatus: listings.countByStatus,
+                        selected: ref.watch(ownListingsTabProvider),
+                        onSelected: (tab) =>
+                            ref.read(ownListingsTabProvider.notifier).state =
+                                tab,
+                      ),
                       const SizedBox(height: 24),
-                      Expanded(child: _buildBody(context, ref, listings)),
+                      // Another tab's listings are on their way: the ones
+                      // shown are of the tab left.
+                      Expanded(
+                        child: propertiesAsync.isReloading
+                            ? _buildLoading(context)
+                            : _buildBody(context, ref, listings),
+                      ),
                     ],
                   ),
-                  loading: () => Center(
-                    child: CircularProgressIndicator(
-                      color: context.colors.accent,
-                    ),
-                  ),
+                  loading: () => _buildLoading(context),
                   error: (error, stack) =>
                       _buildErrorState(context, ref, error),
                 ),
@@ -88,40 +99,11 @@ class MyPropertiesPage extends ConsumerWidget {
         ),
       ),
       bottomNavigationBar: isEmbedded ? null : const PropertyBottomBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: isEmbedded ? 20.0 : 70.0),
-        child: SizedBox(
-          width: 140,
-          height: 44,
-          child: ElevatedButton(
-            // Saving it reloads the list (see `ownListingsChanged`).
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    const AddPropertyPage(boundaryPoints: [], propertyArea: 0),
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.accent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              elevation: 4,
-            ),
-            child: Text(
-              context.l10n.propertyAddProperty,
-              style: GoogleFonts.inter(
-                color: context.colors.onPrimary,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
+
+  Widget _buildLoading(BuildContext context) =>
+      Center(child: CircularProgressIndicator(color: context.colors.accent));
 
   Widget _buildBody(BuildContext context, WidgetRef ref, OwnListings listings) {
     final properties = listings.items;
@@ -207,6 +189,15 @@ class MyPropertiesPage extends ConsumerWidget {
         ),
       ),
       onOptionsTapped: () => PropertyOptionsSheet.show(context, ref, property),
+      onStatusTapped: () => PropertyStatusChange.pick(context, ref, property),
+      onInsightsTapped: () => Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
+          builder: (_) => PropertyInsightsPage(property: property),
+        ),
+      ),
+      onViewOnMap: canShowPropertyOnMap(property)
+          ? () => showPropertyOnMap(context, ref, property)
+          : null,
     );
   }
 

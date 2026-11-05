@@ -141,9 +141,6 @@ class AppLocalizationsKm extends AppLocalizations {
   String get accountSubscription => 'គម្រោងជាវ';
 
   @override
-  String get accountSubscriptionFree => 'ឥតគិតថ្លៃ';
-
-  @override
   String get accountSignOut => 'ចាកចេញ';
 
   @override
@@ -1532,6 +1529,9 @@ class AppLocalizationsKm extends AppLocalizations {
       'បុគ្គលនេះមិនមានអចលនទ្រព្យដែលបានផ្សាយនៅពេលនេះទេ។';
 
   @override
+  String get searchViewProperty => 'មើលអចលនទ្រព្យ';
+
+  @override
   String get searchCloseResults => 'បិទលទ្ធផលស្វែងរក';
 
   @override
@@ -1637,6 +1637,9 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get profileNoContact => 'មិនមានព័ត៌មានទំនាក់ទំនងទេ។';
+
+  @override
+  String get propertySavePhoto => 'រក្សាទុករូបថត';
 
   @override
   String propertyPhotoLimit(int count) {
@@ -3227,4 +3230,397 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get closestShowList => 'បង្ហាញអចលនទ្រព្យនៅជិតអ្នក';
+
+  @override
+  String get authEnterYourPhoneNumberToGet =>
+      'បញ្ចូលលេខទូរស័ព្ទរបស់អ្នក យើងនឹងផ្ញើលេខកូដជាសារ ដើម្បីកំណត់ពាក្យសម្ងាត់ឡើងវិញ។';
+
+  @override
+  String get authVerificationCodeSentToYourPhone =>
+      'បានផ្ញើលេខកូដផ្ទៀងផ្ទាត់ទៅទូរស័ព្ទរបស់អ្នក';
+
+  @override
+  String get authEnterTheVerificationCodeWeTexted =>
+      'បញ្ចូលលេខកូដផ្ទៀងផ្ទាត់ដែលយើងទើបផ្ញើជាសារទៅទូរស័ព្ទរបស់អ្នក។';
+
+  @override
+  String get authErrorNoAccountForPhone => 'មិនមានគណនីណាប្រើលេខទូរស័ព្ទនេះទេ។';
+
+  @override
+  String get authErrorSmsUnavailable =>
+      'មិនអាចផ្ញើសារបានទេនៅពេលនេះ។ សូមកំណត់ឡើងវិញតាមអ៊ីមែល ឬព្យាយាមម្តងទៀតពេលក្រោយ។';
+
+  @override
+  String get planFree => 'ឥតគិតថ្លៃ';
+
+  @override
+  String get planSilver => 'ប្រាក់';
+
+  @override
+  String get planGold => 'មាស';
+
+  @override
+  String get planDiamond => 'ពេជ្រ';
+
+  @override
+  String planMember(String tier) {
+    return 'សមាជិក$tier';
+  }
+
+  @override
+  String planAccount(String tier) {
+    return 'គណនី$tier';
+  }
+
+  @override
+  String get planPerMonth => '/ ខែ';
+
+  @override
+  String planListingsUsed(int used, int limit) {
+    return 'បានប្រើ $used / $limit ការផ្សាយ';
+  }
+
+  @override
+  String get planCurrent => 'គម្រោងបច្ចុប្បន្ន';
+
+  @override
+  String planUpgradeTo(String tier) {
+    return 'ដំឡើងទៅ$tier';
+  }
+
+  @override
+  String get planFeatures => 'លក្ខណៈពិសេស';
+
+  @override
+  String planFeatureLimit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ផ្សាយអចលនទ្រព្យបានរហូតដល់ $count',
+      one: 'ផ្សាយអចលនទ្រព្យ 1 ក្នុងពេលតែមួយ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planFeatureFree => 'ការបង្ហាញការផ្សាយកម្រិតមូលដ្ឋាន';
+
+  @override
+  String get planFeatureSilver => 'សមស្របសម្រាប់ភ្នាក់ងារតូចៗ';
+
+  @override
+  String get planFeatureGold => 'សមត្ថភាពផ្សាយខ្ពស់ជាង';
+
+  @override
+  String get planFeatureDiamond => 'សមត្ថភាពផ្សាយខ្ពស់បំផុត';
+
+  @override
+  String get planChooseIntro =>
+      'ជ្រើសរើសគម្រោង ដើម្បីផ្សាយអចលនទ្រព្យបានច្រើនទៀត។';
+
+  @override
+  String get planUpgradeTitle => 'ដំឡើងការជាវ';
+
+  @override
+  String get planUpgradeIntro =>
+      'ផ្សាយអចលនទ្រព្យបានច្រើនទៀត ជាមួយគម្រោងបង់ប្រាក់។';
+
+  @override
+  String get planSubscribe => 'ជាវ';
+
+  @override
+  String get paymentSelectMethod => 'ជ្រើសរើសវិធីបង់ប្រាក់';
+
+  @override
+  String get paymentTaxIncluded => 'តម្លៃសរុបរួមបញ្ចូលពន្ធ 10%។';
+
+  @override
+  String get paymentAbaPay => 'ABA PAY';
+
+  @override
+  String get paymentAbaPayHint => 'បង់ប្រាក់តាម ABA Mobile';
+
+  @override
+  String get paymentAbaKhqr => 'ABA KHQR';
+
+  @override
+  String get paymentAbaKhqrHint => 'ស្កេនដើម្បីបង់ជាមួយកម្មវិធីធនាគារណាមួយ';
+
+  @override
+  String get paymentAwaitingConfirmation =>
+      'កំពុងរង់ចាំ ABA បញ្ជាក់ការបង់ប្រាក់របស់អ្នក។ ជាធម្មតាចំណាយពេលប្រហែលមួយនាទី។';
+
+  @override
+  String get paymentFailed => 'ការបង់ប្រាក់មិនបានបញ្ចប់ទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get paymentAppNotOpened =>
+      'មិនអាចបើក ABA Mobile ឬទំព័របង់ប្រាក់បានទេ។';
+
+  @override
+  String get paymentUnavailable =>
+      'ការបង់ប្រាក់តាមអនឡាញមិនទាន់មាននៅឡើយទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get paymentCouldNotStart =>
+      'មិនអាចចាប់ផ្តើមការបង់ប្រាក់បានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get paymentBillingSummary => 'សេចក្តីសង្ខេបវិក្កយបត្រ';
+
+  @override
+  String get paymentPlan => 'គម្រោង';
+
+  @override
+  String get paymentPrice => 'តម្លៃ';
+
+  @override
+  String get paymentBillingCycle => 'វដ្តបង់ប្រាក់';
+
+  @override
+  String get paymentMonthly => 'ប្រចាំខែ';
+
+  @override
+  String get paymentTotal => 'សរុប';
+
+  @override
+  String get paymentOneTimeTitle => 'ការបង់ប្រាក់តែម្តង';
+
+  @override
+  String get paymentOneTimeIntro => 'អចលនទ្រព្យរបស់អ្នករួចរាល់សម្រាប់ផ្សាយហើយ។';
+
+  @override
+  String get paymentPropertyInformation => 'ព័ត៌មានអចលនទ្រព្យ';
+
+  @override
+  String get paymentOneTime => 'បង់តែម្តង';
+
+  @override
+  String get paymentPublishProperty => 'ផ្សាយអចលនទ្រព្យ';
+
+  @override
+  String get paymentProperty => 'អចលនទ្រព្យ';
+
+  @override
+  String get paymentCategory => 'ប្រភេទ';
+
+  @override
+  String get publishPlanTitle => 'ជ្រើសរើសគម្រោងផ្សាយ';
+
+  @override
+  String get publishPlanOneTime => 'ផ្សាយតែម្តង';
+
+  @override
+  String publishPlanOneTimeHint(String price) {
+    return 'បង់ $price ដើម្បីផ្សាយតែអចលនទ្រព្យនេះ។';
+  }
+
+  @override
+  String get publishPlanSubscription => 'គម្រោងជាវ';
+
+  @override
+  String get publishPlanSubscriptionHint => 'ផ្សាយអចលនទ្រព្យច្រើនរៀងរាល់ខែ។';
+
+  @override
+  String get publishPlanChooseFirst => 'សូមជ្រើសរើសរបៀបផ្សាយអចលនទ្រព្យនេះ។';
+
+  @override
+  String get privacyLastUpdated =>
+      'ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ៖ ថ្ងៃទី 4 ខែវិច្ឆិកា ឆ្នាំ 2026';
+
+  @override
+  String get privacyIntro =>
+      'ទំព័រនេះពន្យល់ពីអ្វីដែល Tilomnov ប្រមូលនៅពេលអ្នកប្រើកម្មវិធី មូលហេតុដែលយើងត្រូវការវា អ្នកណាផ្សេងទៀតអាចមើលឃើញវា និងជម្រើសដែលអ្នកមាន។';
+
+  @override
+  String get privacyCollectTitle => 'អ្វីដែលយើងប្រមូល';
+
+  @override
+  String get privacyCollectAccount =>
+      'ព័ត៌មានគណនី៖ ឈ្មោះ ឈ្មោះអ្នកប្រើ លេខទូរសព្ទ អ៊ីមែល (ប្រសិនបើអ្នកបញ្ចូល) និងរូបភាពប្រវត្តិរូបរបស់អ្នក។';
+
+  @override
+  String get privacyCollectListings =>
+      'អ្វីដែលអ្នកផ្សាយ៖ រូបថត ការពិពណ៌នា តម្លៃ ទីតាំង និងព្រំដែនដែលអ្នកគូរលើផែនទី និងលេខទំនាក់ទំនងដែលអ្នកបញ្ចូល។';
+
+  @override
+  String get privacyCollectLocation =>
+      'ទីតាំងរបស់អ្នក តែនៅពេលអ្នកអនុញ្ញាត ដើម្បីបង្ហាញការផ្សាយ និងផ្លូវនៅជិតអ្នក។';
+
+  @override
+  String get privacyCollectActivity =>
+      'សកម្មភាពរបស់អ្នកក្នុងកម្មវិធី ដូចជាការផ្សាយដែលបានរក្សាទុក ការស្វែងរកដែលបានរក្សាទុក ការតាមដាន និងចំនួនអ្នកមើលការផ្សាយរបស់អ្នក ដើម្បីបង្ហាញស្ថិតិរបស់អ្នក។';
+
+  @override
+  String get privacyCollectDevice =>
+      'ព័ត៌មានឧបករណ៍ ដូចជាកំណែកម្មវិធី ម៉ូដែលទូរសព្ទ កូនសោឧបករណ៍ចូលគណនី និងតូខឹនការជូនដំណឹង ដើម្បីរក្សាសុវត្ថិភាពគណនី និងផ្ញើការជូនដំណឹង។';
+
+  @override
+  String get privacyUseTitle => 'របៀបដែលយើងប្រើវា';
+
+  @override
+  String get privacyUseRun =>
+      'ដើម្បីដំណើរការទីផ្សារ៖ បង្ហាញការផ្សាយ ភ្ជាប់អ្នកទិញជាមួយម្ចាស់ និងបញ្ជូនការជជែក និងការហៅ។';
+
+  @override
+  String get privacyUseProtect =>
+      'ដើម្បីការពារគណនី៖ រកឃើញការចូលគណនីគួរឱ្យសង្ស័យ កំណត់ការប្រើប្រាស់ខុស និងដោះស្រាយរបាយការណ៍។';
+
+  @override
+  String get privacyUseFix =>
+      'ដើម្បីជួសជុលបញ្ហា៖ របាយការណ៍គាំង និងកំហុសជួយយើងរកកំហុស។';
+
+  @override
+  String get privacyUseNoSale => 'យើងមិនលក់ព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នកទេ។';
+
+  @override
+  String get privacyChatTitle => 'សារ និងការហៅ';
+
+  @override
+  String get privacyChatBody =>
+      'សារជជែកត្រូវបានអ៊ិនគ្រីបពីចុងម្ខាងទៅចុងម្ខាង៖ មានតែអ្នក និងអ្នកដែលអ្នកកំពុងនិយាយជាមួយប៉ុណ្ណោះដែលអាចអានបាន។ លេខ PIN ជជែករបស់អ្នកការពារកូនសោនៅលើឧបករណ៍របស់អ្នក។';
+
+  @override
+  String get privacyPaymentsTitle => 'ការបង់ប្រាក់';
+
+  @override
+  String get privacyPaymentsBody =>
+      'ការបង់ប្រាក់ត្រូវបានដំណើរការដោយ ABA PayWay។ យើងមិនដែលឃើញ ឬរក្សាទុកព័ត៌មានកាត ឬគណនីធនាគាររបស់អ្នកទេ។ យើងរក្សាទុកតែលេខយោងប្រតិបត្តិការ ចំនួនទឹកប្រាក់ ស្ថានភាព និងកាលបរិច្ឆេទ ដែលភ្ជាប់ជាមួយគណនីរបស់អ្នក។';
+
+  @override
+  String get privacySharingTitle => 'អ្នកណាអាចមើលឃើញព័ត៌មានរបស់អ្នក';
+
+  @override
+  String get privacySharingIntro =>
+      'យើងចែករំលែកព័ត៌មានតែតាមដែលកម្មវិធីត្រូវការប៉ុណ្ណោះ៖';
+
+  @override
+  String get privacySharingUsers =>
+      'អ្នកប្រើផ្សេងទៀតមើលឃើញអ្វីដែលអ្នកផ្សាយ ប្រវត្តិរូបសាធារណៈរបស់អ្នក និងលេខទំនាក់ទំនងនៅលើការផ្សាយរបស់អ្នក។';
+
+  @override
+  String get privacySharingProviders =>
+      'ក្រុមហ៊ុនដែលដំណើរការផ្នែកខ្លះនៃកម្មវិធីឱ្យយើង៖ Google (ផែនទី ការចូលគណនី ការផ្ទៀងផ្ទាត់លេខទូរសព្ទ និងការជូនដំណឹង) Sentry (របាយការណ៍កំហុស) និងធនាគារ ABA (ការបង់ប្រាក់)។';
+
+  @override
+  String get privacySharingLaw => 'អាជ្ញាធរ នៅពេលច្បាប់តម្រូវ។';
+
+  @override
+  String get privacyCookiesTitle => 'ខូគី និងការរក្សាទុកនៅលើទូរសព្ទរបស់អ្នក';
+
+  @override
+  String get privacyCookiesIntro =>
+      'កម្មវិធីមិនប្រើខូគីសម្រាប់ការផ្សាយពាណិជ្ជកម្ម ឬការតាមដានទេ។ វារក្សាទុករបស់មួយចំនួនតូចនៅលើទូរសព្ទរបស់អ្នក ដើម្បីឱ្យដំណើរការបានល្អ៖';
+
+  @override
+  String get privacyCookiesSignIn =>
+      'ការចូលគណនីរបស់អ្នក ដែលរក្សាទុកក្នុងកន្លែងផ្ទុកសុវត្ថិភាពរបស់ទូរសព្ទ។';
+
+  @override
+  String get privacyCookiesSettings =>
+      'ការកំណត់របស់អ្នក ដូចជារចនាប័ទ្ម និងភាសា។';
+
+  @override
+  String get privacyCookiesOffline =>
+      'ច្បាប់ចម្លងនៃទំព័រ និងរូបភាពដែលបានមើលថ្មីៗ ដើម្បីឱ្យកម្មវិធីបើកលឿន និងដំណើរការពេលគ្មានអ៊ីនធឺណិត។';
+
+  @override
+  String get privacyCookiesClear =>
+      'ការចាកចេញលុបការចូលគណនីរបស់អ្នកចេញពីទូរសព្ទ។ ការសម្អាតកន្លែងផ្ទុករបស់កម្មវិធីក្នុងការកំណត់ទូរសព្ទ លុបអ្វីៗផ្សេងទៀតទាំងអស់។';
+
+  @override
+  String get privacyChoicesTitle => 'ជម្រើសរបស់អ្នក';
+
+  @override
+  String get privacyChoicesEdit =>
+      'មើល និងកែប្រែព័ត៌មានរបស់អ្នកបានគ្រប់ពេលនៅក្នុង គណនី > ព័ត៌មានផ្ទាល់ខ្លួន។';
+
+  @override
+  String get privacyChoicesLocation =>
+      'បិទការចូលប្រើទីតាំងក្នុងការកំណត់ទូរសព្ទ ផែនទីនៅតែដំណើរការដោយគ្មានវា។';
+
+  @override
+  String get privacyChoicesNotifications =>
+      'ជ្រើសរើសការជូនដំណឹងដែលអ្នកចង់ទទួលនៅក្នុង គណនី > ការជូនដំណឹង។';
+
+  @override
+  String get privacyChoicesDelete =>
+      'លុបការផ្សាយរបស់អ្នកបានគ្រប់ពេល។ ដើម្បីបិទគណនីរបស់អ្នក សូមទាក់ទងមកយើង។';
+
+  @override
+  String get privacyContactTitle => 'ទាក់ទងមកយើង';
+
+  @override
+  String get privacyContactBody =>
+      'ប្រសិនបើអ្នកមានសំណួរអំពីទំព័រនេះ ឬព័ត៌មានរបស់អ្នក សូមទាក់ទងក្រុមការងារ Tilomnov។ នៅពេលទំព័រនេះផ្លាស់ប្តូរ យើងនឹងធ្វើបច្ចុប្បន្នភាពកាលបរិច្ឆេទនៅខាងលើ។';
+
+  @override
+  String get paymentSuccessTitle => 'ជោគជ័យ';
+
+  @override
+  String paymentSuccessAmount(String amount) {
+    return '$amount ដុល្លារ';
+  }
+
+  @override
+  String paymentSuccessTransaction(String id) {
+    return 'លេខប្រតិបត្តិការ  #$id';
+  }
+
+  @override
+  String get paymentSuccessEmailed =>
+      'ព័ត៌មានបញ្ជាក់ការបញ្ជាទិញត្រូវបានផ្ញើទៅអ៊ីមែលរបស់អ្នក៖';
+
+  @override
+  String get paymentSuccessNoEmail =>
+      'បញ្ចូលអ៊ីមែលនៅក្នុង ព័ត៌មានផ្ទាល់ខ្លួន ដើម្បីទទួលបង្កាន់ដៃតាមអ៊ីមែល។';
+
+  @override
+  String get paymentDownloadReceipt => 'ទាញយកបង្កាន់ដៃ';
+
+  @override
+  String get paymentBackToHome => 'ត្រឡប់ទៅទំព័រដើម';
+
+  @override
+  String get paymentReceiptSaved => 'បានរក្សាទុកបង្កាន់ដៃក្នុងរូបថតរបស់អ្នក។';
+
+  @override
+  String get paymentReceiptSaveFailed =>
+      'មិនអាចរក្សាទុកបង្កាន់ដៃបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get paymentReceiptPhotosDenied =>
+      'សូមអនុញ្ញាតឱ្យចូលប្រើរូបថត ដើម្បីរក្សាទុកបង្កាន់ដៃ។';
+
+  @override
+  String get paymentReceiptTitle => 'បង្កាន់ដៃបង់ប្រាក់';
+
+  @override
+  String get paymentReceiptTransaction => 'លេខប្រតិបត្តិការ';
+
+  @override
+  String get paymentReceiptDate => 'កាលបរិច្ឆេទ';
+
+  @override
+  String get paymentReceiptItem => 'មុខទំនិញ';
+
+  @override
+  String get paymentReceiptMethod => 'វិធីបង់ប្រាក់';
+
+  @override
+  String get paymentReceiptEmail => 'អ៊ីមែល';
+
+  @override
+  String get paymentReceiptStatus => 'ស្ថានភាព';
+
+  @override
+  String get paymentReceiptPaid => 'បានបង់';
+
+  @override
+  String paymentItemSubscription(String tier) {
+    return 'គម្រោង$tier · ប្រចាំខែ';
+  }
+
+  @override
+  String get paymentItemOneTimePublish => 'ការផ្សាយមួយដង';
 }

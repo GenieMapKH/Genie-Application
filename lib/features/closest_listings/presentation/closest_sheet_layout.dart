@@ -12,12 +12,11 @@ abstract final class ClosestSheetLayout {
   /// Gap between the docked panel and the screen's left edge.
   static const double dockMargin = 12;
 
-  /// A card column never gets narrower than this: below it the price and
-  /// details no longer fit, so the sheet keeps fewer, wider columns.
-  static const double minColumnWidth = 300;
+  /// A card column never gets narrower than this.
+  static const double minColumnWidth = SearchLayout.minCardColumnWidth;
 
   /// Space between cards, both ways.
-  static const double spacing = 16;
+  static const double spacing = SearchLayout.cardSpacing;
 
   /// Whether the sheet is a panel at the left rather than full width.
   static bool isDocked(double screenWidth) => SearchLayout.isWide(screenWidth);
@@ -31,28 +30,15 @@ abstract final class ClosestSheetLayout {
   static double gutter(double sheetWidth) => SearchLayout.gutter(sheetWidth);
 
   /// Card columns in a sheet [sheetWidth] wide.
-  static int columns(double sheetWidth) {
-    final content = sheetWidth - 2 * gutter(sheetWidth);
-    return math.max(
-      1,
-      ((content + spacing) / (minColumnWidth + spacing)).floor(),
-    );
-  }
+  static int columns(double sheetWidth) => SearchLayout.cardColumns(sheetWidth);
 
   /// Width of one card column in a sheet [sheetWidth] wide.
-  static double columnWidth(double sheetWidth) {
-    final count = columns(sheetWidth);
-    final content = sheetWidth - 2 * gutter(sheetWidth);
-    return (content - spacing * (count - 1)) / count;
-  }
+  static double columnWidth(double sheetWidth) =>
+      SearchLayout.cardColumnWidth(sheetWidth);
 
-  /// Height of a card [columnWidth] wide: a photo about two thirds as tall
-  /// as it is wide, above the price and details. On a short sheet (a phone
-  /// held sideways) it shrinks so a whole card still fits under the header.
-  static double cardHeight(double columnWidth, {required double sheetHeight}) {
-    final natural = (columnWidth * 0.72).clamp(240.0, 340.0);
-    return math.min(natural, math.max(180.0, sheetHeight * 0.62));
-  }
+  /// Height of a card [columnWidth] wide ([SearchLayout.cardHeight]).
+  static double cardHeight(double columnWidth, {required double sheetHeight}) =>
+      SearchLayout.cardHeight(columnWidth, sheetHeight: sheetHeight);
 
   /// The middle resting place, as a share of [availableHeight]: about half,
   /// but never so low that a card does not show.

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tilomnov/core/device/app_haptics.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 
 /// The close, favourite and share buttons floating over the detail gallery,
 /// and a "more" menu after them.
@@ -29,25 +31,28 @@ class PropertyDetailActions extends StatelessWidget {
       top: 16,
       left: 16,
       right: 16,
-      child: Row(
-        children: [
-          _CircleButton(icon: Icons.close, onPressed: onClose),
-          const Spacer(),
-          _CircleButton(
-            icon: isFavorite ? Icons.favorite : Icons.favorite_border,
-            iconColor: isFavorite ? context.colors.accent : null,
-            onPressed: () {
-              if (!isFavorite) AppHaptics.lightTap();
-              onFavoriteToggled();
-            },
-          ),
-          const SizedBox(width: 10),
-          _CircleButton(icon: Icons.ios_share, onPressed: onShare),
-          if (menu case final menu?) ...[
+      // With glass, the buttons share one read of the photo behind them.
+      child: BackdropGroup(
+        child: Row(
+          children: [
+            _CircleButton(icon: Icons.close, onPressed: onClose),
+            const Spacer(),
+            _CircleButton(
+              icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+              iconColor: isFavorite ? context.colors.accent : null,
+              onPressed: () {
+                if (!isFavorite) AppHaptics.lightTap();
+                onFavoriteToggled();
+              },
+            ),
             const SizedBox(width: 10),
-            _Circle(child: menu),
+            _CircleButton(icon: Icons.ios_share, onPressed: onShare),
+            if (menu case final menu?) ...[
+              const SizedBox(width: 10),
+              _Circle(child: menu),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -76,17 +81,23 @@ class _CircleButton extends StatelessWidget {
   }
 }
 
-/// The round, shadowed surface every button here sits on.
+/// The round, shadowed surface every button here sits on: glass over the
+/// photo on phones whose interface is glass.
 class _Circle extends StatelessWidget {
   final Widget child;
 
   const _Circle({required this.child});
 
+  static const double _size = 38;
+
   @override
   Widget build(BuildContext context) {
+    if (GlassScope.of(context)) {
+      return GlassCircle(size: _size, child: child);
+    }
     return Container(
-      width: 38,
-      height: 38,
+      width: _size,
+      height: _size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: context.colors.surface,

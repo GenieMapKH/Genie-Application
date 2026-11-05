@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 import 'package:tilomnov/core/media/app_image_cache.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 import 'package:tilomnov/features/chat/providers/chat_participant_providers.dart';
@@ -131,6 +133,13 @@ class _ChatImageViewer extends StatelessWidget {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         elevation: 0,
+        leading: GlassScope.of(context)
+            ? Center(
+                child: GlassIconButton.back(
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              )
+            : null,
       ),
       body: Center(
         child: InteractiveViewer(maxScale: 5, child: Image.memory(bytes)),

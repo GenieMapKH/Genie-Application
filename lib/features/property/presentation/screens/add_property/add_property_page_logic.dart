@@ -9,6 +9,7 @@ import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'add_property_page.dart';
 import 'add_property_page_form_binding.dart';
+import 'add_property_paid_publish.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
@@ -129,7 +130,17 @@ extension AddPropertyPageLogic on AddPropertyPageState {
     }
   }
 
+  /// Publishes a new listing: free while it fits in the user's plan, else
+  /// the way they chose to pay for it.
   Future<void> _publish() async {
+    if (needsPublishingPlan) {
+      await publishBeyondPlan(publishInPlan: _publishInPlan);
+    } else {
+      await _publishInPlan();
+    }
+  }
+
+  Future<void> _publishInPlan() async {
     try {
       final property = await ref
           .read(addPropertyControllerProvider.notifier)

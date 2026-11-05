@@ -11,7 +11,13 @@ import 'package:tilomnov/features/profile/presentation/view_models/user_provider
 import 'package:tilomnov/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:tilomnov/features/security/presentation/screens/security_page.dart';
 import 'package:tilomnov/features/notifications/presentation/notification_settings_page.dart';
+import 'package:tilomnov/features/settings/presentation/screens/privacy_cookies_page.dart';
 import 'package:tilomnov/features/settings/presentation/widgets/preference_rows.dart';
+import 'package:tilomnov/features/subscription/presentation/plan_tier_style.dart';
+import 'package:tilomnov/features/subscription/presentation/screens/subscription_plans_page.dart';
+import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
+import 'package:tilomnov/features/subscription/presentation/widgets/plan_tier_chip.dart';
+import 'package:tilomnov/features/subscription/presentation/widgets/tier_avatar_frame.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/feedback/refresh_outcome.dart';
@@ -131,6 +137,7 @@ class _AccountMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final tier = ref.watch(currentPlanTierProvider);
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -141,7 +148,12 @@ class _AccountMenu extends ConsumerWidget {
         40 + MediaQuery.paddingOf(context).bottom,
       ),
       children: [
-        ProfileHeader(profile: profile),
+        ProfileHeader(
+          profile: profile,
+          frameAvatar: (avatar) =>
+              TierAvatarFrame(tier: tier, diameter: 100, child: avatar),
+          badge: tier.isPaid ? PlanTierChip(tier: tier) : null,
+        ),
         const SizedBox(height: 28),
         SettingsSectionTitle(l10n.accountSectionAccount),
         SettingsSection(
@@ -181,13 +193,16 @@ class _AccountMenu extends ConsumerWidget {
         SettingsSection(
           children: [
             SettingsRow(
-              icon: Icons.star_border,
+              icon: Icons.workspace_premium_outlined,
               title: l10n.accountSubscription,
-              value: l10n.accountSubscriptionFree,
+              value: tier.label(l10n),
+              onTap: () =>
+                  context.pushPage<bool>(const SubscriptionPlansPage()),
             ),
             SettingsRow(
               icon: Icons.privacy_tip_outlined,
               title: l10n.accountPrivacy,
+              onTap: () => context.pushPage(const PrivacyCookiesPage()),
             ),
             SettingsRow(
               icon: Icons.logout_outlined,

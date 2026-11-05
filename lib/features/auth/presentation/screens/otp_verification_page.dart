@@ -4,16 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/auth_back_button.dart';
+import 'package:tilomnov/features/auth/presentation/view_models/password_reset_flow.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
+/// The 6-digit code of a password reset, sent by email or by SMS.
 class OtpVerificationPage extends ConsumerStatefulWidget {
-  final String email;
+  final PasswordResetTarget target;
 
-  const OtpVerificationPage({super.key, required this.email});
+  const OtpVerificationPage({super.key, required this.target});
 
   @override
   ConsumerState<OtpVerificationPage> createState() =>
@@ -34,6 +36,19 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
   );
 
   bool _isLoading = false;
+
+  /// Replaced when the code is sent again (an SMS resend has a new session).
+  late PasswordResetTarget _target = widget.target;
+
+  bool get _byPhone => _target is PhoneResetTarget;
+
+  String _errorText(Object error) => _byPhone
+      ? phoneResetErrorMessage(context.l10n, error)
+      : authErrorMessage(
+          context.l10n,
+          error,
+          badRequest: context.l10n.authErrorInvalidCode,
+        );
 
   /// The server sends at most one code per address a minute.
   static const _resendWaitSeconds = 60;
@@ -145,25 +160,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
     setState(() => _isLoading = true);
 
     try {
-      final verified = await ref
-          .read(authServiceProvider)
-          .verifyOtp(widget.email, otp);
+      final proof = await ref
+          .read(passwordResetFlowProvider)
+          .checkCode(_target, otp);
       if (!mounted) return;
-      if (verified) {
-        context.push(
-          '/reset-password?email=${Uri.encodeComponent(widget.email)}&otp=${Uri.encodeComponent(otp)}',
-        );
-      }
+      if (proof != null) context.push('/reset-password', extra: proof);
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(
-        context,
-        authErrorMessage(
-          context.l10n,
-          e,
-          badRequest: context.l10n.authErrorInvalidCode,
-        ),
-      );
+      AppPopup.showError(context, _errorText(e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -173,8 +177,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
     if (_resendCountdown > 0) return;
 
     try {
-      await ref.read(authServiceProvider).forgotPassword(widget.email);
+      final outcome = await ref.read(passwordResetFlowProvider).resend(_target);
       if (!mounted) return;
+      // Android may read the new SMS by itself: nothing left to type.
+      if (outcome.proof case final proof?) {
+        context.push('/reset-password', extra: proof);
+        return;
+      }
+      _target = outcome.target!;
       AppPopup.showSuccess(context, context.l10n.authNewVerificationCodeSent);
       _startResendTimer();
       // Clear existing OTP
@@ -184,7 +194,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
       _focusNodes[0].requestFocus();
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(context, authErrorMessage(context.l10n, e));
+      AppPopup.showError(context, _errorText(e));
     }
   }
 
@@ -208,22 +218,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Back button
-                      GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: context.colors.border),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 20,
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
+                      const AuthBackButton(),
                       const SizedBox(height: 32),
 
                       // Title
@@ -237,7 +232,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        context.l10n.authEnterTheVerificationCodeWeJust,
+                        _byPhone
+                            ? context.l10n.authEnterTheVerificationCodeWeTexted
+                            : context.l10n.authEnterTheVerificationCodeWeJust,
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           color: context.colors.textMuted,
