@@ -57,12 +57,8 @@ class _UpgradeSubscriptionPageState
         showUnfinishedPayment(context, outcome.result);
         return;
       }
-      if (checkout.isSimulation) {
-        ref.read(simulatedPlanTierProvider.notifier).state = plan.tier;
-      } else {
-        // The tier comes with the profile.
-        ref.invalidate(userProfileProvider);
-      }
+      ref.invalidate(accountSubscriptionProvider);
+      ref.invalidate(publishingAllowanceProvider);
       await showPaymentSuccess(
         context,
         ref,
@@ -119,6 +115,8 @@ class _UpgradeSubscriptionPageState
                   ),
                 ),
                 const SizedBox(height: 16),
+                if (ref.watch(paymentCheckoutServiceProvider).isSimulation)
+                  Text(l10n.paymentSimulationNotice),
                 PlanCard(plan: plan),
                 const SizedBox(height: 28),
                 SummaryTable(

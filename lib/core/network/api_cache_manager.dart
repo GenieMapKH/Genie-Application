@@ -103,7 +103,11 @@ class CacheInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (options.extra[skipCache] == true) return handler.next(options);
+    if (options.extra[skipCache] == true ||
+        {'chat', 'auth'}.contains(ApiCacheManager.resourceOf(options.path))) {
+      options.extra[skipCache] = true;
+      return handler.next(options);
+    }
 
     if (!_isRead(options)) {
       _cacheManager.invalidateResource(options.path);

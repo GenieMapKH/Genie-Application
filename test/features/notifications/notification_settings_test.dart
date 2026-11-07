@@ -74,7 +74,7 @@ void main() {
     expect(find.text('Chat messages'), findsOneWidget);
     expect(find.text('Offers and news'), findsOneWidget);
     expect(
-      find.textContaining('Security alerts and calls are always on'),
+      find.text('Calls and sign-in alerts are always on.'),
       findsOneWidget,
     );
 

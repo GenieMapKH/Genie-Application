@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/call/data/native_call_integration.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/device/microphone_permission.dart';
@@ -45,3 +46,21 @@ final callControllerProvider = StateNotifierProvider<CallController, CallState>(
     newCallId: randomUuid,
   ),
 );
+
+/// A live call can stay connected while the user browses.
+final callMinimizedProvider = StateProvider<bool>((ref) => false);
+
+final nativeCallIntegrationProvider = Provider((ref) {
+  final integration = NativeCallIntegration(
+    answer: () => ref.read(callControllerProvider.notifier).accept(),
+    end: () => ref.read(callControllerProvider.notifier).hangUp(),
+    mute: (muted) async {
+      if (ref.read(callControllerProvider).muted != muted) {
+        await ref.read(callControllerProvider.notifier).toggleMute();
+      }
+    },
+    restore: () => ref.read(callMinimizedProvider.notifier).state = false,
+  );
+  ref.onDispose(integration.dispose);
+  return integration;
+});

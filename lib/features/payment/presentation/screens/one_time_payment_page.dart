@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/payment/application/payment_config.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/payment/domain/payment_method.dart';
@@ -70,6 +71,7 @@ class _OneTimePaymentPageState extends State<OneTimePaymentPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                if (!PaymentConfig.enabled) Text(l10n.paymentSimulationNotice),
                 SummaryTable(
                   title: l10n.paymentPropertyInformation,
                   rows: widget.listingRows,

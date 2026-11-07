@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Voice messages and calls. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- Calls: the audio connection follows the network it is on. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -22,7 +24,7 @@
         android:allowBackup="false"
         android:networkSecurityConfig="@xml/network_security_config"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="${appIcon}">
         
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -38,6 +40,8 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/notification_accent"/>
             
+        <service android:name=".CallAudioService" android:exported="false"
+            android:foregroundServiceType="microphone" android:stopWithTask="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

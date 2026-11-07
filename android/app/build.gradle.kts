@@ -46,6 +46,17 @@ val dartDefines: Map<String, String> = (project.findProperty("dart-defines") as 
     ?.toMap()
     ?: emptyMap()
 val isStagingBuild = dartDefines["APP_ENV"] == "staging"
+// Refuse an APK whose label and backend disagree, including a missing env file.
+val expectedGateways = mapOf(
+    "staging" to "https://gateway-staging-c9ff.up.railway.app",
+    "production" to "https://tilomnovgateway.sparkbytekh.com",
+)
+if (gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }) {
+    val appEnv = dartDefines["APP_ENV"]
+    require(appEnv in expectedGateways && dartDefines["API_BASE_URL"] == expectedGateways[appEnv]) {
+        "Release builds require matching APP_ENV and API_BASE_URL. Use scripts/build_apk.ps1 -Env staging|production."
+    }
+}
 
 android {
     namespace = "com.sparkbytekh.tilomnov"
@@ -63,7 +74,8 @@ android {
         // The store listing is tied to this id: it cannot change after release.
         // Staging: also registered in Firebase (google-services.json) under this id.
         applicationId = if (isStagingBuild) "com.sparkbytekh.tilomnov.staging" else "com.sparkbytekh.tilomnov"
-        manifestPlaceholders["appLabel"] = if (isStagingBuild) "Tilomnov Staging" else "Tilomnov"
+        manifestPlaceholders["appLabel"] = if (isStagingBuild) "Tilomnov Stage" else "Tilomnov"
+        manifestPlaceholders["appIcon"] = if (isStagingBuild) "@mipmap/ic_launcher_staging" else "@mipmap/ic_launcher"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

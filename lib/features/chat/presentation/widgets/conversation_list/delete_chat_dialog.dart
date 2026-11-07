@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,8 +14,8 @@ class DeleteChatDialog extends StatefulWidget {
   const DeleteChatDialog({super.key, required this.participantName});
 
   static Future<bool?> show(BuildContext context, String participantName) {
-    return showDialog<bool>(
-      context: context,
+    return AppDialog.show<bool>(
+      context,
       builder: (_) => DeleteChatDialog(participantName: participantName),
     );
   }
@@ -31,8 +32,9 @@ class _DeleteChatDialogState extends State<DeleteChatDialog> {
     final l10n = context.l10n;
     final name = widget.participantName;
 
-    return AlertDialog(
-      backgroundColor: context.colors.surface,
+    return AppDialog.custom(
+      icon: Icons.delete_outline,
+      tone: AppDialogTone.danger,
       title: Text(
         l10n.chatDeleteChatQuestion,
         style: GoogleFonts.inter(fontWeight: FontWeight.w700),

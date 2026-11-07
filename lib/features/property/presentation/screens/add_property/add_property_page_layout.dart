@@ -196,7 +196,7 @@ extension AddPropertyPageLayout on AddPropertyPageState {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _submitBar(context, formState.isLoading),
+      floatingActionButton: _submitBar(context, formState.isLoading || isLoading),
     );
   }
 

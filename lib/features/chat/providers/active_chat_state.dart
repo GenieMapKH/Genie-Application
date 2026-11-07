@@ -1,4 +1,3 @@
-import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 
@@ -11,24 +10,15 @@ typedef ChatParticipants = ({String userId, String participantId});
 class ActiveChatState {
   final ActiveChatStatus status;
 
-  /// Why the chat could not be opened, when [status] is unavailable.
-  final E2eeSetupResult? setupResult;
-
   /// Oldest first.
   final List<ChatMessage> messages;
-
-  /// The server lists a different key for the other person than the one
-  /// this device trusts. Nothing is sent until the user accepts the new key.
-  final bool peerKeyChanged;
 
   /// Why the last message could not be sent. The screen says it.
   final ChatSendProblem? sendError;
 
   const ActiveChatState({
     this.status = ActiveChatStatus.loading,
-    this.setupResult,
     this.messages = const [],
-    this.peerKeyChanged = false,
     this.sendError,
   });
 
@@ -36,14 +26,11 @@ class ActiveChatState {
   ActiveChatState copyWith({
     ActiveChatStatus? status,
     List<ChatMessage>? messages,
-    bool? peerKeyChanged,
     ChatSendProblem? sendError,
   }) {
     return ActiveChatState(
       status: status ?? this.status,
-      setupResult: setupResult,
       messages: messages ?? this.messages,
-      peerKeyChanged: peerKeyChanged ?? this.peerKeyChanged,
       sendError: sendError,
     );
   }

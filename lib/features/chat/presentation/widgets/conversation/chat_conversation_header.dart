@@ -12,8 +12,7 @@ import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/owner_display_name.dart';
 
 /// App-bar title of a conversation: who it is with and whether they are
-/// online. Tapping it opens the participant sheet: their profile (with a way
-/// to their full profile page) and the security code, as two tabs.
+/// online. Tapping it opens their profile summary and safety menu.
 class ChatConversationHeader extends ConsumerWidget {
   final String participantName;
 

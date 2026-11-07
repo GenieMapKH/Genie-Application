@@ -110,7 +110,11 @@ class FeedPage extends ConsumerWidget {
         bottom: false,
         child: Column(
           children: [
-            AppHeaderBar(title: l10n.feedTitle, onBackPressed: onBackPressed),
+            AppHeaderBar(
+              title: l10n.feedTitle,
+              onBackPressed: onBackPressed,
+              height: feed.valueOrNull?.items.isEmpty == true ? 60 : null,
+            ),
             Expanded(
               child: RefreshIndicator(
                 color: context.colors.accent,
@@ -151,12 +155,7 @@ class FeedPage extends ConsumerWidget {
   Widget _message(BuildContext context, Widget message) {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(
-        16,
-        16,
-        16,
-        16 + MediaQuery.paddingOf(context).bottom,
-      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
       children: [message],
     );
   }

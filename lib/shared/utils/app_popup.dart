@@ -45,6 +45,8 @@ class AppPopup {
     required AppPopupTone tone,
     IconData? icon,
     VoidCallback? onRetry,
+    String? actionLabel,
+    VoidCallback? onAction,
   }) {
     final hide = ValueNotifier(false);
     late OverlayEntry overlayEntry;
@@ -59,6 +61,8 @@ class AppPopup {
         borderColor: borderColor,
         hideRequest: hide,
         onRetry: onRetry,
+        actionLabel: actionLabel,
+        onAction: onAction,
         onDismiss: () {
           if (overlayEntry.mounted) {
             overlayEntry.remove();
@@ -111,6 +115,8 @@ class _TopToastWidget extends StatefulWidget {
 
   /// When set, a retry button at the end; tapping it closes the popup too.
   final VoidCallback? onRetry;
+  final String? actionLabel;
+  final VoidCallback? onAction;
   final VoidCallback onDismiss;
 
   const _TopToastWidget({
@@ -122,6 +128,8 @@ class _TopToastWidget extends StatefulWidget {
     required this.hideRequest,
     required this.onDismiss,
     this.onRetry,
+    this.actionLabel,
+    this.onAction,
   });
 
   @override
@@ -219,6 +227,17 @@ class _TopToastWidgetState extends State<_TopToastWidget>
                       ),
                     ),
                   ),
+                  if (widget.onAction case final onAction?)
+                    TextButton(
+                      onPressed: () {
+                        _dismiss();
+                        onAction();
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: widget.iconColor,
+                      ),
+                      child: Text(widget.actionLabel!),
+                    ),
                   if (widget.onRetry case final onRetry?)
                     IconButton(
                       tooltip: context.l10n.commonRetry,

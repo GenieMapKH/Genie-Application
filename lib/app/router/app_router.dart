@@ -9,7 +9,6 @@ import 'package:tilomnov/features/auth/presentation/screens/forgot_password_page
 import 'package:tilomnov/features/auth/presentation/screens/otp_verification_page.dart';
 import 'package:tilomnov/features/auth/presentation/screens/reset_password_page.dart';
 import 'package:tilomnov/features/home/presentation/screens/main_layout.dart';
-import 'package:tilomnov/app/session/chat_pin_gate.dart';
 
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:tilomnov/shared/transitions/app_transition_page.dart';
@@ -100,10 +99,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home',
-        pageBuilder: (context, state) => AppTransitionPage(
-          child: const ChatPinGate(child: MainLayout()),
-          key: state.pageKey,
-        ),
+        pageBuilder: (context, state) =>
+            AppTransitionPage(child: const MainLayout(), key: state.pageKey),
       ),
     ],
   );

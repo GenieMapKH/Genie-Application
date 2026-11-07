@@ -10,8 +10,7 @@ import 'package:tilomnov/features/call/providers/call_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
 
-/// The whole screen while a call rings, connects or goes on. It cannot be
-/// left with Back while the call is live: the call must be ended first.
+/// The call remains connected when minimized with the top button or Back.
 class CallScreen extends ConsumerWidget {
   const CallScreen({super.key});
 
@@ -23,8 +22,24 @@ class CallScreen extends ConsumerWidget {
 
     return PopScope(
       canPop: !call.isLive,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) ref.read(callMinimizedProvider.notifier).state = true;
+      },
       child: Scaffold(
         backgroundColor: context.colors.background,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: context.colors.background,
+          actions: [
+            if (call.isLive)
+              IconButton(
+                tooltip: context.l10n.callMinimize,
+                icon: const Icon(Icons.close_fullscreen_rounded),
+                onPressed: () =>
+                    ref.read(callMinimizedProvider.notifier).state = true,
+              ),
+          ],
+        ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),

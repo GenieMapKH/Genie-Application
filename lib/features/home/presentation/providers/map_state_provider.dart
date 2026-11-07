@@ -274,17 +274,11 @@ class MapStateNotifier extends StateNotifier<MapState> {
   }
 
   void finalizeDrawing() {
-    // A saved listing's new boundary comes back with the refreshed listings.
-    final newFinalized = List<List<LatLng>>.from(state.finalizedProperties);
-    if (state.editingProperty == null) {
-      newFinalized.add(List.from(state.drawnPoints));
-    }
-
+    // Saved listings reload from the server; a local copy would duplicate markers.
     state = state.copyWith(
       isDrawing: false,
       isEditingPolygon: false,
       drawnPoints: [],
-      finalizedProperties: newFinalized,
       clearSelectedVertex: true,
       clearBackupPoints: true,
       clearDrag: true,

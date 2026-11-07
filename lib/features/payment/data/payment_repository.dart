@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
+import 'dart:math';
 
 import 'package:tilomnov/features/payment/domain/payment_checkout.dart';
 import 'package:tilomnov/features/payment/domain/payment_method.dart';
+import 'package:tilomnov/features/subscription/domain/account_subscription.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
 
 /// The payment service (`/payments`). It alone talks to ABA PayWay, holds
 /// the merchant keys and decides what is paid; the app only starts a
@@ -9,6 +12,7 @@ import 'package:tilomnov/features/payment/domain/payment_method.dart';
 /// `docs/ABA_PAYWAY_INTEGRATION.md`.
 class PaymentRepository {
   final Dio dio;
+  final _requestIds = <String, String>{};
 
   PaymentRepository(this.dio);
 
@@ -34,7 +38,10 @@ class PaymentRepository {
   /// Where transaction [transactionId] stands now.
   Future<PaymentState> fetchState(String transactionId) async {
     final response = await _guard(
-      () => dio.get('/payments/transactions/$transactionId'),
+      () => dio.get(
+        '/payments/transactions/$transactionId',
+        options: Options(extra: {CacheInterceptor.skipCache: true}),
+      ),
     );
     final data = response.data as Map<String, dynamic>;
     return PaymentState.fromApi(data['status']);
@@ -44,8 +51,70 @@ class PaymentRepository {
     String path,
     Map<String, dynamic> body,
   ) async {
-    final response = await _guard(() => dio.post(path, data: body));
+    final response = await _sendCheckout(path, body);
     return PaymentCheckout.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<String> simulateListing(String propertyId, PaymentMethod method) =>
+      _simulate('/payments/checkout', {
+        'propertyId': propertyId,
+        'method': method.apiName,
+      });
+
+  Future<String> simulateSubscription(String tier, PaymentMethod method) =>
+      _simulate('/payments/subscriptions/checkout', {
+        'tier': tier,
+        'method': method.apiName,
+      });
+
+  Future<String> _simulate(String path, Map<String, dynamic> body) async {
+    final response = await _sendCheckout(path, body);
+    final data = response.data as Map<String, dynamic>;
+    if (data['isSimulation'] != true || data['status'] != 'Success') {
+      throw const PaymentsUnavailableException();
+    }
+    return data['transactionId'] as String;
+  }
+
+  Future<Response<dynamic>> _sendCheckout(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
+    // shortcut: retry references live in memory; persist pending checkout recovery before live bank payments.
+    final intent = '$path:${body['propertyId'] ?? body['tier']}';
+    final requestId = _requestIds.putIfAbsent(intent, () {
+      final random = Random.secure();
+      final bytes = List.generate(16, (_) => random.nextInt(256));
+      bytes[6] = (bytes[6] & 15) | 64;
+      bytes[8] = (bytes[8] & 63) | 128;
+      final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}';
+    });
+    final response = await _guard(
+      () => dio.post(path, data: {...body, 'requestId': requestId}),
+    );
+    _requestIds.remove(intent);
+    return response;
+  }
+
+  Future<AccountSubscription?> fetchSubscription() async {
+    final response = await dio.get(
+      '/payments/subscriptions/current',
+      options: Options(extra: {CacheInterceptor.skipCache: true}),
+    );
+    return _subscription(response.data as Map<String, dynamic>);
+  }
+
+  Future<AccountSubscription?> cancelSubscription() async {
+    final response = await dio.post('/payments/subscriptions/cancel');
+    return _subscription(response.data as Map<String, dynamic>);
+  }
+
+  static AccountSubscription? _subscription(Map<String, dynamic> data) {
+    final json = data['subscription'];
+    return json == null
+        ? null
+        : AccountSubscription.fromJson(json as Map<String, dynamic>);
   }
 
   /// A server without the endpoint (Nest's "Cannot POST …" 404) or with

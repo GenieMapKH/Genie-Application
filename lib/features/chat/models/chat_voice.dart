@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 /// What a voice message adds to its audio file: how long it is and the
 /// shape of its sound, so the bubble can be drawn before the file is opened.
-/// It travels inside the end-to-end encrypted message, like the file's key.
+/// It travels inside the encrypted message storage, like the file's key.
 class ChatVoiceDetails {
   /// How many bars a waveform has, and the highest value of a bar.
   static const bars = 40;

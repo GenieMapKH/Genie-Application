@@ -1,8 +1,8 @@
+import 'package:tilomnov/features/security/presentation/screens/security_page.dart';
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tilomnov/features/chat/e2ee/e2ee_key_manager.dart';
-import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 import 'package:tilomnov/features/profile/data/models/user_profile.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:tilomnov/features/security/data/known_devices_storage.dart';
@@ -12,7 +12,6 @@ import 'package:tilomnov/features/security/data/repositories/session_repository.
 import 'package:tilomnov/features/security/presentation/screens/change_password_page.dart';
 import 'package:tilomnov/features/security/presentation/screens/create_password_page.dart';
 import 'package:tilomnov/features/security/presentation/screens/devices_page.dart';
-import 'package:tilomnov/features/security/presentation/screens/security_page.dart';
 import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
 import 'package:tilomnov/features/security/presentation/view_models/new_sign_in_detector.dart';
 import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
@@ -61,16 +60,6 @@ class _Sessions extends Fake implements SessionRepository {
       StubServer.always(200, _devices(devices)).dio,
     ).fetchSessions();
   }
-}
-
-/// Says whether this device holds the account's keys, without any key work.
-class _FakeKeyManager extends Fake implements E2eeKeyManager {
-  final bool holdsKeys;
-
-  _FakeKeyManager({required this.holdsKeys});
-
-  @override
-  Future<bool> holdsCurrentKeys(String userId) async => holdsKeys;
 }
 
 void main() {
@@ -270,7 +259,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(AppDialog), findsNothing);
     });
   });
 
@@ -344,57 +333,6 @@ void main() {
         'idToken': 'fresh-id-token',
         'newPassword': 'my-first-password',
       });
-    });
-  });
-
-  // The account password proves a forgotten chat PIN is the owner's: an
-  // account that signs in with Google alone creates one first.
-  group('forgotten chat PIN of a Google-only account', () {
-    Future<void> open(WidgetTester tester, {required bool holdsKeys}) async {
-      await pumpTestApp(
-        tester,
-        const SecurityPage(),
-        overrides: [
-          _signedInAs(_profile(firebaseUid: 'fb1', hasPassword: false)),
-          e2eeKeyManagerProvider.overrideWithValue(
-            _FakeKeyManager(holdsKeys: holdsKeys),
-          ),
-        ],
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Forgot chat PIN'));
-      await tester.pumpAndSettle();
-    }
-
-    testWidgets('first creates a password, and no history is lost', (
-      tester,
-    ) async {
-      await open(tester, holdsKeys: true);
-      expect(find.textContaining('nothing is lost'), findsOneWidget);
-
-      await tester.tap(find.text('Continue'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(CreatePasswordPage), findsOneWidget);
-      expect(
-        find.textContaining('when you choose a new chat PIN'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('warns first when this device cannot keep the history', (
-      tester,
-    ) async {
-      await open(tester, holdsKeys: false);
-
-      expect(
-        find.textContaining('earlier chat history can no longer be read'),
-        findsOneWidget,
-      );
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(CreatePasswordPage), findsNothing);
     });
   });
 }

@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/property/presentation/view_models/listing_refresh_provider.dart';
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,6 +56,7 @@ class SavedPropertiesNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
       final saved = next.valueOrNull;
       if (saved != null) _dropUnsaved(saved);
     });
+    ref.listen(listingRefreshProvider, (_, _) => _reloadQuietly());
     ref.listen(savedListingsAddedProvider, (_, _) => _reloadQuietly());
     ref.listen(connectionRestoredProvider, (_, _) => _reloadQuietly());
 

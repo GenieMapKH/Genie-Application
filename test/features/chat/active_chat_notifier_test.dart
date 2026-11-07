@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
-import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 import 'package:tilomnov/features/chat/providers/active_chat_provider.dart';
@@ -12,7 +10,6 @@ import 'chat_fakes.dart';
 void main() {
   late FakeChatRepository repository;
   late FakeChatSocket socket;
-  late FakeSetupService setup;
   late FakeCipher cipher;
   late FakeAttachmentService attachments;
   late ConversationsNotifier conversations;
@@ -26,7 +23,6 @@ void main() {
   setUp(() {
     repository = FakeChatRepository();
     socket = FakeChatSocket();
-    setup = FakeSetupService();
     cipher = FakeCipher();
     attachments = FakeAttachmentService();
     conversations = ConversationsNotifier(
@@ -39,7 +35,6 @@ void main() {
       participantId: peer,
       repository: repository,
       socketService: socket,
-      setupService: setup,
       cipher: cipher,
       attachments: attachments,
       conversations: conversations,
@@ -58,7 +53,7 @@ void main() {
         encrypted('m2', 'Yes it is', from: peer),
       ];
 
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       expect(chat.state.status, ActiveChatStatus.ready);
       expect(texts(), ['Is it still available?', 'Yes it is']);
@@ -78,39 +73,16 @@ void main() {
         ),
       ];
 
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       expect(texts(), [ActiveChatNotifier.undecryptableText]);
     });
 
-    for (final result in [
-      E2eeSetupResult.pinNotSet,
-      E2eeSetupResult.lockedWithPassword,
-      E2eeSetupResult.cancelled,
-      E2eeSetupResult.rateLimited,
-      E2eeSetupResult.failed,
-    ]) {
-      test(
-        'stays closed when encryption setup ends as ${result.name}',
-        () async {
-          setup.result = result;
-
-          await chat.open(askPin: neverAskPin);
-
-          expect(chat.state.status, ActiveChatStatus.unavailable);
-          expect(chat.state.setupResult, result);
-          expect(repository.historyRequests, 0);
-        },
-      );
-    }
-
     test('can be retried after a failure', () async {
-      setup.result = E2eeSetupResult.rateLimited;
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
-      setup.result = E2eeSetupResult.ready;
       repository.history = [encrypted('m1', 'hello', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       expect(chat.state.status, ActiveChatStatus.ready);
       expect(texts(), ['hello']);
@@ -121,7 +93,7 @@ void main() {
     test(
       'adds a live message from the other person and marks it read',
       () async {
-        await chat.open(askPin: neverAskPin);
+        await chat.open();
         repository.markedRead.clear();
 
         socket.messages.add(encrypted('m1', 'hi there', from: peer));
@@ -134,7 +106,7 @@ void main() {
 
     test('never shows the same message twice', () async {
       repository.history = [encrypted('m1', 'hi', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       socket.messages.add(encrypted('m1', 'hi', from: peer));
       socket.messages.add(encrypted('m1', 'hi', from: peer));
@@ -144,7 +116,7 @@ void main() {
     });
 
     test('ignores messages that belong to another conversation', () async {
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       socket.messages.add(encrypted('m1', 'psst', from: 'someone-else'));
       await settle();
@@ -155,7 +127,7 @@ void main() {
     test(
       'shows a message this user sent from another device as theirs',
       () async {
-        await chat.open(askPin: neverAskPin);
+        await chat.open();
         repository.markedRead.clear();
 
         socket.messages.add(encrypted('m1', 'sent from my tablet', from: me));
@@ -167,7 +139,7 @@ void main() {
     );
 
     test('keeps live messages in the order they arrived', () async {
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       for (final text in ['one', 'two', 'three']) {
         socket.messages.add(encrypted(text, text, from: peer));
@@ -177,19 +149,18 @@ void main() {
       expect(texts(), ['one', 'two', 'three']);
     });
 
-    test('ignores live messages until encryption is ready', () async {
-      setup.result = E2eeSetupResult.cancelled;
-      await chat.open(askPin: neverAskPin);
+    test('receives new messages without legacy key recovery', () async {
+      await chat.open();
 
       socket.messages.add(encrypted('m1', 'hi', from: peer));
       await settle();
 
-      expect(chat.state.messages, isEmpty);
+      expect(texts(), ['hi']);
     });
   });
 
   group('sending', () {
-    setUp(() => chat.open(askPin: neverAskPin));
+    setUp(() => chat.open());
 
     test('shows the message at once, as mine, then confirms it', () async {
       final sending = chat.sendMessage('hello');
@@ -268,17 +239,14 @@ void main() {
       expect(chat.state.sendError, ChatSendProblem.noConnection);
     });
 
-    test('explains when the other person has no keys yet', () async {
-      cipher.encryptError = const ChatEncryptionException(
-        ChatSendProblem.peerNotReady,
-        'no keys',
-      );
+    test('reports an encoding failure without sending partial data', () async {
+      cipher.encryptError = const FormatException('invalid attachment');
 
       await chat.sendMessage('hello');
 
       expect(socket.sent, isEmpty);
       expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-      expect(chat.state.sendError, ChatSendProblem.peerNotReady);
+      expect(chat.state.sendError, ChatSendProblem.failed);
     });
 
     test('retries a failed message under the same id', () async {
@@ -306,79 +274,10 @@ void main() {
       },
     );
 
-    test('does nothing while the chat is not open', () async {
-      setup.result = E2eeSetupResult.cancelled;
-      await chat.open(askPin: neverAskPin);
-
+    test('sends new messages without legacy setup', () async {
       await chat.sendMessage('hello');
 
-      expect(chat.state.messages, isEmpty);
-      expect(socket.sent, isEmpty);
-    });
-  });
-
-  group("when the other person's key changed", () {
-    EncryptedMessage unreadable(String id) => EncryptedMessage(
-      id: id,
-      senderId: peer,
-      recipientId: me,
-      ciphertext: 'made-with-a-new-key',
-      nonce: 'nonce',
-      createdAt: DateTime.utc(2026),
-    );
-
-    test('opening the chat says so and nothing can be sent', () async {
-      cipher.peerKeyStatus = PeerKeyStatus.changed;
-
-      await chat.open(askPin: neverAskPin);
-      await chat.sendMessage('my bank details');
-
-      expect(chat.state.status, ActiveChatStatus.ready);
-      expect(chat.state.peerKeyChanged, isTrue);
-      expect(chat.state.messages, isEmpty);
-      expect(socket.sent, isEmpty);
-    });
-
-    test('a change noticed while sending stops the message', () async {
-      await chat.open(askPin: neverAskPin);
-      cipher.peerKeyStatus = PeerKeyStatus.changed;
-
-      await chat.sendMessage('my bank details');
-
-      expect(socket.sent, isEmpty);
-      expect(chat.state.peerKeyChanged, isTrue);
-      expect(chat.state.messages.single.status, ChatMessageStatus.failed);
-    });
-
-    test('an unreadable incoming message triggers a key check', () async {
-      await chat.open(askPin: neverAskPin);
-      cipher.peerKeyStatus = PeerKeyStatus.changed;
-      cipher.keyChecks = 0;
-
-      // A burst of them must not turn into a burst of requests.
-      await Future<void>.delayed(const Duration(milliseconds: 1));
-      socket.messages.add(unreadable('m1'));
-      socket.messages.add(unreadable('m2'));
-      await settle();
-
-      expect(texts(), [
-        ActiveChatNotifier.undecryptableText,
-        ActiveChatNotifier.undecryptableText,
-      ]);
-      expect(cipher.keyChecks, lessThanOrEqualTo(1));
-    });
-
-    test('accepting the new key reloads the chat and allows sending', () async {
-      cipher.peerKeyStatus = PeerKeyStatus.changed;
-      await chat.open(askPin: neverAskPin);
-      repository.history = [encrypted('m1', 'hi, new phone', from: peer)];
-
-      await chat.acceptNewPeerKey();
-      await chat.sendMessage('welcome back');
-
-      expect(cipher.acceptedKeys, 1);
-      expect(chat.state.peerKeyChanged, isFalse);
-      expect(texts(), ['hi, new phone', 'welcome back']);
+      expect(texts(), ['hello']);
       expect(socket.sent, hasLength(1));
     });
   });
@@ -386,7 +285,7 @@ void main() {
   group('reconnecting', () {
     test('loads what was missed, without duplicates', () async {
       repository.history = [encrypted('m1', 'first', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       repository.history = [
         encrypted('m1', 'first', from: peer),
@@ -399,7 +298,7 @@ void main() {
     });
 
     test('keeps a message that failed to send', () async {
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
       socket.sendError = const ChatSendException(ChatSendProblem.noConnection);
       await chat.sendMessage('unsent');
 
@@ -418,12 +317,11 @@ void main() {
       participantId: peer,
       repository: repository,
       socketService: socket,
-      setupService: setup,
       cipher: cipher,
       attachments: attachments,
       conversations: conversations,
     );
-    await closing.open(askPin: neverAskPin);
+    await closing.open();
     closing.dispose();
 
     socket.messages.add(encrypted('m1', 'hi', from: peer));

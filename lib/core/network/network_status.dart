@@ -35,6 +35,7 @@ class NetworkStatus {
   static const slowReadsForWeak = 3;
 
   int _slowReads = 0;
+  DateTime? _lastSlow;
 
   final ValueNotifier<ConnectionQuality> connection = ValueNotifier(
     ConnectionQuality.good,
@@ -66,6 +67,7 @@ class NetworkStatus {
   /// A read was answered in good time: the connection is not weak.
   void quick() {
     _slowReads = 0;
+    _lastSlow = null;
     _endWeak();
     if (connection.value == ConnectionQuality.weak) {
       connection.value = ConnectionQuality.good;
@@ -77,6 +79,12 @@ class NetworkStatus {
   /// answer ends that.
   void slow() {
     if (isOffline) return;
+    final now = DateTime.now();
+    if (_lastSlow != null &&
+        now.difference(_lastSlow!) > const Duration(minutes: 2)) {
+      _slowReads = 0;
+    }
+    _lastSlow = now;
     _slowReads++;
     if (_slowReads < slowReadsForWeak) return;
     connection.value = ConnectionQuality.weak;
@@ -91,6 +99,7 @@ class NetworkStatus {
 
   void unreachable() {
     _slowReads = 0;
+    _lastSlow = null;
     _endWeak();
     connection.value = ConnectionQuality.offline;
     _probeTimer ??= Timer.periodic(_probeEvery, (_) => _runProbe());
@@ -103,6 +112,7 @@ class NetworkStatus {
     _endWeak();
     _slowReads = 0;
     _serverInTrouble = false;
+    _lastSlow = null;
     connection.value = ConnectionQuality.good;
   }
 

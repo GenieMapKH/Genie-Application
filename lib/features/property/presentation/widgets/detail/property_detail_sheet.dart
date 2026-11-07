@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -314,14 +315,11 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       ),
                                     );
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          context
-                                              .l10n
-                                              .propertyCannotChatOwnerInformationMissing,
-                                        ),
-                                      ),
+                                    AppPopup.showError(
+                                      context,
+                                      context
+                                          .l10n
+                                          .propertyCannotChatOwnerInformationMissing,
                                     );
                                   }
                                 },

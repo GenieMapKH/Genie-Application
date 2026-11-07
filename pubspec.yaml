@@ -64,7 +64,6 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   shared_preferences: ^2.5.5
   sodium_libs: ^3.4.6+4
-  cryptography: ^2.9.0
   socket_io_client: ^3.1.6
   device_info_plus: ^13.3.0
   flutter_localizations:

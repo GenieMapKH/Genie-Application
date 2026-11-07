@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/payment/application/payment_config.dart';
 import 'package:tilomnov/features/subscription/domain/subscription_plan.dart';
 import 'package:tilomnov/features/subscription/presentation/screens/upgrade_subscription_page.dart';
 import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
 import 'package:tilomnov/features/subscription/presentation/widgets/plan_card.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
+import 'package:tilomnov/features/subscription/presentation/widgets/subscription_status.dart';
 
-/// Every subscription plan, the user's own first. Picking a higher one opens
-/// its checkout. Pops with true once the user has subscribed.
+/// Every subscription plan. Simulations can buy any paid tier; live purchases
+/// offer upgrades. Pops with true once the user has subscribed.
 class SubscriptionPlansPage extends ConsumerWidget {
   const SubscriptionPlansPage({super.key});
 
@@ -42,6 +44,7 @@ class SubscriptionPlansPage extends ConsumerWidget {
           24 + MediaQuery.paddingOf(context).bottom,
         ),
         children: [
+          const SubscriptionStatus(),
           Text(
             context.l10n.planChooseIntro,
             style: TextStyle(
@@ -56,8 +59,10 @@ class SubscriptionPlansPage extends ConsumerWidget {
               plan: plan,
               isCurrent: plan.tier == current,
               used: used,
-              // Only a higher plan is offered; changing down is not built.
-              onUpgrade: plan.tier.index > current.index
+              onUpgrade:
+                  plan.tier.isPaid &&
+                      (!PaymentConfig.enabled ||
+                          plan.tier.index > current.index)
                   ? () => upgrade(plan)
                   : null,
             ),

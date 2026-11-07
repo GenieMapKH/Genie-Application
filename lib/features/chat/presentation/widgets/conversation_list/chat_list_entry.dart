@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -104,36 +105,32 @@ class ChatListEntry extends ConsumerWidget {
 
   Future<void> _toggleArchive(BuildContext context, WidgetRef ref) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
+    final overlay = Overlay.of(context, rootOverlay: true);
     final actions = ref.read(conversationActionsProvider);
     final id = chat.participantId;
 
     final done = await _attempt(
-      messenger,
+      overlay,
       l10n,
       () => isArchived ? actions.unarchive(id) : actions.archive(id),
     );
     if (!done) return;
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          isArchived ? l10n.chatUnarchivedDone : l10n.chatArchivedDone,
-        ),
-        action: SnackBarAction(
-          label: l10n.chatUndo,
-          onPressed: () => _attempt(
-            messenger,
-            l10n,
-            () => isArchived ? actions.archive(id) : actions.unarchive(id),
-          ),
-        ),
+    AppPopup.showOn(
+      overlay,
+      isArchived ? l10n.chatUnarchivedDone : l10n.chatArchivedDone,
+      tone: AppPopupTone.success,
+      actionLabel: l10n.chatUndo,
+      onAction: () => _attempt(
+        overlay,
+        l10n,
+        () => isArchived ? actions.archive(id) : actions.unarchive(id),
       ),
     );
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
+    final overlay = Overlay.of(context, rootOverlay: true);
     final actions = ref.read(conversationActionsProvider);
 
     final forEveryone = await DeleteChatDialog.show(
@@ -143,7 +140,7 @@ class ChatListEntry extends ConsumerWidget {
     if (forEveryone == null) return;
 
     final done = await _attempt(
-      messenger,
+      overlay,
       l10n,
       () => actions.delete(
         chat.participantId,
@@ -152,13 +149,17 @@ class ChatListEntry extends ConsumerWidget {
       ),
     );
     if (done) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.chatDeletedDone)));
+      AppPopup.showOn(
+        overlay,
+        l10n.chatDeletedDone,
+        tone: AppPopupTone.success,
+      );
     }
   }
 
   /// Runs [action]; on failure logs it and tells the user. True on success.
   static Future<bool> _attempt(
-    ScaffoldMessengerState messenger,
+    OverlayState overlay,
     AppLocalizations l10n,
     Future<void> Function() action,
   ) async {
@@ -172,7 +173,7 @@ class ChatListEntry extends ConsumerWidget {
         error: e,
         fallback: l10n.chatActionFailed,
       );
-      messenger.showSnackBar(SnackBar(content: Text(message)));
+      AppPopup.showOn(overlay, message, tone: AppPopupTone.error);
       return false;
     }
   }

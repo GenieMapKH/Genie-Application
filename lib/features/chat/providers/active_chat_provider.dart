@@ -7,10 +7,8 @@ import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
 import 'package:tilomnov/features/chat/data/chat_message_changes.dart';
 import 'package:tilomnov/features/chat/data/chat_repository.dart';
 import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
-import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:tilomnov/features/chat/e2ee/message_reader.dart';
-import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
+import 'package:tilomnov/features/chat/data/message_reader.dart';
 import 'package:tilomnov/features/chat/models/chat_message_action_problem.dart';
 import 'package:tilomnov/features/chat/models/chat_message_list.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
@@ -31,14 +29,12 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   static const undecryptableText = ChatMessage.undecryptableText;
 
   /// An unreadable live message triggers a key check at most this often.
-  static const _keyCheckCooldown = Duration(seconds: 30);
 
   final String userId;
   final String participantId;
   final ChatRepository repository;
   final ChatSocketService socketService;
-  final E2eeSetupService setupService;
-  final MessageCipher cipher;
+  final MessageCodec cipher;
   final ChatAttachmentService attachments;
   final ConversationsNotifier conversations;
   final ChatMessageReader _reader;
@@ -50,8 +46,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   final _subscriptions = <StreamSubscription<void>>[];
 
   /// Set once this device holds the keys, so messages can be decrypted.
-  bool _keysReady = false;
-  DateTime? _lastKeyCheck;
+  bool _historyReady = false;
 
   /// Live messages are handled one at a time so they stay in arrival order.
   Future<void> _incoming = Future.value();
@@ -61,7 +56,6 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     required this.participantId,
     required this.repository,
     required this.socketService,
-    required this.setupService,
     required this.cipher,
     required this.attachments,
     required this.conversations,
@@ -76,32 +70,17 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       ..add(socketService.onConversationChanged.listen(_onConversationChanged));
   }
 
-  /// Makes encryption ready, then loads the conversation. [askPin] is used
-  /// only on a device without the account's keys: they come back with the
-  /// chat PIN.
-  Future<void> open({required PinPrompt askPin}) async {
-    _keysReady = false;
+  /// Loads the conversation without requiring any device keys.
+  Future<void> open() async {
+    _historyReady = false;
     state = const ActiveChatState();
     try {
-      final result = await setupService.initialize(userId, askPin: askPin);
-      if (!mounted) return;
-      if (result != E2eeSetupResult.ready) {
-        state = ActiveChatState(
-          status: ActiveChatStatus.unavailable,
-          setupResult: result,
-        );
-        return;
-      }
-
-      // From here on live messages are kept, and merged with the history.
-      _keysReady = true;
-      final keyStatus = await _checkPeerKey();
+      _historyReady = true;
       final history = await _fetchHistory();
       if (!mounted) return;
       state = state.copyWith(
         status: ActiveChatStatus.ready,
         messages: _mergeHistory(history),
-        peerKeyChanged: keyStatus == PeerKeyStatus.changed,
       );
       unawaited(conversations.markAsRead(participantId));
       // Previews could not be decrypted before the keys were on this device.
@@ -109,17 +88,14 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     } catch (e, stackTrace) {
       AppLogger.error('Failed to open chat', e, stackTrace);
       if (!mounted) return;
-      _keysReady = false;
-      state = const ActiveChatState(
-        status: ActiveChatStatus.unavailable,
-        setupResult: E2eeSetupResult.failed,
-      );
+      _historyReady = false;
+      state = const ActiveChatState(status: ActiveChatStatus.unavailable);
     }
   }
 
   /// Sends [text], as a reply to [replyTo] when given.
   Future<void> sendMessage(String text, {ChatMessage? replyTo}) async {
-    if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
+    if (state.status != ActiveChatStatus.ready) return;
 
     final message = ChatMessage(
       id: _newMessageId(),
@@ -138,7 +114,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   /// Sends [listing] as a card. Its text says what it is, for an app that
   /// cannot draw the card and for the notification.
   Future<void> sendListing(ChatListing listing) async {
-    if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
+    if (state.status != ActiveChatStatus.ready) return;
 
     final message = ChatMessage(
       id: _newMessageId(),
@@ -186,7 +162,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     Uint8List? localImage,
     RecordedVoiceNote? localVoice,
   }) async {
-    if (state.status != ActiveChatStatus.ready || state.peerKeyChanged) return;
+    if (state.status != ActiveChatStatus.ready) return;
 
     final message = ChatMessage(
       id: _newMessageId(),
@@ -209,36 +185,17 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     final failed = state.messages
         .where((m) => m.id == messageId && m.status == ChatMessageStatus.failed)
         .firstOrNull;
-    if (failed == null || state.peerKeyChanged) return;
+    if (failed == null) return;
 
     final message = failed.copyWith(status: ChatMessageStatus.sending);
     _replace(message);
     await _deliver(message);
   }
 
-  /// The user agrees to use the other person's new key. Messages sealed
-  /// with their old key can no longer be read.
-  Future<void> acceptNewPeerKey() async {
-    try {
-      await cipher.trustCurrentPeerKey(participantId);
-      final history = await _fetchHistory();
-      if (!mounted) return;
-      state = state.copyWith(
-        messages: _mergeHistory(history),
-        peerKeyChanged: false,
-      );
-      unawaited(conversations.refresh());
-    } catch (e, stackTrace) {
-      AppLogger.error('Failed to accept the new key', e, stackTrace);
-      if (!mounted) return;
-      state = state.copyWith(sendError: ChatSendProblem.noConnection);
-    }
-  }
-
   Future<void> _deliver(ChatMessage message) async {
     try {
       message = await _uploadPendingFile(message);
-      final sealed = await cipher.encrypt(
+      final sealed = await cipher.encode(
         message.text,
         id: message.id,
         peerId: participantId,
@@ -262,10 +219,8 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       if (!mounted) return;
       _replace(
         message.copyWith(status: ChatMessageStatus.failed),
-        peerKeyChanged: e is PeerKeyChangedException ? true : null,
         sendError: switch (e) {
           ChatSendException(:final problem) => problem,
-          ChatEncryptionException(:final problem) => problem,
           _ => ChatSendProblem.failed,
         },
       );
@@ -369,10 +324,10 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   }
 
   Future<void> _receive(EncryptedMessage encrypted) async {
-    if (!_keysReady || encrypted.peerOf(userId) != participantId) return;
+    if (!_historyReady || encrypted.peerOf(userId) != participantId) return;
     try {
       final message = await _reader.read(encrypted);
-      if (!mounted || !_keysReady) return;
+      if (!mounted || !_historyReady) return;
 
       final known = state.messages.any((m) => m.id == message.id);
       if (known) {
@@ -386,8 +341,6 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       if (message.senderId == participantId) {
         unawaited(conversations.markAsRead(participantId));
       }
-      // Unreadable may mean the other person now uses a different key.
-      if (!message.isReadable) await _recheckPeerKeyAfterUnreadable();
     } catch (e, stackTrace) {
       AppLogger.error('Failed to show an incoming message', e, stackTrace);
     }
@@ -400,7 +353,7 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
   }
 
   Future<void> _receiveEdit(EncryptedMessage encrypted) async {
-    if (!_keysReady || encrypted.peerOf(userId) != participantId) return;
+    if (!_historyReady || encrypted.peerOf(userId) != participantId) return;
     try {
       final edited = await _reader.read(encrypted);
       if (!mounted || _find(edited.id) == null) return;
@@ -423,22 +376,6 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
       messages: state.messages.without(deletion.messageId),
       sendError: state.sendError,
     );
-  }
-
-  Future<void> _recheckPeerKeyAfterUnreadable() async {
-    final last = _lastKeyCheck;
-    if (last != null && DateTime.now().difference(last) < _keyCheckCooldown) {
-      return;
-    }
-    final status = await _checkPeerKey();
-    if (mounted && status == PeerKeyStatus.changed && !state.peerKeyChanged) {
-      state = state.copyWith(peerKeyChanged: true, sendError: state.sendError);
-    }
-  }
-
-  Future<PeerKeyStatus> _checkPeerKey() {
-    _lastKeyCheck = DateTime.now();
-    return cipher.checkPeerKey(participantId);
   }
 
   /// The conversation was deleted (by the other person, for everyone, or on
@@ -501,17 +438,12 @@ class ActiveChatNotifier extends StateNotifier<ActiveChatState> {
     ];
   }
 
-  void _replace(
-    ChatMessage message, {
-    bool? peerKeyChanged,
-    ChatSendProblem? sendError,
-  }) {
+  void _replace(ChatMessage message, {ChatSendProblem? sendError}) {
     state = state.copyWith(
       messages: [
         for (final existing in state.messages)
           existing.id == message.id ? message : existing,
       ],
-      peerKeyChanged: peerKeyChanged,
       sendError: sendError,
     );
   }
@@ -544,8 +476,7 @@ final activeChatProvider = StateNotifierProvider.autoDispose
         participantId: chat.participantId,
         repository: ref.watch(chatRepositoryProvider),
         socketService: ref.watch(chatSocketServiceProvider),
-        setupService: ref.watch(e2eeSetupServiceProvider),
-        cipher: ref.watch(messageCipherProvider(chat.userId)),
+        cipher: ref.watch(messageCodecProvider(chat.userId)),
         attachments: ref.watch(chatAttachmentServiceProvider),
         conversations: ref.watch(conversationsProvider.notifier),
       );

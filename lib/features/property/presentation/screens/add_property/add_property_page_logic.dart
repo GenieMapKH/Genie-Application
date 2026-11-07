@@ -1,6 +1,8 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
@@ -12,11 +14,13 @@ import 'add_property_page_form_binding.dart';
 import 'add_property_paid_publish.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {
   /// Publishes a new listing, or saves the edits to an existing one. A
   /// draft being edited may stay incomplete; anything else must be complete.
   void validateAndSubmit() async {
+    if (isLoading || ref.read(addPropertyControllerProvider).isLoading) return;
     final editedDraft = isEditing && widget.property!.status == 'Draft';
     if (!editedDraft && !_isComplete()) return;
 
@@ -133,10 +137,19 @@ extension AddPropertyPageLogic on AddPropertyPageState {
   /// Publishes a new listing: free while it fits in the user's plan, else
   /// the way they chose to pay for it.
   Future<void> _publish() async {
-    if (needsPublishingPlan) {
-      await publishBeyondPlan(publishInPlan: _publishInPlan);
-    } else {
-      await _publishInPlan();
+    setState(() => isLoading = true);
+    try {
+      final allowance = await ref.read(publishingAllowanceProvider.future);
+      if (!mounted) return;
+      if (!allowance.hasRoom) {
+        await publishBeyondPlan(publishInPlan: _publishInPlan);
+      } else {
+        await _publishInPlan();
+      }
+    } catch (error) {
+      _showSaveFailed(error);
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
@@ -162,25 +175,28 @@ extension AddPropertyPageLogic on AddPropertyPageState {
 
   void _showSaveFailed(Object error) {
     if (!mounted) return;
+    if (error is DioException &&
+        error.response?.data is Map &&
+        error.response!.data['code'] == 'PUBLISHING_PLAN_REQUIRED') {
+      ref.invalidate(publishingAllowanceProvider);
+      setState(() => publishingPlanMissing = true);
+    }
     final message = failureMessage(
       context.l10n,
       error: error,
       fallback: context.l10n.propertySaveFailed,
     );
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    AppPopup.showError(context, message);
   }
 
   void showErrorDialog(GlobalKey firstErrorKey) {
-    showDialog(
-      context: context,
+    AppDialog.show(
+      context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          contentPadding: const EdgeInsets.all(24),
+        return AppDialog.custom(
+          icon: Icons.home_outlined,
+          tone: AppDialogTone.neutral,
+
           title: Text(
             context.l10n.propertyValidateRequiredFields,
             style: GoogleFonts.inter(
@@ -198,7 +214,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
             ),
             textAlign: TextAlign.center,
           ),
-          actionsAlignment: MainAxisAlignment.center,
+
           actions: [
             TextButton(
               onPressed: () {
@@ -227,14 +243,13 @@ extension AddPropertyPageLogic on AddPropertyPageState {
   }
 
   void showSuccessDialog(PropertyModel property) {
-    showDialog(
-      context: context,
+    AppDialog.show(
+      context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          contentPadding: const EdgeInsets.all(24),
+        return AppDialog.custom(
+          icon: Icons.home_outlined,
+          tone: AppDialogTone.neutral,
+
           title: Text(
             context.l10n.propertyPublishedTitle,
             style: GoogleFonts.inter(
@@ -252,7 +267,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
             ),
             textAlign: TextAlign.center,
           ),
-          actionsAlignment: MainAxisAlignment.center,
+
           actions: [
             TextButton(
               onPressed: () {

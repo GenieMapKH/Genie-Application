@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:dio/dio.dart';
 
 import 'package:tilomnov/core/network/load_failure.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -17,6 +18,11 @@ String failureMessage(
   Object? error,
   required String fallback,
 }) {
+  if (error is DioException &&
+      error.response?.data is Map &&
+      error.response!.data['code'] == 'PUBLISHING_PLAN_REQUIRED') {
+    return l10n.publishPlanChooseFirst;
+  }
   return switch (LoadFailure.of(error)) {
     LoadFailure.offline => l10n.failureOffline,
     LoadFailure.slow => l10n.failureSlow,

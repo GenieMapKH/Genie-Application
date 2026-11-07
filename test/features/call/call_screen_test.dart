@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/call/presentation/mini_call_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,6 +42,42 @@ void main() {
     );
     await tester.pump();
   }
+
+  testWidgets(
+    'minimize keeps the call connected and the mini bar restores it',
+    (tester) async {
+      await showScreen(tester);
+      await controller.call('bob', 'Bob');
+      await tester.pump();
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(CallScreen)),
+      );
+      await tester.tap(find.byTooltip('Minimize call'));
+      await tester.pump();
+      expect(container.read(callMinimizedProvider), isTrue);
+      expect(controller.state.isLive, isTrue);
+      expect(signaling.sent, ['invite bob']);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [callControllerProvider.overrideWith((ref) => controller)],
+          child: MaterialApp(
+            home: const Scaffold(body: Text('Conversations')),
+            builder: (context, child) =>
+                Stack(children: [child!, const MiniCallBar()]),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Bob'), findsOneWidget);
+      await tester.tap(find.text('Bob'));
+      await tester.pump();
+      expect(container.read(callMinimizedProvider), isFalse);
+      expect(controller.state.isLive, isTrue);
+      await controller.hangUp();
+      await tester.pump(CallController.endedShownFor);
+    },
+  );
 
   testWidgets('a ringing call can be answered or declined', (tester) async {
     await showScreen(tester);
@@ -125,8 +162,7 @@ void main() {
           chatRepositoryProvider.overrideWithValue(FakeChatRepository()),
           chatSocketServiceProvider.overrideWithValue(FakeChatSocket()),
           noBlocksOverride(),
-          e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
-          messageCipherProvider.overrideWith((ref, userId) => FakeCipher()),
+          messageCodecProvider.overrideWith((ref, userId) => FakeCipher()),
           chatAttachmentServiceProvider.overrideWithValue(
             FakeAttachmentService(),
           ),

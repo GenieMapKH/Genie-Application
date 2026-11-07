@@ -41,137 +41,181 @@ class SavedPropertyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Hero(
-        tag: heroTag ?? 'saved_property_hero_${property.id}',
-        flightShuttleBuilder: propertyCardFlightShuttle,
-        child: Material(
-          type: MaterialType.transparency,
-          child: Container(
-            // The shadow keeps the quicker rounded-rectangle outline; under
-            // the card's continuous corners the difference cannot be seen.
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            foregroundDecoration: ShapeDecoration(
-              shape: AppShapes.continuous(
-                16,
-                side: BorderSide(color: context.colors.divider),
-              ),
-            ),
-            child: ClipRSuperellipse(
-              borderRadius: BorderRadius.circular(16.0),
-              child: ColoredBox(
-                color: context.colors.surface,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Property image gallery container matching PropertyItemCard
-                    Expanded(
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          PropertyImageGallery(
-                            imageUrls: property.cardImageUrls,
-                          ),
-                          Positioned(
-                            top: 10,
-                            left: 10,
-                            child: PropertyTypePill(
-                              propertyType: property.propertyType,
-                              compact: true,
-                            ),
-                          ),
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: FavoriteHeartButton(
-                              isFavorite: isFavorite,
-                              onPressed: onFavoriteToggled,
-                              iconSize: 18,
-                              idleColor: context.colors.textMuted,
-                            ),
-                          ),
-                          if (onViewOnMap case final onViewOnMap?)
-                            Positioned(
-                              bottom: 6,
-                              right: 10,
-                              child: CardMapButton(onPressed: onViewOnMap),
-                            ),
-                        ],
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Opacity(
+          opacity: property.isPublic ? 1 : 0.45,
+          child: GestureDetector(
+            onTap: property.isPublic ? onTap : null,
+            child: Hero(
+              tag: heroTag ?? 'saved_property_hero_${property.id}',
+              flightShuttleBuilder: propertyCardFlightShuttle,
+              child: Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  // The shadow keeps the quicker rounded-rectangle outline; under
+                  // the card's continuous corners the difference cannot be seen.
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
+                    ],
+                  ),
+                  foregroundDecoration: ShapeDecoration(
+                    shape: AppShapes.continuous(
+                      16,
+                      side: BorderSide(color: context.colors.divider),
                     ),
-
-                    // Details section
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                  ),
+                  child: ClipRSuperellipse(
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: ColoredBox(
+                      color: context.colors.surface,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            PropertyFormat.cardPrice(context.l10n, property),
-                            style: GoogleFonts.inter(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w800,
-                              color: context.colors.textPrimary,
+                          // Property image gallery container matching PropertyItemCard
+                          Expanded(
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                PropertyImageGallery(
+                                  imageUrls: property.cardImageUrls,
+                                ),
+                                Positioned(
+                                  top: 10,
+                                  left: 10,
+                                  child: PropertyTypePill(
+                                    propertyType: property.propertyType,
+                                    compact: true,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: FavoriteHeartButton(
+                                    isFavorite: isFavorite,
+                                    onPressed: onFavoriteToggled,
+                                    iconSize: 18,
+                                    idleColor: context.colors.textMuted,
+                                  ),
+                                ),
+                                if (property.isPublic && onViewOnMap != null)
+                                  Positioned(
+                                    bottom: 6,
+                                    right: 10,
+                                    child: CardMapButton(
+                                      onPressed: onViewOnMap!,
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 3),
-                          Text(
-                            PropertyFormat.cardSpecLine(context.l10n, property),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: context.colors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            property.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: context.colors.textMuted,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            context.l10n.propertyListingBy(
-                              ownerDisplayName(
-                                context.l10n,
-                                property.ownerName,
-                              ),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: context.colors.textHint,
+
+                          // Details section
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  PropertyFormat.cardPrice(
+                                    context.l10n,
+                                    property,
+                                  ),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w800,
+                                    color: context.colors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  PropertyFormat.cardSpecLine(
+                                    context.l10n,
+                                    property,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: context.colors.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  property.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: context.colors.textMuted,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  context.l10n.propertyListingBy(
+                                    ownerDisplayName(
+                                      context.l10n,
+                                      property.ownerName,
+                                    ),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                    color: context.colors.textHint,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
+        if (!property.isPublic)
+          Positioned(
+            top: 48,
+            left: 10,
+            right: 10,
+            child: IgnorePointer(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.colors.surface,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    context.l10n.propertyUnavailable,
+                    style: TextStyle(
+                      color: context.colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

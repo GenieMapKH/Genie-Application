@@ -1,10 +1,4 @@
-import 'package:dio/dio.dart';
-
-import 'package:tilomnov/features/chat/data/chat_backup_repository.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/key_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/peer_key_store.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 
 /// Words for what a message holds besides text, in the user's language.
@@ -15,26 +9,14 @@ class ChatPushPreview {
   /// A notification shows this much of a long message.
   static const maxLength = 300;
 
-  /// Opens a sealed message with the keys on this phone; null when it cannot.
+  /// Reads an authorized transport body; stored ciphertext gives no preview.
   final Future<OpenedMessage?> Function(EncryptedMessage message) open;
 
   const ChatPushPreview({required this.open});
 
-  /// Opens messages for [userId] with the keys stored on this phone, using
-  /// only what is already trusted here: no network and no signed-in
-  /// session, as when the app is closed and a push arrives.
-  factory ChatPushPreview.forAccount(String userId, CryptoService crypto) {
-    final cipher = MessageCipher(
-      userId: userId,
-      cryptoService: crypto,
-      keyService: KeyService(cryptoService: crypto, dio: Dio()),
-      // Never asked: `askServer: false` stays on this phone.
-      keyRepository: ChatBackupRepository(dio: Dio()),
-      trustedKeys: PeerKeyStore(userId: userId),
-    );
-    return ChatPushPreview(
-      open: (message) => cipher.decrypt(message, askServer: false),
-    );
+  factory ChatPushPreview.forAccount(String userId) {
+    final codec = MessageCodec(userId: userId);
+    return ChatPushPreview(open: codec.decode);
   }
 
   /// What the notification says about the message, or null when this phone

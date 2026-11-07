@@ -18,7 +18,7 @@ import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
 /// Gives an account that signs in with Google a password of its own.
 ///
 /// Such an account has nothing to type where the app asks for a password
-/// (recovering a forgotten chat PIN, for one). The owner confirms with
+/// (for account security). The owner confirms with
 /// Google once more, then chooses a password. Pops with true once it is set.
 class CreatePasswordPage extends ConsumerStatefulWidget {
   /// Said at the top when the user was sent here from something that needs

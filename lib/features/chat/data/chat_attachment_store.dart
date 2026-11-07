@@ -7,7 +7,7 @@ import 'package:tilomnov/core/logging/app_logger.dart';
 /// downloading it again, even after the app restarts.
 ///
 /// Only the encrypted bytes are written, never the opened file: without the
-/// key, which travels inside the end-to-end encrypted message, a stored file
+/// key, which is kept in protected message storage, a stored file
 /// cannot be read. A file is stored under its server path, which never
 /// changes. The store is a cache: when it fails, the file is downloaded.
 class ChatAttachmentStore {

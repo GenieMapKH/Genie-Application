@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/property/presentation/view_models/listing_refresh_provider.dart';
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
@@ -27,7 +28,7 @@ final feedClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 /// internet comes back. None for a guest.
 class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
   /// How old what is shown may get before showing the tab reads it again.
-  static const staleAfter = Duration(minutes: 5);
+  static const staleAfter = Duration(seconds: 30);
 
   String? _nextCursor;
 
@@ -46,6 +47,11 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
     final repository = ref.watch(feedRepositoryProvider);
     if (!ref.watch(isSignedInProvider)) return const PagedList();
 
+    ref.listen(listingRefreshProvider, (_, _) {
+      if (ref.read(mainNavProvider).currentIndex == MainTab.feed) {
+        _reloadQuietly();
+      }
+    });
     ref.listen(followChangesProvider, (_, _) => _reloadQuietly());
     ref.listen(connectionRestoredProvider, (_, _) => _reloadQuietly());
     ref.listen(
@@ -74,7 +80,10 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
   }
 
   Future<PagedList<PropertyModel>> _firstPage() async {
-    final page = await ref.read(feedRepositoryProvider).fetchPage();
+    final shown = state.valueOrNull?.items.length ?? FeedRepository.pageSize;
+    final page = await ref
+        .read(feedRepositoryProvider)
+        .fetchPage(limit: shown.clamp(FeedRepository.pageSize, 50));
     _nextCursor = page.nextCursor;
     _loadedAt = ref.read(feedClockProvider)();
     return _listOf(page);

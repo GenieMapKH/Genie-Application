@@ -7,8 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tilomnov/app/push_chat_text.dart';
 import 'package:tilomnov/features/call/data/call_notifications.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
-import 'package:tilomnov/features/chat/e2ee/push_preview.dart';
+import 'package:tilomnov/features/chat/data/push_preview.dart';
 import 'package:tilomnov/features/notifications/data/system_notifications.dart';
 import 'package:tilomnov/features/notifications/models/push_message.dart';
 import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
@@ -73,7 +72,6 @@ Future<void> handleBackgroundPush(RemoteMessage message) async {
 }
 
 /// Libsodium starts once per isolate.
-Future<CryptoService>? _crypto;
 
 /// Shows a chat message that came with its sealed text, opened with the keys
 /// on this phone. Where it cannot be opened, or the user turned the text off,
@@ -93,10 +91,7 @@ Future<void> _showChatMessage(
     push: push,
     l10n: l10n,
     showText: AppSettingsStorage(preferences).readShowNotificationText(),
-    previewFor: (userId) async => ChatPushPreview.forAccount(
-      userId,
-      await (_crypto ??= CryptoService.init()),
-    ),
+    previewFor: (userId) async => ChatPushPreview.forAccount(userId),
   );
 
   final notifications = LocalSystemNotifications();

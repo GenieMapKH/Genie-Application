@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -113,9 +114,11 @@ class _DeviceListState extends ConsumerState<_DeviceList> {
     required String message,
     required String action,
   }) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      builder: (dialogContext) => AppDialog.custom(
+        icon: Icons.logout,
+        tone: AppDialogTone.neutral,
         title: Text(title),
         content: Text(message),
         actions: [

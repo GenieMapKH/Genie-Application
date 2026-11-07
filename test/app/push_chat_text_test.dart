@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/app/push_chat_text.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:tilomnov/features/chat/e2ee/push_preview.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
+import 'package:tilomnov/features/chat/data/push_preview.dart';
 import 'package:tilomnov/features/notifications/models/push_message.dart';
 import 'package:tilomnov/l10n/generated/app_localizations.dart';
 

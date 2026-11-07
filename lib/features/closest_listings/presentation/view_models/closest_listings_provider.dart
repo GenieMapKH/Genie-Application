@@ -1,3 +1,5 @@
+import 'package:tilomnov/features/property/presentation/view_models/listing_refresh_provider.dart';
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -68,6 +70,7 @@ class ClosestListingsNotifier extends AsyncNotifier<ClosestListingsState> {
   @override
   Future<ClosestListingsState> build() async {
     final generation = ++_generation;
+    ref.listen(listingRefreshProvider, (_, _) => unawaited(_reloadQuietly()));
     final filter = ref.watch(mapPropertyFilterProvider);
     final origin = _origin ??= await ref.read(closestOriginProvider)();
     final page = await _firstPage(origin, filter);
@@ -91,6 +94,36 @@ class ClosestListingsNotifier extends AsyncNotifier<ClosestListingsState> {
       if (kept == null) rethrow;
       ref.listen(connectionRestoredProvider, (_, _) => ref.invalidateSelf());
       return kept;
+    }
+  }
+
+  Future<void> _reloadQuietly() async {
+    final current = state.valueOrNull;
+    final origin = _origin;
+    if (current == null || origin == null || current.listings.loadingMore) {
+      return;
+    }
+    final generation = ++_generation;
+    try {
+      final page = await ref
+          .read(closestListingsRepositoryProvider)
+          .fetchPage(
+            origin: origin.point,
+            filter: ref.read(mapPropertyFilterProvider),
+            limit: current.listings.items.length.clamp(
+              ClosestListingsRepository.pageSize,
+              50,
+            ),
+          );
+      if (generation != _generation) return;
+      _nextOffset = page.nextOffset;
+      state = AsyncData(
+        current.withListings(
+          PagedList(items: page.items, hasMore: page.nextOffset != null),
+        ),
+      );
+    } catch (e) {
+      AppLogger.error('Refreshing nearby listings failed', e);
     }
   }
 

@@ -10,6 +10,7 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
   final Widget? trailing;
   final bool showBackButton;
+  final double? height;
 
   /// Defaults to the page background of the theme in use.
   final Color? backgroundColor;
@@ -20,17 +21,19 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.trailing,
     this.showBackButton = true,
+    this.height,
     this.backgroundColor,
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(56.0);
+  Size get preferredSize => Size.fromHeight(height ?? 56.0);
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
     return Container(
+      height: height,
       color: backgroundColor ?? colors.background,
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       child: Stack(

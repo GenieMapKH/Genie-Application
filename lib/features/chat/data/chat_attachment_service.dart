@@ -5,7 +5,7 @@ import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/chat/data/chat_attachment_store.dart';
 import 'package:tilomnov/features/chat/data/chat_repository.dart';
 import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/data/chat_crypto.dart';
 import 'package:tilomnov/features/chat/models/chat_attachment.dart';
 import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 import 'package:tilomnov/features/chat/models/chat_voice.dart';

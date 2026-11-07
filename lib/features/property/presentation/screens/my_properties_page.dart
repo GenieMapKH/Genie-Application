@@ -44,8 +44,10 @@ class MyPropertiesPage extends ConsumerWidget {
 
   Widget _buildShown(BuildContext context, WidgetRef ref) {
     final propertiesAsync = ref.watch(propertiesProvider);
-    // With nothing loaded before, the failure takes the page's place.
-    final failed = propertiesAsync.hasError && !propertiesAsync.hasValue;
+    final listings = propertiesAsync.valueOrNull;
+    final hasListings =
+        listings?.items.isNotEmpty == true ||
+        (listings?.countByStatus.values.any((count) => count > 0) ?? false);
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -58,10 +60,9 @@ class MyPropertiesPage extends ConsumerWidget {
           children: [
             AppHeaderBar(
               title: context.l10n.navMyProperties,
+              height: listings != null && !hasListings ? 60 : null,
               onBackPressed: onBackPressed,
             ),
-            // The failure sits right under the header, as on every tab.
-            if (!failed) const SizedBox(height: 16),
             Expanded(
               child: RefreshIndicator(
                 color: context.colors.accent,
@@ -72,14 +73,17 @@ class MyPropertiesPage extends ConsumerWidget {
                   data: (listings) => Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      PropertyTabs(
-                        countByStatus: listings.countByStatus,
-                        selected: ref.watch(ownListingsTabProvider),
-                        onSelected: (tab) =>
-                            ref.read(ownListingsTabProvider.notifier).state =
-                                tab,
-                      ),
-                      const SizedBox(height: 24),
+                      if (hasListings) ...[
+                        const SizedBox(height: 16),
+                        PropertyTabs(
+                          countByStatus: listings.countByStatus,
+                          selected: ref.watch(ownListingsTabProvider),
+                          onSelected: (tab) =>
+                              ref.read(ownListingsTabProvider.notifier).state =
+                                  tab,
+                        ),
+                        const SizedBox(height: 24),
+                      ],
                       // Another tab's listings are on their way: the ones
                       // shown are of the tab left.
                       Expanded(

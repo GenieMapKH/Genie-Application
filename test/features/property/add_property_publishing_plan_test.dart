@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tilomnov/features/payment/application/simulated_payment_checkout_service.dart';
 import 'package:tilomnov/features/payment/data/receipt_mailer.dart';
+import 'package:tilomnov/features/payment/data/payment_repository.dart';
 import 'package:tilomnov/features/payment/presentation/payment_providers.dart';
 import 'package:tilomnov/features/payment/presentation/screens/one_time_payment_page.dart';
 import 'package:tilomnov/features/payment/presentation/screens/payment_success_page.dart';
@@ -48,6 +49,13 @@ class _Server extends PropertyRepository {
   });
 
   final published = <String>[];
+  final fetched = <String>[];
+
+  @override
+  Future<PropertyModel> fetchPropertyDetail(String id) async {
+    fetched.add(id);
+    return _listing('Active');
+  }
 
   @override
   Future<PropertyModel> publish(String id) async {
@@ -83,7 +91,14 @@ Future<void> _openAddPage(
     ),
     overrides: [
       paymentCheckoutServiceProvider.overrideWithValue(
-        SimulatedPaymentCheckoutService(delay: Duration.zero),
+        SimulatedPaymentCheckoutService(
+          repository: PaymentRepository(
+            StubServer.always(
+              201,
+              '{"transactionId":"tx-mock","status":"Success","isSimulation":true}',
+            ).dio,
+          ),
+        ),
       ),
       receiptMailerProvider.overrideWithValue(MockReceiptMailer()),
       propertyRepositoryProvider.overrideWithValue(server),
@@ -133,7 +148,12 @@ void main() {
     expect(find.text('Subscription Plan'), findsOneWidget);
 
     await _pressPublish(tester);
-    expect(find.text('Choose how to publish this property.'), findsOneWidget);
+    expect(
+      find.text(
+        'Please choose a publishing plan or a one-time payment to publish this property.',
+      ),
+      findsOneWidget,
+    );
     expect(server.created, isEmpty);
     await tester.pumpAndSettle(const Duration(seconds: 5));
   });
@@ -169,7 +189,8 @@ void main() {
 
     // Saved privately, paid (simulated), then published.
     expect(server.created.single['status'], 'Draft');
-    expect(server.published, ['p-new']);
+    expect(server.published, isEmpty);
+    expect(server.fetched, ['p-new']);
     expect(find.byType(PaymentSuccessPage), findsOneWidget);
     expect(find.text('1 USD'), findsOneWidget);
 

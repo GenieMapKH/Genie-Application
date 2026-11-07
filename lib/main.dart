@@ -7,7 +7,7 @@ import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/core/media/app_image_cache.dart';
 import 'package:tilomnov/core/theme/font_licenses.dart';
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/crypto_service.dart';
+import 'package:tilomnov/features/chat/data/chat_crypto.dart';
 import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';

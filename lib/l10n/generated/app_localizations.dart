@@ -98,6 +98,36 @@ abstract class AppLocalizations {
     Locale('km'),
   ];
 
+  /// No description provided for @callInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Call in progress'**
+  String get callInProgress;
+
+  /// No description provided for @chatManagedSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages are encrypted when sent and stored.'**
+  String get chatManagedSecurity;
+
+  /// No description provided for @callMinimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize call'**
+  String get callMinimize;
+
+  /// No description provided for @callReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to call'**
+  String get callReturn;
+
+  /// No description provided for @propertyUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get propertyUnavailable;
+
   /// No description provided for @commonCancel.
   ///
   /// In en, this message translates to:
@@ -143,7 +173,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonOffline.
   ///
   /// In en, this message translates to:
-  /// **'You are offline. Connect to the internet for updates.'**
+  /// **'You’re offline. Connect for updates.'**
   String get commonOffline;
 
   /// No description provided for @connectionOffline.
@@ -185,7 +215,7 @@ abstract class AppLocalizations {
   /// No description provided for @loadFailureOfflineBody.
   ///
   /// In en, this message translates to:
-  /// **'Check your Wi-Fi or mobile data. This page will load by itself when you are back online.'**
+  /// **'Check your internet. This page will reload when you reconnect.'**
   String get loadFailureOfflineBody;
 
   /// No description provided for @loadFailureSlowTitle.
@@ -197,13 +227,13 @@ abstract class AppLocalizations {
   /// No description provided for @loadFailureSlowBody.
   ///
   /// In en, this message translates to:
-  /// **'This page took too long to load. Your signal may be weak: move to a better spot or try again.'**
+  /// **'Loading took too long. Check your connection and retry.'**
   String get loadFailureSlowBody;
 
   /// No description provided for @loadFailureServerBody.
   ///
   /// In en, this message translates to:
-  /// **'Our server is having trouble right now. Please try again in a moment.'**
+  /// **'Something went wrong. Try again shortly.'**
   String get loadFailureServerBody;
 
   /// No description provided for @failureOffline.
@@ -221,7 +251,7 @@ abstract class AppLocalizations {
   /// No description provided for @failureServer.
   ///
   /// In en, this message translates to:
-  /// **'Our server is having trouble right now. Please try again in a moment.'**
+  /// **'Something went wrong. Try again shortly.'**
   String get failureServer;
 
   /// No description provided for @navExplore.
@@ -269,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginRequiredMessage.
   ///
   /// In en, this message translates to:
-  /// **'Please log in or sign up to access this feature.'**
+  /// **'Log in or sign up to continue.'**
   String get loginRequiredMessage;
 
   /// No description provided for @loginRequiredAction.
@@ -449,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoUsernameHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your username is yours alone and is how people find you. Use 3 to 30 lowercase letters, numbers, \"_\" or \".\".'**
+  /// **'People can find you by username. Use 3–30 lowercase letters, numbers, \"_\" or \".\".'**
   String get personalInfoUsernameHelp;
 
   /// No description provided for @personalInfoUsernameInvalid.
@@ -473,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoNameHelp.
   ///
   /// In en, this message translates to:
-  /// **'The name other people see. It does not have to be unique, and you can change it any time.'**
+  /// **'The name people see. Change it anytime.'**
   String get personalInfoNameHelp;
 
   /// No description provided for @personalInfoFirstName.
@@ -521,7 +551,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoPhoneHelp.
   ///
   /// In en, this message translates to:
-  /// **'Used for signing in and so buyers can reach you.'**
+  /// **'For signing in and calls from buyers.'**
   String get personalInfoPhoneHelp;
 
   /// No description provided for @personalInfoPhoneTaken.
@@ -560,12 +590,6 @@ abstract class AppLocalizations {
   /// **'Security'**
   String get securityTitle;
 
-  /// No description provided for @securitySectionEncryption.
-  ///
-  /// In en, this message translates to:
-  /// **'End-to-end encryption'**
-  String get securitySectionEncryption;
-
   /// No description provided for @securitySectionSignIn.
   ///
   /// In en, this message translates to:
@@ -577,18 +601,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account'**
   String get securitySectionAccount;
-
-  /// No description provided for @securityChangePin.
-  ///
-  /// In en, this message translates to:
-  /// **'Change chat PIN'**
-  String get securityChangePin;
-
-  /// No description provided for @securityResetKeys.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset encryption keys'**
-  String get securityResetKeys;
 
   /// No description provided for @securityChangePassword.
   ///
@@ -607,132 +619,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deactivate or delete account'**
   String get securityRemoveAccount;
-
-  /// No description provided for @pinHint.
-  ///
-  /// In en, this message translates to:
-  /// **'6-digit PIN'**
-  String get pinHint;
-
-  /// No description provided for @pinSubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Submit'**
-  String get pinSubmit;
-
-  /// No description provided for @pinIncomplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter all 6 digits.'**
-  String get pinIncomplete;
-
-  /// No description provided for @pinTooGuessable.
-  ///
-  /// In en, this message translates to:
-  /// **'Too easy to guess. Choose another PIN.'**
-  String get pinTooGuessable;
-
-  /// No description provided for @pinEnterCurrentTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter current PIN'**
-  String get pinEnterCurrentTitle;
-
-  /// No description provided for @pinEnterCurrentHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your current 6-digit PIN to confirm it is you.'**
-  String get pinEnterCurrentHelp;
-
-  /// No description provided for @pinEnterNewTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter new PIN'**
-  String get pinEnterNewTitle;
-
-  /// No description provided for @pinEnterNewHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'The new PIN will protect your existing keys.'**
-  String get pinEnterNewHelp;
-
-  /// No description provided for @pinForNewKeysTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'PIN for the new keys'**
-  String get pinForNewKeysTitle;
-
-  /// No description provided for @pinForNewKeysHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'This PIN will protect your new keys. You need it to read your chats on another device.'**
-  String get pinForNewKeysHelp;
-
-  /// No description provided for @pinChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat PIN changed.'**
-  String get pinChanged;
-
-  /// No description provided for @pinNoBackup.
-  ///
-  /// In en, this message translates to:
-  /// **'You have no chat PIN yet.'**
-  String get pinNoBackup;
-
-  /// No description provided for @pinLocked.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs. Your PIN is locked for a while; try again later.'**
-  String get pinLocked;
-
-  /// No description provided for @pinFetchFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not reach the key backup. Check your connection.'**
-  String get pinFetchFailed;
-
-  /// No description provided for @pinWrong.
-  ///
-  /// In en, this message translates to:
-  /// **'Incorrect PIN. After 5 wrong tries your PIN locks for a while.'**
-  String get pinWrong;
-
-  /// No description provided for @pinSaveFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not save the new backup. Nothing was changed.'**
-  String get pinSaveFailed;
-
-  /// No description provided for @resetKeysConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset encryption keys?'**
-  String get resetKeysConfirmTitle;
-
-  /// No description provided for @resetKeysConfirmMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current chat PIN first.'**
-  String get resetKeysConfirmMessage;
-
-  /// No description provided for @resetKeysConfirmAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset keys'**
-  String get resetKeysConfirmAction;
-
-  /// No description provided for @resetKeysDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Encryption keys reset.'**
-  String get resetKeysDone;
-
-  /// No description provided for @resetKeysFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not reset the keys. Nothing was changed.'**
-  String get resetKeysFailed;
 
   /// No description provided for @passwordCurrent.
   ///
@@ -791,13 +677,13 @@ abstract class AppLocalizations {
   /// No description provided for @passwordIntro.
   ///
   /// In en, this message translates to:
-  /// **'After the change, every other device signed in to your account will be signed out.'**
+  /// **'Changing your password signs out all other devices.'**
   String get passwordIntro;
 
   /// No description provided for @devicesIntro.
   ///
   /// In en, this message translates to:
-  /// **'These devices are signed in to your account. Sign out any you do not recognise, then change your password.'**
+  /// **'Don’t recognise a device? Sign it out and change your password.'**
   String get devicesIntro;
 
   /// No description provided for @devicesLoadFailed.
@@ -917,7 +803,7 @@ abstract class AppLocalizations {
   /// No description provided for @removeAccountDeactivateBody.
   ///
   /// In en, this message translates to:
-  /// **'Your profile and listings are hidden and you are signed out everywhere. Nothing is deleted: sign in again to bring it all back.'**
+  /// **'Hide your profile and listings, and sign out everywhere. Sign in to restore them.'**
   String get removeAccountDeactivateBody;
 
   /// No description provided for @removeAccountDeactivateAction.
@@ -935,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @removeAccountDeleteBody.
   ///
   /// In en, this message translates to:
-  /// **'Your account, listings, saved properties and chats are permanently deleted. This cannot be undone.'**
+  /// **'Permanently delete your account, listings, saved properties and chats. This cannot be undone.'**
   String get removeAccountDeleteBody;
 
   /// No description provided for @removeAccountDeleteAction.
@@ -995,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @identityConfirmGoogleHelp.
   ///
   /// In en, this message translates to:
-  /// **'You sign in with Google. Confirm with your Google account to continue.'**
+  /// **'Confirm with your Google account to continue.'**
   String get identityConfirmGoogleHelp;
 
   /// No description provided for @identityConfirmGoogleFailed.
@@ -1037,7 +923,7 @@ abstract class AppLocalizations {
   /// No description provided for @authEnterYourEmailAddressToGet.
   ///
   /// In en, this message translates to:
-  /// **'Enter your email address to get the password reset link.'**
+  /// **'Enter your email to reset your password.'**
   String get authEnterYourEmailAddressToGet;
 
   /// No description provided for @authPasswordReset.
@@ -1079,7 +965,7 @@ abstract class AppLocalizations {
   /// No description provided for @authLoginFailedPleaseCheckYourCredentials.
   ///
   /// In en, this message translates to:
-  /// **'Login failed. Please check your credentials and try again.'**
+  /// **'Could not sign in. Check your details and retry.'**
   String get authLoginFailedPleaseCheckYourCredentials;
 
   /// No description provided for @authSuccessfullyLoggedIn.
@@ -1097,7 +983,7 @@ abstract class AppLocalizations {
   /// No description provided for @authEnterTheVerificationCodeWeJust.
   ///
   /// In en, this message translates to:
-  /// **'Enter the verification code we just sent to your email.'**
+  /// **'Enter the code sent to your email.'**
   String get authEnterTheVerificationCodeWeJust;
 
   /// No description provided for @authVerify.
@@ -1133,7 +1019,7 @@ abstract class AppLocalizations {
   /// No description provided for @authEnterYourNewPasswordTwiceBelow.
   ///
   /// In en, this message translates to:
-  /// **'Enter your new password twice below to reset a new password'**
+  /// **'Enter your new password twice.'**
   String get authEnterYourNewPasswordTwiceBelow;
 
   /// No description provided for @authEnterNewPassword.
@@ -1151,7 +1037,7 @@ abstract class AppLocalizations {
   /// No description provided for @authPasswordResetSuccessfullyPleaseLogIn.
   ///
   /// In en, this message translates to:
-  /// **'Password reset successfully! Please log in with your new password.'**
+  /// **'Password reset. Sign in with your new password.'**
   String get authPasswordResetSuccessfullyPleaseLogIn;
 
   /// No description provided for @authWelcomeToTheApp.
@@ -1289,7 +1175,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatArchivedChatsHint.
   ///
   /// In en, this message translates to:
-  /// **'An archived chat comes back to your list when a new message arrives.'**
+  /// **'New messages move chats back to your inbox.'**
   String get chatArchivedChatsHint;
 
   /// No description provided for @chatArchive.
@@ -1337,7 +1223,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatDeleteForMeExplained.
   ///
   /// In en, this message translates to:
-  /// **'It is removed from your chats only. {name} still has it.'**
+  /// **'Only deleted for you. {name} keeps the chat.'**
   String chatDeleteForMeExplained(String name);
 
   /// No description provided for @chatDeleteForBoth.
@@ -1349,7 +1235,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatDeleteForBothExplained.
   ///
   /// In en, this message translates to:
-  /// **'Every message and photo is deleted for both of you. This cannot be undone.'**
+  /// **'Delete all messages and photos for both of you. This cannot be undone.'**
   String get chatDeleteForBothExplained;
 
   /// No description provided for @chatArchivedDone.
@@ -1379,7 +1265,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatActionFailed.
   ///
   /// In en, this message translates to:
-  /// **'That did not work. Check your connection and try again.'**
+  /// **'Could not do that. Check your connection and retry.'**
   String get chatActionFailed;
 
   /// No description provided for @chatThisIsYourOwnAccount.
@@ -1394,12 +1280,6 @@ abstract class AppLocalizations {
   /// **'Sign in to chat, or check your connection.'**
   String get chatSignInToChatOrCheck;
 
-  /// No description provided for @chatMessagesAreEndToEndEncrypted.
-  ///
-  /// In en, this message translates to:
-  /// **'Messages are end-to-end encrypted. Say hello!'**
-  String get chatMessagesAreEndToEndEncrypted;
-
   /// No description provided for @chatNoChatsYet.
   ///
   /// In en, this message translates to:
@@ -1409,7 +1289,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatMessageAPropertyOwnerToStart.
   ///
   /// In en, this message translates to:
-  /// **'Message a property owner to start a conversation.'**
+  /// **'Message an owner to start chatting.'**
   String get chatMessageAPropertyOwnerToStart;
 
   /// No description provided for @chatCouldNotLoadYourChats.
@@ -1435,36 +1315,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Message'**
   String get chatMessage;
-
-  /// No description provided for @chatThisIsNormalIfTheyReinstalled.
-  ///
-  /// In en, this message translates to:
-  /// **'This is normal if they reinstalled the app or reset their keys. If you did not expect it, someone may be trying to read your messages: accept the new key, then compare the security code with them before sharing anything private.'**
-  String get chatThisIsNormalIfTheyReinstalled;
-
-  /// No description provided for @chatSecurityCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Security code'**
-  String get chatSecurityCode;
-
-  /// No description provided for @chatAcceptNewKey.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept new key'**
-  String get chatAcceptNewKey;
-
-  /// No description provided for @chatAvailableOnceYouHaveBothSet.
-  ///
-  /// In en, this message translates to:
-  /// **'Available once you have both set up secure chat.'**
-  String get chatAvailableOnceYouHaveBothSet;
-
-  /// No description provided for @chatTheSecurityCodeIsUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'The security code is unavailable.'**
-  String get chatTheSecurityCodeIsUnavailable;
 
   /// No description provided for @homeCoordinates.
   ///
@@ -1505,7 +1355,7 @@ abstract class AppLocalizations {
   /// No description provided for @homePleaseFillBothXAndY.
   ///
   /// In en, this message translates to:
-  /// **'Please fill both X and Y coordinates for a row, or leave both empty.'**
+  /// **'Enter both X and Y, or leave both blank.'**
   String get homePleaseFillBothXAndY;
 
   /// No description provided for @homeCoordinatesMustBeValidNumbers.
@@ -1517,7 +1367,7 @@ abstract class AppLocalizations {
   /// No description provided for @homePleaseEnterAtLeast3Coordinates.
   ///
   /// In en, this message translates to:
-  /// **'Please enter at least 3 coordinates to form a property.'**
+  /// **'Enter at least 3 coordinates.'**
   String get homePleaseEnterAtLeast3Coordinates;
 
   /// No description provided for @homePreview.
@@ -1553,7 +1403,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeUseUtmFromALandDocument.
   ///
   /// In en, this message translates to:
-  /// **'Use UTM from a land document or enter coordinates manually'**
+  /// **'Use UTM coordinates from your land document or enter them.'**
   String get homeUseUtmFromALandDocument;
 
   /// No description provided for @homeCrsWgs84UtmZone48p.
@@ -1727,7 +1577,7 @@ abstract class AppLocalizations {
   /// No description provided for @propertyTapTheHeartIconOnListings.
   ///
   /// In en, this message translates to:
-  /// **'Tap the heart icon on listings to save them for later.'**
+  /// **'Tap the heart to save a listing.'**
   String get propertyTapTheHeartIconOnListings;
 
   /// No description provided for @propertySavedProperties.
@@ -1745,7 +1595,7 @@ abstract class AppLocalizations {
   /// No description provided for @propertyAddAtLeast3ClearPhotos.
   ///
   /// In en, this message translates to:
-  /// **'Add at least 3 clear photos of the property and surrounding area'**
+  /// **'Add at least 3 clear property photos.'**
   String get propertyAddAtLeast3ClearPhotos;
 
   /// No description provided for @propertyOpenCamera.
@@ -1763,7 +1613,7 @@ abstract class AppLocalizations {
   /// No description provided for @propertyNoPhoneNumber.
   ///
   /// In en, this message translates to:
-  /// **'No phone number was shared for this listing. Try chatting with the owner instead.'**
+  /// **'No phone number. Message the owner instead.'**
   String get propertyNoPhoneNumber;
 
   /// No description provided for @propertyCallFailed.
@@ -1907,7 +1757,7 @@ abstract class AppLocalizations {
   /// No description provided for @insightsEmptyHint.
   ///
   /// In en, this message translates to:
-  /// **'Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.'**
+  /// **'No views yet. Share your listing to reach more people.'**
   String get insightsEmptyHint;
 
   /// No description provided for @propertyShareThisProperty.
@@ -2009,19 +1859,19 @@ abstract class AppLocalizations {
   /// No description provided for @propertyShareNotPublicDraft.
   ///
   /// In en, this message translates to:
-  /// **'Only you can see this listing until it is published. Publish it to share its link and QR code.'**
+  /// **'Publish this listing to share its link or QR code.'**
   String get propertyShareNotPublicDraft;
 
   /// No description provided for @propertyShareNotPublicPending.
   ///
   /// In en, this message translates to:
-  /// **'This listing goes public once its payment is complete. You can share it then.'**
+  /// **'Complete payment before sharing this listing.'**
   String get propertyShareNotPublicPending;
 
   /// No description provided for @propertyShareNotPublicEnded.
   ///
   /// In en, this message translates to:
-  /// **'This listing is no longer public, so its link and QR code cannot be shared.'**
+  /// **'This listing is no longer public and can’t be shared.'**
   String get propertyShareNotPublicEnded;
 
   /// No description provided for @propertyTitleType.
@@ -2396,12 +2246,6 @@ abstract class AppLocalizations {
   /// **'Property deleted'**
   String get propertyPropertyDeleted;
 
-  /// No description provided for @chatSecurityCodeExplanation.
-  ///
-  /// In en, this message translates to:
-  /// **'Messages are end-to-end encrypted. To be sure nobody is in between, compare this code with {name} in person or on a call: it must be the same on both phones.'**
-  String chatSecurityCodeExplanation(String name);
-
   /// No description provided for @commonContinue.
   ///
   /// In en, this message translates to:
@@ -2423,14 +2267,8 @@ abstract class AppLocalizations {
   /// No description provided for @updateRequiredMessage.
   ///
   /// In en, this message translates to:
-  /// **'This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.'**
+  /// **'Update Tilomnov from your app store to keep using it.'**
   String get updateRequiredMessage;
-
-  /// No description provided for @securityForgotPin.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot chat PIN'**
-  String get securityForgotPin;
 
   /// No description provided for @securityCreatePassword.
   ///
@@ -2441,7 +2279,7 @@ abstract class AppLocalizations {
   /// No description provided for @createPasswordIntro.
   ///
   /// In en, this message translates to:
-  /// **'You sign in with Google, so this account has no password yet. Choose one, then confirm with your Google account. You can keep signing in with Google.'**
+  /// **'Set a password and confirm with Google. You can still sign in with Google.'**
   String get createPasswordIntro;
 
   /// No description provided for @createPasswordAction.
@@ -2456,82 +2294,28 @@ abstract class AppLocalizations {
   /// **'Password created.'**
   String get createPasswordDone;
 
-  /// No description provided for @forgotPinTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot your chat PIN?'**
-  String get forgotPinTitle;
-
-  /// No description provided for @forgotPinKeepsHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'This phone still has your chat keys, so nothing is lost. Confirm it is you with your account password, then choose a new PIN.'**
-  String get forgotPinKeepsHistory;
-
-  /// No description provided for @forgotPinLosesHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'This phone does not have your chat keys, and without the PIN they cannot be recovered. After you confirm with your account password and choose a new PIN, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your phones can still open your chats, do this there instead to keep your history.'**
-  String get forgotPinLosesHistory;
-
-  /// No description provided for @forgotPinNeedsPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'You sign in with Google, so create an account password first. It confirms it is you when you choose a new chat PIN.'**
-  String get forgotPinNeedsPassword;
-
-  /// No description provided for @pinForgotHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot your PIN? Go to User > Security > Forgot chat PIN.'**
-  String get pinForgotHint;
-
-  /// No description provided for @chatPinNeeded.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your chat PIN to read and send messages on this phone.'**
-  String get chatPinNeeded;
-
   /// No description provided for @chatOpenFailed.
   ///
   /// In en, this message translates to:
   /// **'Could not open this chat. Check your connection.'**
   String get chatOpenFailed;
 
-  /// No description provided for @pinSetUpHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'You will need this PIN to read your chats on a new phone. Choose one you will remember.'**
-  String get pinSetUpHelp;
-
-  /// No description provided for @chatPinRestoreTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your chat PIN'**
-  String get chatPinRestoreTitle;
-
-  /// No description provided for @chatPinRestoreHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are protected by your 6-digit chat PIN. Enter it to read them on this phone.'**
-  String get chatPinRestoreHelp;
-
   /// No description provided for @devicesImmediateNote.
   ///
   /// In en, this message translates to:
-  /// **'A device you sign out is signed out immediately.'**
+  /// **'Devices are signed out right away.'**
   String get devicesImmediateNote;
 
   /// No description provided for @devicesTooNew.
   ///
   /// In en, this message translates to:
-  /// **'This device signed in less than a day ago, so it cannot sign other devices out yet. Use a device you have been signed in on for longer.'**
+  /// **'Wait 24 hours after signing in to sign out other devices, or use an older device.'**
   String get devicesTooNew;
 
   /// No description provided for @devicesTooNewUntil.
   ///
   /// In en, this message translates to:
-  /// **'For your protection, a device can sign other devices out only after it has been signed in for a day. This device can from {when}. Until then, use a device you have been signed in on for longer.'**
+  /// **'You can sign out other devices from {when}. Until then, use a device signed in earlier.'**
   String devicesTooNewUntil(String when);
 
   /// No description provided for @newSignInTitle.
@@ -2543,7 +2327,7 @@ abstract class AppLocalizations {
   /// No description provided for @newSignInMessage.
   ///
   /// In en, this message translates to:
-  /// **'Another device signed in to your account. If this was not you, sign it out now and change your password.'**
+  /// **'New sign-in. Not you? Sign out that device and change your password.'**
   String get newSignInMessage;
 
   /// No description provided for @newSignInWasMe.
@@ -2591,7 +2375,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDeviceTooNew.
   ///
   /// In en, this message translates to:
-  /// **'This device signed in less than a day ago, so to protect your account it cannot do this yet. Use a device you have been signed in on for longer, or try again tomorrow.'**
+  /// **'Wait 24 hours after signing in, or use a device signed in earlier.'**
   String get accountDeviceTooNew;
 
   /// No description provided for @personalInfoUsernameChecking.
@@ -2615,7 +2399,7 @@ abstract class AppLocalizations {
   /// No description provided for @mediaStillTooLarge.
   ///
   /// In en, this message translates to:
-  /// **'This picture is still too large after compression. Please choose a smaller one.'**
+  /// **'Picture too large. Choose a smaller one.'**
   String get mediaStillTooLarge;
 
   /// No description provided for @mediaUnreadable.
@@ -2663,7 +2447,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchIdleBody.
   ///
   /// In en, this message translates to:
-  /// **'Type a road, village or district to see what is for sale there, or the name of an owner or agency.'**
+  /// **'Search for a place, owner or agency.'**
   String get searchIdleBody;
 
   /// No description provided for @searchNoResultsTitle.
@@ -2729,13 +2513,13 @@ abstract class AppLocalizations {
   /// No description provided for @searchAreaEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Nothing is listed here yet. Move the map or search a wider area.'**
+  /// **'No listings here. Try a wider area.'**
   String get searchAreaEmpty;
 
   /// No description provided for @searchPersonEmpty.
   ///
   /// In en, this message translates to:
-  /// **'This person has no published listings right now.'**
+  /// **'No published listings yet.'**
   String get searchPersonEmpty;
 
   /// No description provided for @searchViewProperty.
@@ -2855,7 +2639,7 @@ abstract class AppLocalizations {
   /// No description provided for @feedEmptyHint.
   ///
   /// In en, this message translates to:
-  /// **'Follow people from their profile to see their new listings here.'**
+  /// **'Follow people to see their new listings.'**
   String get feedEmptyHint;
 
   /// No description provided for @feedExplore.
@@ -3158,173 +2942,17 @@ abstract class AppLocalizations {
   /// **'Draw the property on the map first to measure it.'**
   String get propertyDrawBoundaryFirst;
 
-  /// No description provided for @forgotPinPasswordHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your account password to confirm it is you. Then choose a new chat PIN.'**
-  String get forgotPinPasswordHelp;
-
-  /// No description provided for @forgotPinRecovered.
-  ///
-  /// In en, this message translates to:
-  /// **'Done. Your new chat PIN protects your chats.'**
-  String get forgotPinRecovered;
-
   /// No description provided for @securityPinRequiredNote.
   ///
   /// In en, this message translates to:
   /// **'Your chats are always end-to-end encrypted and protected by your 6-digit chat PIN. You need it to read your chats on a new phone.'**
   String get securityPinRequiredNote;
 
-  /// No description provided for @pinUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock'**
-  String get pinUnlock;
-
-  /// No description provided for @pinChecking.
-  ///
-  /// In en, this message translates to:
-  /// **'Checking your PIN...'**
-  String get pinChecking;
-
-  /// No description provided for @pinWrongTriesLeft.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{Incorrect PIN. 1 try left before your PIN locks for a while.} other{Incorrect PIN. {count} tries left.}}'**
-  String pinWrongTriesLeft(int count);
-
-  /// No description provided for @pinWrongNoCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Incorrect PIN. Please try again.'**
-  String get pinWrongNoCount;
-
-  /// No description provided for @pinLockedFor.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs. Try again in {time}.'**
-  String pinLockedFor(String time);
-
-  /// No description provided for @pinLockedLater.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs. Please try again later.'**
-  String get pinLockedLater;
-
-  /// No description provided for @pinCheckFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not check your PIN. Check your connection and try again.'**
-  String get pinCheckFailed;
-
-  /// No description provided for @chatPinSaving.
-  ///
-  /// In en, this message translates to:
-  /// **'Saving your PIN...'**
-  String get chatPinSaving;
-
   /// No description provided for @chatPasswordChecking.
   ///
   /// In en, this message translates to:
   /// **'Checking your password...'**
   String get chatPasswordChecking;
-
-  /// No description provided for @chatPinSetupSignOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign out'**
-  String get chatPinSetupSignOut;
-
-  /// No description provided for @chatPinCreateTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create your chat PIN'**
-  String get chatPinCreateTitle;
-
-  /// No description provided for @chatPinCreateHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.'**
-  String get chatPinCreateHelp;
-
-  /// No description provided for @chatPinConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm your chat PIN'**
-  String get chatPinConfirmTitle;
-
-  /// No description provided for @chatPinConfirmHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Type the same 6 digits again.'**
-  String get chatPinConfirmHelp;
-
-  /// No description provided for @chatPinMismatch.
-  ///
-  /// In en, this message translates to:
-  /// **'The PINs did not match. Choose your PIN again.'**
-  String get chatPinMismatch;
-
-  /// No description provided for @chatPinSaveFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not save your PIN. Check your connection and try again.'**
-  String get chatPinSaveFailed;
-
-  /// No description provided for @chatPinChooseAnother.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a different PIN'**
-  String get chatPinChooseAnother;
-
-  /// No description provided for @chatPinMoveTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Protect your chats with a PIN'**
-  String get chatPinMoveTitle;
-
-  /// No description provided for @chatPinMoveHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are now protected by a 6-digit chat PIN instead of your account password. Enter your account password once, then choose your PIN.'**
-  String get chatPinMoveHelp;
-
-  /// No description provided for @chatPinStartOverLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Can\'t unlock? Start over'**
-  String get chatPinStartOverLink;
-
-  /// No description provided for @chatPinStartOverTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Start over with new chat keys?'**
-  String get chatPinStartOverTitle;
-
-  /// No description provided for @chatPinStartOverMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'If your password was reset, your old chats cannot be unlocked. Starting over keeps your account, but your earlier messages can no longer be read. This cannot be undone.'**
-  String get chatPinStartOverMessage;
-
-  /// No description provided for @chatPinStartOverAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Start over'**
-  String get chatPinStartOverAction;
-
-  /// No description provided for @chatPinRequiredMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Your messages are end-to-end encrypted. Create a 6-digit chat PIN to protect them before you start chatting.'**
-  String get chatPinRequiredMessage;
-
-  /// No description provided for @chatPinCreateAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Create PIN'**
-  String get chatPinCreateAction;
 
   /// No description provided for @chatLockedTitle.
   ///
@@ -3337,18 +2965,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter PIN'**
   String get chatEnterPinAction;
-
-  /// No description provided for @chatPinLockedTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs'**
-  String get chatPinLockedTitle;
-
-  /// No description provided for @chatPinLockedMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'For your security, entering your chat PIN is paused for a while. Please try again later.'**
-  String get chatPinLockedMessage;
 
   /// No description provided for @authErrEnterName.
   ///
@@ -3815,19 +3431,19 @@ abstract class AppLocalizations {
   /// No description provided for @chatDeleteOwnMessageExplained.
   ///
   /// In en, this message translates to:
-  /// **'For everyone: it is removed for you and {name}, with nothing left in its place. For me: only you stop seeing it.'**
+  /// **'Delete for you and {name}, or just for you.'**
   String chatDeleteOwnMessageExplained(String name);
 
   /// No description provided for @chatDeleteMessageForMeExplained.
   ///
   /// In en, this message translates to:
-  /// **'It is removed for you only. {name} still sees it.'**
+  /// **'Only deleted for you. {name} can still see it.'**
   String chatDeleteMessageForMeExplained(String name);
 
   /// No description provided for @chatEditTooLate.
   ///
   /// In en, this message translates to:
-  /// **'A message can only be edited within an hour of sending it.'**
+  /// **'You can edit messages for up to 1 hour.'**
   String get chatEditTooLate;
 
   /// No description provided for @chatPresenceOnline.
@@ -3866,12 +3482,6 @@ abstract class AppLocalizations {
   /// **'Last seen {date}'**
   String chatLastSeenOn(String date);
 
-  /// No description provided for @chatKeyChangedTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'{name}\'s security key has changed'**
-  String chatKeyChangedTitle(String name);
-
   /// No description provided for @chatEmojiSmileys.
   ///
   /// In en, this message translates to:
@@ -3899,7 +3509,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatPreviewEncrypted.
   ///
   /// In en, this message translates to:
-  /// **'Encrypted message'**
+  /// **'Message unavailable'**
   String get chatPreviewEncrypted;
 
   /// No description provided for @chatPreviewPhoto.
@@ -3935,20 +3545,14 @@ abstract class AppLocalizations {
   /// No description provided for @chatSendRejected.
   ///
   /// In en, this message translates to:
-  /// **'The server did not accept this message. Please try again.'**
+  /// **'Message not accepted. Try again.'**
   String get chatSendRejected;
 
   /// No description provided for @chatSendTooFast.
   ///
   /// In en, this message translates to:
-  /// **'You are sending messages too quickly. Wait a moment.'**
+  /// **'Sending too fast. Wait a moment.'**
   String get chatSendTooFast;
-
-  /// No description provided for @chatSendPinRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Create your chat PIN before sending messages.'**
-  String get chatSendPinRequired;
 
   /// No description provided for @chatSendBlocked.
   ///
@@ -3995,7 +3599,7 @@ abstract class AppLocalizations {
   /// No description provided for @blockConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'They won\'t be able to message or call you, and you\'ll stop following each other. They won\'t be told.'**
+  /// **'They can’t message or call you. You’ll unfollow each other. They won’t be notified.'**
   String get blockConfirmMessage;
 
   /// No description provided for @unblockConfirmTitle.
@@ -4007,7 +3611,7 @@ abstract class AppLocalizations {
   /// No description provided for @unblockConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'You\'ll be able to message each other again. Follows removed by the block don\'t come back.'**
+  /// **'You can message each other again. Follow them again if you want to.'**
   String get unblockConfirmMessage;
 
   /// No description provided for @blockDone.
@@ -4165,24 +3769,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The report wasn\'t sent. Check your connection and try again.'**
   String get reportFailed;
-
-  /// No description provided for @chatSendKeyChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Their security key has changed. Accept the new key to continue.'**
-  String get chatSendKeyChanged;
-
-  /// No description provided for @chatSendNotSetUp.
-  ///
-  /// In en, this message translates to:
-  /// **'Secure chat is not set up on this device.'**
-  String get chatSendNotSetUp;
-
-  /// No description provided for @chatSendPeerNotReady.
-  ///
-  /// In en, this message translates to:
-  /// **'This person has not set up secure chat yet. They can receive messages once they open the app again.'**
-  String get chatSendPeerNotReady;
 
   /// No description provided for @chatSendFileTooLarge.
   ///
@@ -5099,7 +4685,7 @@ abstract class AppLocalizations {
   /// No description provided for @savedSearchesEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No saved searches yet. Set a filter on the map and tap the bookmark to save it.'**
+  /// **'Set map filters, then tap the bookmark to save your search.'**
   String get savedSearchesEmpty;
 
   /// No description provided for @savedSearchesLoadFailed.
@@ -5189,7 +4775,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsAlwaysOn.
   ///
   /// In en, this message translates to:
-  /// **'Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.'**
+  /// **'Calls and sign-in alerts are always on.'**
   String get notificationsAlwaysOn;
 
   /// No description provided for @notificationsBlockedTitle.
@@ -5201,7 +4787,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsBlockedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.'**
+  /// **'Enable notifications in your phone’s settings.'**
   String get notificationsBlockedHelp;
 
   /// No description provided for @chatPreviewNewMessage.
@@ -5219,7 +4805,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsShowTextHelp.
   ///
   /// In en, this message translates to:
-  /// **'Show what a message says in its notification. Anyone who can see your lock screen can read it.'**
+  /// **'Show message text in notifications, including on your lock screen.'**
   String get notificationsShowTextHelp;
 
   /// No description provided for @notificationsLoadFailed.
@@ -5597,7 +5183,7 @@ abstract class AppLocalizations {
   /// No description provided for @addEmailIntro.
   ///
   /// In en, this message translates to:
-  /// **'Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.'**
+  /// **'Add an email for password resets. Confirm with your password.'**
   String get addEmailIntro;
 
   /// No description provided for @addEmailDone.
@@ -5807,7 +5393,7 @@ abstract class AppLocalizations {
   /// No description provided for @planUpgradeIntro.
   ///
   /// In en, this message translates to:
-  /// **'Unlock more property listings with a paid plan.'**
+  /// **'Your plan lasts one month from purchase. Upgrades replace your plan at the full price shown.'**
   String get planUpgradeIntro;
 
   /// No description provided for @planSubscribe.
@@ -5993,7 +5579,7 @@ abstract class AppLocalizations {
   /// No description provided for @publishPlanChooseFirst.
   ///
   /// In en, this message translates to:
-  /// **'Choose how to publish this property.'**
+  /// **'Choose a plan or one-time payment to publish.'**
   String get publishPlanChooseFirst;
 
   /// No description provided for @privacyLastUpdated.
@@ -6005,7 +5591,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyIntro.
   ///
   /// In en, this message translates to:
-  /// **'This page explains what Tilomnov collects when you use the app, why we need it, who else can see it, and the choices you have.'**
+  /// **'What we collect, how we use it, and your choices.'**
   String get privacyIntro;
 
   /// No description provided for @privacyCollectTitle.
@@ -6017,13 +5603,13 @@ abstract class AppLocalizations {
   /// No description provided for @privacyCollectAccount.
   ///
   /// In en, this message translates to:
-  /// **'Account details: your name, username, phone number, email (if you add one) and profile picture.'**
+  /// **'Your name, username, phone number, optional email and profile photo.'**
   String get privacyCollectAccount;
 
   /// No description provided for @privacyCollectListings.
   ///
   /// In en, this message translates to:
-  /// **'What you publish: photos, descriptions, prices, the location and boundary you draw on the map, and the contact number you add.'**
+  /// **'Listing photos, descriptions, prices, map locations, boundaries and contact numbers.'**
   String get privacyCollectListings;
 
   /// No description provided for @privacyCollectLocation.
@@ -6035,13 +5621,13 @@ abstract class AppLocalizations {
   /// No description provided for @privacyCollectActivity.
   ///
   /// In en, this message translates to:
-  /// **'Your activity in the app, such as saved listings, saved searches, follows, and views of your listings, so we can show your insights.'**
+  /// **'Saved listings and searches, follows and listing views, used for insights.'**
   String get privacyCollectActivity;
 
   /// No description provided for @privacyCollectDevice.
   ///
   /// In en, this message translates to:
-  /// **'Device details, such as the app version, phone model, a sign-in device key and a notification token, to keep your account safe and deliver notifications.'**
+  /// **'App version, phone model, sign-in device key and notification token for security and notifications.'**
   String get privacyCollectDevice;
 
   /// No description provided for @privacyUseTitle.
@@ -6083,7 +5669,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyChatBody.
   ///
   /// In en, this message translates to:
-  /// **'Chat messages are end-to-end encrypted: only you and the person you are talking to can read them. Your chat PIN protects the keys on your devices.'**
+  /// **'Messages are encrypted when sent and stored. Only chat participants can access them through the app. Tilomnov manages the encryption keys. No chat PIN is needed. Older encrypted messages are kept but can’t be opened.'**
   String get privacyChatBody;
 
   /// No description provided for @privacyPaymentsTitle.
@@ -6095,7 +5681,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPaymentsBody.
   ///
   /// In en, this message translates to:
-  /// **'Payments are processed by ABA PayWay. We never see or store your card or bank account details. We keep only the transaction reference, amount, status and date, linked to your account.'**
+  /// **'ABA PayWay handles payments. We never see or store card or bank details. We keep the transaction reference, amount, status and date with your account.'**
   String get privacyPaymentsBody;
 
   /// No description provided for @privacySharingTitle.
@@ -6113,13 +5699,13 @@ abstract class AppLocalizations {
   /// No description provided for @privacySharingUsers.
   ///
   /// In en, this message translates to:
-  /// **'Other users see what you publish, your public profile, and the contact number on your listings.'**
+  /// **'Others can see your listings, public profile and listing contact number.'**
   String get privacySharingUsers;
 
   /// No description provided for @privacySharingProviders.
   ///
   /// In en, this message translates to:
-  /// **'Companies that run parts of the app for us: Google (maps, sign-in, phone verification and notifications), Sentry (error reports) and ABA Bank (payments).'**
+  /// **'Google handles maps, sign-in, phone verification and notifications; Sentry handles error reports; ABA Bank handles payments.'**
   String get privacySharingProviders;
 
   /// No description provided for @privacySharingLaw.
@@ -6137,7 +5723,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyCookiesIntro.
   ///
   /// In en, this message translates to:
-  /// **'The app does not use advertising or tracking cookies. It keeps a few things on your phone so it works well:'**
+  /// **'No advertising or tracking cookies. We store these on your phone:'**
   String get privacyCookiesIntro;
 
   /// No description provided for @privacyCookiesSignIn.
@@ -6155,13 +5741,13 @@ abstract class AppLocalizations {
   /// No description provided for @privacyCookiesOffline.
   ///
   /// In en, this message translates to:
-  /// **'Copies of recently viewed pages and pictures, so the app opens quickly and works offline.'**
+  /// **'Recent pages and photos for faster loading and offline use.'**
   String get privacyCookiesOffline;
 
   /// No description provided for @privacyCookiesClear.
   ///
   /// In en, this message translates to:
-  /// **'Signing out removes your sign-in from the phone. Clearing the app\'s storage in your phone\'s settings removes everything else.'**
+  /// **'Sign out to remove your login. Clear app storage in your phone’s settings to remove other stored data.'**
   String get privacyCookiesClear;
 
   /// No description provided for @privacyChoicesTitle.
@@ -6203,7 +5789,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyContactBody.
   ///
   /// In en, this message translates to:
-  /// **'If you have questions about this page or your information, contact the Tilomnov team. When this page changes, we will update the date at the top.'**
+  /// **'Contact the Tilomnov team with questions. The date above shows the latest update.'**
   String get privacyContactBody;
 
   /// No description provided for @paymentSuccessTitle.
@@ -6325,6 +5911,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'One-time listing publish'**
   String get paymentItemOneTimePublish;
+
+  /// No description provided for @paymentSimulationNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Test purchase only. No money will be charged.'**
+  String get paymentSimulationNotice;
+
+  /// No description provided for @planCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel plan'**
+  String get planCancelAction;
+
+  /// No description provided for @planCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off automatic renewal?'**
+  String get planCancelTitle;
+
+  /// No description provided for @planCancelExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan stays active until {date}. No automatic renewal or charge.'**
+  String planCancelExplanation(String date);
+
+  /// No description provided for @planActiveUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan active until {date}.'**
+  String planActiveUntil(String date);
+
+  /// No description provided for @planCancelledUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic renewal is off. Your plan stays active until {date}.'**
+  String planCancelledUntil(String date);
+
+  /// No description provided for @planCancelFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not cancel your plan. Please try again.'**
+  String get planCancelFailed;
+
+  /// No description provided for @planStatusRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your plan. Tap to retry.'**
+  String get planStatusRetry;
 }
 
 class _AppLocalizationsDelegate

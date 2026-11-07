@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -106,7 +107,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(server.created, isEmpty);
-    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.byType(AppDialog), findsOneWidget);
   });
 
   testWidgets('editing offers one Save changes button', (tester) async {

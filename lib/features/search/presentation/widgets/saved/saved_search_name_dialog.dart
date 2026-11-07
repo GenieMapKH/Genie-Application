@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tilomnov/l10n/l10n.dart';
@@ -13,8 +14,8 @@ Future<String?> showSavedSearchNameDialog(
   required String initialName,
   String? help,
 }) {
-  return showDialog<String>(
-    context: context,
+  return AppDialog.show<String>(
+    context,
     builder: (_) =>
         _NameDialog(title: title, initialName: initialName, help: help),
   );
@@ -57,7 +58,9 @@ class _NameDialogState extends State<_NameDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return AlertDialog(
+    return AppDialog.custom(
+      icon: Icons.bookmark_outline,
+      tone: AppDialogTone.neutral,
       title: Text(widget.title),
       content: Column(
         mainAxisSize: MainAxisSize.min,

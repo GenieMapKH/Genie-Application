@@ -347,13 +347,13 @@ void main() {
       expect(_feedRequests(server), hasLength(1), reason: 'just read');
 
       nav.setIndex(MainTab.chat);
-      clock.now = clock.now.add(const Duration(minutes: 4));
+      clock.now = clock.now.add(const Duration(seconds: 20));
       nav.setIndex(MainTab.feed);
       await _settle(tester);
       expect(_feedRequests(server), hasLength(1), reason: '4 minutes old');
 
       nav.setIndex(MainTab.chat);
-      clock.now = clock.now.add(const Duration(minutes: 2));
+      clock.now = clock.now.add(const Duration(seconds: 15));
       nav.setIndex(MainTab.feed);
       await _settle(tester);
       expect(_feedRequests(server), hasLength(2), reason: '6 minutes old');

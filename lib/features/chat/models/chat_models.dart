@@ -171,8 +171,7 @@ class ChatConversation {
   }
 }
 
-/// A message as the server stores and delivers it. Only the two people in
-/// the conversation can turn it into a [ChatMessage].
+/// The authenticated API transport envelope of a message.
 class EncryptedMessage {
   final String id;
   final String senderId;

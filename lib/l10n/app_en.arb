@@ -1,6 +1,10 @@
 {
+  "callInProgress": "Call in progress",
+  "chatManagedSecurity": "Messages are encrypted when sent and stored.",
+  "callMinimize": "Minimize call",
+  "callReturn": "Return to call",
+  "propertyUnavailable": "Unavailable",
   "@@locale": "en",
-
   "commonCancel": "Cancel",
   "commonSave": "Save",
   "commonRetry": "Retry",
@@ -8,21 +12,20 @@
   "commonSaved": "Saved",
   "commonSomethingWentWrong": "Something went wrong. Please try again.",
   "commonTooManyAttempts": "Too many attempts. Please try again later.",
-  "commonOffline": "You are offline. Connect to the internet for updates.",
+  "commonOffline": "You’re offline. Connect for updates.",
   "connectionOffline": "No internet connection",
   "connectionWaiting": "Waiting for network…",
   "connectionWeak": "Slow connection",
   "connectionWeakDetail": "Loading may take longer",
   "connectionRestored": "Back online",
   "loadFailureOfflineTitle": "No internet connection",
-  "loadFailureOfflineBody": "Check your Wi-Fi or mobile data. This page will load by itself when you are back online.",
+  "loadFailureOfflineBody": "Check your internet. This page will reload when you reconnect.",
   "loadFailureSlowTitle": "Your connection is too slow",
-  "loadFailureSlowBody": "This page took too long to load. Your signal may be weak: move to a better spot or try again.",
-  "loadFailureServerBody": "Our server is having trouble right now. Please try again in a moment.",
+  "loadFailureSlowBody": "Loading took too long. Check your connection and retry.",
+  "loadFailureServerBody": "Something went wrong. Try again shortly.",
   "failureOffline": "No internet connection. Check your Wi-Fi or mobile data and try again.",
   "failureSlow": "Your connection is too slow. Move to a better spot and try again.",
-  "failureServer": "Our server is having trouble right now. Please try again in a moment.",
-
+  "failureServer": "Something went wrong. Try again shortly.",
   "navExplore": "Explore",
   "navSaved": "Saved",
   "navChat": "Chat",
@@ -30,9 +33,8 @@
   "navListings": "Listings",
   "navUser": "User",
   "loginRequiredTitle": "Account Required",
-  "loginRequiredMessage": "Please log in or sign up to access this feature.",
+  "loginRequiredMessage": "Log in or sign up to continue.",
   "loginRequiredAction": "Login / Sign Up",
-
   "accountTitle": "Account",
   "accountLoadFailed": "Could not load profile",
   "accountSectionAccount": "Account",
@@ -49,7 +51,6 @@
   "avatarTakePhoto": "Take photo",
   "avatarChooseFromStorage": "Choose from storage",
   "avatarSyncFromGoogle": "Sync from Google Account",
-
   "appearanceTitle": "Appearance",
   "appearanceSystem": "System default",
   "appearanceLight": "Light",
@@ -57,17 +58,16 @@
   "languageTitle": "Language",
   "glassNavigationTitle": "Glass navigation",
   "glassNavigationSubtitle": "Match your phone's see-through bars",
-
   "personalInfoTitle": "Personal information",
   "personalInfoSectionProfile": "Profile",
   "personalInfoSectionDetails": "Personal details",
   "personalInfoSectionContact": "Contact",
   "personalInfoUsername": "Username",
-  "personalInfoUsernameHelp": "Your username is yours alone and is how people find you. Use 3 to 30 lowercase letters, numbers, \"_\" or \".\".",
+  "personalInfoUsernameHelp": "People can find you by username. Use 3–30 lowercase letters, numbers, \"_\" or \".\".",
   "personalInfoUsernameInvalid": "Use 3 to 30 lowercase letters, numbers, \"_\" or \".\".",
   "personalInfoUsernameTaken": "This username is already taken.",
   "personalInfoName": "Name",
-  "personalInfoNameHelp": "The name other people see. It does not have to be unique, and you can change it any time.",
+  "personalInfoNameHelp": "The name people see. Change it anytime.",
   "personalInfoFirstName": "First name",
   "personalInfoLastName": "Last name",
   "personalInfoSex": "Sex",
@@ -75,7 +75,7 @@
   "personalInfoSexFemale": "Female",
   "personalInfoSexOther": "Other",
   "personalInfoPhone": "Phone number",
-  "personalInfoPhoneHelp": "Used for signing in and so buyers can reach you.",
+  "personalInfoPhoneHelp": "For signing in and calls from buyers.",
   "personalInfoPhoneTaken": "This phone number is already used by another account.",
   "personalInfoPhoneInvalid": "Enter a valid phone number, for example 012 345 678.",
   "personalInfoEmail": "Email",
@@ -83,41 +83,18 @@
   "personalInfoEdit": "Edit {field}",
   "@personalInfoEdit": {
     "description": "Title of the dialog that edits one field, e.g. \"Edit Username\".",
-    "placeholders": { "field": { "type": "String" } }
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
   },
-
   "securityTitle": "Security",
-  "securitySectionEncryption": "End-to-end encryption",
   "securitySectionSignIn": "Sign-in",
   "securitySectionAccount": "Account",
-  "securityChangePin": "Change chat PIN",
-  "securityResetKeys": "Reset encryption keys",
   "securityChangePassword": "Change password",
   "securityDevices": "Logged-in devices",
   "securityRemoveAccount": "Deactivate or delete account",
-
-  "pinHint": "6-digit PIN",
-  "pinSubmit": "Submit",
-  "pinIncomplete": "Enter all 6 digits.",
-  "pinTooGuessable": "Too easy to guess. Choose another PIN.",
-  "pinEnterCurrentTitle": "Enter current PIN",
-  "pinEnterCurrentHelp": "Enter your current 6-digit PIN to confirm it is you.",
-  "pinEnterNewTitle": "Enter new PIN",
-  "pinEnterNewHelp": "The new PIN will protect your existing keys.",
-  "pinForNewKeysTitle": "PIN for the new keys",
-  "pinForNewKeysHelp": "This PIN will protect your new keys. You need it to read your chats on another device.",
-  "pinChanged": "Chat PIN changed.",
-  "pinNoBackup": "You have no chat PIN yet.",
-  "pinLocked": "Too many wrong PINs. Your PIN is locked for a while; try again later.",
-  "pinFetchFailed": "Could not reach the key backup. Check your connection.",
-  "pinWrong": "Incorrect PIN. After 5 wrong tries your PIN locks for a while.",
-  "pinSaveFailed": "Could not save the new backup. Nothing was changed.",
-  "resetKeysConfirmTitle": "Reset encryption keys?",
-  "resetKeysConfirmMessage": "New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current chat PIN first.",
-  "resetKeysConfirmAction": "Reset keys",
-  "resetKeysDone": "Encryption keys reset.",
-  "resetKeysFailed": "Could not reset the keys. Nothing was changed.",
-
   "passwordCurrent": "Current password",
   "passwordNew": "New password",
   "passwordConfirm": "Confirm new password",
@@ -127,9 +104,8 @@
   "passwordSameAsCurrent": "Choose a password different from the current one.",
   "passwordIncorrect": "The current password is incorrect.",
   "passwordChanged": "Password changed. Your other devices were signed out.",
-  "passwordIntro": "After the change, every other device signed in to your account will be signed out.",
-
-  "devicesIntro": "These devices are signed in to your account. Sign out any you do not recognise, then change your password.",
+  "passwordIntro": "Changing your password signs out all other devices.",
+  "devicesIntro": "Don’t recognise a device? Sign it out and change your password.",
   "devicesLoadFailed": "Could not load your devices",
   "devicesEmpty": "No other devices are signed in.",
   "devicesThisDevice": "This device",
@@ -137,65 +113,93 @@
   "devicesUnknownLocation": "Unknown location",
   "devicesActiveNow": "Active now",
   "devicesLastUsedMinutes": "{count, plural, =1{Last used 1 minute ago} other{Last used {count} minutes ago}}",
-  "@devicesLastUsedMinutes": { "placeholders": { "count": { "type": "int" } } },
+  "@devicesLastUsedMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "devicesLastUsedHours": "{count, plural, =1{Last used 1 hour ago} other{Last used {count} hours ago}}",
-  "@devicesLastUsedHours": { "placeholders": { "count": { "type": "int" } } },
+  "@devicesLastUsedHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "devicesLastUsedDays": "{count, plural, =1{Last used yesterday} other{Last used {count} days ago}}",
-  "@devicesLastUsedDays": { "placeholders": { "count": { "type": "int" } } },
+  "@devicesLastUsedDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "devicesSignedInOn": "Signed in {date}",
-  "@devicesSignedInOn": { "placeholders": { "date": { "type": "String" } } },
+  "@devicesSignedInOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "devicesSignOut": "Sign out",
   "devicesSignOutAll": "Sign out of all devices",
   "devicesSignOutConfirmTitle": "Sign out this device?",
   "devicesSignOutConfirmMessage": "{device} will have to sign in again.",
-  "@devicesSignOutConfirmMessage": { "placeholders": { "device": { "type": "String" } } },
+  "@devicesSignOutConfirmMessage": {
+    "placeholders": {
+      "device": {
+        "type": "String"
+      }
+    }
+  },
   "devicesSignOutAllConfirmTitle": "Sign out of all devices?",
   "devicesSignOutAllConfirmMessage": "Every device, including this one, will have to sign in again.",
   "devicesSignedOut": "Device signed out.",
   "devicesSignOutFailed": "Could not sign the device out. Please try again.",
-
   "removeAccountDeactivateTitle": "Deactivate account",
-  "removeAccountDeactivateBody": "Your profile and listings are hidden and you are signed out everywhere. Nothing is deleted: sign in again to bring it all back.",
+  "removeAccountDeactivateBody": "Hide your profile and listings, and sign out everywhere. Sign in to restore them.",
   "removeAccountDeactivateAction": "Deactivate account",
   "removeAccountDeleteTitle": "Delete account",
-  "removeAccountDeleteBody": "Your account, listings, saved properties and chats are permanently deleted. This cannot be undone.",
+  "removeAccountDeleteBody": "Permanently delete your account, listings, saved properties and chats. This cannot be undone.",
   "removeAccountDeleteAction": "Delete account",
   "removeAccountDeleteConfirmAction": "Delete forever",
   "removeAccountDeactivated": "Your account was deactivated.",
   "removeAccountDeleted": "Your account was deleted.",
-
   "identityConfirmPasswordHelp": "Enter your password to continue.",
   "identityConfirmPassword": "Password",
   "identityConfirmPasswordRequired": "Enter your password.",
   "identityConfirmPasswordWrong": "The password is incorrect.",
   "identityConfirmWithGoogle": "Confirm with Google",
-  "identityConfirmGoogleHelp": "You sign in with Google. Confirm with your Google account to continue.",
+  "identityConfirmGoogleHelp": "Confirm with your Google account to continue.",
   "identityConfirmGoogleFailed": "Could not confirm your Google account. Please try again.",
   "identityConfirmOr": "or",
   "authCreateAnAccount": "Create an account",
   "authAccountCreatedSuccessfullyPleaseLogin": "Account created successfully! Please login.",
   "authSuccessfullyAuthenticated": "Successfully authenticated!",
   "authForgotPassword": "Forgot Password",
-  "authEnterYourEmailAddressToGet": "Enter your email address to get the password reset link.",
+  "authEnterYourEmailAddressToGet": "Enter your email to reset your password.",
   "authPasswordReset": "Password Reset",
   "authCreateAAccount": "Create a Account",
   "authEmailAddress": "Email Address",
   "authExampleGmailCom": "example@gmail.com",
   "authVerificationCodeSentToYourEmail": "Verification code sent to your email",
   "authPhoneNumber": "Phone Number",
-  "authLoginFailedPleaseCheckYourCredentials": "Login failed. Please check your credentials and try again.",
+  "authLoginFailedPleaseCheckYourCredentials": "Could not sign in. Check your details and retry.",
   "authSuccessfullyLoggedIn": "Successfully logged in!",
   "authOtpVerification": "OTP Verification",
-  "authEnterTheVerificationCodeWeJust": "Enter the verification code we just sent to your email.",
+  "authEnterTheVerificationCodeWeJust": "Enter the code sent to your email.",
   "authVerify": "Verify",
   "authResendOtp": "Resend OTP",
   "authPleaseEnterAll6Digits": "Please enter all 6 digits",
   "authNewVerificationCodeSent": "New verification code sent",
   "authResetPassword": "Reset Password",
-  "authEnterYourNewPasswordTwiceBelow": "Enter your new password twice below to reset a new password",
+  "authEnterYourNewPasswordTwiceBelow": "Enter your new password twice.",
   "authEnterNewPassword": "Enter new password",
   "authReEnterNewPassword": "Re-enter new password",
-  "authPasswordResetSuccessfullyPleaseLogIn": "Password reset successfully! Please log in with your new password.",
+  "authPasswordResetSuccessfullyPleaseLogIn": "Password reset. Sign in with your new password.",
   "authWelcomeToTheApp": "Welcome to the app",
   "authFindAndSharePropertiesWithExact": "Find and share properties with exact map location",
   "authLogin": "Login",
@@ -218,7 +222,7 @@
   "chatMoreOptions": "More options",
   "chatArchivedChats": "Archived chats",
   "chatNoArchivedChats": "No archived chats",
-  "chatArchivedChatsHint": "An archived chat comes back to your list when a new message arrives.",
+  "chatArchivedChatsHint": "New messages move chats back to your inbox.",
   "chatArchive": "Archive",
   "chatUnarchive": "Unarchive",
   "chatDelete": "Delete",
@@ -226,45 +230,51 @@
   "chatUnarchiveChat": "Move back to chats",
   "chatDeleteChat": "Delete chat",
   "chatDeleteChatQuestion": "Delete this chat?",
-  "chatDeleteForMeExplained": "It is removed from your chats only. {name} still has it.",
-  "@chatDeleteForMeExplained": {"placeholders": {"name": {"type": "String"}}},
+  "chatDeleteForMeExplained": "Only deleted for you. {name} keeps the chat.",
+  "@chatDeleteForMeExplained": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "chatDeleteForBoth": "Also delete for {name}",
-  "@chatDeleteForBoth": {"placeholders": {"name": {"type": "String"}}},
-  "chatDeleteForBothExplained": "Every message and photo is deleted for both of you. This cannot be undone.",
+  "@chatDeleteForBoth": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDeleteForBothExplained": "Delete all messages and photos for both of you. This cannot be undone.",
   "chatArchivedDone": "Chat archived",
   "chatUnarchivedDone": "Chat moved back to your chats",
   "chatDeletedDone": "Chat deleted",
   "chatUndo": "Undo",
-  "chatActionFailed": "That did not work. Check your connection and try again.",
+  "chatActionFailed": "Could not do that. Check your connection and retry.",
   "chatThisIsYourOwnAccount": "This is your own account.",
   "chatSignInToChatOrCheck": "Sign in to chat, or check your connection.",
-  "chatMessagesAreEndToEndEncrypted": "Messages are end-to-end encrypted. Say hello!",
   "chatNoChatsYet": "No chats yet!",
-  "chatMessageAPropertyOwnerToStart": "Message a property owner to start a conversation.",
+  "chatMessageAPropertyOwnerToStart": "Message an owner to start chatting.",
   "chatCouldNotLoadYourChats": "Could not load your chats.",
   "chatPhotoLibrary": "Photo library",
   "chatCamera": "Camera",
   "chatMessage": "Message",
-  "chatThisIsNormalIfTheyReinstalled": "This is normal if they reinstalled the app or reset their keys. If you did not expect it, someone may be trying to read your messages: accept the new key, then compare the security code with them before sharing anything private.",
-  "chatSecurityCode": "Security code",
-  "chatAcceptNewKey": "Accept new key",
-  "chatAvailableOnceYouHaveBothSet": "Available once you have both set up secure chat.",
-  "chatTheSecurityCodeIsUnavailable": "The security code is unavailable.",
   "homeCoordinates": "Coordinates",
   "homeDraw": "Draw",
   "homeSearchByAreaRoadVillage": "Search by area, road, village...",
   "homeNoCoordinatesFoundPleaseTryAgain": "No coordinates found. Please try again.",
   "homeCropDocument": "Crop Document",
   "homeNoCoordinatesFoundInTheImage": "No coordinates found in the image.",
-  "homePleaseFillBothXAndY": "Please fill both X and Y coordinates for a row, or leave both empty.",
+  "homePleaseFillBothXAndY": "Enter both X and Y, or leave both blank.",
   "homeCoordinatesMustBeValidNumbers": "Coordinates must be valid numbers.",
-  "homePleaseEnterAtLeast3Coordinates": "Please enter at least 3 coordinates to form a property.",
+  "homePleaseEnterAtLeast3Coordinates": "Enter at least 3 coordinates.",
   "homePreview": "Preview",
   "homeLocateProperty": "Locate Property",
   "homeEnterCoordinatesManually": "Enter Coordinates Manually",
   "homeTypeUtmZoneEastingXAnd": "Type UTM Zone, Easting (X), and Northing (Y).",
   "homeEnterCoordinates": "Enter Coordinates",
-  "homeUseUtmFromALandDocument": "Use UTM from a land document or enter coordinates manually",
+  "homeUseUtmFromALandDocument": "Use UTM coordinates from your land document or enter them.",
   "homeCrsWgs84UtmZone48p": "CRS: WGS84 / UTM Zone 48P",
   "homeScanUtmFromDocument": "Scan UTM from Document",
   "homeUseCameraToDetectCoordinates": "Use camera to detect coordinates",
@@ -293,13 +303,13 @@
   "propertySortBy": "Sort by",
   "propertyFailedToLoadSavedProperties": "Failed to load saved properties",
   "propertyYouHavenTSavedAnyProperties": "You haven't saved any properties yet.",
-  "propertyTapTheHeartIconOnListings": "Tap the heart icon on listings to save them for later.",
+  "propertyTapTheHeartIconOnListings": "Tap the heart to save a listing.",
   "propertySavedProperties": "Saved Properties",
   "propertySortOrder": "Sort Order",
-  "propertyAddAtLeast3ClearPhotos": "Add at least 3 clear photos of the property and surrounding area",
+  "propertyAddAtLeast3ClearPhotos": "Add at least 3 clear property photos.",
   "propertyOpenCamera": "Open camera",
   "propertyCallNow": "Call Now",
-  "propertyNoPhoneNumber": "No phone number was shared for this listing. Try chatting with the owner instead.",
+  "propertyNoPhoneNumber": "No phone number. Message the owner instead.",
   "propertyCallFailed": "The phone app could not be opened.",
   "profileSignInForContact": "Sign in to see their phone and email.",
   "propertyCannotChatOwnerInformationMissing": "Cannot chat: owner information missing.",
@@ -320,14 +330,41 @@
   "insightsMeasureSaves": "Saves",
   "insightsMeasureLeads": "Leads",
   "insightsViewers": "{count, plural, =1{1 new viewer} other{{count} new viewers}}",
-  "@insightsViewers": {"placeholders": {"count": {"type": "int"}}},
+  "@insightsViewers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "insightsSaves": "{count, plural, =1{1 new save} other{{count} new saves}}",
-  "@insightsSaves": {"placeholders": {"count": {"type": "int"}}},
+  "@insightsSaves": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "insightsLeads": "{count, plural, =1{1 new lead} other{{count} new leads}}",
-  "@insightsLeads": {"placeholders": {"count": {"type": "int"}}},
+  "@insightsLeads": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "insightsThisWeek": "This week: {thisWeek}. The week before: {lastWeek}.",
-  "@insightsThisWeek": {"placeholders": {"thisWeek": {"type": "String"}, "lastWeek": {"type": "int"}}},
-  "insightsEmptyHint": "Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.",
+  "@insightsThisWeek": {
+    "placeholders": {
+      "thisWeek": {
+        "type": "String"
+      },
+      "lastWeek": {
+        "type": "int"
+      }
+    }
+  },
+  "insightsEmptyHint": "No views yet. Share your listing to reach more people.",
   "propertyShareThisProperty": "Share This Property",
   "propertyScanThisQrCodeToView": "Scan this QR code to view this property on your phone",
   "propertyShare": "Share",
@@ -344,9 +381,9 @@
   "propertyShareMessageSeeOnMap": "See the photos and exact location on the map:",
   "propertyShareMessageFooter": "Shared from Tilomnov, land and homes on the map.",
   "propertyShareCaptionCopied": "Caption copied: paste it if the app leaves it out",
-  "propertyShareNotPublicDraft": "Only you can see this listing until it is published. Publish it to share its link and QR code.",
-  "propertyShareNotPublicPending": "This listing goes public once its payment is complete. You can share it then.",
-  "propertyShareNotPublicEnded": "This listing is no longer public, so its link and QR code cannot be shared.",
+  "propertyShareNotPublicDraft": "Publish this listing to share its link or QR code.",
+  "propertyShareNotPublicPending": "Complete payment before sharing this listing.",
+  "propertyShareNotPublicEnded": "This listing is no longer public and can’t be shared.",
   "propertyTitleType": "Title Type",
   "propertyBedrooms": "Bedrooms",
   "propertyNumberOfBedrooms": "Number of bedrooms",
@@ -409,33 +446,27 @@
   "propertyMoveToDraft": "Move to Draft",
   "propertyDeleteProperty": "Delete Property",
   "propertyPropertyDeleted": "Property deleted",
-  "chatSecurityCodeExplanation": "Messages are end-to-end encrypted. To be sure nobody is in between, compare this code with {name} in person or on a call: it must be the same on both phones.",
-  "@chatSecurityCodeExplanation": {"placeholders": {"name": {"type": "String"}}},
   "commonContinue": "Continue",
   "sessionEnded": "You were signed out of this device.",
   "updateRequiredTitle": "Update required",
-  "updateRequiredMessage": "This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.",
-  "securityForgotPin": "Forgot chat PIN",
+  "updateRequiredMessage": "Update Tilomnov from your app store to keep using it.",
   "securityCreatePassword": "Create password",
-  "createPasswordIntro": "You sign in with Google, so this account has no password yet. Choose one, then confirm with your Google account. You can keep signing in with Google.",
+  "createPasswordIntro": "Set a password and confirm with Google. You can still sign in with Google.",
   "createPasswordAction": "Confirm with Google and create",
   "createPasswordDone": "Password created.",
-  "forgotPinTitle": "Forgot your chat PIN?",
-  "forgotPinKeepsHistory": "This phone still has your chat keys, so nothing is lost. Confirm it is you with your account password, then choose a new PIN.",
-  "forgotPinLosesHistory": "This phone does not have your chat keys, and without the PIN they cannot be recovered. After you confirm with your account password and choose a new PIN, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your phones can still open your chats, do this there instead to keep your history.",
-  "forgotPinNeedsPassword": "You sign in with Google, so create an account password first. It confirms it is you when you choose a new chat PIN.",
-  "pinForgotHint": "Forgot your PIN? Go to User > Security > Forgot chat PIN.",
-  "chatPinNeeded": "Enter your chat PIN to read and send messages on this phone.",
   "chatOpenFailed": "Could not open this chat. Check your connection.",
-  "pinSetUpHelp": "You will need this PIN to read your chats on a new phone. Choose one you will remember.",
-  "chatPinRestoreTitle": "Enter your chat PIN",
-  "chatPinRestoreHelp": "Your chats are protected by your 6-digit chat PIN. Enter it to read them on this phone.",
-  "devicesImmediateNote": "A device you sign out is signed out immediately.",
-  "devicesTooNew": "This device signed in less than a day ago, so it cannot sign other devices out yet. Use a device you have been signed in on for longer.",
-  "devicesTooNewUntil": "For your protection, a device can sign other devices out only after it has been signed in for a day. This device can from {when}. Until then, use a device you have been signed in on for longer.",
-  "@devicesTooNewUntil": {"placeholders": {"when": {"type": "String"}}},
+  "devicesImmediateNote": "Devices are signed out right away.",
+  "devicesTooNew": "Wait 24 hours after signing in to sign out other devices, or use an older device.",
+  "devicesTooNewUntil": "You can sign out other devices from {when}. Until then, use a device signed in earlier.",
+  "@devicesTooNewUntil": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "newSignInTitle": "New sign-in to your account",
-  "newSignInMessage": "Another device signed in to your account. If this was not you, sign it out now and change your password.",
+  "newSignInMessage": "New sign-in. Not you? Sign out that device and change your password.",
   "newSignInWasMe": "It was me",
   "newSignInReview": "Review devices",
   "avatarRemove": "Remove photo",
@@ -443,12 +474,18 @@
   "avatarFailed": "Could not change the profile picture. Please try again.",
   "avatarSyncHelp": "Use your Google account's photo and keep it up to date.",
   "avatarNoGooglePhoto": "Your Google account has no photo.",
-  "accountDeviceTooNew": "This device signed in less than a day ago, so to protect your account it cannot do this yet. Use a device you have been signed in on for longer, or try again tomorrow.",
+  "accountDeviceTooNew": "Wait 24 hours after signing in, or use a device signed in earlier.",
   "personalInfoUsernameChecking": "Checking…",
   "personalInfoUsernameAvailable": "This username is available.",
   "mediaSourceTooLarge": "This file is larger than {limitMb} MB and cannot be uploaded.",
-  "@mediaSourceTooLarge": {"placeholders": {"limitMb": {"type": "int"}}},
-  "mediaStillTooLarge": "This picture is still too large after compression. Please choose a smaller one.",
+  "@mediaSourceTooLarge": {
+    "placeholders": {
+      "limitMb": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaStillTooLarge": "Picture too large. Choose a smaller one.",
   "mediaUnreadable": "This picture could not be read. Please choose another one.",
   "searchFieldHint": "Search area, road, listing or person",
   "searchClear": "Clear search",
@@ -456,9 +493,15 @@
   "searchSectionListings": "Listings",
   "searchSectionPeople": "People & agencies",
   "searchIdleTitle": "Find a place, a listing or a person",
-  "searchIdleBody": "Type a road, village or district to see what is for sale there, or the name of an owner or agency.",
+  "searchIdleBody": "Search for a place, owner or agency.",
   "searchNoResultsTitle": "No results for “{query}”",
-  "@searchNoResultsTitle": {"placeholders": {"query": {"type": "String"}}},
+  "@searchNoResultsTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
   "searchNoResultsBody": "Check the spelling, or try a nearby road or district.",
   "searchFailureOffline": "You are offline. Check your connection and try again.",
   "searchFailureTooManyRequests": "Too many searches. Please wait a moment and try again.",
@@ -466,13 +509,31 @@
   "searchFailureNotFound": "This place could not be found. Try another result.",
   "searchFailureUnknown": "Something went wrong. Please try again.",
   "searchListingCount": "{count, plural, =0{No listings} =1{1 listing} other{{count} listings}}",
-  "@searchListingCount": {"placeholders": {"count": {"type": "int"}}},
+  "@searchListingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "searchPropertiesInArea": "{count, plural, =0{No properties here yet} =1{1 property in this area} other{{count} properties in this area}}",
-  "@searchPropertiesInArea": {"placeholders": {"count": {"type": "int"}}},
+  "@searchPropertiesInArea": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "searchPropertiesByPerson": "{count, plural, =0{No published listings} =1{1 published listing} other{{count} published listings}}",
-  "@searchPropertiesByPerson": {"placeholders": {"count": {"type": "int"}}},
-  "searchAreaEmpty": "Nothing is listed here yet. Move the map or search a wider area.",
-  "searchPersonEmpty": "This person has no published listings right now.",
+  "@searchPropertiesByPerson": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchAreaEmpty": "No listings here. Try a wider area.",
+  "searchPersonEmpty": "No published listings yet.",
   "searchViewProperty": "View property",
   "searchCloseResults": "Close search results",
   "searchRecentTitle": "Recent searches",
@@ -480,7 +541,13 @@
   "searchHistoryRemove": "Remove from history",
   "searchHistoryRemoveFailed": "This search could not be removed. Please try again.",
   "profileMemberSince": "Member since {date}",
-  "@profileMemberSince": {"placeholders": {"date": {"type": "String"}}},
+  "@profileMemberSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "profileListingsTitle": "Listings",
   "profileViewOnMap": "View on map",
   "profileListingsStat": "Listings",
@@ -489,21 +556,39 @@
   "profileFollowersStat": "Followers",
   "profileFollowingStat": "Following",
   "profileFollowLimit": "You can follow up to {count} people. Unfollow someone to follow more.",
-  "@profileFollowLimit": {"placeholders": {"count": {"type": "int"}}},
+  "@profileFollowLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "profileFollowFailed": "Following could not be changed. Please try again.",
   "navFeed": "Feed",
   "feedTitle": "Feed",
   "feedEmptyTitle": "Your feed is empty",
-  "feedEmptyHint": "Follow people from their profile to see their new listings here.",
+  "feedEmptyHint": "Follow people to see their new listings.",
   "feedExplore": "Explore listings",
   "feedLoadFailed": "Your feed could not be loaded.",
   "feedListedOn": "Listed {date}",
-  "@feedListedOn": {"placeholders": {"date": {"type": "String"}}},
+  "@feedListedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "profileContactTitle": "Contact",
   "profilePhone": "Phone",
   "profileEmail": "Email",
   "profileCopied": "{label} copied",
-  "@profileCopied": {"placeholders": {"label": {"type": "String"}}},
+  "@profileCopied": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "profileCopy": "Copy",
   "profileChat": "Chat",
   "chatTabProfile": "Profile",
@@ -512,16 +597,34 @@
   "profileNoContact": "No contact details shared.",
   "propertySavePhoto": "Save photo",
   "propertyPhotoLimit": "A listing can have up to {count} photos.",
-  "@propertyPhotoLimit": {"placeholders": {"count": {"type": "int"}}},
+  "@propertyPhotoLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyEditProperty": "Edit Property",
   "propertySaveChanges": "Save Changes",
   "propertySavingChanges": "Saving changes...",
   "propertyChangesSaved": "Changes saved.",
   "propertyCouldNotSaveChanges": "Could not save your changes. Please try again.",
   "propertyCurrentPhotos": "Current photos ({count})",
-  "@propertyCurrentPhotos": {"placeholders": {"count": {"type": "int"}}},
+  "@propertyCurrentPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyRestoreRemovedPhotos": "Undo remove ({count})",
-  "@propertyRestoreRemovedPhotos": {"placeholders": {"count": {"type": "int"}}},
+  "@propertyRestoreRemovedPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyRemovePhoto": "Remove photo",
   "propertyNearby": "What's nearby",
   "propertyNearbyCaption": "Closest by road from this property",
@@ -529,20 +632,50 @@
   "propertyNearbyHospitals": "Hospitals",
   "propertyNearbySchools": "Schools",
   "propertyNearbyNoneWithin": "None found within {km} km",
-  "@propertyNearbyNoneWithin": {"placeholders": {"km": {"type": "int"}}},
+  "@propertyNearbyNoneWithin": {
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
   "propertyDistanceKm": "{distance} km",
-  "@propertyDistanceKm": {"placeholders": {"distance": {"type": "String"}}},
+  "@propertyDistanceKm": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
   "propertyDistanceM": "{distance} m",
-  "@propertyDistanceM": {"placeholders": {"distance": {"type": "int"}}},
+  "@propertyDistanceM": {
+    "placeholders": {
+      "distance": {
+        "type": "int"
+      }
+    }
+  },
   "propertyStraightLine": "{distance} straight line",
-  "@propertyStraightLine": {"placeholders": {"distance": {"type": "String"}}},
+  "@propertyStraightLine": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
   "propertyNearbyCouldNotLoad": "Couldn't load nearby places.",
   "propertyNearbyRouteCouldNotLoad": "Couldn't load the road to this place.",
   "propertyDiscount": "Discount (optional)",
   "propertyDiscountHint": "e.g. 10",
   "propertyDiscountInvalid": "Use more than 0 and less than 100%, or less than the price.",
   "propertyPriceCut": "Price cut: {amount}",
-  "@propertyPriceCut": {"placeholders": {"amount": {"type": "String"}}},
+  "@propertyPriceCut": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "propertyVisibility": "Visibility",
   "propertyVisibilityPublic": "Public",
   "propertyVisibilityPublicHint": "Anyone can find it on the map.",
@@ -555,40 +688,10 @@
   "propertyCouldNotChangeVisibility": "Could not change the visibility. Please try again.",
   "propertyCouldNotOpenEditor": "Could not open the listing for editing. Please try again.",
   "propertyDrawBoundaryFirst": "Draw the property on the map first to measure it.",
-  "forgotPinPasswordHelp": "Enter your account password to confirm it is you. Then choose a new chat PIN.",
-  "forgotPinRecovered": "Done. Your new chat PIN protects your chats.",
   "securityPinRequiredNote": "Your chats are always end-to-end encrypted and protected by your 6-digit chat PIN. You need it to read your chats on a new phone.",
-  "pinUnlock": "Unlock",
-  "pinChecking": "Checking your PIN...",
-  "pinWrongTriesLeft": "{count, plural, =1{Incorrect PIN. 1 try left before your PIN locks for a while.} other{Incorrect PIN. {count} tries left.}}",
-  "@pinWrongTriesLeft": { "placeholders": { "count": { "type": "int" } } },
-  "pinWrongNoCount": "Incorrect PIN. Please try again.",
-  "pinLockedFor": "Too many wrong PINs. Try again in {time}.",
-  "@pinLockedFor": { "placeholders": { "time": { "type": "String" } } },
-  "pinLockedLater": "Too many wrong PINs. Please try again later.",
-  "pinCheckFailed": "Could not check your PIN. Check your connection and try again.",
-  "chatPinSaving": "Saving your PIN...",
   "chatPasswordChecking": "Checking your password...",
-  "chatPinSetupSignOut": "Sign out",
-  "chatPinCreateTitle": "Create your chat PIN",
-  "chatPinCreateHelp": "Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.",
-  "chatPinConfirmTitle": "Confirm your chat PIN",
-  "chatPinConfirmHelp": "Type the same 6 digits again.",
-  "chatPinMismatch": "The PINs did not match. Choose your PIN again.",
-  "chatPinSaveFailed": "Could not save your PIN. Check your connection and try again.",
-  "chatPinChooseAnother": "Choose a different PIN",
-  "chatPinMoveTitle": "Protect your chats with a PIN",
-  "chatPinMoveHelp": "Your chats are now protected by a 6-digit chat PIN instead of your account password. Enter your account password once, then choose your PIN.",
-  "chatPinStartOverLink": "Can't unlock? Start over",
-  "chatPinStartOverTitle": "Start over with new chat keys?",
-  "chatPinStartOverMessage": "If your password was reset, your old chats cannot be unlocked. Starting over keeps your account, but your earlier messages can no longer be read. This cannot be undone.",
-  "chatPinStartOverAction": "Start over",
-  "chatPinRequiredMessage": "Your messages are end-to-end encrypted. Create a 6-digit chat PIN to protect them before you start chatting.",
-  "chatPinCreateAction": "Create PIN",
   "chatLockedTitle": "Chats are locked on this phone",
   "chatEnterPinAction": "Enter PIN",
-  "chatPinLockedTitle": "Too many wrong PINs",
-  "chatPinLockedMessage": "For your security, entering your chat PIN is paused for a while. Please try again later.",
   "authErrEnterName": "Please enter your name",
   "authErrEnterPassword": "Enter a valid password",
   "authErrPasswordMin8": "Password must be at least 8 characters",
@@ -636,21 +739,51 @@
   "authErrorNoConnection": "Could not reach the server. Check your connection.",
   "authErrorGeneric": "Something went wrong. Please try again.",
   "authResendOtpIn": "Resend OTP in {seconds}s",
-  "@authResendOtpIn": { "placeholders": { "seconds": { "type": "int" } } },
+  "@authResendOtpIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "chatPhotoUnavailable": "Photo unavailable. Tap to retry.",
   "chatPictureCannotBeShown": "This picture cannot be shown.",
   "chatMessageNotSent": "Not sent. Tap to retry.",
   "chatMessageSending": "Sending…",
   "chatMessageSent": "Sent",
   "chatMessageTimeYesterday": "Yesterday {time}",
-  "@chatMessageTimeYesterday": { "placeholders": { "time": { "type": "String" } } },
+  "@chatMessageTimeYesterday": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "chatDeliveredJustNow": "Delivered just now",
   "chatDeliveredMinutes": "Delivered {minutes, plural, =1{1 minute ago} other{{minutes} minutes ago}}",
-  "@chatDeliveredMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@chatDeliveredMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "chatDeliveredHours": "Delivered {hours, plural, =1{1 hour ago} other{{hours} hours ago}}",
-  "@chatDeliveredHours": { "placeholders": { "hours": { "type": "int" } } },
+  "@chatDeliveredHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "chatDeliveredOn": "Delivered {day}",
-  "@chatDeliveredOn": { "placeholders": { "day": { "type": "String" } } },
+  "@chatDeliveredOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
   "chatAttachPicture": "Attach a picture",
   "chatShowEmojis": "Emoji",
   "chatShowKeyboard": "Keyboard",
@@ -661,7 +794,13 @@
   "chatCopied": "Copied",
   "chatYou": "You",
   "chatReplyingTo": "Replying to {name}",
-  "@chatReplyingTo": {"placeholders": {"name": {"type": "String"}}},
+  "@chatReplyingTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "chatEditingMessage": "Editing message",
   "chatEdited": "Edited",
   "chatAskAboutListing": "Asking about this listing?",
@@ -672,53 +811,116 @@
   "chatDeleteMessageQuestion": "Delete this message?",
   "chatDeleteMessageForEveryone": "Delete for everyone",
   "chatDeleteMessageForMe": "Delete for me",
-  "chatDeleteOwnMessageExplained": "For everyone: it is removed for you and {name}, with nothing left in its place. For me: only you stop seeing it.",
-  "@chatDeleteOwnMessageExplained": {"placeholders": {"name": {"type": "String"}}},
-  "chatDeleteMessageForMeExplained": "It is removed for you only. {name} still sees it.",
-  "@chatDeleteMessageForMeExplained": {"placeholders": {"name": {"type": "String"}}},
-  "chatEditTooLate": "A message can only be edited within an hour of sending it.",
+  "chatDeleteOwnMessageExplained": "Delete for you and {name}, or just for you.",
+  "@chatDeleteOwnMessageExplained": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDeleteMessageForMeExplained": "Only deleted for you. {name} can still see it.",
+  "@chatDeleteMessageForMeExplained": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatEditTooLate": "You can edit messages for up to 1 hour.",
   "chatPresenceOnline": "Online",
   "chatLastSeenJustNow": "Last seen just now",
   "chatLastSeenMinutes": "Last seen {minutes} min ago",
-  "@chatLastSeenMinutes": { "placeholders": { "minutes": { "type": "int" } } },
+  "@chatLastSeenMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "chatLastSeenToday": "Last seen today at {time}",
-  "@chatLastSeenToday": { "placeholders": { "time": { "type": "String" } } },
+  "@chatLastSeenToday": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "chatLastSeenYesterday": "Last seen yesterday at {time}",
-  "@chatLastSeenYesterday": { "placeholders": { "time": { "type": "String" } } },
+  "@chatLastSeenYesterday": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "chatLastSeenOn": "Last seen {date}",
-  "@chatLastSeenOn": { "placeholders": { "date": { "type": "String" } } },
-  "chatKeyChangedTitle": "{name}'s security key has changed",
-  "@chatKeyChangedTitle": { "placeholders": { "name": { "type": "String" } } },
+  "@chatLastSeenOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "chatEmojiSmileys": "Smileys",
   "chatEmojiGestures": "Gestures",
   "chatEmojiHearts": "Hearts",
   "chatEmojiPlaces": "Places",
-  "chatPreviewEncrypted": "Encrypted message",
-  "chatPreviewPhoto": "📷 Photo",
+  "chatPreviewEncrypted": "Message unavailable",
+  "chatPreviewPhoto": "Photo",
   "chatUndecryptable": "This message cannot be read on this device.",
   "ownerFallbackName": "Property Owner",
   "chatSendSignedOut": "You are signed out.",
   "chatSendNoConnection": "Could not reach the server. Check your connection.",
-  "chatSendRejected": "The server did not accept this message. Please try again.",
-  "chatSendTooFast": "You are sending messages too quickly. Wait a moment.",
-  "chatSendPinRequired": "Create your chat PIN before sending messages.",
+  "chatSendRejected": "Message not accepted. Try again.",
+  "chatSendTooFast": "Sending too fast. Wait a moment.",
   "chatSendBlocked": "You can't message this person.",
   "chatYouBlocked": "You blocked {name}. They can't message or call you.",
-  "@chatYouBlocked": {"placeholders": {"name": {"type": "String"}}},
+  "@chatYouBlocked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "chatCannotReply": "You can't reply to this conversation.",
   "safetyMore": "More",
   "blockAction": "Block",
   "unblockAction": "Unblock",
   "blockConfirmTitle": "Block {name}?",
-  "@blockConfirmTitle": {"placeholders": {"name": {"type": "String"}}},
-  "blockConfirmMessage": "They won't be able to message or call you, and you'll stop following each other. They won't be told.",
+  "@blockConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blockConfirmMessage": "They can’t message or call you. You’ll unfollow each other. They won’t be notified.",
   "unblockConfirmTitle": "Unblock {name}?",
-  "@unblockConfirmTitle": {"placeholders": {"name": {"type": "String"}}},
-  "unblockConfirmMessage": "You'll be able to message each other again. Follows removed by the block don't come back.",
+  "@unblockConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unblockConfirmMessage": "You can message each other again. Follow them again if you want to.",
   "blockDone": "{name} is blocked.",
-  "@blockDone": {"placeholders": {"name": {"type": "String"}}},
+  "@blockDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "unblockDone": "{name} is unblocked.",
-  "@unblockDone": {"placeholders": {"name": {"type": "String"}}},
+  "@unblockDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "blockFailed": "That didn't work. Check your connection and try again.",
   "blockedAccountsTitle": "Blocked accounts",
   "blockedAccountsEmpty": "You haven't blocked anyone.",
@@ -743,16 +945,25 @@
   "reportTooMany": "You've sent a lot of reports. Try again later.",
   "reportTargetGone": "This has already been removed.",
   "reportFailed": "The report wasn't sent. Check your connection and try again.",
-  "chatSendKeyChanged": "Their security key has changed. Accept the new key to continue.",
-  "chatSendNotSetUp": "Secure chat is not set up on this device.",
-  "chatSendPeerNotReady": "This person has not set up secure chat yet. They can receive messages once they open the app again.",
   "chatSendFileTooLarge": "This file is too large (limit {megabytes} MB).",
-  "@chatSendFileTooLarge": { "placeholders": { "megabytes": { "type": "int" } } },
+  "@chatSendFileTooLarge": {
+    "placeholders": {
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
   "chatSendUploadFailed": "Could not upload the file. Check your connection.",
   "chatSendFailed": "Message not sent. Please try again.",
   "mapNewListing": "New",
   "homeExtractedCoordinates": "{count, plural, =1{Found 1 coordinate.} other{Found {count} coordinates.}}",
-  "@homeExtractedCoordinates": { "placeholders": { "count": { "type": "int" } } },
+  "@homeExtractedCoordinates": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "homeScanFailed": "Could not read the document. Please try again.",
   "homeInvalidUtm": "These UTM coordinates are not valid. Please check them.",
   "homeScanProcessing": "Processing...",
@@ -789,34 +1000,118 @@
   "propertyUpdateFailed": "Could not update the property. Please try again.",
   "propertyDeleteFailed": "Could not delete the property. Please try again.",
   "propertyListingBy": "Listing by: {name}",
-  "@propertyListingBy": { "placeholders": { "name": { "type": "String" } } },
+  "@propertyListingBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "propertyTabActive": "Active ({count})",
-  "@propertyTabActive": { "placeholders": { "count": { "type": "int" } } },
+  "@propertyTabActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyTabPending": "Pending ({count})",
-  "@propertyTabPending": { "placeholders": { "count": { "type": "int" } } },
+  "@propertyTabPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyTabDraft": "Draft ({count})",
-  "@propertyTabDraft": { "placeholders": { "count": { "type": "int" } } },
+  "@propertyTabDraft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyTabSold": "Sold ({count})",
-  "@propertyTabSold": { "placeholders": { "count": { "type": "int" } } },
+  "@propertyTabSold": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyContacts": "Contacts",
   "propertySavedCount": "{count} Saved",
-  "@propertySavedCount": { "placeholders": { "count": { "type": "int" } } },
+  "@propertySavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertySpecBeds": "{count} bds",
-  "@propertySpecBeds": { "placeholders": { "count": { "type": "int" } } },
+  "@propertySpecBeds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertySpecBaths": "{count} ba",
-  "@propertySpecBaths": { "placeholders": { "count": { "type": "int" } } },
+  "@propertySpecBaths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyTypeForSale": "{type} for sale",
-  "@propertyTypeForSale": { "placeholders": { "type": { "type": "String" } } },
+  "@propertyTypeForSale": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
   "propertyTypeForRent": "{type} for rent",
-  "@propertyTypeForRent": { "placeholders": { "type": { "type": "String" } } },
+  "@propertyTypeForRent": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
   "propertyPriceFrom": "From {price}",
-  "@propertyPriceFrom": { "placeholders": { "price": { "type": "String" } } },
+  "@propertyPriceFrom": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "propertyBedroomCount": "{count, plural, =1{1 Bed} other{{count} Beds}}",
-  "@propertyBedroomCount": { "placeholders": { "count": { "type": "int" } } },
+  "@propertyBedroomCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyBathroomCount": "{count, plural, =1{1 Bath} other{{count} Baths}}",
-  "@propertyBathroomCount": { "placeholders": { "count": { "type": "int" } } },
+  "@propertyBathroomCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyDaysCount": "{count, plural, =1{1 day} other{{count} days}}",
-  "@propertyDaysCount": { "placeholders": { "count": { "type": "int" } } },
+  "@propertyDaysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sortPropertyForYou": "Property for You",
   "sortRecentlyPosted": "Recently Posted",
   "sortNewest": "Newest",
@@ -877,7 +1172,7 @@
   "keywordWaterSupply": "Water Supply",
   "keywordResidentialArea": "Residential Area",
   "keywordCommercialArea": "Commercial Area",
-  "chatPreviewVoice": "🎤 Voice message",
+  "chatPreviewVoice": "Voice message",
   "chatVoiceMessage": "Voice message",
   "chatRecordVoice": "Record a voice message",
   "chatRecordingVoice": "Recording",
@@ -914,31 +1209,41 @@
   "notificationsSavedUpdatesHelp": "Price drops, and when a listing you saved is sold.",
   "feedPriceDropped": "Price dropped",
   "savedSearchesTitle": "Saved searches",
-  "savedSearchesEmpty": "No saved searches yet. Set a filter on the map and tap the bookmark to save it.",
+  "savedSearchesEmpty": "Set map filters, then tap the bookmark to save your search.",
   "savedSearchesLoadFailed": "Couldn't load your saved searches.",
   "savedSearchSaveTitle": "Save this search",
   "savedSearchSaveHelp": "We'll tell you when a new listing in this map area matches your filter.",
   "savedSearchName": "Name",
   "savedSearchSaved": "Search saved. We'll let you know about new listings.",
   "savedSearchLimit": "You can save up to {count} searches. Delete one first.",
-  "@savedSearchLimit": {"placeholders": {"count": {"type": "int"}}},
+  "@savedSearchLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "savedSearchFailed": "That didn't work. Check your connection and try again.",
   "savedSearchNoArea": "The map is still loading. Try again in a moment.",
   "savedSearchAnyListing": "Any listing in this area",
   "savedSearchKeywords": "{count, plural, =1{1 keyword} other{{count} keywords}}",
-  "@savedSearchKeywords": {"placeholders": {"count": {"type": "int"}}},
+  "@savedSearchKeywords": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "savedSearchAlerts": "Alerts",
   "savedSearchRename": "Rename",
   "savedSearchDelete": "Delete",
   "savedSearchDeleted": "Saved search deleted.",
-  "notificationsAlwaysOn": "Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.",
+  "notificationsAlwaysOn": "Calls and sign-in alerts are always on.",
   "notificationsBlockedTitle": "Notifications are off for this app",
-  "notificationsBlockedHelp": "Turn them on in your phone's settings to hear about new messages, calls and sign-ins.",
+  "notificationsBlockedHelp": "Enable notifications in your phone’s settings.",
   "chatPreviewNewMessage": "New message",
-  "chatPreviewPhoto": "Photo",
-  "chatPreviewVoice": "Voice message",
   "notificationsShowTextTitle": "Show message text",
-  "notificationsShowTextHelp": "Show what a message says in its notification. Anyone who can see your lock screen can read it.",
+  "notificationsShowTextHelp": "Show message text in notifications, including on your lock screen.",
   "notificationsLoadFailed": "Could not load your notification settings.",
   "notificationsSaveFailed": "Could not save. Check your connection and try again.",
   "callVoice": "Voice call",
@@ -961,18 +1266,42 @@
   "callUnmute": "Unmute",
   "callSpeaker": "Speaker",
   "callIncomingFrom": "{name} is calling",
-  "@callIncomingFrom": {"placeholders": {"name": {"type": "String"}}},
+  "@callIncomingFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "callMissedFrom": "Missed call from {name}",
-  "@callMissedFrom": {"placeholders": {"name": {"type": "String"}}},
+  "@callMissedFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "filterTitle": "Filters",
   "filterForSale": "For sale",
   "filterForRent": "For rent",
   "filterPriceRange": "Price range",
   "filterPriceLabel": "Price: {range}",
-  "@filterPriceLabel": {"placeholders": {"range": {"type": "String"}}},
+  "@filterPriceLabel": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      }
+    }
+  },
   "filterPriceAny": "Any",
   "filterPerMonth": "{price}/month",
-  "@filterPerMonth": {"placeholders": {"price": {"type": "String"}}},
+  "@filterPerMonth": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "filterMinPrice": "Min Price",
   "filterMaxPrice": "Max Price",
   "filterNoMin": "No min",
@@ -997,9 +1326,21 @@
   "propertyFactsFeatures": "Features",
   "propertyFactPricePerSquareMetre": "Price per m²",
   "propertyFactPerMonth": "{amount} / month",
-  "@propertyFactPerMonth": {"placeholders": {"amount": {"type": "String"}}},
+  "@propertyFactPerMonth": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "propertyFactMonths": "{count, plural, =1{1 month} other{{count} months}}",
-  "@propertyFactMonths": {"placeholders": {"count": {"type": "int"}}},
+  "@propertyFactMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "propertyPublisherTitle": "Listed by",
   "propertyPublisherViewProfile": "View Profile",
   "authPhoneHint": "012 345 678",
@@ -1007,14 +1348,20 @@
   "authAgreeToTermsPrefix": "I agree to the ",
   "personalInfoAddEmail": "Add email",
   "addEmailTitle": "Add email",
-  "addEmailIntro": "Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.",
+  "addEmailIntro": "Add an email for password resets. Confirm with your password.",
   "addEmailDone": "Email added",
   "addEmailTaken": "This email is already used by another account.",
   "closestTitleNearYou": "Listings near you",
   "closestTitleNearMap": "Listings near the map centre",
   "closestSubtitle": "Nearest first, then further away",
   "closestAway": "{distance} away",
-  "@closestAway": {"placeholders": {"distance": {"type": "String"}}},
+  "@closestAway": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
   "closestEmptyTitle": "No listings found",
   "closestEmptyHint": "Try clearing some filters.",
   "closestLoadFailed": "Listings could not be loaded.",
@@ -1025,31 +1372,63 @@
   "authEnterTheVerificationCodeWeTexted": "Enter the verification code we just texted to your phone.",
   "authErrorNoAccountForPhone": "No account uses this phone number.",
   "authErrorSmsUnavailable": "Text messages cannot be sent right now. Reset with your email, or try again later.",
-
   "planFree": "Free",
   "planSilver": "Silver",
   "planGold": "Gold",
   "planDiamond": "Diamond",
   "planMember": "{tier} member",
-  "@planMember": {"placeholders": {"tier": {"type": "String"}}},
+  "@planMember": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
   "planAccount": "{tier} Account",
-  "@planAccount": {"placeholders": {"tier": {"type": "String"}}},
+  "@planAccount": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
   "planPerMonth": "/ month",
   "planListingsUsed": "{used} / {limit} listings used",
-  "@planListingsUsed": {"placeholders": {"used": {"type": "int"}, "limit": {"type": "int"}}},
+  "@planListingsUsed": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
   "planCurrent": "Current Plan",
   "planUpgradeTo": "Upgrade to {tier}",
-  "@planUpgradeTo": {"placeholders": {"tier": {"type": "String"}}},
+  "@planUpgradeTo": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
   "planFeatures": "Features",
   "planFeatureLimit": "{count, plural, =1{Publish 1 property at a time} other{Publish up to {count} properties}}",
-  "@planFeatureLimit": {"placeholders": {"count": {"type": "int"}}},
+  "@planFeatureLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "planFeatureFree": "Basic listing visibility",
   "planFeatureSilver": "Suits small agents",
   "planFeatureGold": "Higher listing capacity",
   "planFeatureDiamond": "Highest listing capacity",
   "planChooseIntro": "Choose a plan to publish more properties.",
   "planUpgradeTitle": "Upgrade Subscription",
-  "planUpgradeIntro": "Unlock more property listings with a paid plan.",
+  "planUpgradeIntro": "Your plan lasts one month from purchase. Upgrades replace your plan at the full price shown.",
   "planSubscribe": "Subscribe",
   "paymentSelectMethod": "Select Payment Method",
   "paymentTaxIncluded": "Total price includes 10% tax.",
@@ -1078,50 +1457,68 @@
   "publishPlanTitle": "Choose Publishing Plan",
   "publishPlanOneTime": "One-Time Publish",
   "publishPlanOneTimeHint": "Pay {price} to publish just this property.",
-  "@publishPlanOneTimeHint": {"placeholders": {"price": {"type": "String"}}},
+  "@publishPlanOneTimeHint": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "publishPlanSubscription": "Subscription Plan",
   "publishPlanSubscriptionHint": "Publish many properties every month.",
-  "publishPlanChooseFirst": "Choose how to publish this property.",
+  "publishPlanChooseFirst": "Choose a plan or one-time payment to publish.",
   "privacyLastUpdated": "Last updated: November 4, 2026",
-  "privacyIntro": "This page explains what Tilomnov collects when you use the app, why we need it, who else can see it, and the choices you have.",
+  "privacyIntro": "What we collect, how we use it, and your choices.",
   "privacyCollectTitle": "What we collect",
-  "privacyCollectAccount": "Account details: your name, username, phone number, email (if you add one) and profile picture.",
-  "privacyCollectListings": "What you publish: photos, descriptions, prices, the location and boundary you draw on the map, and the contact number you add.",
+  "privacyCollectAccount": "Your name, username, phone number, optional email and profile photo.",
+  "privacyCollectListings": "Listing photos, descriptions, prices, map locations, boundaries and contact numbers.",
   "privacyCollectLocation": "Your location, only when you allow it, to show listings and routes near you.",
-  "privacyCollectActivity": "Your activity in the app, such as saved listings, saved searches, follows, and views of your listings, so we can show your insights.",
-  "privacyCollectDevice": "Device details, such as the app version, phone model, a sign-in device key and a notification token, to keep your account safe and deliver notifications.",
+  "privacyCollectActivity": "Saved listings and searches, follows and listing views, used for insights.",
+  "privacyCollectDevice": "App version, phone model, sign-in device key and notification token for security and notifications.",
   "privacyUseTitle": "How we use it",
   "privacyUseRun": "To run the marketplace: show listings, connect buyers with owners, and deliver chats and calls.",
   "privacyUseProtect": "To protect accounts: spot suspicious sign-ins, limit misuse and act on reports.",
   "privacyUseFix": "To fix problems: crash and error reports help us find bugs.",
   "privacyUseNoSale": "We do not sell your personal information.",
   "privacyChatTitle": "Messages and calls",
-  "privacyChatBody": "Chat messages are end-to-end encrypted: only you and the person you are talking to can read them. Your chat PIN protects the keys on your devices.",
+  "privacyChatBody": "Messages are encrypted when sent and stored. Only chat participants can access them through the app. Tilomnov manages the encryption keys. No chat PIN is needed. Older encrypted messages are kept but can’t be opened.",
   "privacyPaymentsTitle": "Payments",
-  "privacyPaymentsBody": "Payments are processed by ABA PayWay. We never see or store your card or bank account details. We keep only the transaction reference, amount, status and date, linked to your account.",
+  "privacyPaymentsBody": "ABA PayWay handles payments. We never see or store card or bank details. We keep the transaction reference, amount, status and date with your account.",
   "privacySharingTitle": "Who can see your information",
   "privacySharingIntro": "We share information only as far as the app needs it:",
-  "privacySharingUsers": "Other users see what you publish, your public profile, and the contact number on your listings.",
-  "privacySharingProviders": "Companies that run parts of the app for us: Google (maps, sign-in, phone verification and notifications), Sentry (error reports) and ABA Bank (payments).",
+  "privacySharingUsers": "Others can see your listings, public profile and listing contact number.",
+  "privacySharingProviders": "Google handles maps, sign-in, phone verification and notifications; Sentry handles error reports; ABA Bank handles payments.",
   "privacySharingLaw": "Authorities, when the law requires it.",
   "privacyCookiesTitle": "Cookies and storage on your phone",
-  "privacyCookiesIntro": "The app does not use advertising or tracking cookies. It keeps a few things on your phone so it works well:",
+  "privacyCookiesIntro": "No advertising or tracking cookies. We store these on your phone:",
   "privacyCookiesSignIn": "Your sign-in, kept in your phone's secure storage.",
   "privacyCookiesSettings": "Your settings, such as theme and language.",
-  "privacyCookiesOffline": "Copies of recently viewed pages and pictures, so the app opens quickly and works offline.",
-  "privacyCookiesClear": "Signing out removes your sign-in from the phone. Clearing the app's storage in your phone's settings removes everything else.",
+  "privacyCookiesOffline": "Recent pages and photos for faster loading and offline use.",
+  "privacyCookiesClear": "Sign out to remove your login. Clear app storage in your phone’s settings to remove other stored data.",
   "privacyChoicesTitle": "Your choices",
   "privacyChoicesEdit": "View and change your details at any time in Account > Personal information.",
   "privacyChoicesLocation": "Turn location access off in your phone's settings; the map still works without it.",
   "privacyChoicesNotifications": "Choose which notifications you get in Account > Notifications.",
   "privacyChoicesDelete": "Delete your listings at any time. To close your account, contact us.",
   "privacyContactTitle": "Contact us",
-  "privacyContactBody": "If you have questions about this page or your information, contact the Tilomnov team. When this page changes, we will update the date at the top.",
+  "privacyContactBody": "Contact the Tilomnov team with questions. The date above shows the latest update.",
   "paymentSuccessTitle": "Success",
   "paymentSuccessAmount": "{amount} USD",
-  "@paymentSuccessAmount": {"placeholders": {"amount": {"type": "String"}}},
+  "@paymentSuccessAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "paymentSuccessTransaction": "Transaction ID  #{id}",
-  "@paymentSuccessTransaction": {"placeholders": {"id": {"type": "String"}}},
+  "@paymentSuccessTransaction": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "paymentSuccessEmailed": "Order confirmation details sent to your email:",
   "paymentSuccessNoEmail": "Add an email in Personal information to get receipts by email.",
   "paymentDownloadReceipt": "Download Receipt",
@@ -1138,6 +1535,23 @@
   "paymentReceiptStatus": "Status",
   "paymentReceiptPaid": "Paid",
   "paymentItemSubscription": "{tier} plan · Monthly",
-  "@paymentItemSubscription": {"placeholders": {"tier": {"type": "String"}}},
-  "paymentItemOneTimePublish": "One-time listing publish"
+  "@paymentItemSubscription": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentItemOneTimePublish": "One-time listing publish",
+  "paymentSimulationNotice": "Test purchase only. No money will be charged.",
+  "planCancelAction": "Cancel plan",
+  "planCancelTitle": "Turn off automatic renewal?",
+  "planCancelExplanation": "Your plan stays active until {date}. No automatic renewal or charge.",
+  "@planCancelExplanation": { "placeholders": { "date": { "type": "String" } } },
+  "planActiveUntil": "Plan active until {date}.",
+  "@planActiveUntil": { "placeholders": { "date": { "type": "String" } } },
+  "planCancelledUntil": "Automatic renewal is off. Your plan stays active until {date}.",
+  "@planCancelledUntil": { "placeholders": { "date": { "type": "String" } } },
+  "planCancelFailed": "We could not cancel your plan. Please try again.",
+  "planStatusRetry": "Could not load your plan. Tap to retry."
 }

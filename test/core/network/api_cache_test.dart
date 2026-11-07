@@ -60,6 +60,19 @@ void main() {
     extra: CacheInterceptor.freshFor(const Duration(seconds: 30)),
   );
 
+  test('message bodies and authentication never enter the API cache', () async {
+    for (final path in ['/chat/messages/bob', '/auth/me']) {
+      await dio.get(path, options: fresh);
+      server.offline = true;
+      await expectLater(
+        dio.get(path, options: fresh),
+        throwsA(isA<DioException>()),
+      );
+      expect(ApiCacheManager().get(path), isNull);
+      server.offline = false;
+    }
+  });
+
   test('a request marked fresh is answered from memory', () async {
     await dio.get('/public/properties/map', options: fresh);
     final second = await dio.get('/public/properties/map', options: fresh);

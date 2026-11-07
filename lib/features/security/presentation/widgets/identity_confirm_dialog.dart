@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,8 +25,8 @@ Future<bool> showIdentityConfirmDialog(
   required Future<AccountActionResult> Function(IdentityProof proof) action,
   bool isDestructive = true,
 }) async {
-  final confirmed = await showDialog<bool>(
-    context: context,
+  final confirmed = await AppDialog.show<bool>(
+    context,
     barrierDismissible: false,
     builder: (_) => _IdentityConfirmDialog(
       title: title,
@@ -135,7 +136,9 @@ class _IdentityConfirmDialogState
     final colors = context.colors;
     final l10n = context.l10n;
 
-    return AlertDialog(
+    return AppDialog.custom(
+      icon: Icons.verified_user_outlined,
+      tone: AppDialogTone.neutral,
       title: Text(widget.title),
       content: Column(
         mainAxisSize: MainAxisSize.min,

@@ -164,14 +164,13 @@ void main() {
         participantId: peer,
         repository: repository,
         socketService: socket,
-        setupService: FakeSetupService(),
         cipher: FakeCipher(),
         attachments: FakeAttachmentService(),
         conversations: conversations,
       );
       addTearDown(chat.dispose);
       repository.history = [encrypted('m1', 'Hello', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
       expect(chat.state.messages, hasLength(1));
 
       repository.history = [];

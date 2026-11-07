@@ -10,12 +10,10 @@ import 'package:tilomnov/features/chat/providers/active_chat_state.dart';
 import 'package:tilomnov/features/chat/providers/chat_participant_providers.dart';
 import 'package:tilomnov/features/chat/providers/chat_profile_opener.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
-/// Who the user is chatting with, in two tabs: "Profile" (and a way to
-/// their full profile page) and "Security code", the code that proves the
-/// conversation is encrypted to that person and nobody else.
+/// Profile summary, full profile link, and safety menu for the participant.
 Future<void> showChatParticipantSheet(
   BuildContext context, {
   required ChatParticipants chat,
@@ -58,71 +56,51 @@ class _ChatParticipantSheet extends ConsumerWidget {
     final colors = context.colors;
 
     return SafeArea(
-      child: DefaultTabController(
-        length: 2,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              UserAvatar(name: name, avatarUrl: profile?.avatarUrl, radius: 40),
-              const SizedBox(height: 12),
-              Text(
-                name,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: colors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              ChatPresenceLabel(userId: chat.participantId),
-              const SizedBox(height: 16),
-              TabBar(
-                labelColor: colors.accent,
-                unselectedLabelColor: colors.textMuted,
-                indicatorColor: colors.accent,
-                dividerColor: colors.divider,
-                labelStyle: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                tabs: [
-                  Tab(
-                    icon: const Icon(Icons.person_outline_rounded, size: 20),
-                    text: context.l10n.chatTabProfile,
+      child: SizedBox(
+        width: double.infinity,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  UserAvatar(
+                    name: name,
+                    avatarUrl: profile?.avatarUrl,
+                    radius: 40,
                   ),
-                  Tab(
-                    icon: const Icon(Icons.lock_outline, size: 20),
-                    text: context.l10n.chatSecurityCode,
+                  const SizedBox(height: 12),
+                  Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  ChatPresenceLabel(userId: chat.participantId),
+                  const SizedBox(height: 16),
+                  _ProfileTab(
+                    profile: profile,
+                    participantName: name,
+                    onViewProfile: _profileOpener(context, ref, name),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              // Not a TabBarView: that needs a fixed height, and the two tabs
-              // differ, so the sheet grows to whichever is shown.
-              Builder(
-                builder: (context) {
-                  final tabs = DefaultTabController.of(context);
-                  return AnimatedBuilder(
-                    animation: tabs,
-                    builder: (context, _) => AnimatedSize(
-                      duration: const Duration(milliseconds: 180),
-                      alignment: Alignment.topCenter,
-                      child: tabs.index == 0
-                          ? _ProfileTab(
-                              profile: profile,
-                              participantName: name,
-                              onViewProfile: _profileOpener(context, ref, name),
-                            )
-                          : _SecurityTab(chat: chat, participantName: name),
-                    ),
-                  );
-                },
+            ),
+            if (chat.userId != chat.participantId)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: SafetyMenuButton(
+                  userId: chat.participantId,
+                  userName: name,
+                ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -211,62 +189,6 @@ class _ProfileTab extends StatelessWidget {
           ),
         ],
       ],
-    );
-  }
-}
-
-class _SecurityTab extends ConsumerWidget {
-  final ChatParticipants chat;
-  final String participantName;
-
-  const _SecurityTab({required this.chat, required this.participantName});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final safetyCode = ref.watch(chatSafetyCodeProvider(chat));
-
-    return safetyCode.when(
-      data: (code) => code == null
-          ? Text(
-              context.l10n.chatAvailableOnceYouHaveBothSet,
-              textAlign: TextAlign.center,
-              style: _caption(context),
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SelectableText(
-                  code,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1,
-                    color: context.colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  context.l10n.chatSecurityCodeExplanation(participantName),
-                  textAlign: TextAlign.center,
-                  style: _caption(context),
-                ),
-              ],
-            ),
-      loading: () => const SizedBox(
-        height: 24,
-        width: 24,
-        child: CircularProgressIndicator(strokeWidth: 2),
-      ),
-      error: (error, _) => Text(
-        failureMessage(
-          context.l10n,
-          error: error,
-          fallback: context.l10n.chatTheSecurityCodeIsUnavailable,
-        ),
-        textAlign: TextAlign.center,
-        style: _caption(context),
-      ),
     );
   }
 }

@@ -16,8 +16,10 @@ final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
 
 /// ABA PayWay when this build takes payments, else the simulation.
 final paymentCheckoutServiceProvider = Provider<PaymentCheckoutService>((ref) {
-  if (!PaymentConfig.enabled) return SimulatedPaymentCheckoutService();
   final repository = ref.watch(paymentRepositoryProvider);
+  if (!PaymentConfig.enabled) {
+    return SimulatedPaymentCheckoutService(repository: repository);
+  }
   return AbaPaymentCheckoutService(
     repository: repository,
     flow: PaymentFlow(

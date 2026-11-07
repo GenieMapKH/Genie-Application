@@ -28,7 +28,7 @@ class ConnectionPopups extends StatefulWidget {
   });
 
   static const _offlineAfter = Duration(seconds: 2);
-  static const _slowEvery = Duration(minutes: 5);
+  static const _slowEvery = Duration(minutes: 15);
 
   @override
   State<ConnectionPopups> createState() => _ConnectionPopupsState();

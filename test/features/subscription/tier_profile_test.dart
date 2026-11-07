@@ -30,6 +30,7 @@ Future<void> _openAccount(WidgetTester tester, PlanTier tier) async {
     overrides: [
       userProfileProvider.overrideWith((ref) async => _profile),
       currentPlanTierProvider.overrideWithValue(tier),
+      accountSubscriptionProvider.overrideWith((ref) async => null),
     ],
   );
 }

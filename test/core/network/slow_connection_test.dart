@@ -34,7 +34,10 @@ void main() {
   final status = NetworkStatus.instance;
 
   setUp(status.reset);
-  tearDown(status.reset);
+  tearDown(() {
+    status.reset();
+    status.probe = null;
+  });
 
   void slowReads(int count) {
     for (var i = 0; i < count; i++) {
@@ -92,11 +95,15 @@ void main() {
 
     setUp(() {
       server = _SlowServer();
+      status.probe = () =>
+          Future<void>.delayed(const Duration(milliseconds: 10));
       dio = Dio()
         ..interceptors.addAll([
           SlowConnectionInterceptor(
             status,
             slowAfter: const Duration(milliseconds: 100),
+            probeSlowAfter: const Duration(milliseconds: 5),
+            checkEvery: Duration.zero,
           ),
           server,
         ]);
@@ -139,6 +146,38 @@ void main() {
         await dio.post<void>('/properties/1/images');
       }
       expect(status.connection.value, ConnectionQuality.good);
+    });
+
+    test(
+      'a slow endpoint with a quick health response is not slow internet',
+      () async {
+        server.delay = const Duration(milliseconds: 150);
+        status.probe = () async {};
+        await reads(NetworkStatus.slowReadsForWeak + 1);
+        expect(status.connection.value, ConnectionQuality.good);
+      },
+    );
+
+    test('a parallel slow batch counts as one confirmation', () async {
+      var probes = 0;
+      status.probe = () async {
+        probes++;
+        await Future<void>.delayed(const Duration(milliseconds: 30));
+      };
+      server.delay = const Duration(milliseconds: 150);
+      await Future.wait(List.generate(6, (_) => dio.get<void>('/feed')));
+      expect(probes, 1);
+      expect(status.connection.value, ConnectionQuality.good);
+    });
+
+    test('the health probe never triggers another probe', () async {
+      var probes = 0;
+      status.probe = () async {
+        probes++;
+      };
+      server.delay = const Duration(milliseconds: 150);
+      await dio.get<void>('/health');
+      expect(probes, 0);
     });
   });
 

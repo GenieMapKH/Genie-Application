@@ -170,8 +170,7 @@ void main() {
             chatRepositoryProvider.overrideWithValue(repository),
             chatSocketServiceProvider.overrideWithValue(socket),
             noBlocksOverride(),
-            e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
-            messageCipherProvider.overrideWith((ref, userId) => FakeCipher()),
+            messageCodecProvider.overrideWith((ref, userId) => FakeCipher()),
             chatAttachmentServiceProvider.overrideWithValue(
               FakeAttachmentService(),
             ),

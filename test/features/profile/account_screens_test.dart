@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -298,7 +299,7 @@ void main() {
 
       expect(server.requests.last.method, 'PATCH');
       expect(server.requests.last.body, {'username': 'dara'});
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(AppDialog), findsNothing);
       await _letToastsLeave(tester);
     });
 
@@ -321,7 +322,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('This username is already taken.'), findsOneWidget);
-        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(find.byType(AppDialog), findsOneWidget);
       },
     );
 
@@ -407,7 +408,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(server.requests.single.body, {'name': 'សុខា ចាន់'});
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(AppDialog), findsNothing);
       await _letToastsLeave(tester);
     });
 

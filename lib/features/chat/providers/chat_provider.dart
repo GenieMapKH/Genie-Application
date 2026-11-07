@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/chat/data/chat_repository.dart';
 import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 import 'package:tilomnov/features/chat/providers/conversation_list.dart';
@@ -23,7 +23,7 @@ class ConversationsNotifier
   final bool archived;
 
   /// Decrypts the last-message previews. Null for a guest, who has no chats.
-  final MessageCipher? cipher;
+  final MessageCodec? cipher;
 
   final ConversationPreviews? _previews;
   final _subscriptions = <StreamSubscription<void>>[];
@@ -151,7 +151,7 @@ class ConversationsNotifier
       refresh();
       return;
     }
-    _previews!.remember(message.id, message.nonce, preview);
+    _previews!.remember(message.id, message.ciphertext, preview);
     final sent = list.items[index]
         .withNewMessage(message)
         .copyWith(lastMessage: preview);
@@ -207,7 +207,8 @@ class ConversationsNotifier
         for (final current in list.items)
           current.participantId == conversation.participantId &&
                   current.lastMessageId == conversation.lastMessageId &&
-                  current.lastNonce == conversation.lastNonce
+                  current.lastNonce == conversation.lastNonce &&
+                  current.lastCiphertext == conversation.lastCiphertext
               ? current.copyWith(lastMessage: withPreview.lastMessage)
               : current,
       ]),
@@ -360,9 +361,7 @@ final conversationsProvider =
       return ConversationsNotifier(
         repository: ref.watch(chatRepositoryProvider),
         socketService: ref.watch(chatSocketServiceProvider),
-        cipher: userId == null
-            ? null
-            : ref.watch(messageCipherProvider(userId)),
+        cipher: userId == null ? null : ref.watch(messageCodecProvider(userId)),
         signInPending:
             userId == null &&
             ref.watch(userProfileProvider.select((p) => p.isLoading)),
@@ -384,9 +383,7 @@ final archivedConversationsProvider =
       return ConversationsNotifier(
         repository: ref.watch(chatRepositoryProvider),
         socketService: ref.watch(chatSocketServiceProvider),
-        cipher: userId == null
-            ? null
-            : ref.watch(messageCipherProvider(userId)),
+        cipher: userId == null ? null : ref.watch(messageCodecProvider(userId)),
         archived: true,
       );
     });

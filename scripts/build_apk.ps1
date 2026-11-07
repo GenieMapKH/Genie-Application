@@ -2,7 +2,7 @@
 # Usage: .\scripts\build_apk.ps1 [-Env production|staging] [flutter build apk args...]
 #   .\scripts\build_apk.ps1 -Env production   -> build\app\outputs\flutter-apk\tilomnov-production.apk
 #   .\scripts\build_apk.ps1 -Env staging      -> build\app\outputs\flutter-apk\tilomnov-staging.apk
-# -Env builds a release APK from .env.<Env> (backend URL, Sentry, app id) and
+# -Env builds an ARM64-v8a release APK from .env.<Env> (backend URL, Sentry, app id) and
 # copies it to a name of its own, so the two builds don't overwrite each other.
 # Without -Env the arguments go to `flutter build apk` unchanged.
 #
@@ -27,7 +27,8 @@ if ($Env) {
         Write-Error "$envFile is missing (it is git-ignored: create it from the other .env.* file)."
         exit 1
     }
-    $buildArgs = @('--release', "--dart-define-from-file=.env.$Env") + $buildArgs
+    # Split packaging also removes other ABIs bundled by native plugins.
+    $buildArgs = @('--release', '--target-platform=android-arm64', '--split-per-abi', "--dart-define-from-file=.env.$Env") + $buildArgs
 }
 
 $blockStarts = @(
@@ -60,7 +61,7 @@ $buildExitCode = $LASTEXITCODE
 if ($buildExitCode -eq 0 -and $Env) {
     $apkDir = Join-Path $PSScriptRoot '..\build\app\outputs\flutter-apk'
     $named = Join-Path $apkDir "tilomnov-$Env.apk"
-    Copy-Item (Join-Path $apkDir 'app-release.apk') $named -Force
+    Copy-Item (Join-Path $apkDir 'app-arm64-v8a-release.apk') $named -Force
     Write-Host "APK for $Env`: $((Resolve-Path $named).Path)"
 
     # Gradle exports before the named copy exists, so copy it to APK_EXPORT_DIR here.

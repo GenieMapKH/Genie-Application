@@ -34,10 +34,6 @@ import 'add_property_page_logic.dart';
 /// Publishing a new listing that does not fit in the user's plan: paid
 /// once, or after subscribing to a plan with room.
 extension AddPropertyPaidPublish on AddPropertyPageState {
-  /// Whether the user's plan is full, so this listing needs a publishing plan.
-  bool get needsPublishingPlan =>
-      ref.read(publishingAllowanceProvider).valueOrNull?.hasRoom == false;
-
   /// Publishes the listing the way the user chose; asks them to choose first.
   Future<void> publishBeyondPlan({
     required Future<void> Function() publishInPlan,
@@ -162,11 +158,9 @@ extension AddPropertyPaidPublish on AddPropertyPageState {
       switch (outcome.result) {
         case PaymentResult.paid:
           unpaidDraft = null;
-          // A simulated payment never reaches the server, so publish the
-          // listing as the server would have once paid.
-          final live = checkout.isSimulation
-              ? await ref.read(propertyRepositoryProvider).publish(draft.id)
-              : draft;
+          final live = await ref
+              .read(propertyRepositoryProvider)
+              .fetchPropertyDetail(draft.id);
           ownListingsChangedFrom(ref);
           return (live, outcome);
         case PaymentResult.awaitingConfirmation:

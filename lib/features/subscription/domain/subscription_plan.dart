@@ -19,9 +19,8 @@ class SubscriptionPlan {
 
 /// Every plan offered, cheapest first, and the one-time publishing fee.
 ///
-/// The server has no plans endpoint yet, so the prices live here. When
-/// payments are switched on the server must charge from its own copy: these
-/// are only what the app shows.
+/// Display values only. The payment service owns prices and publishing limits
+/// in its plan-catalog.ts and checks them independently of the app.
 abstract final class PlanCatalog {
   static const plans = [
     SubscriptionPlan(tier: PlanTier.free, monthlyPriceUsd: 0, listingLimit: 1),

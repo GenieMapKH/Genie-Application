@@ -28,7 +28,7 @@ String _listing(int n) =>
 /// [total] listings, answered a page at a time as the server does, or a
 /// failure while [fail] is set.
 class _Api {
-  final int total;
+  int total;
   bool fail = false;
 
   /// The query of each request for the list, in order.
@@ -162,6 +162,21 @@ void main() {
     expect(find.text('450 m away'), findsOneWidget);
     expect(find.text('Listing 1'), findsOneWidget);
   });
+
+  testWidgets(
+    'an open nearby feed removes withdrawn listings on its next check',
+    (tester) async {
+      final api = _Api(1);
+      await _pump(tester, api);
+      await _pullUp(tester);
+      expect(find.text('Listing 1'), findsOneWidget);
+      api.total = 0;
+      await tester.pump(const Duration(seconds: 31));
+      await _settle(tester);
+      expect(find.text('Listing 1'), findsNothing);
+      expect(api.asked, hasLength(2));
+    },
+  );
 
   testWidgets('reads the next page when scrolled to the end', (tester) async {
     final api = _Api(25);

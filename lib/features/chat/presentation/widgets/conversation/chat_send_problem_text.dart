@@ -10,11 +10,7 @@ String chatSendProblemText(AppLocalizations l10n, ChatSendProblem problem) {
     ChatSendProblem.noConnection => l10n.chatSendNoConnection,
     ChatSendProblem.rejected => l10n.chatSendRejected,
     ChatSendProblem.tooFast => l10n.chatSendTooFast,
-    ChatSendProblem.pinRequired => l10n.chatSendPinRequired,
     ChatSendProblem.blocked => l10n.chatSendBlocked,
-    ChatSendProblem.keyChanged => l10n.chatSendKeyChanged,
-    ChatSendProblem.notSetUp => l10n.chatSendNotSetUp,
-    ChatSendProblem.peerNotReady => l10n.chatSendPeerNotReady,
     ChatSendProblem.fileTooLarge => l10n.chatSendFileTooLarge(
       ChatAttachmentService.maxBytes ~/ (1024 * 1024),
     ),

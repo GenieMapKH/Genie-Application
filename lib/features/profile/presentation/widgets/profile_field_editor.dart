@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -25,8 +26,8 @@ Future<void> showProfileFieldEditor(
   String? initialValue,
   TextInputType? keyboardType,
 }) {
-  return showDialog<void>(
-    context: context,
+  return AppDialog.show<void>(
+    context,
     useRootNavigator: true,
     builder: (_) => _ProfileFieldEditor(
       field: field,
@@ -196,7 +197,9 @@ class _ProfileFieldEditorState extends ConsumerState<_ProfileFieldEditor> {
     final problem = _error ?? _usernameProblem(context);
     final isAvailable = _usernameCheck == UsernameCheck.available;
 
-    return AlertDialog(
+    return AppDialog.custom(
+      icon: Icons.edit_outlined,
+      tone: AppDialogTone.neutral,
       title: Text(
         l10n.personalInfoEdit(widget.label),
         style: TextStyle(

@@ -85,16 +85,31 @@ void main() {
 
   group('checkout services', () {
     test(
-      'the simulation succeeds under a GP reference, charging nothing',
+      'the simulation succeeds only after the server records the purchase',
       () async {
-        final service = SimulatedPaymentCheckoutService(delay: Duration.zero);
+        final server = StubServer.always(
+          201,
+          '{"transactionId":"tx-mock","status":"Success","isSimulation":true}',
+        );
+        final service = SimulatedPaymentCheckoutService(
+          repository: PaymentRepository(server.dio),
+        );
         final outcome = await service.payForSubscription(
           'gold',
           PaymentMethod.abaPay,
         );
         expect(service.isSimulation, isTrue);
         expect(outcome.isPaid, isTrue);
-        expect(outcome.transactionId, matches(RegExp(r'^GP\d{7}$')));
+        expect(outcome.transactionId, 'tx-mock');
+        expect(server.requests.single.path, '/payments/subscriptions/checkout');
+        expect(
+          server.requests.single.body,
+          isA<Map>().having(
+            (body) => body['requestId'],
+            'requestId',
+            isA<String>(),
+          ),
+        );
       },
     );
 
@@ -118,10 +133,12 @@ void main() {
       expect(outcome.result, PaymentResult.paid);
       expect(outcome.transactionId, 't9');
       expect(server.requests.single.path, '/payments/checkout');
-      expect(server.requests.single.body, {
-        'propertyId': 'p1',
-        'method': 'aba_khqr',
-      });
+      expect(server.requests.single.body, containsPair('propertyId', 'p1'));
+      expect(server.requests.single.body, containsPair('method', 'aba_khqr'));
+      expect(
+        server.requests.single.body,
+        containsPair('requestId', isA<String>()),
+      );
       final opened = launcher.opened.single;
       expect(opened.appDeeplink.toString(), 'abamobilebank://pay?x=1');
       expect(opened.checkoutUrl.toString(), 'https://checkout.test/t9');
@@ -148,6 +165,45 @@ void main() {
   });
 
   group('PaymentRepository', () {
+    test('retrying a lost answer reuses the purchase reference', () async {
+      var attempts = 0;
+      final server = StubServer(
+        (_) => ++attempts == 1
+            ? (503, '{}')
+            : (
+                201,
+                '{"transactionId":"tx-mock","status":"Success","isSimulation":true}',
+              ),
+      );
+      final repository = PaymentRepository(server.dio);
+      await expectLater(
+        repository.simulateSubscription('gold', PaymentMethod.abaPay),
+        throwsA(isA<Exception>()),
+      );
+      expect(
+        await repository.simulateSubscription('gold', PaymentMethod.abaPay),
+        'tx-mock',
+      );
+      expect(
+        (server.requests[0].body as Map)['requestId'],
+        (server.requests[1].body as Map)['requestId'],
+      );
+    });
+
+    test(
+      'a local simulation cannot succeed when the server disables it',
+      () async {
+        final service = SimulatedPaymentCheckoutService(
+          repository: PaymentRepository(
+            StubServer.always(501, '{"code":"PAYMENTS_DISABLED"}').dio,
+          ),
+        );
+        await expectLater(
+          service.payForSubscription('gold', PaymentMethod.abaPay),
+          throwsA(isA<PaymentsUnavailableException>()),
+        );
+      },
+    );
     test('a server without the endpoint cannot take payments', () async {
       final server = StubServer.always(
         404,

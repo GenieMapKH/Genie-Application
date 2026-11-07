@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:tilomnov/features/chat/e2ee/push_preview.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
+import 'package:tilomnov/features/chat/data/push_preview.dart';
 import 'package:tilomnov/features/chat/models/chat_attachment.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/shared/widgets/feedback/empty_state_card.dart';
 
-/// What the feed shows when the user follows no one with listings. One
-/// card hugging its content, like the empty Saved page.
+/// What the feed shows when the user follows no one with listings.
 class FeedMessageView extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -24,61 +24,24 @@ class FeedMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final hint = this.hint;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-      decoration: BoxDecoration(
-        color: colors.surfaceMuted,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: colors.surface,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 36, color: colors.textHint),
+    return EmptyStateCard(
+      icon: icon,
+      title: title,
+      hint: hint,
+      action: FilledButton(
+        onPressed: onAction,
+        style: FilledButton.styleFrom(
+          backgroundColor: colors.accent,
+          foregroundColor: colors.onPrimary,
+          minimumSize: const Size(0, 44),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
           ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: colors.textSecondary,
-            ),
-          ),
-          if (hint != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              hint,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(fontSize: 13, color: colors.textHint),
-            ),
-          ],
-          const SizedBox(height: 20),
-          FilledButton(
-            onPressed: onAction,
-            style: FilledButton.styleFrom(
-              backgroundColor: colors.accent,
-              foregroundColor: colors.onPrimary,
-              minimumSize: const Size(0, 44),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(22),
-              ),
-            ),
-            child: Text(
-              actionLabel,
-              style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
+        ),
+        child: Text(
+          actionLabel,
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }

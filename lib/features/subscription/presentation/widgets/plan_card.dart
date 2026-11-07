@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/payment/application/payment_config.dart';
 import 'package:tilomnov/features/payment/presentation/payment_feedback.dart';
 import 'package:tilomnov/features/subscription/domain/plan_tier.dart';
 import 'package:tilomnov/features/subscription/domain/subscription_plan.dart';
@@ -11,8 +12,8 @@ import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
 /// One subscription plan: its name, monthly price and what it allows.
 ///
 /// The user's [isCurrent] plan is set in the tier's deep metal with how many
-/// listings are [used]; another one shows [onUpgrade] as a button in its
-/// metal, or nothing when it is null (a lower plan, or the checkout's own).
+/// listings are [used]. [onUpgrade] adds a checkout button, including on the
+/// current plan when simulated purchases are available.
 class PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
   final bool isCurrent;
@@ -76,10 +77,8 @@ class PlanCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           _Price(plan: plan, ink: ink),
-          if (isCurrent) ...[
-            const SizedBox(height: 14),
-            _CurrentPlanLabel(),
-          ] else if (onUpgrade != null) ...[
+          if (isCurrent) ...[const SizedBox(height: 14), _CurrentPlanLabel()],
+          if (onUpgrade != null) ...[
             const SizedBox(height: 14),
             _UpgradeButton(tier: plan.tier, onPressed: onUpgrade!),
           ],
@@ -197,7 +196,7 @@ class _CurrentPlanLabel extends StatelessWidget {
   }
 }
 
-/// "Upgrade to Gold": a plain main button, filled with the tier's accent.
+/// A checkout button, filled with the tier's accent.
 class _UpgradeButton extends StatelessWidget {
   final PlanTier tier;
   final VoidCallback onPressed;
@@ -217,7 +216,9 @@ class _UpgradeButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          context.l10n.planUpgradeTo(tier.label(context.l10n)),
+          PaymentConfig.enabled
+              ? context.l10n.planUpgradeTo(tier.label(context.l10n))
+              : context.l10n.planSubscribe,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w700,

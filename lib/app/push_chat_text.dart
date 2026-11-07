@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
-import 'package:tilomnov/features/chat/e2ee/push_preview.dart';
+import 'package:tilomnov/features/chat/data/push_preview.dart';
 import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 import 'package:tilomnov/features/notifications/application/push_notifications_controller.dart';
 import 'package:tilomnov/features/notifications/models/push_message.dart';
@@ -49,17 +49,15 @@ Future<({String title, String body})> chatNotificationText({
 }
 
 /// Writes the notification of a chat message that arrives while the app is
-/// open, with the keys the app already holds.
+/// open, without exposing stored message content.
 ChatPushText chatPushText(Ref ref) {
   return (push) => chatNotificationText(
     push: push,
     l10n: lookupAppLocalizations(Locale(ref.read(pushLocaleProvider))),
     showText: ref.read(showNotificationTextProvider),
     previewFor: (userId) async {
-      final cipher = ref.read(messageCipherProvider(userId));
-      return ChatPushPreview(
-        open: (message) => cipher.decrypt(message, askServer: false),
-      );
+      final cipher = ref.read(messageCodecProvider(userId));
+      return ChatPushPreview(open: (message) => cipher.decode(message));
     },
   );
 }

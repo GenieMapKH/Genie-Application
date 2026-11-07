@@ -73,16 +73,14 @@ sealed class PushMessage {
   }
 }
 
-/// Someone sent a chat message. Its text is end-to-end encrypted: only the
-/// keys on this phone can read it. Android gets the sealed message with the
-/// push ([ciphertext] and [nonce]) and writes the notification itself;
-/// otherwise the system shows a generic one.
+/// A chat notification carries no readable managed-message content.
+/// The authenticated app receives message text separately from the chat API.
 class ChatMessagePush extends PushMessage {
   final String senderId;
   final String senderName;
   final String? messageId;
 
-  /// Whose keys open it: the account this phone is signed in to.
+  /// The recipient account.
   final String? recipientId;
   final String? ciphertext;
   final String? nonce;

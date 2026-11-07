@@ -13,8 +13,7 @@ class PaymentOutcome {
 
 /// What the app can pay for, start to end.
 abstract interface class PaymentCheckoutService {
-  /// True when no money moves (no merchant yet): the server does not know of
-  /// the payment, so the app does what the server would have done.
+  /// True when no money moves. The server still records the purchase.
   bool get isSimulation;
 
   /// The one-time fee that publishes listing [propertyId].
