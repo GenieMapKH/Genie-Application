@@ -115,7 +115,7 @@ class SettingsRow extends StatelessWidget {
             const SizedBox(width: 12),
             // The value gives way to the title: it shrinks and ends in "…".
             if (value != null && value!.isNotEmpty)
-              Flexible(
+              Expanded(
                 child: Text(
                   value ?? '',
                   textAlign: TextAlign.end,

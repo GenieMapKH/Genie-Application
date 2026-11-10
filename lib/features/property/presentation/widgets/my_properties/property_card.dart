@@ -1,4 +1,3 @@
-import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,18 +102,10 @@ class PropertyCard extends StatelessWidget {
                   color: context.colors.divider,
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: property.cardImageUrls.isNotEmpty
-                    ? AppNetworkImage(
-                        url: property.cardImageUrls.first,
-                        errorWidget: const PropertyImagePlaceholder(),
-                      )
-                    : Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: context.colors.textHint,
-                          size: 48,
-                        ),
-                      ),
+                child: PropertyImageGallery(
+                  key: ValueKey(property.id),
+                  imageUrls: property.cardImageUrls,
+                ),
               ),
               // Property Type Badge
               Positioned(
@@ -166,28 +157,6 @@ class PropertyCard extends StatelessWidget {
                     size: 18,
                     color: context.colors.textHint,
                   ),
-                ),
-              ),
-              // Dots indicator
-              Positioned(
-                bottom: 8,
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (i) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 2),
-                      width: i == 0 ? 12 : 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: i == 0
-                            ? Colors.white
-                            : Colors.white.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    );
-                  }),
                 ),
               ),
             ],
