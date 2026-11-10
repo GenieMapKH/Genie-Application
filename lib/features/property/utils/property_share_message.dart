@@ -36,6 +36,7 @@ String propertyShareMessage(AppLocalizations l10n, PropertyModel property) {
       '🔻 ${l10n.propertyPriceCut(_discount(property))}',
     if (specs.isNotEmpty) '📐 ${specs.join(' · ')}',
     if (title.isNotEmpty) '📝 $title',
+    if (property.isTakeover) PropertyFormat.takeoverSummary(l10n, property),
     '',
     '📍 ${l10n.propertyShareMessageSeeOnMap}',
     propertyShareLink(property.id).toString(),

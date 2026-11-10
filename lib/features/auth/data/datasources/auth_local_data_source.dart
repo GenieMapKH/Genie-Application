@@ -19,7 +19,12 @@ class AuthStorage {
 
   /// Reads the stored session once, before the first screen asks about it.
   static Future<void> load() async {
-    _signedIn.value = await getAccessToken() != null;
+    final token = await getAccessToken();
+    if (needsAdminEmailVerification(token)) {
+      await clearTokens();
+      return;
+    }
+    _signedIn.value = token != null;
   }
 
   static Future<void> saveTokens({
@@ -47,6 +52,13 @@ class AuthStorage {
   /// device; the server checks the token itself.
   static Future<String?> signedInUserId() async =>
       userIdOfToken(await getAccessToken());
+
+  static bool isAdminAccessToken(String? token) =>
+      _payloadOf(token)?['role'] == 'admin' &&
+      _payloadOf(token)?['adminMfa'] == true;
+
+  static bool needsAdminEmailVerification(String? token) =>
+      _payloadOf(token)?['role'] == 'admin' && !isAdminAccessToken(token);
 
   /// The `sub` of the JWT [token], or null when it is not a readable JWT.
   @visibleForTesting

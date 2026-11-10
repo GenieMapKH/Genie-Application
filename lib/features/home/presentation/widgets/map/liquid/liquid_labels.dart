@@ -1,73 +1,50 @@
 import 'package:flutter/material.dart';
 
-import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
+import 'package:tilomnov/features/home/utils/map/cluster_label.dart';
 
-/// Paints the counts on bubbles and the prices on tags during a
-/// [ClusterTransition], fading out where the drops leave and in where they
-/// land.
+/// Paints the counts on bubbles and the prices on tags during a cluster
+/// transition, each at its own opacity ([ClusterLabel.opacityAt]).
 abstract final class LiquidLabels {
-  /// The labels of the markers being left, at linear progress [p]. Prices
-  /// go first, before their tag starts to round into a drop.
-  static void paintOutgoing(
+  /// Laid out once per count, not every frame of every transition.
+  static final _counts = <String, TextPainter>{};
+
+  /// Paints [labels] at linear progress [p], each centred on [centerOf].
+  static void paint(
     Canvas canvas,
-    List<ClusterSpot> spots,
+    List<ClusterLabel> labels,
     double p,
-    Offset Function(ClusterSpot spot) centerOf,
+    Offset Function(ClusterLabel label) centerOf,
   ) {
-    _paint(
-      canvas,
-      spots,
-      countOpacity: 1 - const Interval(0, 0.35).transform(p),
-      priceOpacity: 1 - const Interval(0, 0.15).transform(p),
-      centerOf: centerOf,
-    );
+    // Labels fading alike share one layer.
+    final byOpacity = <double, List<ClusterLabel>>{};
+    for (final label in labels) {
+      final opacity = label.opacityAt(p);
+      if (opacity > 0) (byOpacity[opacity] ??= []).add(label);
+    }
+    for (final MapEntry(key: opacity, value: group) in byOpacity.entries) {
+      _faded(canvas, opacity, () {
+        for (final label in group) {
+          _paintOne(canvas, label, centerOf(label));
+        }
+      });
+    }
   }
 
-  /// The labels of the markers being formed, at linear progress [p]. Prices
-  /// come last, once their tag has taken shape.
-  static void paintIncoming(
-    Canvas canvas,
-    List<ClusterSpot> spots,
-    double p,
-    Offset Function(ClusterSpot spot) centerOf,
-  ) {
-    _paint(
-      canvas,
-      spots,
-      countOpacity: const Interval(0.6, 1).transform(p),
-      priceOpacity: const Interval(0.8, 1).transform(p),
-      centerOf: centerOf,
-    );
+  static void _paintOne(Canvas canvas, ClusterLabel label, Offset center) {
+    final tag = label.spot.tag;
+    if (tag != null) {
+      tag.paintLabels(
+        canvas,
+        center - Offset(tag.size.width / 2, tag.size.height / 2),
+      );
+      return;
+    }
+    final count = _countOf(label.spot.count);
+    count.paint(canvas, center - Offset(count.width / 2, count.height / 2));
   }
 
-  static void _paint(
-    Canvas canvas,
-    List<ClusterSpot> spots, {
-    required double countOpacity,
-    required double priceOpacity,
-    required Offset Function(ClusterSpot spot) centerOf,
-  }) {
-    _faded(canvas, countOpacity, () {
-      for (final spot in spots) {
-        if (spot.tag == null) _paintCount(canvas, spot, centerOf(spot));
-      }
-    });
-    _faded(canvas, priceOpacity, () {
-      for (final spot in spots) {
-        final tag = spot.tag;
-        if (tag == null) continue;
-        final center = centerOf(spot);
-        tag.paintLabels(
-          canvas,
-          center - Offset(tag.size.width / 2, tag.size.height / 2),
-        );
-      }
-    });
-  }
-
-  /// Runs [paint] at [opacity], skipping it when invisible.
+  /// Runs [paint] at [opacity].
   static void _faded(Canvas canvas, double opacity, VoidCallback paint) {
-    if (opacity <= 0) return;
     if (opacity >= 1) return paint();
     canvas.saveLayer(
       null,
@@ -77,10 +54,11 @@ abstract final class LiquidLabels {
     canvas.restore();
   }
 
-  static void _paintCount(Canvas canvas, ClusterSpot spot, Offset center) {
-    final label = TextPainter(
+  static TextPainter _countOf(int count) {
+    final text = count > 999 ? '999+' : '$count';
+    return _counts[text] ??= TextPainter(
       text: TextSpan(
-        text: spot.count > 999 ? '999+' : '${spot.count}',
+        text: text,
         style: const TextStyle(
           color: Colors.white,
           fontSize: 13,
@@ -89,6 +67,5 @@ abstract final class LiquidLabels {
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    label.paint(canvas, center - Offset(label.width / 2, label.height / 2));
   }
 }

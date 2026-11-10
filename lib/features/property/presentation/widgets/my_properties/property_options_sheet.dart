@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
-import 'package:tilomnov/features/property/presentation/screens/property_insights_page.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 
+/// What a long press on a My Properties card offers: deleting the listing.
+/// Status and insights have their own buttons on the card.
 class PropertyOptionsSheet {
   static void show(
     BuildContext context,
@@ -21,7 +23,6 @@ class PropertyOptionsSheet {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        final isDraft = property.status == 'Draft';
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -36,45 +37,6 @@ class PropertyOptionsSheet {
                 ),
               ),
               const SizedBox(height: 16),
-              ListTile(
-                leading: Icon(
-                  Icons.insights_outlined,
-                  color: context.colors.accent,
-                ),
-                title: Text(context.l10n.insightsTitle),
-                onTap: () {
-                  // Found before the sheet closes and takes its context.
-                  final navigator = Navigator.of(context, rootNavigator: true);
-                  Navigator.pop(context);
-                  navigator.push(
-                    MaterialPageRoute(
-                      builder: (_) => PropertyInsightsPage(property: property),
-                    ),
-                  );
-                },
-              ),
-              if (isDraft)
-                ListTile(
-                  leading: Icon(Icons.public, color: context.colors.accent),
-                  title: Text(context.l10n.propertyPublishToPublic),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _changePropertyStatus(context, ref, property.id, true);
-                  },
-                )
-              else
-                ListTile(
-                  leading: Icon(
-                    Icons.lock_outline,
-                    color: context.colors.accent,
-                  ),
-                  title: Text(context.l10n.propertyMoveToDraft),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _changePropertyStatus(context, ref, property.id, false);
-                  },
-                ),
-              const Divider(height: 1),
               ListTile(
                 leading: const Icon(
                   Icons.delete_outline,
@@ -97,34 +59,6 @@ class PropertyOptionsSheet {
     );
   }
 
-  static Future<void> _changePropertyStatus(
-    BuildContext context,
-    WidgetRef ref,
-    String id,
-    bool publish,
-  ) async {
-    try {
-      if (publish) {
-        await ref.read(propertiesProvider.notifier).publishProperty(id);
-      } else {
-        await ref.read(propertiesProvider.notifier).unpublishProperty(id);
-      }
-      if (context.mounted) {
-        AppPopup.showSuccess(
-          context,
-          publish
-              ? context.l10n.propertyPublishedToast
-              : context.l10n.propertyMovedToDraft,
-        );
-      }
-    } catch (e, stackTrace) {
-      AppLogger.error('Could not change the property status', e, stackTrace);
-      if (context.mounted) {
-        AppPopup.showError(context, context.l10n.propertyUpdateFailed);
-      }
-    }
-  }
-
   static Future<void> _deleteProperty(
     BuildContext context,
     WidgetRef ref,
@@ -138,7 +72,11 @@ class PropertyOptionsSheet {
     } catch (e, stackTrace) {
       AppLogger.error('Could not delete the property', e, stackTrace);
       if (context.mounted) {
-        AppPopup.showError(context, context.l10n.propertyDeleteFailed);
+        showFailure(
+          context,
+          error: e,
+          fallback: context.l10n.propertyDeleteFailed,
+        );
       }
     }
   }

@@ -5,6 +5,7 @@ import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/utils/property_format.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 
 /// Price, spec row and location — the block that sits directly under the photo
 /// gallery in the detail sheet and stays visible as the sheet expands.
@@ -18,6 +19,10 @@ class PropertyDetailSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (property.isTakeover) ...[
+          const TakeoverBadge(),
+          const SizedBox(height: 10),
+        ],
         if (property.hasDiscount) ...[
           _PriceCutBadge(property: property),
           const SizedBox(height: 10),

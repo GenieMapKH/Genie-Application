@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tilomnov/features/home/presentation/providers/map_properties_provider.dart';
 import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
 import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
@@ -20,10 +21,11 @@ Future<ClusterLayout?> _layout(
   WidgetTester tester,
   double zoom, {
   PropertyModel? selected,
+  MapState mapState = const MapState(),
 }) async {
   final overlays = await tester.runAsync(
     () => MapOverlayBuilder.buildListings(
-      mapState: const MapState(),
+      mapState: mapState,
       zoom: zoom,
       mapProperties: MapProperties(
         // ~1 km apart: ~58 px at zoom 13 (two dots), ~7 px at 10 (one bubble).
@@ -43,6 +45,26 @@ Future<ClusterLayout?> _layout(
 }
 
 void main() {
+  testWidgets('a saved drawing leaves only listing price tags, no extra dot', (
+    tester,
+  ) async {
+    final drawing = MapStateNotifier()
+      ..startDrawing(
+        initialPoints: const [
+          LatLng(11.55, 104.92),
+          LatLng(11.55, 104.9201),
+          LatLng(11.5501, 104.92),
+        ],
+      )
+      ..finalizeDrawing();
+    addTearDown(drawing.dispose);
+
+    final layout = (await _layout(tester, 16, mapState: drawing.state))!;
+
+    expect(layout.spotOf.keys, unorderedEquals(['a', 'b']));
+    expect(layout.spots.every((spot) => spot.tag != null), isTrue);
+  });
+
   testWidgets('zoomed out, merged listings share one bubble', (tester) async {
     final layout = (await _layout(tester, 10))!;
 

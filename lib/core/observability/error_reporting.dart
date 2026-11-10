@@ -1,14 +1,18 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:sentry/sentry.dart';
 
 import 'package:tilomnov/core/config/app_config.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
 
 /// Error reports, sent to Sentry when the build was given a `SENTRY_DSN`;
-/// otherwise nothing is sent. Only what the app did not catch is reported:
-/// errors it handles (offline, a refused request) are shown to the user, not
-/// reported.
+/// otherwise nothing is sent. Reported: what the app did not catch, and
+/// caught errors that point to a bug in the app ([caught]). Not reported:
+/// what the connection or the server explains (offline, a refused or failed
+/// request); the user is told, and it only leaves a breadcrumb.
 ///
 /// The Dart client (`sentry`), not `sentry_flutter`: it needs no Android code,
 /// so the app keeps its minimum Android version. Crashes in native (Java,
@@ -49,6 +53,37 @@ abstract final class ErrorReporting {
       return platformHandler?.call(error, stack) ?? false;
     };
   }
+
+  /// An error the app caught and handled; [where] says what was being done
+  /// ("Could not save the profile"), never with personal data in it.
+  static void caught(String where, Object? error, StackTrace? stackTrace) {
+    if (!isEnabled) return;
+    if (error == null || isExpected(error)) {
+      Sentry.addBreadcrumb(
+        Breadcrumb(
+          message: where,
+          category: 'caught',
+          level: SentryLevel.warning,
+        ),
+      );
+      return;
+    }
+    Sentry.captureException(
+      error,
+      stackTrace: stackTrace,
+      withScope: (scope) => scope.setTag('caught', where),
+    );
+  }
+
+  /// Whether [error] is a failure the app expects now and then, not a bug:
+  /// a request that failed or was refused, a timeout, or the phone saying
+  /// no (a permission, a cancelled picker).
+  @visibleForTesting
+  static bool isExpected(Object error) =>
+      error is DioException ||
+      error is AppException ||
+      error is TimeoutException ||
+      error is PlatformException;
 
   /// [event] without request details or anything about the user but an id.
   /// Chat text never reaches here: it is decrypted on the phone only and

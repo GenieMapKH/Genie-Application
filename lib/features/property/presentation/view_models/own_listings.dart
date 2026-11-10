@@ -29,9 +29,14 @@ class OwnListings {
   }
 
   /// Listing [id] moved to [status], or removed when [status] is null: the
-  /// list and the counts as they will be once the server agrees. Unchanged
+  /// list and the counts as they will be once the server agrees. A listing
+  /// whose new status [listed] does not take leaves the list too. Unchanged
   /// when the listing is not loaded.
-  OwnListings withStatus(String id, String? status) {
+  OwnListings withStatus(
+    String id,
+    String? status, {
+    bool Function(String status)? listed,
+  }) {
     final index = items.indexWhere((p) => p.id == id);
     if (index < 0) return this;
     final old = items[index];
@@ -42,7 +47,7 @@ class OwnListings {
     if (status != null) counts[status] = (counts[status] ?? 0) + 1;
 
     final updated = [...items];
-    if (status == null) {
+    if (status == null || (listed != null && !listed(status))) {
       updated.removeAt(index);
     } else {
       updated[index] = old.copyWith(status: status);

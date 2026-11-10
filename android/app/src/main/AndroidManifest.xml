@@ -6,23 +6,24 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Voice messages and calls. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- Calls: the audio connection follows the network it is on. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <!-- Calls: an incoming call rings as a full-screen notification. The app
-         itself is never shown over the lock screen: Accept asks to unlock. -->
+    <!-- MainActivity enables lock-screen visibility only for the call screen. -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <!-- Saving a listing's share picture to the gallery: only Android 9 and
          older ask for it; newer versions add pictures without it. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     
     <application
-        android:label="Tilomnov"
+        android:label="${appLabel}"
         android:allowBackup="false"
         android:networkSecurityConfig="@xml/network_security_config"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="${appIcon}">
         
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -38,6 +39,11 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/notification_accent"/>
             
+        <service android:name=".CallAudioService" android:exported="false"
+            android:foregroundServiceType="microphone" android:stopWithTask="true" />
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -55,6 +61,12 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="tilomnovgateway.sparkbytekh.com" android:path="/admin-login" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

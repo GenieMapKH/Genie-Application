@@ -146,25 +146,26 @@ class DefaultPriceListingSettingsWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: PropertyTextField(
-            label: context.l10n.propertyPrice,
-            required: true,
-            controller: state.priceController,
-            hintText: context.l10n.propertyEnterSellingPriceUsd,
-            hasError:
-                state.hasAttemptedSubmit &&
-                state.priceController.text.trim().isEmpty,
-            focusKey: state.priceKey,
+        if (!state.isTakeover)
+          Expanded(
+            child: PropertyTextField(
+              label: context.l10n.propertyPrice,
+              required: true,
+              controller: state.priceController,
+              hintText: context.l10n.propertyEnterSellingPriceUsd,
+              hasError:
+                  state.hasAttemptedSubmit &&
+                  state.priceController.text.trim().isEmpty,
+              focusKey: state.priceKey,
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
+        if (!state.isTakeover) const SizedBox(width: 16),
         Expanded(
           child: PropertyDropdown(
             label: context.l10n.propertyListingSettings,
             required: true,
             value: state.selectedListingSetting,
-            items: const ['Sale', 'Rent', 'To Let'],
+            items: const ['Sale', 'Rent', 'To Let', 'Takeover Payments'],
             hasError:
                 state.hasAttemptedSubmit &&
                 state.selectedListingSetting.isEmpty,

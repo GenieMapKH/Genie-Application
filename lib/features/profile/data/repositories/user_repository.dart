@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
 import 'package:tilomnov/core/errors/app_exceptions.dart';
+import 'package:tilomnov/core/storage/kept_copy_store.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:tilomnov/features/profile/data/models/user_profile.dart';
 
 /// A field of the profile the user can change, one at a time.
@@ -40,18 +42,29 @@ class UserRepository {
 
   final Dio dio;
 
-  UserRepository(this.dio);
+  /// The profile as last read, kept for the signed-in account by default
+  /// ([keptProfile]).
+  final KeptCopyStore _kept;
+  static const _keptName = 'profile.v1';
+
+  UserRepository(this.dio, {Future<String?> Function()? accountId})
+    : _kept = KeptCopyStore(account: accountId ?? AuthStorage.signedInUserId);
 
   /// Retries a few times: right after the first Google sign-in the new
   /// account can take a moment to become readable (404), and the gateway
-  /// answers 502/504 while a service restarts.
+  /// answers 502/504 while a service restarts. A lost connection is not
+  /// retried here: the API client already repeats a passing drop, and an
+  /// outage should show at once rather than after every repeat.
   Future<UserProfile> getProfile() async {
     var delay = const Duration(milliseconds: 1500);
 
     for (var attempt = 1; ; attempt++) {
       try {
         final response = await dio.get('/users/me');
-        return UserProfile.fromJson(response.data as Map<String, dynamic>);
+        final data = response.data as Map<String, dynamic>;
+        final profile = UserProfile.fromJson(data);
+        await _kept.write(_keptName, data);
+        return profile;
       } on DioException catch (e) {
         if (attempt == _maxAttempts || !_isWorthRetrying(e)) rethrow;
         await Future.delayed(delay);
@@ -60,8 +73,11 @@ class UserRepository {
     }
   }
 
+  /// The profile as last read on this device, or null.
+  Future<UserProfile?> keptProfile() =>
+      _kept.read(_keptName, parse: UserProfile.fromJson);
+
   bool _isWorthRetrying(DioException e) =>
-      e.type == DioExceptionType.connectionError ||
       const [404, 502, 504].contains(e.response?.statusCode);
 
   /// Asks whether [username] could be chosen: well formed, and not another

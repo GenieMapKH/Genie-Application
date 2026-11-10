@@ -7,14 +7,27 @@ import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dia
 import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// One tab of the bottom navigation.
 class NavTab {
   final int index;
   final String iconAsset;
   final String Function(AppLocalizations l10n) label;
+  final IconData? icon;
+  final bool showUnread;
 
-  const NavTab(this.index, this.iconAsset, this.label);
+  const NavTab(
+    this.index,
+    this.iconAsset,
+    this.label, {
+    this.icon,
+    this.showUnread = false,
+  });
+
+  Widget buildIcon(Color color) => icon == null
+      ? TintedSvg(iconAsset, width: 24, height: 24, color: color)
+      : Icon(icon, size: 24, color: color);
 }
 
 /// The tabs, in the order the bar shows them. Shared by both looks of the
@@ -23,7 +36,12 @@ final List<NavTab> mainNavTabs = [
   NavTab(MainTab.explore, 'assets/icons/explore.svg', (l) => l.navExplore),
   NavTab(MainTab.feed, 'assets/icons/feed.svg', (l) => l.navFeed),
   NavTab(MainTab.saved, 'assets/icons/saved.svg', (l) => l.navSaved),
-  NavTab(MainTab.chat, 'assets/icons/chat.svg', (l) => l.navChat),
+  NavTab(
+    MainTab.chat,
+    'assets/icons/chat.svg',
+    (l) => l.navChat,
+    showUnread: true,
+  ),
   NavTab(
     MainTab.myProperties,
     'assets/icons/property.svg',
@@ -31,6 +49,37 @@ final List<NavTab> mainNavTabs = [
   ),
   NavTab(MainTab.user, 'assets/icons/user.svg', (l) => l.navUser),
 ];
+
+List<NavTab> navTabsFor({required bool isAdmin}) => isAdmin
+    ? [
+        mainNavTabs.first,
+        NavTab(
+          AdminTab.services,
+          '',
+          (_) => 'Services',
+          icon: Icons.dns_outlined,
+        ),
+        NavTab(
+          AdminTab.account,
+          '',
+          (_) => 'Account',
+          icon: Icons.manage_accounts_outlined,
+        ),
+        NavTab(
+          AdminTab.activity,
+          '',
+          (_) => 'Activity',
+          icon: Icons.monitor_heart_outlined,
+        ),
+        NavTab(
+          AdminTab.financial,
+          '',
+          (_) => 'Financial',
+          icon: Icons.account_balance_wallet_outlined,
+        ),
+        NavTab(AdminTab.profile, 'assets/icons/user.svg', (_) => 'Profile'),
+      ]
+    : mainNavTabs;
 
 /// A tab was tapped: every tab but Explore shows the user's own data, so a
 /// guest is asked to sign in first. Picking a different tab clicks softly.

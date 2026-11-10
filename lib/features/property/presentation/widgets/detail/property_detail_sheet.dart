@@ -1,6 +1,9 @@
+import 'package:tilomnov/features/admin/presentation/admin_property_actions.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/property/data/models/property_insights.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/chat_listing_of.dart';
@@ -12,6 +15,7 @@ import 'package:tilomnov/features/property/presentation/widgets/detail/actions/c
 import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_contact_bar.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_detail_actions.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_detail_gallery.dart';
+import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_photo_layout.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_route.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_nearby_section.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_owner_actions.dart';
@@ -19,6 +23,7 @@ import 'package:tilomnov/features/profile/presentation/view_models/user_provider
 import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_facts_section.dart';
+import 'sections/takeover_details_section.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_grid_section.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_highlights.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_map_preview.dart';
@@ -27,6 +32,7 @@ import 'package:tilomnov/features/property/presentation/widgets/detail/sections/
 import 'package:tilomnov/features/property/presentation/widgets/share/property_share_sheet.dart';
 import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_starter.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/owner_display_name.dart';
@@ -106,11 +112,85 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
     });
   }
 
+  /// [property] with its full details, waiting for them when only a list's
+  /// card is known yet. The card itself when they cannot be read.
+  Future<PropertyModel> _withFullDetails(PropertyModel property) async {
+    if (callNumberOf(property) != null) return property;
+    try {
+      return await ref.read(propertyDetailProvider(property.id).future);
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'The listing could not be read for calling',
+        e,
+        stackTrace,
+      );
+      return property;
+    }
+  }
+
   void _dismiss() {
     if (!_isDismissing && mounted) {
       _isDismissing = true;
       Navigator.of(context).pop();
     }
+  }
+
+  /// Pulling the content down past its top closes the sheet.
+  bool _dismissOnPullDown(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) return false;
+    final pulled = switch (notification) {
+      ScrollUpdateNotification() => notification.metrics.pixels < -40,
+      OverscrollNotification() => notification.overscroll < -15,
+      ScrollEndNotification() => notification.metrics.pixels < -15,
+      _ => false,
+    };
+    if (pulled) _dismiss();
+    return false;
+  }
+
+  /// Several photos are stacked to scroll through behind the description;
+  /// one (or none) is a cover above it.
+  Widget _content(
+    PropertyModel property,
+    PropertyRecommendations recommendations,
+    bool isOwner,
+  ) {
+    final manyPhotos = property.imageUrls.length > 1;
+    final body = _Body(
+      property: property,
+      recommendations: recommendations,
+      onOpenProperty: widget.onOpenProperty,
+      // Over stacked photos the card itself is dragged down instead.
+      onDismiss: manyPhotos ? null : _dismiss,
+      isReady: _isReady,
+      isOwner: isOwner,
+      liftOverCover: !manyPhotos,
+    );
+    if (manyPhotos) {
+      return PropertyDetailPhotoLayout(
+        imageUrls: property.imageUrls,
+        thumbnailUrls: property.cardImageUrls,
+        propertyId: property.id,
+        onPhotosScrolled: _dismissOnPullDown,
+        body: body,
+      );
+    }
+    return NotificationListener<ScrollNotification>(
+      onNotification: _dismissOnPullDown,
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          PropertyDetailGallery(
+            imageUrls: property.imageUrls,
+            thumbnailUrls: property.cardImageUrls,
+            propertyId: property.id,
+          ),
+          SliverToBoxAdapter(child: body),
+        ],
+      ),
+    );
   }
 
   @override
@@ -129,7 +209,9 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
         widget.heroTag ?? 'property_card_hero_${widget.property.id}';
 
     // The owner manages the listing instead of contacting themselves.
-    final viewerId = ref.watch(userProfileProvider).valueOrNull?.id;
+    final viewer = ref.watch(userProfileProvider).valueOrNull;
+    final viewerId = viewer?.id;
+    final isAdmin = viewer?.role == 'admin';
     final isOwner = viewerId != null && viewerId == property.ownerId;
 
     return Scaffold(
@@ -163,54 +245,7 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                             Expanded(
                               child: Stack(
                                 children: [
-                                  NotificationListener<ScrollNotification>(
-                                    onNotification: (notification) {
-                                      if (notification.metrics.axis ==
-                                          Axis.vertical) {
-                                        if (notification
-                                            is ScrollUpdateNotification) {
-                                          if (notification.metrics.pixels <
-                                              -40) {
-                                            _dismiss();
-                                          }
-                                        } else if (notification
-                                            is OverscrollNotification) {
-                                          if (notification.overscroll < -15) {
-                                            _dismiss();
-                                          }
-                                        } else if (notification
-                                            is ScrollEndNotification) {
-                                          if (notification.metrics.pixels <
-                                              -15) {
-                                            _dismiss();
-                                          }
-                                        }
-                                      }
-                                      return false;
-                                    },
-                                    child: CustomScrollView(
-                                      physics: const BouncingScrollPhysics(
-                                        parent: AlwaysScrollableScrollPhysics(),
-                                      ),
-                                      slivers: [
-                                        PropertyDetailGallery(
-                                          imageUrls: property.imageUrls,
-                                          thumbnailUrls: property.cardImageUrls,
-                                        ),
-                                        SliverToBoxAdapter(
-                                          child: _Body(
-                                            property: property,
-                                            recommendations: recommendations,
-                                            onOpenProperty:
-                                                widget.onOpenProperty,
-                                            onDismiss: _dismiss,
-                                            isReady: _isReady,
-                                            isOwner: isOwner,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  _content(property, recommendations, isOwner),
                                   PropertyDetailActions(
                                     isFavorite: ref.watch(
                                       isPropertySavedProvider(
@@ -222,7 +257,10 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       context,
                                       property,
                                     ),
-                                    menu: isOwner || property.ownerId == null
+                                    menu:
+                                        isOwner ||
+                                            isAdmin ||
+                                            property.ownerId == null
                                         ? null
                                         : SafetyMenuButton(
                                             userId: property.ownerId!,
@@ -246,7 +284,12 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                 ],
                               ),
                             ),
-                            if (isOwner)
+                            if (isAdmin)
+                              AdminPropertyActions(
+                                property: property,
+                                onChanged: _dismiss,
+                              )
+                            else if (isOwner)
                               PropertyOwnerActions(
                                 property: property,
                                 onEdited: _dismiss,
@@ -285,29 +328,65 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       ),
                                     );
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          context
-                                              .l10n
-                                              .propertyCannotChatOwnerInformationMissing,
-                                        ),
-                                      ),
+                                    AppPopup.showError(
+                                      context,
+                                      context
+                                          .l10n
+                                          .propertyCannotChatOwnerInformationMissing,
                                     );
                                   }
                                 },
-                                onCall: () {
+                                onCall: () async {
                                   // Guests are sent no numbers to call.
                                   if (!requireSignIn(context, ref)) return;
-                                  if (callNumberOf(property) != null) {
+                                  final method = await choosePropertyCallMethod(
+                                    context,
+                                  );
+                                  if (method == null || !context.mounted) {
+                                    return;
+                                  }
+                                  if (method == PropertyCallMethod.inApp) {
+                                    final startCall = ref.read(
+                                      chatCallStarterProvider,
+                                    );
+                                    final ownerId = property.ownerId;
+                                    if (ownerId == null || startCall == null) {
+                                      AppPopup.showError(
+                                        context,
+                                        context.l10n.callUnavailable,
+                                      );
+                                      return;
+                                    }
                                     ref
                                         .read(propertyRepositoryProvider)
                                         .recordLead(
                                           property.id,
                                           LeadChannel.call,
                                         );
+                                    await startCall(
+                                      ownerId,
+                                      ownerDisplayName(
+                                        context.l10n,
+                                        property.ownerName,
+                                      ),
+                                    );
+                                    return;
                                   }
-                                  callOwner(context, property);
+                                  // A list's card has no number: the full
+                                  // listing has, once it is read.
+                                  final callable = await _withFullDetails(
+                                    property,
+                                  );
+                                  if (!context.mounted) return;
+                                  if (callNumberOf(callable) != null) {
+                                    ref
+                                        .read(propertyRepositoryProvider)
+                                        .recordLead(
+                                          callable.id,
+                                          LeadChannel.call,
+                                        );
+                                  }
+                                  callOwner(context, callable);
                                 },
                               ),
                           ],
@@ -334,6 +413,10 @@ class _Body extends StatelessWidget {
   final bool isReady;
   final bool isOwner;
 
+  /// Whether it is lifted over the bottom of the cover photo, rounded like a
+  /// card; else it sits in a card of its own.
+  final bool liftOverCover;
+
   const _Body({
     required this.property,
     required this.recommendations,
@@ -341,13 +424,14 @@ class _Body extends StatelessWidget {
     this.onDismiss,
     this.isReady = false,
     this.isOwner = false,
+    this.liftOverCover = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       // Lifted over the last photo, matching the rounded card in the design.
-      transform: Matrix4.translationValues(0, -20, 0),
+      transform: liftOverCover ? Matrix4.translationValues(0, -20, 0) : null,
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -359,6 +443,10 @@ class _Body extends StatelessWidget {
           _DragHandle(onDismiss: onDismiss),
           const SizedBox(height: 14),
           PropertyDetailSummary(property: property),
+          if (property.isTakeover && property.takeover != null) ...[
+            const _SectionGap(),
+            TakeoverDetailsSection(terms: property.takeover!),
+          ],
           if (isReady) ...[
             const _SectionGap(),
             PropertyHighlights(property: property),
@@ -418,6 +506,21 @@ class _DragHandle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final handle = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Center(
+        child: Container(
+          width: 44,
+          height: 4,
+          decoration: BoxDecoration(
+            color: context.colors.iconSubtle,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+      ),
+    );
+    // Without [onDismiss] a drag moves what holds it.
+    if (onDismiss == null) return handle;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onVerticalDragEnd: (details) {
@@ -430,19 +533,7 @@ class _DragHandle extends StatelessWidget {
           onDismiss?.call();
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Center(
-          child: Container(
-            width: 44,
-            height: 4,
-            decoration: BoxDecoration(
-              color: context.colors.iconSubtle,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ),
-      ),
+      child: handle,
     );
   }
 }

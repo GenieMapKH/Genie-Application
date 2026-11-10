@@ -10,20 +10,9 @@ enum ChatSendProblem {
   /// The server allows a few messages a second.
   tooFast,
 
-  /// The account has no chat PIN yet, and the server sends nothing without.
-  pinRequired,
-
   /// One of the two has blocked the other.
   blocked,
 
-  /// The other person's key changed; the user accepts it first.
-  keyChanged,
-
-  /// This device does not have the chat keys.
-  notSetUp,
-
-  /// The other person has not set up secure chat yet.
-  peerNotReady,
   fileTooLarge,
   uploadFailed,
   failed,

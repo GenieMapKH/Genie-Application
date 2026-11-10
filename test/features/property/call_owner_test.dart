@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/property/data/models/property_details.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -16,6 +17,63 @@ PropertyModel _listing({String? listingPhone, String? ownerPhone}) =>
     );
 
 void main() {
+  for (final method in PropertyCallMethod.values) {
+    testWidgets('Call Now offers both methods and returns ${method.name}', (
+      tester,
+    ) async {
+      PropertyCallMethod? selected;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => TextButton(
+              onPressed: () async {
+                selected = await choosePropertyCallMethod(context);
+              },
+              child: const Text('Call Now'),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Call Now'));
+      await tester.pumpAndSettle();
+      expect(find.text('Call in Tilomnov'), findsOneWidget);
+      expect(find.text('Use phone dialer'), findsOneWidget);
+      await tester.tap(
+        find.text(
+          method == PropertyCallMethod.inApp
+              ? 'Call in Tilomnov'
+              : 'Use phone dialer',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(selected, method);
+    });
+  }
+
+  testWidgets('dismissing the choice places no call', (tester) async {
+    var finished = false;
+    PropertyCallMethod? selected;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => TextButton(
+            onPressed: () async {
+              selected = await choosePropertyCallMethod(context);
+              finished = true;
+            },
+            child: const Text('Call Now'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Call Now'));
+    await tester.pumpAndSettle();
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pumpAndSettle();
+    expect(finished, isTrue);
+    expect(selected, isNull);
+  });
+
   test("dials the number written on the listing before the owner's", () {
     expect(
       callNumberOf(_listing(listingPhone: '012 345 678', ownerPhone: '099')),

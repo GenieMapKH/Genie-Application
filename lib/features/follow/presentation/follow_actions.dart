@@ -7,6 +7,7 @@ import 'package:tilomnov/features/follow/data/follow_repository.dart';
 import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Follows [userId], or unfollows them if already followed, from wherever a
 /// follow button is: a guest is asked to sign in first, and a refusal is
@@ -29,7 +30,7 @@ Future<void> toggleFollow(
     } catch (e) {
       AppLogger.error('Reading a follow failed', e);
       if (context.mounted) {
-        AppPopup.showError(context, l10n.profileFollowFailed);
+        showFailure(context, error: e, fallback: l10n.profileFollowFailed);
       }
       return;
     }
@@ -42,6 +43,9 @@ Future<void> toggleFollow(
     FollowFailure.limitReached => l10n.profileFollowLimit(
       FollowLimitReached.limit,
     ),
-    FollowFailure.failed => l10n.profileFollowFailed,
+    FollowFailure.failed => failureMessage(
+      l10n,
+      fallback: l10n.profileFollowFailed,
+    ),
   });
 }

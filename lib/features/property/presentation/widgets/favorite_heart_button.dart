@@ -4,6 +4,8 @@ import 'package:flutter/physics.dart';
 import 'package:tilomnov/core/device/app_haptics.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/core/theme/app_motion.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 
 /// The heart on a listing card. Saving makes it jump and spring back with a
 /// light tap felt in the hand; unsaving gives only a small dip, as removing
@@ -70,7 +72,6 @@ class _FavoriteHeartButtonState extends State<FavoriteHeartButton>
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return Semantics(
       button: true,
       toggled: widget.isFavorite,
@@ -81,39 +82,60 @@ class _FavoriteHeartButtonState extends State<FavoriteHeartButton>
           width: 44,
           height: 44,
           alignment: Alignment.center,
-          child: ScaleTransition(
-            scale: _scale,
-            child: Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: AnimatedSwitcher(
-                duration: AppMotion.fade,
-                switchInCurve: Curves.easeOut,
-                switchOutCurve: Curves.easeIn,
-                transitionBuilder: (child, animation) =>
-                    ScaleTransition(scale: animation, child: child),
-                child: Icon(
-                  widget.isFavorite ? Icons.favorite : Icons.favorite_border,
-                  key: ValueKey<bool>(widget.isFavorite),
-                  size: widget.iconSize,
-                  color: widget.isFavorite
-                      ? colors.accent
-                      : widget.idleColor ?? colors.textPrimary,
-                ),
-              ),
-            ),
-          ),
+          child: GlassScope.of(context) ? _glass() : _solid(context),
         ),
+      ),
+    );
+  }
+
+  /// The glass stays still (its blur is never animated); only the heart in
+  /// it springs.
+  Widget _glass() {
+    return GlassSurface(
+      borderRadius: BorderRadius.circular(100),
+      child: Padding(
+        padding: const EdgeInsets.all(7),
+        child: ScaleTransition(scale: _scale, child: _heart()),
+      ),
+    );
+  }
+
+  Widget _solid(BuildContext context) {
+    return ScaleTransition(
+      scale: _scale,
+      child: Container(
+        padding: const EdgeInsets.all(7),
+        decoration: BoxDecoration(
+          color: context.colors.surface,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: _heart(),
+      ),
+    );
+  }
+
+  Widget _heart() {
+    final colors = context.colors;
+    return AnimatedSwitcher(
+      duration: AppMotion.fade,
+      switchInCurve: Curves.easeOut,
+      switchOutCurve: Curves.easeIn,
+      transitionBuilder: (child, animation) =>
+          ScaleTransition(scale: animation, child: child),
+      child: Icon(
+        widget.isFavorite ? Icons.favorite : Icons.favorite_border,
+        key: ValueKey<bool>(widget.isFavorite),
+        size: widget.iconSize,
+        color: widget.isFavorite
+            ? colors.accent
+            : widget.idleColor ?? colors.textPrimary,
       ),
     );
   }

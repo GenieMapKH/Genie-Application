@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/payment/presentation/renewal_checkout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,6 +14,7 @@ import 'package:tilomnov/features/property/presentation/widgets/detail/actions/p
 import 'package:tilomnov/features/property/presentation/widgets/detail/actions/property_visibility_sheet.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Takes the place of Chat / Call Now when the owner opens their own
 /// listing: Edit opens the edit form, Visibility makes it public, a draft
@@ -57,32 +59,10 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
     } catch (e, stack) {
       AppLogger.error('Opening the listing editor failed', e, stack);
       if (mounted) {
-        AppPopup.showError(context, context.l10n.propertyCouldNotOpenEditor);
-      }
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  Future<void> _changeVisibility() async {
-    final target = await PropertyVisibilitySheet.show(context, _status);
-    if (target == null || !mounted) return;
-    if (visibilityChange(_status, target) == null) return;
-
-    setState(() => _busy = true);
-    try {
-      await ref
-          .read(ownListingActionsProvider)
-          .changeVisibility(widget.property.id, _status, target);
-      if (!mounted) return;
-      setState(() => _status = _statusOf(target));
-      AppPopup.showSuccess(context, context.l10n.propertyVisibilityChanged);
-    } catch (e, stack) {
-      AppLogger.error('Changing listing visibility failed', e, stack);
-      if (mounted) {
-        AppPopup.showError(
+        showFailure(
           context,
-          context.l10n.propertyCouldNotChangeVisibility,
+          error: e,
+          fallback: context.l10n.propertyCouldNotOpenEditor,
         );
       }
     } finally {
@@ -90,12 +70,19 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
     }
   }
 
-  static String _statusOf(PropertyVisibility visibility) =>
-      switch (visibility) {
-        PropertyVisibility.public => 'Active',
-        PropertyVisibility.draft => 'Draft',
-        PropertyVisibility.sold => 'Sold',
-      };
+  Future<void> _changeVisibility() async {
+    final target = await PropertyVisibilitySheet.show(
+      context,
+      _status,
+      onPaymentRequired: () => renewProperty(context, ref, widget.property),
+      onChanged: (target) => ref
+          .read(ownListingActionsProvider)
+          .changeVisibility(widget.property.id, _status, target),
+    );
+    if (target == null || !mounted) return;
+    setState(() => _status = target.status);
+    AppPopup.showSuccess(context, context.l10n.propertyVisibilityChanged);
+  }
 
   String _visibilityLabel(BuildContext context) {
     final l10n = context.l10n;

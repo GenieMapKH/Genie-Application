@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/chat/data/chat_repository.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
 import 'package:tilomnov/features/chat/models/chat_message_action_problem.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 
@@ -11,10 +11,9 @@ typedef ChatEditResult = ({
   ChatMessageActionProblem? problem,
 });
 
-/// Sends edits and deletes of single messages to the server. An edit is
-/// sealed again here, so the server still never sees the text.
+/// Sends authorized edits and deletes; the server encrypts edits before storage.
 class ChatMessageChanges {
-  final MessageCipher cipher;
+  final MessageCodec cipher;
   final ChatRepository repository;
 
   const ChatMessageChanges({required this.cipher, required this.repository});
@@ -26,7 +25,7 @@ class ChatMessageChanges {
     required String peerId,
   }) async {
     try {
-      final sealed = await cipher.encrypt(
+      final sealed = await cipher.encode(
         text,
         id: message.id,
         peerId: peerId,

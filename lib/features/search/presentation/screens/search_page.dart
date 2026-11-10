@@ -10,7 +10,7 @@ import 'package:tilomnov/features/search/presentation/screens/publisher_profile_
 import 'package:tilomnov/features/search/presentation/search_layout.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_history_controller.dart';
 import 'package:tilomnov/features/search/presentation/widgets/search_history_list.dart';
-import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_query_controller.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
 import 'package:tilomnov/features/search/presentation/widgets/search_input_bar.dart';
@@ -131,7 +131,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     } catch (error, stack) {
       AppLogger.error('Removing a search from history failed', error, stack);
       if (mounted) {
-        AppPopup.showError(context, context.l10n.searchHistoryRemoveFailed);
+        showFailure(
+          context,
+          error: error,
+          fallback: context.l10n.searchHistoryRemoveFailed,
+        );
       }
     }
   }

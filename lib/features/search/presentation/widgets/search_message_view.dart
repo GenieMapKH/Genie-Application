@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/search/data/search_failure.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// An icon, a title, a sentence and maybe a button: what search shows when it
 /// has no list to show (nothing typed, nothing found, something failed).
@@ -49,7 +50,7 @@ class SearchMessageView extends StatelessWidget {
       ),
       SearchFailureReason.unknown => (
         Icons.error_outline_rounded,
-        l10n.searchFailureUnknown,
+        failureMessage(l10n, fallback: l10n.searchFailureUnknown),
       ),
     };
     return SearchMessageView(

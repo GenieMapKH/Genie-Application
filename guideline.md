@@ -112,11 +112,13 @@ The app moves and is shaped the way Apple's apps are. Reuse these instead of wri
 - **Continuous corners** (`lib/core/theme/app_shapes.dart`):
   - Cards, sheets and dialogs use `RoundedSuperellipseBorder` / `ClipRSuperellipse`, so curvature eases into the edge. Shadows may keep a plain `BorderRadius`, which is quicker.
   - An inner shape inset by `p` uses `AppShapes.concentric(outer, p)`.
-- **Glass** (`lib/features/home/presentation/widgets/glass/`):
+- **Glass** (`lib/shared/widgets/glass/`):
   - **Who gets it:** only phones whose own interface is glass: iOS 26+, and Xiaomi/Redmi/POCO on HyperOS 3+ that are not low-RAM (`GlassCapability`).
   - **Opting out:** users can turn it off in Settings. It also falls back to the solid look with Reduce Transparency or increased contrast.
-  - **Where:** glass is only for the navigation layer (bottom bar, map buttons), never for content such as cards, sheets or chat.
-  - **Blur:** one plain `ImageFilter.blur`, shared through the `BackdropGroup` in `MainLayout`. iOS can apply nothing else over the map.
+  - **Where:** glass is only for the navigation layer: the bottom bar, map buttons, and the controls floating over a page (back buttons, the chat bar's call and menu buttons, the buttons over listing photos). Never use it for content such as cards, sheets, lists or messages.
+  - **Asking:** inside a feature use `watchGlassNavigation(ref, context)`; shared widgets use `GlassScope.of(context)`, which the app root sets from the same setting. Round buttons use `GlassIconButton` (`GlassIconButton.back` for back).
+  - **Look:** clear like Apple's Liquid Glass, not frosted. A light blur (sigma 9), only a breath of tint (20% light, 32% dark), colours behind boosted about 1.6–1.8× outside iOS, and a crisp rim lit all round, brightest at the top-left and bottom-right (`GlassStyle`). Panes next to another pane cast no shadow, because the neighbour's blur turns the shadow into a smudge.
+  - **Blur:** one filter per pane: a plain blur on iOS, which can apply nothing else over the map, and blur plus saturation elsewhere. Group panes that sit together under a `BackdropGroup` (as `MainLayout` does) so they share one read of the screen. iOS can apply nothing else over the map.
   - **Painting:** paint selection and highlights on the glass, never glass on glass, and don't animate the blur.
   - **Testing:** try it on any device with `--dart-define=FORCE_GLASS=true`.
 

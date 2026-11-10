@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/core/media/image_compressor.dart';
@@ -6,6 +7,7 @@ import 'package:tilomnov/shared/utils/image_rejection_message.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/property/data/models/takeover_terms.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -16,6 +18,7 @@ import 'package:tilomnov/features/property/utils/property_format.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_form_input.dart';
+import 'package:tilomnov/features/property/presentation/widgets/publishing_plan_selector.dart';
 
 import 'add_property_page_form_binding.dart';
 import 'add_property_page_layout.dart';
@@ -82,10 +85,15 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
 
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final List<TextEditingController> additionalPhoneControllers = [];
+  final GlobalKey contactPhoneKey = GlobalKey();
   final TextEditingController discountController = TextEditingController();
 
   String selectedPropertyType = 'Land';
   String selectedListingSetting = 'Sale';
+  TakeoverTerms? takeoverTerms;
+  final GlobalKey takeoverKey = GlobalKey();
+  bool get isTakeover => selectedListingSetting == takeoverListingType;
   String selectedTitleType = 'Hard Title';
 
   /// 'percent' or 'amount'.
@@ -114,6 +122,19 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
   /// Whether the Archive button, not Publish, started the running save.
   bool isArchiving = false;
 
+  /// How the listing is published when it does not fit in the user's plan;
+  /// null until chosen.
+  PublishingPlan? selectedPublishingPlan;
+
+  /// Publish was pressed before a publishing plan was chosen.
+  bool publishingPlanMissing = false;
+
+  /// The listing saved privately before paying for it, so a second try
+  /// pays for the same one instead of creating another.
+  PropertyModel? unpaidDraft;
+
+  final GlobalKey publishingPlanKey = GlobalKey();
+
   final GlobalKey titleKey = GlobalKey();
   final GlobalKey priceKey = GlobalKey();
   final GlobalKey listingSettingsKey = GlobalKey();
@@ -133,7 +154,9 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
       !listEquals(widget.boundaryPoints, widget.property!.boundaryPoints);
 
   /// The price the form sets: a Borey project's starting price, else the price.
-  String get effectivePrice => selectedPropertyType == 'Borey'
+  String get effectivePrice => isTakeover
+      ? takeoverTerms?.combinedPrice?.toString() ?? ''
+      : selectedPropertyType == 'Borey'
       ? startingPriceController.text
       : priceController.text;
 
@@ -224,6 +247,18 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
     } else if (widget.propertyArea > 0) {
       landSizeController.text = _squareMeters(widget.propertyArea);
     }
+    ref
+        .read(userProfileProvider.future)
+        .then((profile) {
+          if (mounted &&
+              phoneController.text.isEmpty &&
+              profile?.phone != null) {
+            setState(() => phoneController.text = profile!.phone!);
+          }
+        })
+        .catchError((Object error) {
+          AppLogger.error('Could not prefill the account phone', error);
+        });
   }
 
   /// "Auto from map": the land size of the drawn boundary.
@@ -267,6 +302,9 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
     reasonForSellingController.dispose();
     descriptionController.dispose();
     phoneController.dispose();
+    for (final controller in additionalPhoneControllers) {
+      controller.dispose();
+    }
     discountController.dispose();
     super.dispose();
   }

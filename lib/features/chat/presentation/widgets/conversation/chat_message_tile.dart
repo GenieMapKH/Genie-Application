@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -162,9 +163,7 @@ class ChatMessageTile extends ConsumerWidget {
       case ChatMessageAction.copy:
         await Clipboard.setData(ClipboardData(text: message.text));
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(context.l10n.chatCopied)));
+        AppPopup.showSuccess(context, context.l10n.chatCopied);
       case ChatMessageAction.delete:
         await _delete(context, ref);
     }
@@ -179,7 +178,7 @@ class ChatMessageTile extends ConsumerWidget {
     );
     if (scope == null || !context.mounted) return;
 
-    final messenger = ScaffoldMessenger.of(context);
+    final overlay = Overlay.of(context, rootOverlay: true);
     final l10n = context.l10n;
     final problem = await ref
         .read(activeChatProvider(chat).notifier)
@@ -188,10 +187,10 @@ class ChatMessageTile extends ConsumerWidget {
           forEveryone: scope == MessageDeletionScope.everyone,
         );
     if (problem == null) return;
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(content: Text(chatMessageActionProblemText(l10n, problem))),
-      );
+    AppPopup.showOn(
+      overlay,
+      chatMessageActionProblemText(l10n, problem),
+      tone: AppPopupTone.error,
+    );
   }
 }

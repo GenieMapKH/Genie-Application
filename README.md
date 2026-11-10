@@ -1,7 +1,7 @@
 # Tilomnov
 
 Flutter app for the Tilomnov property marketplace: browse listings on a map, draw land
-boundaries, list your own property, and chat with owners (end-to-end encrypted).
+boundaries, list your own property, and chat with owners (encrypted connections and server storage).
 
 The backend lives in the `tilomnov-backend` repository.
 
@@ -18,11 +18,43 @@ flutter build apk --release --dart-define-from-file=.env.production
 Set `API_BASE_URL` in the env files to point at a local backend
 (Android emulator: `http://10.0.2.2:4000`) or the hosted one. In VS Code, F5 passes the file
 for you (`.vscode/launch.json`). A debug run without it stops at once and says so, instead of
-quietly talking to the production server; a release build without it uses production.
+quietly talking to the production server. Android release builds require an explicit
+`APP_ENV` and its matching gateway; missing or mixed environment settings fail the build.
 
 The env files are git-ignored and **not shipped in the app**: their values are compiled in
 (`lib/core/config/app_config.dart`). That keeps them out of the APK's files, but a compiled-in
 value can still be extracted, so they must never contain secrets.
+
+### Android staging and production APKs
+
+From the project folder in PowerShell:
+
+```powershell
+.\scripts\build_apk.ps1 -Env staging
+.\scripts\build_apk.ps1 -Env production
+```
+
+Set `APP_ENV=staging` in `.env.staging` and `APP_ENV=production` in `.env.production`,
+alongside its `API_BASE_URL`: `https://gateway-staging-c9ff.up.railway.app` for staging,
+`https://tilomnovgateway.sparkbytekh.com` for production. The script writes `tilomnov-staging.apk`
+and `tilomnov-production.apk` to `build/app/outputs/flutter-apk/`. Both are ARM64-v8a
+release APKs, avoiding the size of bundling multiple architectures. They require an
+ARM64 Android device; 32-bit devices and x86 emulators are not supported by these APKs.
+
+Staging appears as **Tilomnov Stage** with a **TESTING** badge on its launcher icon.
+Production appears as **Tilomnov** with the normal icon. Their separate package IDs
+allow both apps to be installed together.
+
+### Signup
+
+SMS verification is temporarily paused as of 2026-11-09. Enter your name,
+phone number and password, then accept the terms to create an account. The
+phone number is validated but saved as unverified. An optional email still
+requires email verification. New phone-only accounts cannot recover a forgotten
+password until they verify a recovery contact while signed in.
+
+Firebase phone verification code remains available for restoring signup SMS
+later. Existing phone verification and password recovery flows are unchanged.
 
 ## Error reporting (Sentry)
 

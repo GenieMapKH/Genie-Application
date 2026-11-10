@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 import 'package:tilomnov/features/property/data/models/nearby_place.dart';
@@ -10,6 +12,7 @@ import 'package:tilomnov/features/property/data/models/nearby_route.dart';
 import 'package:tilomnov/features/property/presentation/view_models/nearby_route_providers.dart';
 import 'package:tilomnov/features/property/utils/nearby_distance_format.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 
 /// A nearby place marked on the map, with the road to it from the listing.
 class NearbyRoutePage extends ConsumerWidget {
@@ -32,10 +35,21 @@ class NearbyRoutePage extends ConsumerWidget {
     final route = ref.watch(nearbyRouteProvider(_key));
 
     return Scaffold(
-      appBar: AppBar(title: Text(place.name, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        leading: GlassScope.of(context)
+            ? Center(
+                child: GlassIconButton.back(
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              )
+            : null,
+        title: Text(place.name, overflow: TextOverflow.ellipsis),
+      ),
       body: route.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _CouldNotLoad(
+        error: (error, stack) => PageLoadFailure(
+          error: error,
+          message: context.l10n.propertyNearbyRouteCouldNotLoad,
           onRetry: () => ref.invalidate(nearbyRouteProvider(_key)),
         ),
         data: (route) => _RouteMap(origin: origin, place: place, route: route),
@@ -163,31 +177,6 @@ class _DistanceCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _CouldNotLoad extends StatelessWidget {
-  final VoidCallback onRetry;
-
-  const _CouldNotLoad({required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            context.l10n.propertyNearbyRouteCouldNotLoad,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              color: context.colors.textMuted,
-            ),
-          ),
-          TextButton(onPressed: onRetry, child: Text(context.l10n.commonRetry)),
-        ],
       ),
     );
   }

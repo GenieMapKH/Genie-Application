@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
+import '../components/utm_section_title.dart';
+
 class UtmScanSection extends StatelessWidget {
   final Animation<double> fadeAnimation1;
   final Animation<Offset> slideAnimation1;
@@ -47,9 +49,10 @@ class UtmScanSection extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 16,
+                    Image.asset(
+                      'assets/icons/icons8-utm-marking-48.png',
+                      width: 16,
+                      height: 16,
                       color: context.colors.textMuted,
                     ),
                     const SizedBox(width: 6),
@@ -66,7 +69,7 @@ class UtmScanSection extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
         // Scan Section
         FadeTransition(
@@ -82,41 +85,16 @@ class UtmScanSection extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.document_scanner_outlined,
-                        size: 40,
-                        color: context.colors.textSecondary,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context.l10n.homeScanUtmFromDocument,
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: context.colors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              context.l10n.homeUseCameraToDetectCoordinates,
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: context.colors.textMuted,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  UtmSectionTitle(
+                    icon: (color) => Icon(
+                      Icons.document_scanner_outlined,
+                      size: 20,
+                      color: color,
+                    ),
+                    title: context.l10n.homeScanUtmFromDocument,
+                    subtitle: context.l10n.homeUseCameraToDetectCoordinates,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
                   GestureDetector(
                     onTap: isScanning ? null : onScanDocument,
                     child: Container(
@@ -172,7 +150,6 @@ class UtmScanSection extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 24),
       ],
     );
   }

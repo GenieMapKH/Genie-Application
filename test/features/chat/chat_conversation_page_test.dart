@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
-import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
 import 'package:tilomnov/features/chat/models/chat_participant.dart';
 import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_record_button.dart';
@@ -24,7 +22,6 @@ import 'chat_fakes.dart';
 void main() {
   late FakeChatRepository repository;
   late FakeChatSocket socket;
-  late FakeSetupService setup;
   late FakeCipher cipher;
   late FakeAttachmentService attachments;
   late FakeBlockRepository blocks;
@@ -32,7 +29,6 @@ void main() {
   setUp(() {
     repository = FakeChatRepository();
     socket = FakeChatSocket();
-    setup = FakeSetupService();
     cipher = FakeCipher();
     attachments = FakeAttachmentService();
     blocks = FakeBlockRepository();
@@ -55,8 +51,7 @@ void main() {
           ),
           chatRepositoryProvider.overrideWithValue(repository),
           chatSocketServiceProvider.overrideWithValue(socket),
-          e2eeSetupServiceProvider.overrideWithValue(setup),
-          messageCipherProvider.overrideWith((ref, userId) => cipher),
+          messageCodecProvider.overrideWith((ref, userId) => cipher),
           chatAttachmentServiceProvider.overrideWithValue(attachments),
           blockRepositoryProvider.overrideWithValue(blocks),
           signedInOverride(),
@@ -154,59 +149,12 @@ void main() {
     expect(find.text('Hello'), findsOneWidget);
   });
 
-  testWidgets('a closed PIN prompt says chat is locked and offers the PIN', (
+  testWidgets('chat opens and can send without a PIN or legacy setup', (
     tester,
   ) async {
-    setup.result = E2eeSetupResult.cancelled;
-
     await openChat(tester);
-
-    expect(find.text('Chats are locked on this phone'), findsOneWidget);
-    // Someone who cannot remember it is told where the way back is.
-    expect(find.textContaining('Forgot chat PIN'), findsOneWidget);
-    expect(find.byType(TextField), findsNothing);
-
-    setup.result = E2eeSetupResult.ready;
-    await tester.tap(find.text('Enter PIN'));
-    for (var i = 0; i < 5; i++) {
-      await tester.pump();
-    }
-
-    expect(setup.runs, 2);
     expect(find.byType(TextField), findsOneWidget);
-  });
-
-  testWidgets('too many wrong PINs is shown as a lock, not a broken chat', (
-    tester,
-  ) async {
-    setup.result = E2eeSetupResult.rateLimited;
-
-    await openChat(tester);
-
-    expect(find.text('Too many wrong PINs'), findsOneWidget);
-    expect(find.byIcon(Icons.lock_clock_outlined), findsOneWidget);
-    expect(find.text('Try again'), findsOneWidget);
-  });
-
-  testWidgets('an account without a chat PIN is sent to create one', (
-    tester,
-  ) async {
-    setup.result = E2eeSetupResult.pinNotSet;
-
-    await openChat(tester);
-
-    expect(find.text('Create your chat PIN'), findsOneWidget);
-    expect(find.byType(TextField), findsNothing);
-
-    await tester.tap(find.text('Create PIN'));
-    await tester.pumpAndSettle();
-
-    // The setup screen, with the six PIN boxes.
-    expect(find.text('Type the same 6 digits again.'), findsNothing);
-    expect(
-      find.textContaining('This 6-digit PIN brings them back'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Create your chat PIN'), findsNothing);
   });
 
   testWidgets('the header shows whether the other person is online', (
@@ -233,9 +181,7 @@ void main() {
     expect(find.text('Last seen 3 min ago'), findsOneWidget);
   });
 
-  testWidgets('tapping the header shows their profile and security code', (
-    tester,
-  ) async {
+  testWidgets('tapping the header shows their profile', (tester) async {
     repository.participant = ChatParticipantProfile(
       id: peer,
       username: 'Dara Sok',
@@ -249,28 +195,7 @@ void main() {
     expect(find.text('Dara Sok'), findsOneWidget);
     expect(find.text('Member since March 2025'), findsOneWidget);
 
-    await tester.tap(find.text('Security code'));
-    await tester.pumpAndSettle();
-    expect(find.text('11111 22222 33333 44444 55555 66666'), findsOneWidget);
-  });
-
-  testWidgets('a changed security key blocks sending until it is accepted', (
-    tester,
-  ) async {
-    cipher.peerKeyStatus = PeerKeyStatus.changed;
-
-    await openChat(tester);
-
-    expect(find.text("Dara's security key has changed"), findsOneWidget);
-    expect(find.byType(TextField), findsNothing);
-
-    await tester.tap(find.text('Accept new key'));
-    for (var i = 0; i < 5; i++) {
-      await tester.pump();
-    }
-
-    expect(find.text("Dara's security key has changed"), findsNothing);
-    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('Security code'), findsNothing);
   });
 
   testWidgets('a chat with your own account cannot be opened', (tester) async {
@@ -278,7 +203,6 @@ void main() {
 
     expect(find.text('This is your own account.'), findsOneWidget);
     expect(find.byType(TextField), findsNothing);
-    expect(setup.runs, 0);
   });
 
   group('blocked', () {

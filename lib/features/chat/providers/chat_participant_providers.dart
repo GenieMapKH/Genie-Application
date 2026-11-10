@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/chat/models/chat_attachment.dart';
 import 'package:tilomnov/features/chat/models/chat_participant.dart';
-import 'package:tilomnov/features/chat/providers/active_chat_state.dart';
 import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 
 /// Whether the given user is online, kept current while something watches.
@@ -47,15 +46,6 @@ final chatPresenceProvider = StreamProvider.autoDispose
 final chatParticipantProfileProvider = FutureProvider.autoDispose
     .family<ChatParticipantProfile, String>((ref, userId) {
       return ref.watch(chatRepositoryProvider).fetchParticipantProfile(userId);
-    });
-
-/// The code two people compare to confirm nobody swapped their keys.
-/// Null until both have keys this device knows.
-final chatSafetyCodeProvider = FutureProvider.autoDispose
-    .family<String?, ChatParticipants>((ref, chat) {
-      return ref
-          .watch(messageCipherProvider(chat.userId))
-          .safetyCode(chat.participantId);
     });
 
 /// A received file, downloaded and decrypted in memory.

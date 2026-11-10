@@ -6,6 +6,7 @@ import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation_list/chat_conversation_list_view.dart';
 import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
 
 /// Conversations the user archived. Swipe or long-press one to move it back
@@ -57,26 +58,12 @@ class ArchivedChatsPage extends ConsumerWidget {
                           ),
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
-                    error: (error, stack) => Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            context.l10n.chatCouldNotLoadYourChats,
-                            style: GoogleFonts.inter(
-                              fontSize: 15,
-                              color: context.colors.textMuted,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          OutlinedButton(
-                            onPressed: () => ref
-                                .read(archivedConversationsProvider.notifier)
-                                .refresh(),
-                            child: Text(context.l10n.chatTryAgain),
-                          ),
-                        ],
-                      ),
+                    error: (error, stack) => PageLoadFailure(
+                      error: error,
+                      message: context.l10n.chatCouldNotLoadYourChats,
+                      onRetry: () => ref
+                          .read(archivedConversationsProvider.notifier)
+                          .refresh(),
                     ),
                   ),
             ),

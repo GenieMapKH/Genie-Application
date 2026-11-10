@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/feed/presentation/widgets/feed_post_header.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
-import 'package:tilomnov/features/property/presentation/widgets/saved_property_card.dart';
+import 'package:tilomnov/features/property/presentation/widgets/property_image_gallery.dart';
+import 'package:tilomnov/features/property/presentation/widgets/share/property_share_sheet.dart';
 import 'package:tilomnov/features/property/utils/property_format.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/utils/owner_display_name.dart';
-import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
 
-/// One listing in the feed: who posted it and when, then the listing card.
+/// A publisher's post, with its own feed layout rather than a saved card.
 class FeedListingCard extends StatelessWidget {
   final PropertyModel property;
   final bool isFavorite;
   final VoidCallback onOpen;
-
-  /// Opens the owner's profile, out of their avatar's on-screen rectangle.
   final ValueChanged<Rect> onOpenOwner;
   final VoidCallback onFavoriteToggled;
+  final VoidCallback? onViewOnMap;
 
   const FeedListingCard({
     super.key,
@@ -27,150 +26,181 @@ class FeedListingCard extends StatelessWidget {
     required this.onOpen,
     required this.onOpenOwner,
     required this.onFavoriteToggled,
+    this.onViewOnMap,
   });
 
-  /// Tall enough for a wide photo above the price and details.
-  static const double _cardHeight = 320;
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _PostedBy(property: property, onTap: onOpenOwner),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: _cardHeight,
-          child: SavedPropertyCard(
-            property: property,
-            isFavorite: isFavorite,
-            onTap: onOpen,
-            onFavoriteToggled: onFavoriteToggled,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// The owner's picture and name (opening their profile), and the day listed.
-class _PostedBy extends StatefulWidget {
-  final PropertyModel property;
-
-  /// Gets the avatar's on-screen rectangle.
-  final ValueChanged<Rect> onTap;
-
-  const _PostedBy({required this.property, required this.onTap});
-
-  @override
-  State<_PostedBy> createState() => _PostedByState();
-}
-
-class _PostedByState extends State<_PostedBy> {
-  final _avatarKey = GlobalKey();
-
-  void _onTap() {
-    final box = _avatarKey.currentContext!.findRenderObject()! as RenderBox;
-    widget.onTap(box.localToGlobal(Offset.zero) & box.size);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final property = widget.property;
     final colors = context.colors;
     final l10n = context.l10n;
-    final name = ownerDisplayName(l10n, property.ownerName);
-    final listed = DateFormat.yMMMd(
-      Localizations.localeOf(context).toLanguageTag(),
-    ).format((property.publishedAt ?? property.createdAt).toLocal());
+    final previousPrice = property.recentPreviousPrice();
+    final open = property.isPublic ? onOpen : null;
 
-    return InkWell(
-      onTap: _onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(
-          children: [
-            UserAvatar(
-              key: _avatarKey,
-              name: name,
-              avatarUrl: property.ownerAvatarUrl,
-              radius: 18,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    l10n.feedListedOn(listed),
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: colors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (property.recentPreviousPrice() case final before?)
-              _PriceDropBadge(previousPrice: before),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// "Price dropped", and what a buyer paid before it.
-class _PriceDropBadge extends StatelessWidget {
-  final double previousPrice;
-
-  const _PriceDropBadge({required this.previousPrice});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: colors.primarySoft,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    return Material(
+      color: colors.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(Icons.trending_down, size: 16, color: colors.primary),
-          const SizedBox(width: 6),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.feedPriceDropped,
+          FeedPostHeader(property: property, onOpenOwner: onOpenOwner),
+          InkWell(
+            onTap: open,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 14),
+              child: Text(
+                property.title,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  height: 1.5,
+                  fontWeight: FontWeight.w600,
                   color: colors.textPrimary,
                 ),
               ),
-              Text(
-                PropertyFormat.money(previousPrice),
-                style: GoogleFonts.inter(
-                  fontSize: 11,
-                  color: colors.textMuted,
-                  decoration: TextDecoration.lineThrough,
+            ),
+          ),
+          Semantics(
+            label: property.title,
+            button: open != null,
+            child: GestureDetector(
+              onTap: open,
+              child: Hero(
+                tag: 'feed_property_hero_${property.id}',
+                child: AspectRatio(
+                  aspectRatio: 6 / 5,
+                  child: PropertyImageGallery(
+                    key: ValueKey(property.id),
+                    imageUrls: property.cardImageUrls,
+                  ),
                 ),
               ),
-            ],
+            ),
+          ),
+          InkWell(
+            onTap: open,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (previousPrice != null) ...[
+                    Wrap(
+                      spacing: 8,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.trending_down_rounded,
+                          size: 16,
+                          color: colors.success,
+                        ),
+                        Text(
+                          l10n.feedPriceDropped,
+                          style: TextStyle(
+                            color: colors.textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          PropertyFormat.money(previousPrice),
+                          style: TextStyle(
+                            color: colors.textMuted,
+                            fontSize: 12,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                  ],
+                  if (property.isTakeover) ...[
+                    const TakeoverBadge(),
+                    const SizedBox(height: 8),
+                    Text(PropertyFormat.takeoverSummary(l10n, property)),
+                    const SizedBox(height: 6),
+                  ],
+                  Text(
+                    PropertyFormat.cardPrice(l10n, property),
+                    style: GoogleFonts.inter(
+                      fontSize: 23,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.6,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    PropertyFormat.cardSpecLine(l10n, property),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      height: 1.6,
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                  if (!property.isPublic) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.propertyUnavailable,
+                      style: TextStyle(color: colors.textMuted),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Divider(height: 1, color: colors.divider),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              children: [
+                Semantics(
+                  toggled: isFavorite,
+                  child: TextButton.icon(
+                    onPressed: onFavoriteToggled,
+                    icon: Icon(
+                      isFavorite
+                          ? Icons.bookmark_rounded
+                          : Icons.bookmark_border_rounded,
+                      size: 21,
+                    ),
+                    label: Text(
+                      isFavorite ? l10n.commonSaved : l10n.commonSave,
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: isFavorite
+                          ? colors.accent
+                          : colors.textSecondary,
+                      minimumSize: const Size(48, 48),
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: property.isPublic
+                      ? () => PropertyShareSheet.show(context, property)
+                      : null,
+                  icon: const Icon(Icons.ios_share_rounded, size: 20),
+                  label: Text(l10n.propertyShare),
+                  style: TextButton.styleFrom(
+                    foregroundColor: colors.textSecondary,
+                    minimumSize: const Size(48, 48),
+                  ),
+                ),
+                if (property.isPublic && onViewOnMap != null)
+                  TextButton.icon(
+                    onPressed: onViewOnMap,
+                    icon: const Icon(Icons.map_outlined, size: 21),
+                    label: Text(l10n.propertyViewOnMap),
+                    style: TextButton.styleFrom(
+                      foregroundColor: colors.textSecondary,
+                      minimumSize: const Size(48, 48),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),

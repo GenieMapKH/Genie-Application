@@ -1,6 +1,8 @@
+import 'package:tilomnov/features/property/presentation/widgets/forms/property_contact_fields.dart';
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
@@ -8,8 +10,12 @@ import 'package:tilomnov/features/property/presentation/widgets/property_type_se
 import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:tilomnov/features/property/presentation/widgets/existing_property_photos.dart';
 import 'package:tilomnov/features/property/presentation/widgets/forms/fields/property_discount_field.dart';
+import 'package:tilomnov/features/property/presentation/widgets/forms/takeover_terms_form.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_image_picker.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
+import 'package:tilomnov/features/property/presentation/widgets/publishing_plan_selector.dart';
+import 'package:tilomnov/features/subscription/domain/subscription_plan.dart';
+import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
 import 'add_property_page.dart';
 import 'add_property_page_forms_dynamic.dart';
 import 'add_property_page_logic.dart';
@@ -20,6 +26,10 @@ import 'package:tilomnov/l10n/l10n.dart';
 extension AddPropertyPageLayout on AddPropertyPageState {
   Widget buildAddPropertyLayout(BuildContext context) {
     final formState = ref.watch(addPropertyControllerProvider);
+    // A new listing past the user's plan needs a way to be published.
+    final showsPublishingPlan =
+        !isEditing &&
+        ref.watch(publishingAllowanceProvider).valueOrNull?.hasRoom == false;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -70,20 +80,29 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                       const SizedBox(height: 16),
                       buildDynamicFields(),
                       const SizedBox(height: 16),
-                      PropertyDiscountField(
-                        controller: discountController,
-                        discountType: selectedDiscountType,
-                        onTypeChanged: (type) =>
-                            setState(() => selectedDiscountType = type),
-                        hasError:
-                            hasAttemptedSubmit &&
-                            !isValidDiscount(
-                              discount: discountController.text,
-                              discountType: selectedDiscountType,
-                              price: effectivePrice,
-                            ),
-                        focusKey: discountKey,
-                      ),
+                      if (isTakeover)
+                        TakeoverTermsForm(
+                          key: takeoverKey,
+                          initialTerms: takeoverTerms,
+                          showErrors: hasAttemptedSubmit,
+                          onChanged: (terms) =>
+                              setState(() => takeoverTerms = terms),
+                        ),
+                      if (!isTakeover)
+                        PropertyDiscountField(
+                          controller: discountController,
+                          discountType: selectedDiscountType,
+                          onTypeChanged: (type) =>
+                              setState(() => selectedDiscountType = type),
+                          hasError:
+                              hasAttemptedSubmit &&
+                              !isValidDiscount(
+                                discount: discountController.text,
+                                discountType: selectedDiscountType,
+                                price: effectivePrice,
+                              ),
+                          focusKey: discountKey,
+                        ),
                       const SizedBox(height: 24),
                       PropertySectionTitle(
                         title: context.l10n.propertyDescription,
@@ -151,12 +170,43 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                           });
                         },
                       ),
+                      if (showsPublishingPlan) ...[
+                        const SizedBox(height: 24),
+                        PropertySectionTitle(
+                          title: context.l10n.publishPlanTitle,
+                          required: true,
+                        ),
+                        const SizedBox(height: 12),
+                        PublishingPlanSelector(
+                          key: publishingPlanKey,
+                          selected: selectedPublishingPlan,
+                          oneTimeFee: PlanCatalog.oneTimePublishFeeUsd,
+                          hasError: publishingPlanMissing,
+                          onChanged: (plan) => setState(() {
+                            selectedPublishingPlan = plan;
+                            publishingPlanMissing = false;
+                          }),
+                        ),
+                      ],
                       const SizedBox(height: 24),
-                      PropertyTextField(
-                        label: context.l10n.propertyContactInformation,
-                        required: false,
-                        controller: phoneController,
-                        hintText: context.l10n.propertyPhoneNumber0,
+                      PropertyContactFields(
+                        key: contactPhoneKey,
+                        primary: phoneController,
+                        additional: additionalPhoneControllers,
+                        showErrors: hasAttemptedSubmit,
+                        onAdd: () => setState(
+                          () => additionalPhoneControllers.add(
+                            TextEditingController(),
+                          ),
+                        ),
+                        onRemove: (index) => setState(() {
+                          final removed = additionalPhoneControllers.removeAt(
+                            index,
+                          );
+                          WidgetsBinding.instance.addPostFrameCallback(
+                            (_) => removed.dispose(),
+                          );
+                        }),
                       ),
                       const SizedBox(
                         height: 100,
@@ -169,9 +219,11 @@ extension AddPropertyPageLayout on AddPropertyPageState {
           ],
         ),
       ),
-      bottomNavigationBar: buildBottomBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _submitBar(context, formState.isLoading),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: _submitBar(
+        context,
+        formState.isLoading || isLoading,
+      ),
     );
   }
 

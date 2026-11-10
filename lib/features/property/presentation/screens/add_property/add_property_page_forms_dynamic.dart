@@ -24,7 +24,8 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
         ),
         const SizedBox(height: 8),
         Container(
-          height: 160,
+          height: widget.boundaryPoints.isNotEmpty ? 160 : null,
+          constraints: const BoxConstraints(minHeight: 160),
           width: double.infinity,
           decoration: BoxDecoration(
             color: context.colors.divider,
@@ -71,12 +72,14 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   ),
                 )
               : Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.map, size: 48, color: context.colors.textHint),
                     const SizedBox(height: 8),
                     Text(
                       context.l10n.propertySetPropertyLocation,
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         color: context.colors.textHint,
                         fontSize: 16,
@@ -199,14 +202,18 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                       : context.colors.textMuted,
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  propertyKeywordLabel(context.l10n, kw.code),
-                  style: GoogleFonts.inter(
-                    color: isSelected
-                        ? context.colors.accent
-                        : context.colors.textSecondary,
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                Flexible(
+                  child: Text(
+                    propertyKeywordLabel(context.l10n, kw.code),
+                    style: GoogleFonts.inter(
+                      color: isSelected
+                          ? context.colors.accent
+                          : context.colors.textSecondary,
+                      fontSize: 12,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
@@ -233,71 +240,6 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
     return LatLngBounds(
       northeast: LatLng(x1!, y1!),
       southwest: LatLng(x0!, y0!),
-    );
-  }
-
-  Widget buildBottomBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(
-          top: BorderSide(color: context.colors.border, width: 1.0),
-        ),
-      ),
-      padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(
-            iconPath: 'assets/icons/explore.svg',
-            label: context.l10n.navExplore,
-            isSelected: true,
-          ),
-          _buildNavItem(
-            iconPath: 'assets/icons/saved.svg',
-            label: context.l10n.navSaved,
-          ),
-          _buildNavItem(
-            iconPath: 'assets/icons/chat.svg',
-            label: context.l10n.navChat,
-          ),
-          _buildNavItem(
-            iconPath: 'assets/icons/property.svg',
-            label: context.l10n.navMyProperties,
-          ),
-          _buildNavItem(
-            iconPath: 'assets/icons/user.svg',
-            label: context.l10n.accountDefaultName,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required String iconPath,
-    required String label,
-    bool isSelected = false,
-  }) {
-    final color = isSelected ? context.colors.accent : context.colors.textMuted;
-    return SizedBox(
-      width: 70,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TintedSvg(iconPath, width: 24, height: 24, color: color),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              color: color,
-              fontSize: 10,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 

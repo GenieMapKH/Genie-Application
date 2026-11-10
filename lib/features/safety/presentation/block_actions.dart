@@ -6,6 +6,7 @@ import 'package:tilomnov/features/safety/presentation/view_models/block_provider
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Blocks [userId] after saying what that does, or unblocks them, from
 /// wherever the choice is offered. A guest is asked to sign in first.
@@ -43,6 +44,6 @@ Future<void> setBlocked(
       blocked ? l10n.blockDone(name) : l10n.unblockDone(name),
     );
   } else {
-    AppPopup.showError(context, l10n.blockFailed);
+    showFailure(context, fallback: l10n.blockFailed);
   }
 }

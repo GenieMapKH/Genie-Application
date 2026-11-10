@@ -107,12 +107,11 @@ void main() {
         participantId: peer,
         repository: repository,
         socketService: socket,
-        setupService: FakeSetupService(),
         cipher: cipher,
         attachments: attachments,
         conversations: conversations,
       );
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
     });
 
     tearDown(() {
@@ -212,8 +211,7 @@ void main() {
             chatRepositoryProvider.overrideWithValue(repository),
             chatSocketServiceProvider.overrideWithValue(socket),
             noBlocksOverride(),
-            e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
-            messageCipherProvider.overrideWith((ref, userId) => cipher),
+            messageCodecProvider.overrideWith((ref, userId) => cipher),
             chatAttachmentServiceProvider.overrideWithValue(attachments),
             voiceRecorderFactoryProvider.overrideWithValue(() => recorder),
             voicePlayerFactoryProvider.overrideWithValue(() => player),

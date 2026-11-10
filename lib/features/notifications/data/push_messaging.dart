@@ -65,7 +65,22 @@ class FirebasePushMessaging implements PushMessaging {
       }
       return _messaging.getToken(vapidKey: AppConfig.webPushKey);
     }
+    if (defaultTargetPlatform == TargetPlatform.iOS &&
+        !await _waitForApnsToken()) {
+      return null;
+    }
     return _messaging.getToken();
+  }
+
+  /// On iOS, getToken throws until Apple has answered the app's registration,
+  /// which arrives a moment after permission is granted. A device Apple never
+  /// answers (most simulators, a build without the push entitlement) gives up.
+  Future<bool> _waitForApnsToken() async {
+    for (var attempt = 0; attempt < 10; attempt++) {
+      if (await _messaging.getAPNSToken() != null) return true;
+      await Future<void>.delayed(const Duration(seconds: 1));
+    }
+    return false;
   }
 
   @override

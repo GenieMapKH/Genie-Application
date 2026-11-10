@@ -1,3 +1,5 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,6 +8,7 @@ import 'package:tilomnov/features/profile/data/repositories/user_repository.dart
 import 'package:tilomnov/features/profile/presentation/screens/personal_info_page.dart';
 import 'package:tilomnov/features/profile/presentation/screens/user_profile_page.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../support/test_app.dart';
@@ -23,6 +26,7 @@ final _profile = UserProfile(
 
 List<Override> _signedIn({StubServer? server}) => [
   userProfileProvider.overrideWith((ref) async => _profile),
+  accountSubscriptionProvider.overrideWith((ref) async => null),
   if (server != null)
     userRepositoryProvider.overrideWithValue(UserRepository(server.dio)),
 ];
@@ -132,6 +136,27 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Sokha Chan'), findsOneWidget);
+    });
+
+    testWidgets('offline, it says there is no internet connection', (
+      tester,
+    ) async {
+      await pumpTestApp(
+        tester,
+        const UserProfilePage(),
+        overrides: [
+          userProfileProvider.overrideWith(
+            (ref) async => throw DioException(
+              requestOptions: RequestOptions(path: '/users/me'),
+              type: DioExceptionType.connectionError,
+            ),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('No internet connection'), findsOneWidget);
+      expect(find.text('Could not load profile'), findsNothing);
     });
 
     testWidgets('choosing Dark repaints the app and is remembered', (
@@ -276,7 +301,7 @@ void main() {
 
       expect(server.requests.last.method, 'PATCH');
       expect(server.requests.last.body, {'username': 'dara'});
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(AppDialog), findsNothing);
       await _letToastsLeave(tester);
     });
 
@@ -299,7 +324,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('This username is already taken.'), findsOneWidget);
-        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(find.byType(AppDialog), findsOneWidget);
       },
     );
 
@@ -385,7 +410,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(server.requests.single.body, {'name': 'សុខា ចាន់'});
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(AppDialog), findsNothing);
       await _letToastsLeave(tester);
     });
 

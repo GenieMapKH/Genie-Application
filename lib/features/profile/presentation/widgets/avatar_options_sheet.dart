@@ -11,6 +11,7 @@ import 'package:tilomnov/features/profile/presentation/view_models/avatar_contro
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/shared/utils/image_rejection_message.dart';
 
 /// Opens the sheet with the ways to change the profile picture.
@@ -101,7 +102,7 @@ class _AvatarOptionsSheetState extends ConsumerState<AvatarOptionsSheet> {
       case AvatarResult.noGooglePhoto:
         AppPopup.showInfo(context, l10n.avatarNoGooglePhoto);
       case AvatarResult.failed:
-        AppPopup.showError(context, l10n.avatarFailed);
+        showFailure(context, fallback: l10n.avatarFailed);
     }
   }
 

@@ -29,9 +29,7 @@ double _scale(WidgetTester tester) {
   final transforms = tester.widgetList<Transform>(
     find.ancestor(of: find.byKey(_key), matching: find.byType(Transform)),
   );
-  return transforms.isEmpty
-      ? 1
-      : transforms.first.transform.storage[0];
+  return transforms.isEmpty ? 1 : transforms.first.transform.storage[0];
 }
 
 void main() {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
+import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -41,24 +43,29 @@ class PropertyGridSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          itemCount: properties.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 0.72,
+        LayoutBuilder(
+          builder: (context, constraints) => GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemCount: properties.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: PropertyListLayout.compactColumns(
+                context,
+                constraints.maxWidth,
+              ).clamp(1, 2),
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 0.72,
+            ),
+            itemBuilder: (context, index) {
+              final property = properties[index];
+              return _PropertyTile(
+                property: property,
+                onTap: (tileRect) => onPropertyTapped(property, tileRect),
+              );
+            },
           ),
-          itemBuilder: (context, index) {
-            final property = properties[index];
-            return _PropertyTile(
-              property: property,
-              onTap: (tileRect) => onPropertyTapped(property, tileRect),
-            );
-          },
         ),
       ],
     );
@@ -106,6 +113,13 @@ class _PropertyTile extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (property.isTakeover)
+                  const Positioned(
+                    bottom: 8,
+                    left: 8,
+                    right: 8,
+                    child: TakeoverBadge(),
+                  ),
               ],
             ),
           ),

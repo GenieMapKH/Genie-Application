@@ -16,7 +16,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Update required'), findsOneWidget);
-    expect(find.textContaining('Please update the app'), findsOneWidget);
+    expect(
+      find.textContaining('Update Tilomnov from your app store'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('asks for an update, in Khmer', (tester) async {

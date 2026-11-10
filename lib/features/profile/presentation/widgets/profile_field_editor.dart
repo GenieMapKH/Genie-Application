@@ -1,14 +1,20 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/profile_edit_controller.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/security/presentation/widgets/identity_confirm_dialog.dart';
+import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
+import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Opens the dialog that edits one text [field] of the profile.
 ///
@@ -24,8 +30,8 @@ Future<void> showProfileFieldEditor(
   String? initialValue,
   TextInputType? keyboardType,
 }) {
-  return showDialog<void>(
-    context: context,
+  return AppDialog.show<void>(
+    context,
     useRootNavigator: true,
     builder: (_) => _ProfileFieldEditor(
       field: field,
@@ -144,7 +150,7 @@ class _ProfileFieldEditorState extends ConsumerState<_ProfileFieldEditor> {
     final unchanged =
         ProfileEditController.normalize(widget.field, _controller.text) ==
         widget.initialValue;
-    if (unchanged) {
+    if (unchanged && widget.field != ProfileField.phone) {
       Navigator.pop(context);
       return;
     }
@@ -153,6 +159,46 @@ class _ProfileFieldEditorState extends ConsumerState<_ProfileFieldEditor> {
       _error = null;
       _isSaving = true;
     });
+    if (widget.field == ProfileField.phone) {
+      final phone = ProfileEditController.normalize(
+        widget.field,
+        _controller.text,
+      );
+      if (!ProfileEditController.isValid(widget.field, phone)) {
+        setState(() {
+          _isSaving = false;
+          _error = widget.invalidMessage;
+        });
+        return;
+      }
+      final profile = ref.read(userProfileProvider).valueOrNull;
+      final saved = await showIdentityConfirmDialog(
+        context,
+        title: widget.label,
+        confirmLabel: context.l10n.authVerify,
+        offerGoogle: profile?.signsInWithGoogle ?? false,
+        isDestructive: false,
+        action: (proof) async {
+          try {
+            return await ref
+                .read(accountSecurityControllerProvider)
+                .changePhone(phone!, proof);
+          } catch (e) {
+            AppLogger.error('Phone verification failed', e);
+            return AccountActionResult.failed;
+          }
+        },
+      );
+      if (!mounted) return;
+      if (saved) {
+        ref.invalidate(userProfileProvider);
+        Navigator.pop(context);
+        AppPopup.showSuccess(context, context.l10n.commonSaved);
+      } else {
+        setState(() => _isSaving = false);
+      }
+      return;
+    }
     final result = await ref
         .read(profileEditControllerProvider)
         .save(widget.field, _controller.text);
@@ -169,7 +215,10 @@ class _ProfileFieldEditorState extends ConsumerState<_ProfileFieldEditor> {
         ProfileSaveResult.invalid => widget.invalidMessage,
         ProfileSaveResult.taken =>
           widget.takenMessage ?? context.l10n.commonSomethingWentWrong,
-        _ => context.l10n.commonSomethingWentWrong,
+        _ => failureMessage(
+          context.l10n,
+          fallback: context.l10n.commonSomethingWentWrong,
+        ),
       };
     });
   }
@@ -192,7 +241,9 @@ class _ProfileFieldEditorState extends ConsumerState<_ProfileFieldEditor> {
     final problem = _error ?? _usernameProblem(context);
     final isAvailable = _usernameCheck == UsernameCheck.available;
 
-    return AlertDialog(
+    return AppDialog.custom(
+      icon: Icons.edit_outlined,
+      tone: AppDialogTone.neutral,
       title: Text(
         l10n.personalInfoEdit(widget.label),
         style: TextStyle(

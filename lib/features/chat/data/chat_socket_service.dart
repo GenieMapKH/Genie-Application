@@ -26,8 +26,6 @@ class ChatSendException extends AppException {
     final text = reason is String ? reason : '';
     final problem = code == 'blocked'
         ? ChatSendProblem.blocked
-        : text.contains('chat PIN')
-        ? ChatSendProblem.pinRequired
         : text.contains('too quickly')
         ? ChatSendProblem.tooFast
         : ChatSendProblem.rejected;
@@ -38,8 +36,7 @@ class ChatSendException extends AppException {
 /// A call event the server sent: its name and payload.
 typedef CallSocketEvent = ({String event, Map<String, dynamic> data});
 
-/// The real-time connection of one signed-in user. It carries ciphertext
-/// both ways and never sees a readable message. Voice calls are signalled
+/// The authenticated real-time connection for message delivery. Voice calls are signalled
 /// over it too (see [onCallEvent]).
 class ChatSocketService {
   static const _ackTimeout = Duration(seconds: 10);

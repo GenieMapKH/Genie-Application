@@ -1,8 +1,13 @@
+import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
+import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
+import 'package:tilomnov/features/home/presentation/providers/show_property_on_map.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
 import 'package:tilomnov/features/property/presentation/screens/sort_order_page.dart';
@@ -15,6 +20,8 @@ import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/layout/paused_while_hidden.dart';
 import 'package:tilomnov/shared/utils/paged_list.dart';
 import 'package:tilomnov/shared/widgets/lists/load_more_on_scroll.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
+import 'package:tilomnov/shared/widgets/feedback/empty_state_card.dart';
 import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
 /// The Saved Properties tab page matching Screenshots 1 & 2.
@@ -67,7 +74,10 @@ class SavedPropertiesPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: context.colors.background,
+      // The list carries on behind a floating navigation bar, padded to end
+      // above it.
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             // Top App Bar Header
@@ -87,48 +97,43 @@ class SavedPropertiesPage extends ConsumerWidget {
               ),
             ),
 
-            // Sort By Filter Pill Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(SortOrderPage.route());
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: context.colors.divider,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.tune,
-                          size: 16,
-                          color: context.colors.textSecondary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          context.l10n.propertySortBy,
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+            // Sorting is useful only when there are saved listings.
+            if (!savedAsync.hasError &&
+                savedAsync.valueOrNull?.items.isNotEmpty == true) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(SortOrderPage.route());
+                    },
+                    child: _SortPill(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.tune,
+                            size: 16,
                             color: context.colors.textSecondary,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 6),
+                          Text(
+                            context.l10n.propertySortBy,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ],
 
             // Main Content Area
             Expanded(
@@ -138,26 +143,11 @@ class SavedPropertiesPage extends ConsumerWidget {
                     color: context.colors.accent,
                   ),
                 ),
-                error: (err, stack) => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        context.l10n.propertyFailedToLoadSavedProperties,
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          color: context.colors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          ref.read(savedPropertiesProvider.notifier).refresh();
-                        },
-                        child: Text(context.l10n.commonRetry),
-                      ),
-                    ],
-                  ),
+                error: (err, stack) => PageLoadFailure(
+                  error: err,
+                  message: context.l10n.propertyFailedToLoadSavedProperties,
+                  onRetry: () =>
+                      ref.read(savedPropertiesProvider.notifier).refresh(),
                 ),
                 data: (page) {
                   if (page.items.isEmpty) return _buildEmptyState(context);
@@ -171,72 +161,17 @@ class SavedPropertiesPage extends ConsumerWidget {
     );
   }
 
-  /// Empty state matching Screenshot 2.
   Widget _buildEmptyState(BuildContext context) {
-    // Aligned to the top so the card hugs its content instead of filling the
-    // page, like the empty My Properties and chat lists.
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-          decoration: BoxDecoration(
-            color: context.colors.surfaceMuted,
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.favorite_border_rounded,
-                  size: 36,
-                  color: context.colors.textHint,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                context.l10n.propertyYouHavenTSavedAnyProperties,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 14,
-                    color: context.colors.textHint,
-                  ),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      context.l10n.propertyTapTheHeartIconOnListings,
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        color: context.colors.textHint,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+    return ListView(
+      padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+      children: [
+        EmptyStateCard(
+          icon: Icons.favorite_border_rounded,
+          title: context.l10n.propertyYouHavenTSavedAnyProperties,
+          hint: context.l10n.propertyTapTheHeartIconOnListings,
         ),
-      ),
+        const AdvertisementSlot(),
+      ],
     );
   }
 
@@ -254,7 +189,7 @@ class SavedPropertiesPage extends ConsumerWidget {
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid.builder(
+            sliver: AdvertisedSliverGrid(
               gridDelegate: PropertyListLayout.isTablet(context)
                   ? const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: PropertyListLayout.savedCardMaxWidth,
@@ -262,8 +197,11 @@ class SavedPropertiesPage extends ConsumerWidget {
                       crossAxisSpacing: PropertyListLayout.columnSpacing,
                       childAspectRatio: 0.68,
                     )
-                  : const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                  : SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: PropertyListLayout.compactColumns(
+                        context,
+                        MediaQuery.sizeOf(context).width - 32,
+                      ),
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 12,
                       childAspectRatio: 0.68,
@@ -278,6 +216,9 @@ class SavedPropertiesPage extends ConsumerWidget {
                   onFavoriteToggled: () => ref
                       .read(savedPropertyIdsProvider.notifier)
                       .toggle(property.id),
+                  onViewOnMap: canShowPropertyOnMap(property)
+                      ? () => showPropertyOnMap(context, ref, property)
+                      : null,
                 );
               },
             ),
@@ -287,8 +228,40 @@ class SavedPropertiesPage extends ConsumerWidget {
                 ? const LoadingMoreIndicator()
                 : const SizedBox(height: 24),
           ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+          ),
         ],
       ),
+    );
+  }
+}
+
+/// The pill around "Sort by": glass on phones whose interface is glass.
+class _SortPill extends StatelessWidget {
+  final Widget child;
+
+  const _SortPill({required this.child});
+
+  static const _radius = BorderRadius.all(Radius.circular(20));
+  static const _padding = EdgeInsets.symmetric(horizontal: 14, vertical: 8);
+
+  @override
+  Widget build(BuildContext context) {
+    if (GlassScope.of(context)) {
+      return GlassSurface(
+        borderRadius: _radius,
+        shadow: false,
+        child: Padding(padding: _padding, child: child),
+      );
+    }
+    return Container(
+      padding: _padding,
+      decoration: BoxDecoration(
+        color: context.colors.divider,
+        borderRadius: _radius,
+      ),
+      child: child,
     );
   }
 }

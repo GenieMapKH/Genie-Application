@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_form_input.dart';
 import 'add_property_page.dart';
 
@@ -10,6 +11,7 @@ extension AddPropertyPageFormBinding on AddPropertyPageState {
       title: titleController.text,
       price: priceController.text,
       listingType: selectedListingSetting,
+      takeover: takeoverTerms,
       titleType: selectedTitleType,
       landSize: landSizeController.text,
       buildingSize: buildingSizeController.text,
@@ -26,6 +28,9 @@ extension AddPropertyPageFormBinding on AddPropertyPageState {
       reasonForSelling: reasonForSellingController.text,
       description: descriptionController.text,
       contactPhone: phoneController.text,
+      additionalContactPhones: additionalPhoneControllers
+          .map((c) => c.text)
+          .toList(),
       discount: discountController.text,
       discountType: selectedDiscountType,
       bedrooms: selectedBedrooms,
@@ -51,6 +56,7 @@ extension AddPropertyPageFormBinding on AddPropertyPageState {
     titleController.text = input.title;
     priceController.text = input.price;
     selectedListingSetting = input.listingType;
+    takeoverTerms = input.takeover;
     selectedTitleType = input.titleType;
     landSizeController.text = input.landSize;
     buildingSizeController.text = input.buildingSize;
@@ -67,6 +73,9 @@ extension AddPropertyPageFormBinding on AddPropertyPageState {
     reasonForSellingController.text = input.reasonForSelling;
     descriptionController.text = input.description;
     phoneController.text = input.contactPhone;
+    for (final number in input.additionalContactPhones) {
+      additionalPhoneControllers.add(TextEditingController(text: number));
+    }
     discountController.text = input.discount;
     selectedDiscountType = input.discountType;
     selectedBedrooms = input.bedrooms;

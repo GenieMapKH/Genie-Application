@@ -9,6 +9,8 @@ import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search
 import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search_summary.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
+import 'package:tilomnov/shared/widgets/feedback/page_load_failure.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:tilomnov/shared/widgets/menus/app_menu_item.dart';
 
@@ -30,8 +32,9 @@ class SavedSearchesPage extends ConsumerWidget {
         child: searches.when(
           skipLoadingOnRefresh: true,
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, _) => _Message(
-            text: l10n.savedSearchesLoadFailed,
+          error: (error, _) => PageLoadFailure(
+            error: error,
+            message: l10n.savedSearchesLoadFailed,
             onRetry: () => ref.invalidate(savedSearchesProvider),
           ),
           data: (list) => list.isEmpty
@@ -75,7 +78,7 @@ class _SavedSearchTile extends ConsumerWidget {
     if (name == null || name == search.name) return;
     final done = await _notifier(ref).rename(search, name);
     if (!done && context.mounted) {
-      AppPopup.showError(context, l10n.savedSearchFailed);
+      showFailure(context, fallback: l10n.savedSearchFailed);
     }
   }
 
@@ -86,14 +89,14 @@ class _SavedSearchTile extends ConsumerWidget {
     if (done) {
       AppPopup.showSuccess(context, l10n.savedSearchDeleted);
     } else {
-      AppPopup.showError(context, l10n.savedSearchFailed);
+      showFailure(context, fallback: l10n.savedSearchFailed);
     }
   }
 
   Future<void> _setAlerts(BuildContext context, WidgetRef ref, bool on) async {
     final done = await _notifier(ref).setAlerts(search, on);
     if (!done && context.mounted) {
-      AppPopup.showError(context, context.l10n.savedSearchFailed);
+      showFailure(context, fallback: context.l10n.savedSearchFailed);
     }
   }
 
@@ -161,9 +164,8 @@ class _SavedSearchTile extends ConsumerWidget {
 /// A short line in the middle of the page, scrollable so pulling refreshes.
 class _Message extends StatelessWidget {
   final String text;
-  final VoidCallback? onRetry;
 
-  const _Message({required this.text, this.onRetry});
+  const _Message({required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -175,8 +177,6 @@ class _Message extends StatelessWidget {
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(color: context.colors.textMuted),
         ),
-        if (onRetry != null)
-          TextButton(onPressed: onRetry, child: Text(context.l10n.commonRetry)),
       ],
     );
   }

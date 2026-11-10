@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 
+import 'network_status.dart';
+
 /// Repeats a read that failed for a reason that may pass: no connection for
 /// a moment, a timeout, or a gateway that could not reach a service. A weak
 /// mobile signal drops single requests often; one quiet retry spares the
@@ -9,24 +11,39 @@ import 'package:dio/dio.dart';
 ///
 /// Only reads (GET) are repeated, as repeating them changes nothing on the
 /// server. A write is never repeated: the server may have done it already.
+///
+/// A read sent while [status] already knows the server cannot be reached is
+/// not repeated for failing to connect: the outage is not a passing drop,
+/// and the screen should say so at once instead of after every repeat.
 class RetryInterceptor extends Interceptor {
   /// Put `{noRetry: true}` in a request's `extra` to fail it at once.
   static const noRetry = 'api_no_retry';
 
   static const _attemptKey = 'api_retry_attempt';
+  static const _sentOfflineKey = 'api_retry_sent_offline';
 
   /// Waits before each repeat; their count is how many repeats are made.
   /// Randomised a little so many phones do not all retry at the same moment.
   final List<Duration> delays;
 
   final Dio dio;
+  final NetworkStatus status;
   final Random _random;
 
   RetryInterceptor(
     this.dio, {
+    required this.status,
     this.delays = const [Duration(seconds: 1), Duration(seconds: 3)],
     Random? random,
   }) : _random = random ?? Random();
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    // Only the first attempt counts: a repeat is sent after the failure
+    // that made the status offline.
+    options.extra.putIfAbsent(_sentOfflineKey, () => status.isOffline);
+    handler.next(options);
+  }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
@@ -55,8 +72,8 @@ class RetryInterceptor extends Interceptor {
     if (options.extra[noRetry] == true) return false;
     if (options.method.toUpperCase() != 'GET') return false;
     return switch (err.type) {
-      DioExceptionType.connectionError ||
-      DioExceptionType.connectionTimeout ||
+      DioExceptionType.connectionError || DioExceptionType.connectionTimeout =>
+        options.extra[_sentOfflineKey] != true,
       DioExceptionType.receiveTimeout => true,
       DioExceptionType.badResponse => _isPassingServerError(
         err.response?.statusCode,

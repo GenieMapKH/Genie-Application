@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/connection_restored_provider.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_tab.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_visibility.dart';
 import 'package:tilomnov/shared/utils/paged_list.dart';
@@ -21,9 +26,14 @@ void ownListingsChangedFrom(WidgetRef ref) =>
     ref.read(ownListingsRevisionProvider.notifier).state++;
 
 /// The signed-in user's own listings, newest first, a page at a time, with
-/// their count per status: the My Properties screen. None for a guest.
+/// their count per status: the My Properties screen. Opens on the first
+/// page kept from last time (so offline too), read again behind it and
+/// whenever the internet comes back. None for a guest.
 class PropertiesNotifier extends AsyncNotifier<OwnListings> {
   int? _nextOffset;
+
+  /// The tab whose listings are shown.
+  OwnListingsTab _tab = OwnListingsTab.active;
 
   /// Counts reloads, so a page that was on its way during one is dropped.
   int _generation = 0;
@@ -34,15 +44,32 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
   @override
   Future<OwnListings> build() async {
     final repo = ref.watch(propertyRepositoryProvider);
+    _tab = ref.watch(ownListingsTabProvider);
     _generation++;
     _nextOffset = null;
     if (!ref.watch(isSignedInProvider)) return const OwnListings();
     ref.listen(ownListingsRevisionProvider, (_, _) => _reloadQuietly());
+    ref.listen(connectionRestoredProvider, (_, _) => _reloadQuietly());
+
+    final kept = await repo.keptOwnFirstPage(statuses: _tab.statuses);
+    if (kept != null) {
+      // Shown at once; the server's page replaces it when it arrives.
+      unawaited(Future.microtask(_reloadQuietly));
+      return _listingsOf(kept);
+    }
     return _firstPage(repo, PropertyRepository.ownPageSize);
   }
 
-  Future<OwnListings> _firstPage(PropertyRepository repo, int limit) async {
-    final page = await repo.fetchOwnPage(offset: 0, limit: limit);
+  Future<OwnListings> _firstPage(PropertyRepository repo, int limit) async =>
+      _listingsOf(
+        await repo.fetchOwnPage(
+          offset: 0,
+          limit: limit,
+          statuses: _tab.statuses,
+        ),
+      );
+
+  OwnListings _listingsOf(OwnListingsPage page) {
     _nextOffset = page.nextOffset;
     return OwnListings(
       page: PagedList(items: page.items, hasMore: page.nextOffset != null),
@@ -63,7 +90,7 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
     try {
       final page = await ref
           .read(propertyRepositoryProvider)
-          .fetchOwnPage(offset: offset);
+          .fetchOwnPage(offset: offset, statuses: _tab.statuses);
       if (generation != _generation) return;
       _nextOffset = page.nextOffset;
       state = AsyncData(
@@ -82,11 +109,31 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
     }
   }
 
-  Future<void> publishProperty(String id) =>
-      _changeOptimistically(id, 'Active', (repo) => repo.publish(id));
-
-  Future<void> unpublishProperty(String id) =>
-      _changeOptimistically(id, 'Draft', (repo) => repo.unpublish(id));
+  /// Moves listing [id] and its counts only after the server confirms.
+  Future<void> changeVisibility(
+    String id,
+    String status,
+    PropertyVisibility target,
+  ) async {
+    final change = _allowedChange(status, target);
+    try {
+      final property = await _sendVisibilityChange(
+        ref.read(propertyRepositoryProvider),
+        id,
+        change,
+      );
+      // A page requested before the write must not undo the confirmed change.
+      _generation++;
+      final current = state.valueOrNull;
+      if (current != null) {
+        state = AsyncData(
+          current.withStatus(id, property.status, listed: _tab.lists),
+        );
+      }
+    } finally {
+      ownListingsChanged(ref);
+    }
+  }
 
   Future<void> removeProperty(String id) =>
       _changeOptimistically(id, null, (repo) => repo.remove(id));
@@ -100,7 +147,9 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
     Future<Object?> Function(PropertyRepository) request,
   ) async {
     final current = state.valueOrNull;
-    if (current != null) state = AsyncData(current.withStatus(id, status));
+    if (current != null) {
+      state = AsyncData(current.withStatus(id, status, listed: _tab.lists));
+    }
     try {
       await request(ref.read(propertyRepositoryProvider));
     } finally {
@@ -108,8 +157,9 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
     }
   }
 
-  /// Reads the pages already shown again, without a loading state.
-  Future<void> _reloadQuietly() async {
+  /// Reads the pages already shown again, without a loading state. False
+  /// when they could not be read: what is shown stays.
+  Future<bool> _reloadQuietly() async {
     final shown = state.valueOrNull?.items.length ?? 0;
     final generation = ++_generation;
     try {
@@ -118,14 +168,19 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
         shown.clamp(PropertyRepository.ownPageSize, _maxReload),
       );
       if (generation == _generation) state = AsyncData(reloaded);
+      return true;
     } catch (e) {
       // The listings already shown stay; the next change or pull reloads.
       AppLogger.error('Reloading your listings failed', e);
+      return false;
     }
   }
 
-  /// Pull to refresh: the first page again, with a loading state.
-  Future<void> refresh() async {
+  /// Pull to refresh, or Retry. Shown listings stay until the new ones
+  /// arrive; with none shown, it shows the loading state. False when they
+  /// could not be read.
+  Future<bool> refresh() async {
+    if (state.hasValue && !state.hasError) return _reloadQuietly();
     _generation++;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
@@ -134,6 +189,7 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
         PropertyRepository.ownPageSize,
       ),
     );
+    return !state.hasError;
   }
 }
 
@@ -156,20 +212,34 @@ class OwnListingActions {
     String status,
     PropertyVisibility target,
   ) async {
-    final change = visibilityChange(status, target);
-    if (change == null) {
-      throw StateError('Cannot move a $status listing to ${target.name}');
-    }
-    final repo = _ref.read(propertyRepositoryProvider);
-    await switch (change) {
-      VisibilityChange.publish => repo.publish(id),
-      VisibilityChange.relist => repo.relist(id),
-      VisibilityChange.unpublish => repo.unpublish(id),
-      VisibilityChange.markSold => repo.markSold(id),
-    };
+    final change = _allowedChange(status, target);
+    await _sendVisibilityChange(
+      _ref.read(propertyRepositoryProvider),
+      id,
+      change,
+    );
     ownListingsChanged(_ref);
   }
 }
+
+VisibilityChange _allowedChange(String status, PropertyVisibility target) {
+  final change = visibilityChange(status, target);
+  if (change == null) {
+    throw StateError('Cannot move a $status listing to ${target.name}');
+  }
+  return change;
+}
+
+Future<PropertyModel> _sendVisibilityChange(
+  PropertyRepository repo,
+  String id,
+  VisibilityChange change,
+) => switch (change) {
+  VisibilityChange.publish => repo.publish(id),
+  VisibilityChange.relist => repo.relist(id),
+  VisibilityChange.unpublish => repo.unpublish(id),
+  VisibilityChange.markSold => repo.markSold(id),
+};
 
 final ownListingActionsProvider = Provider<OwnListingActions>(
   OwnListingActions.new,

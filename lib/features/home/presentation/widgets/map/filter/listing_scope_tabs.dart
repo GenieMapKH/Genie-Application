@@ -40,6 +40,14 @@ class ListingScopeTabs extends StatelessWidget {
             filter.isForRent,
             MapPropertyFilter.forRent,
           ),
+          _tab(
+            context,
+            context.l10n.listingTypeTakeover,
+            MapPropertyFilter.listingEquals(filter.listingTypes, const [
+              'Takeover Payments',
+            ]),
+            const ['Takeover Payments'],
+          ),
         ],
       ),
     );

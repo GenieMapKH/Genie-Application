@@ -1,4 +1,7 @@
+import 'package:tilomnov/features/auth/presentation/view_models/password_reset_flow.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/widgets.dart';
+import 'package:tilomnov/features/auth/presentation/screens/admin_email_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/auth/presentation/screens/welcome_page.dart';
 import 'package:tilomnov/features/auth/presentation/screens/login_page.dart';
@@ -7,7 +10,6 @@ import 'package:tilomnov/features/auth/presentation/screens/forgot_password_page
 import 'package:tilomnov/features/auth/presentation/screens/otp_verification_page.dart';
 import 'package:tilomnov/features/auth/presentation/screens/reset_password_page.dart';
 import 'package:tilomnov/features/home/presentation/screens/main_layout.dart';
-import 'package:tilomnov/app/session/chat_pin_gate.dart';
 
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:tilomnov/shared/transitions/app_transition_page.dart';
@@ -17,8 +19,24 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     redirect: (context, state) async {
       // Check if user is logged in
-      final token = await AuthStorage.getAccessToken();
+      var token = await AuthStorage.getAccessToken();
+      if (AuthStorage.needsAdminEmailVerification(token)) {
+        await AuthStorage.clearTokens();
+        token = null;
+      }
       final isLoggedIn = token != null && token.isNotEmpty;
+      final isAdmin = AuthStorage.isAdminAccessToken(token);
+      final path = state.matchedLocation;
+
+      if (path == '/admin-login') return null;
+
+      if (isAdmin &&
+          (path == '/' || path == '/login' || path == '/admin/dashboard')) {
+        return '/home';
+      }
+      if (!isAdmin && path.startsWith('/admin')) {
+        return isLoggedIn ? '/home' : '/login';
+      }
 
       // Determine if they are on an authentication-related screen
       final isAuthScreen =
@@ -64,11 +82,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/verify-otp',
         pageBuilder: (context, state) {
-          final email = Uri.decodeComponent(
-            state.uri.queryParameters['email'] ?? '',
-          );
+          // Email recovery also accepts older links with `?email=`.
+          final target = state.extra is PasswordResetTarget
+              ? state.extra! as PasswordResetTarget
+              : EmailResetTarget(
+                  Uri.decodeComponent(state.uri.queryParameters['email'] ?? ''),
+                );
           return AppTransitionPage(
-            child: OtpVerificationPage(email: email),
+            child: OtpVerificationPage(target: target),
             key: state.pageKey,
           );
         },
@@ -76,24 +97,37 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/reset-password',
         pageBuilder: (context, state) {
-          final email = Uri.decodeComponent(
-            state.uri.queryParameters['email'] ?? '',
-          );
-          final otp = Uri.decodeComponent(
-            state.uri.queryParameters['otp'] ?? '',
-          );
+          final proof = state.extra is PasswordResetProof
+              ? state.extra! as PasswordResetProof
+              : EmailCodeProof(
+                  Uri.decodeComponent(state.uri.queryParameters['email'] ?? ''),
+                  Uri.decodeComponent(state.uri.queryParameters['otp'] ?? ''),
+                );
           return AppTransitionPage(
-            child: ResetPasswordPage(email: email, otp: otp),
+            child: ResetPasswordPage(proof: proof),
             key: state.pageKey,
           );
         },
       ),
       GoRoute(
+        path: '/admin-login',
+        pageBuilder: (context, state) {
+          final token = state.uri.queryParameters['token'];
+          return AppTransitionPage(
+            key: state.pageKey,
+            child: AdminEmailPage(key: ValueKey(token), token: token),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/admin/dashboard',
+        pageBuilder: (context, state) =>
+            AppTransitionPage(child: const MainLayout(), key: state.pageKey),
+      ),
+      GoRoute(
         path: '/home',
-        pageBuilder: (context, state) => AppTransitionPage(
-          child: const ChatPinGate(child: MainLayout()),
-          key: state.pageKey,
-        ),
+        pageBuilder: (context, state) =>
+            AppTransitionPage(child: const MainLayout(), key: state.pageKey),
       ),
     ],
   );

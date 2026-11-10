@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:tilomnov/features/home/presentation/widgets/layout/glass_bottom_nav.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/main_map_controls.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/map_top_controls.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/property_carousel.dart';
@@ -16,18 +17,25 @@ import 'package:tilomnov/features/search/presentation/widgets/area/search_area_p
 class HomeSearchPanel extends StatelessWidget {
   final bool aboveControls;
   final bool visible;
+
+  /// Whether the bottom navigation is the floating glass capsule: the phone
+  /// sheet then grows out of it, like the pull-up list of listings near the
+  /// user.
+  final bool glassNav;
   final ValueChanged<PropertyModel> onOpenProperty;
 
   const HomeSearchPanel({
     super.key,
     required this.aboveControls,
     required this.visible,
+    required this.glassNav,
     required this.onOpenProperty,
   });
 
   /// Space around the panel: under the search bar, above the navigation bar
-  /// (and, beside the map, above the floating buttons).
-  static EdgeInsets margin(BuildContext context) {
+  /// (and, beside the map, above the floating buttons). With the glass bar
+  /// the phone sheet ends at the capsule's bottom edge, its foot behind it.
+  static EdgeInsets margin(BuildContext context, {required bool glassNav}) {
     final top =
         MediaQuery.paddingOf(context).top + MapTopControls.contentHeight;
     if (SearchLayout.isWide(MediaQuery.sizeOf(context).width)) {
@@ -39,18 +47,35 @@ class HomeSearchPanel extends StatelessWidget {
     }
     return EdgeInsets.only(
       top: top,
-      bottom: PropertyCarousel.bottomNavHeight - 8,
+      bottom: glassNav
+          ? GlassBottomNav.capsuleBottomOf(context)
+          : PropertyCarousel.bottomNavHeight - 8,
     );
+  }
+
+  /// The glass capsule the phone sheet grows out of, if any.
+  static Size? _capsule(BuildContext context, {required bool glassNav}) {
+    final width = MediaQuery.sizeOf(context).width;
+    return glassNav && !SearchLayout.isWide(width)
+        ? GlassBottomNav.capsuleSizeFor(width)
+        : null;
   }
 
   /// Everything that hides the map while the panel rests: the search bar,
   /// the panel and the navigation bar. The camera frames a search inside
-  /// what is left.
-  static EdgeInsets coveredInsets(BuildContext context) {
-    final margin = HomeSearchPanel.margin(context);
+  /// what is left. While [focused] on a listing, the phone sheet is
+  /// collapsed to show the map.
+  static EdgeInsets coveredInsets(
+    BuildContext context, {
+    required bool glassNav,
+    bool focused = false,
+  }) {
+    final margin = HomeSearchPanel.margin(context, glassNav: glassNav);
     final panel = SearchAreaPanel.coveredInsets(
       MediaQuery.sizeOf(context),
       margin,
+      foot: _capsule(context, glassNav: glassNav)?.height ?? 0,
+      focused: focused,
     );
     return EdgeInsets.only(
       top: margin.top,
@@ -67,7 +92,8 @@ class HomeSearchPanel extends StatelessWidget {
     if (!visible || aboveControls == wide) return const SizedBox.shrink();
 
     return SearchAreaPanel(
-      margin: margin(context),
+      margin: margin(context, glassNav: glassNav),
+      glassNav: _capsule(context, glassNav: glassNav),
       onOpenProperty: onOpenProperty,
     );
   }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
+
+import '../components/utm_section_title.dart';
 
 class UtmManualEntry extends StatelessWidget {
   final Animation<double> fadeAnimation;
@@ -36,63 +38,17 @@ class UtmManualEntry extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SvgPicture.asset(
-                    'assets/icons/keyboard.svg',
-                    width: 40,
-                    height: 40,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n.homeEnterCoordinatesManually,
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          context.l10n.homeTypeUtmZoneEastingXAnd,
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            color: context.colors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: Container(
-                  height: 44,
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  decoration: BoxDecoration(
-                    color:
-                        context.colors.accent, // Purple color from screenshot
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      context.l10n.homeEnterCoordinates,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+              UtmSectionTitle(
+                icon: (color) => TintedSvg(
+                  'assets/icons/keyboard.svg',
+                  width: 20,
+                  height: 20,
+                  color: color,
                 ),
+                title: context.l10n.homeEnterCoordinatesManually,
+                subtitle: context.l10n.homeTypeUtmZoneEastingXAnd,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               // Table Headers
               Row(

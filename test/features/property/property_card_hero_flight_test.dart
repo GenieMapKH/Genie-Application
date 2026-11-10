@@ -26,6 +26,44 @@ Widget _card(Size size, VoidCallback onTap) => Align(
 );
 
 void main() {
+  for (final status in ['Draft', 'Sold']) {
+    testWidgets(
+      '$status saved cards stay visible, fade, and allow unsaving only',
+      (tester) async {
+        var opened = false;
+        var unsaved = false;
+        await pumpTestApp(
+          tester,
+          Scaffold(
+            body: SizedBox(
+              width: 180,
+              height: 290,
+              child: SavedPropertyCard(
+                property: _property.copyWith(status: status),
+                onTap: () => opened = true,
+                onFavoriteToggled: () => unsaved = true,
+              ),
+            ),
+          ),
+        );
+        expect(find.text('Unavailable'), findsOneWidget);
+        final opacity = tester.widget<Opacity>(
+          find
+              .descendant(
+                of: find.byType(SavedPropertyCard),
+                matching: find.byType(Opacity),
+              )
+              .first,
+        );
+        expect(opacity.opacity, lessThan(1));
+        await tester.tap(find.text('Near Ring Road 3'));
+        expect(opened, isFalse);
+        await tester.tap(find.byIcon(Icons.favorite));
+        expect(unsaved, isTrue);
+      },
+    );
+  }
+
   // The feed's wide card flying to a profile's narrow one, and back: both
   // cards keep their own layout and fade into each other, so their text is
   // never laid out again at an in-between width.

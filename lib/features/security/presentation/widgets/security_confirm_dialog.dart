@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -12,9 +13,11 @@ Future<bool> showSecurityConfirmDialog(
   required String action,
   required bool isDestructive,
 }) async {
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
+  final confirmed = await AppDialog.show<bool>(
+    context,
+    builder: (dialogContext) => AppDialog.custom(
+      icon: Icons.security,
+      tone: AppDialogTone.neutral,
       title: Text(title),
       content: Text(message),
       actions: [

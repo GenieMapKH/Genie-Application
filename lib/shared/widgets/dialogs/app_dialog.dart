@@ -15,6 +15,8 @@ enum AppDialogTone { neutral, danger }
 class AppDialog extends StatelessWidget {
   final IconData icon;
   final String title;
+  final Widget? titleWidget;
+  final List<Widget>? actions;
   final String? message;
   final Widget? content;
   final AppDialogTone tone;
@@ -28,6 +30,8 @@ class AppDialog extends StatelessWidget {
     super.key,
     required this.icon,
     required this.title,
+    this.titleWidget,
+    this.actions,
     this.message,
     this.content,
     this.tone = AppDialogTone.neutral,
@@ -37,6 +41,23 @@ class AppDialog extends StatelessWidget {
     this.secondaryLabel,
     this.onSecondary,
   });
+
+  /// Uses the same card for forms and confirmations with several actions.
+  const AppDialog.custom({
+    super.key,
+    required this.icon,
+    required Widget title,
+    this.content,
+    required this.actions,
+    this.tone = AppDialogTone.neutral,
+  }) : titleWidget = title,
+       title = '',
+       message = null,
+       primaryLabel = '',
+       onPrimary = null,
+       primaryBusy = false,
+       secondaryLabel = null,
+       onSecondary = null;
 
   static Future<T?> show<T>(
     BuildContext context, {
@@ -109,15 +130,16 @@ class AppDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: colors.textPrimary,
-              ),
-            ),
+            titleWidget ??
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: colors.textPrimary,
+                  ),
+                ),
             if (message != null) ...[
               const SizedBox(height: 8),
               Text(
@@ -132,60 +154,71 @@ class AppDialog extends StatelessWidget {
             ],
             if (content != null) ...[
               const SizedBox(height: 16),
-              Flexible(child: SingleChildScrollView(child: content)),
-            ],
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: primaryBusy
-                  ? null
-                  : onPrimary ?? () => Navigator.of(context).pop(true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: danger ? colors.danger : colors.accent,
-                foregroundColor: colors.onPrimary,
-                disabledBackgroundColor:
-                    (danger ? colors.danger : colors.accent).withValues(
-                      alpha: 0.5,
-                    ),
-                disabledForegroundColor: colors.onPrimary,
-                elevation: 0,
-                minimumSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: primaryBusy
-                  ? SizedBox.square(
-                      dimension: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: colors.onPrimary,
-                      ),
-                    )
-                  : Text(
-                      primaryLabel,
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-            ),
-            if (secondary != null) ...[
-              const SizedBox(height: 4),
-              TextButton(
-                onPressed:
-                    onSecondary ?? () => Navigator.of(context).pop(false),
-                style: TextButton.styleFrom(
-                  foregroundColor: colors.textMuted,
-                  minimumSize: const Size.fromHeight(44),
-                ),
-                child: Text(
-                  secondaryLabel!,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: content,
                   ),
                 ),
               ),
+            ],
+            const SizedBox(height: 24),
+            if (actions != null)
+              ...actions!.reversed
+            else ...[
+              ElevatedButton(
+                onPressed: primaryBusy
+                    ? null
+                    : onPrimary ?? () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: danger ? colors.danger : colors.accent,
+                  foregroundColor: colors.onPrimary,
+                  disabledBackgroundColor:
+                      (danger ? colors.danger : colors.accent).withValues(
+                        alpha: 0.5,
+                      ),
+                  disabledForegroundColor: colors.onPrimary,
+                  elevation: 0,
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: primaryBusy
+                    ? SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: colors.onPrimary,
+                        ),
+                      )
+                    : Text(
+                        primaryLabel,
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+              ),
+              if (secondary != null) ...[
+                const SizedBox(height: 4),
+                TextButton(
+                  onPressed:
+                      onSecondary ?? () => Navigator.of(context).pop(false),
+                  style: TextButton.styleFrom(
+                    foregroundColor: colors.textMuted,
+                    minimumSize: const Size.fromHeight(44),
+                  ),
+                  child: Text(
+                    secondaryLabel!,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ],
         ),

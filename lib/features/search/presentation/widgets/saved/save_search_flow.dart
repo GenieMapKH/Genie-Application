@@ -10,6 +10,7 @@ import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search
 import 'package:tilomnov/features/search/presentation/widgets/saved/saved_search_summary.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Saves the area the map shows with [filter], under a name the user
 /// gives. A guest is asked to sign in first. True when saved.
@@ -44,7 +45,7 @@ Future<bool> saveMapSearch(
     case SaveSearchFailure.limitReached:
       AppPopup.showError(context, l10n.savedSearchLimit(maxSavedSearches));
     case SaveSearchFailure.failed:
-      AppPopup.showError(context, l10n.savedSearchFailed);
+      showFailure(context, fallback: l10n.savedSearchFailed);
   }
   return failure == null;
 }

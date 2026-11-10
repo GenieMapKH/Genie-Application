@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'admin_identity.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
@@ -8,12 +9,14 @@ class UserAvatar extends StatelessWidget {
   final String name;
   final String? avatarUrl;
   final double radius;
+  final bool isAdmin;
 
   const UserAvatar({
     super.key,
     required this.name,
     this.avatarUrl,
     this.radius = 22,
+    this.isAdmin = false,
   });
 
   @override
@@ -21,7 +24,7 @@ class UserAvatar extends StatelessWidget {
     final url = avatarUrl;
     final hasPicture = url != null && url.isNotEmpty;
 
-    return CircleAvatar(
+    final avatar = CircleAvatar(
       radius: radius,
       backgroundColor: context.colors.border,
       backgroundImage: hasPicture
@@ -38,5 +41,6 @@ class UserAvatar extends StatelessWidget {
               ),
             ),
     );
+    return isAdmin ? AdminAvatarFrame(child: avatar) : avatar;
   }
 }

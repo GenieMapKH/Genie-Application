@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,7 +7,9 @@ import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/own_listings_tab.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/presentation/view_models/property_visibility.dart';
 import 'package:tilomnov/shared/utils/paged_list.dart';
 
 import '../../support/test_app.dart';
@@ -24,7 +28,9 @@ PropertyModel _listing(String id, String status) => PropertyModel.fromJson({
 class _Server extends PropertyRepository {
   List<PropertyModel> listings;
   final offsets = <int>[];
+  final statusesAsked = <List<String>>[];
   bool refusePublish = false;
+  Completer<void>? publishGate;
 
   _Server(this.listings) : super(Dio());
 
@@ -40,8 +46,10 @@ class _Server extends PropertyRepository {
   Future<OwnListingsPage> fetchOwnPage({
     required int offset,
     int limit = PropertyRepository.ownPageSize,
+    List<String> statuses = const [],
   }) async {
     offsets.add(offset);
+    statusesAsked.add(statuses);
     final end = (offset + limit).clamp(0, listings.length);
     return (
       items: listings.sublist(offset.clamp(0, end), end),
@@ -52,9 +60,18 @@ class _Server extends PropertyRepository {
 
   @override
   Future<PropertyModel> publish(String id) async {
+    await publishGate?.future;
     if (refusePublish) throw Exception('refused');
     listings = [
       for (final p in listings) p.id == id ? p.copyWith(status: 'Active') : p,
+    ];
+    return listings.firstWhere((p) => p.id == id);
+  }
+
+  @override
+  Future<PropertyModel> markSold(String id) async {
+    listings = [
+      for (final p in listings) p.id == id ? p.copyWith(status: 'Sold') : p,
     ];
     return listings.firstWhere((p) => p.id == id);
   }
@@ -125,30 +142,93 @@ void main() {
     expect(server.offsets, [0, 20]);
   });
 
-  test('a publish moves its count to Active at once', () async {
+  test('a publish moves its count only after server confirmation', () async {
+    server.publishGate = Completer<void>();
     await container.read(propertiesProvider.future);
     final publishing = container
         .read(propertiesProvider.notifier)
-        .publishProperty('p0');
+        .changeVisibility('p0', 'Draft', PropertyVisibility.public);
 
+    await pumpEventQueue();
+    expect(shown().count('Draft'), 5);
+    expect(shown().count('Active'), 20);
+    expect(shown().items.first.status, 'Draft');
+    server.publishGate!.complete();
+    await publishing;
     expect(shown().count('Draft'), 4);
     expect(shown().count('Active'), 21);
     expect(shown().items.first.status, 'Active');
-    await publishing;
   });
 
-  test('a refused publish is undone by reading the listings again', () async {
+  test('a refused publish never changes the card or tab counts', () async {
     server.refusePublish = true;
     await container.read(propertiesProvider.future);
+    final counts = <Map<String, int>>[];
+    container.listen(propertiesProvider, (_, next) {
+      if (next.hasValue) counts.add(next.requireValue.countByStatus);
+    });
 
     await expectLater(
-      container.read(propertiesProvider.notifier).publishProperty('p0'),
+      container
+          .read(propertiesProvider.notifier)
+          .changeVisibility('p0', 'Draft', PropertyVisibility.public),
       throwsException,
     );
     await pumpEventQueue();
 
     expect(shown().count('Draft'), 5);
     expect(shown().items.first.status, 'Draft');
+    expect(
+      counts.every((count) => count['Draft'] == 5 && count['Active'] == 20),
+      isTrue,
+    );
+  });
+
+  test('marking an active listing sold moves its count to Sold', () async {
+    await container.read(propertiesProvider.future);
+    final active = shown().items.firstWhere((p) => p.status == 'Active');
+
+    await container
+        .read(propertiesProvider.notifier)
+        .changeVisibility(active.id, 'Active', PropertyVisibility.sold);
+
+    expect(shown().count('Sold'), 1);
+    expect(shown().count('Active'), 19);
+  });
+
+  test('a listing moved to another tab leaves after confirmation', () async {
+    await container.read(propertiesProvider.future);
+    final moving = container
+        .read(propertiesProvider.notifier)
+        .changeVisibility('p7', 'Active', PropertyVisibility.sold);
+
+    expect(_ids(shown()), contains('p7'));
+    await moving;
+    expect(_ids(shown()), isNot(contains('p7')));
+    expect(shown().count('Sold'), 1);
+  });
+
+  test('a tab asks the server only for its statuses', () async {
+    await container.read(propertiesProvider.future);
+    expect(server.statusesAsked.last, ['Active']);
+
+    container.read(ownListingsTabProvider.notifier).state =
+        OwnListingsTab.draft;
+    await container.read(propertiesProvider.future);
+
+    expect(server.statusesAsked.last, ['Draft', 'Expired']);
+  });
+
+  test('a move the server does not allow is refused before asking', () async {
+    await container.read(propertiesProvider.future);
+
+    await expectLater(
+      container
+          .read(propertiesProvider.notifier)
+          .changeVisibility('p0', 'Draft', PropertyVisibility.sold),
+      throwsStateError,
+    );
+    expect(shown().count('Draft'), 5);
   });
 
   test('a removal leaves the list and its count at once', () async {
@@ -192,9 +272,24 @@ void main() {
       expect(listings.withStatus('b', null).countByStatus, {'Draft': 3});
     });
 
+    test('takes a listing out when its tab does not list the new status', () {
+      final moved = listings.withStatus(
+        'a',
+        'Active',
+        listed: OwnListingsTab.draft.lists,
+      );
+      expect(moved.items.map((p) => p.id), ['b']);
+      expect(moved.countByStatus, {'Draft': 2, 'Sold': 1, 'Active': 1});
+    });
+
     test('changes nothing for a listing that is not loaded', () {
       expect(identical(listings.withStatus('zz', 'Active'), listings), isTrue);
     });
+  });
+
+  test('the Draft tab counts expired listings too', () {
+    expect(OwnListingsTab.draft.countIn({'Draft': 2, 'Expired': 1}), 3);
+    expect(OwnListingsTab.pending.countIn({'Draft': 2}), 0);
   });
 }
 

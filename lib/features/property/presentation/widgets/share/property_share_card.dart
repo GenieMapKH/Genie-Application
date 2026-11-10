@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -61,6 +62,12 @@ class PropertyShareCard extends StatelessWidget {
                           left: 12,
                           child: _TypePill(propertyType: property.propertyType),
                         ),
+                        if (property.isTakeover)
+                          const Positioned(
+                            bottom: 12,
+                            left: 12,
+                            child: TakeoverBadge(),
+                          ),
                       ],
                     ),
                   ),
@@ -215,6 +222,10 @@ class _Details extends StatelessWidget {
             color: colors.textPrimary,
           ),
         ),
+        if (property.isTakeover) ...[
+          const SizedBox(height: 6),
+          Text(PropertyFormat.takeoverSummary(l10n, property)),
+        ],
         const SizedBox(height: 6),
         Text(
           PropertyFormat.cardSpecLine(l10n, property),

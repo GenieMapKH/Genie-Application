@@ -22,8 +22,10 @@ class LandSizeFieldWidget extends StatelessWidget {
       key: state.landSizeKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             PropertySectionTitle(
               title: isLandType
@@ -47,6 +49,7 @@ class LandSizeFieldWidget extends StatelessWidget {
                     ),
                   )
                 : Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.info_outline,
@@ -54,11 +57,13 @@ class LandSizeFieldWidget extends StatelessWidget {
                         color: context.colors.textMuted,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        context.l10n.propertyTotalLandAreaOfTheProperty,
-                        style: GoogleFonts.inter(
-                          color: context.colors.textMuted,
-                          fontSize: 11,
+                      Flexible(
+                        child: Text(
+                          context.l10n.propertyTotalLandAreaOfTheProperty,
+                          style: GoogleFonts.inter(
+                            color: context.colors.textMuted,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ],
@@ -96,8 +101,10 @@ class BuildingSizeFieldWidget extends StatelessWidget {
       key: state.buildingSizeKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             PropertySectionTitle(
               title: context.l10n.propertyBuildingSize,
@@ -107,6 +114,7 @@ class BuildingSizeFieldWidget extends StatelessWidget {
                   state.buildingSizeController.text.trim().isEmpty,
             ),
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.info_outline,
@@ -114,11 +122,13 @@ class BuildingSizeFieldWidget extends StatelessWidget {
                   color: context.colors.textMuted,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  context.l10n.propertyTotalBuiltUpArea,
-                  style: GoogleFonts.inter(
-                    color: context.colors.textMuted,
-                    fontSize: 11,
+                Flexible(
+                  child: Text(
+                    context.l10n.propertyTotalBuiltUpArea,
+                    style: GoogleFonts.inter(
+                      color: context.colors.textMuted,
+                      fontSize: 11,
+                    ),
                   ),
                 ),
               ],
@@ -154,8 +164,10 @@ class UnitSizeFieldWidget extends StatelessWidget {
       key: state.unitSizeKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             PropertySectionTitle(
               title: context.l10n.propertyUnitSize,
@@ -165,6 +177,7 @@ class UnitSizeFieldWidget extends StatelessWidget {
                   state.unitSizeController.text.trim().isEmpty,
             ),
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.info_outline,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/home/presentation/providers/map_filter_draft_provider.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/filter/filter_number_field.dart';
@@ -68,10 +70,16 @@ class _MapFilterPageState extends ConsumerState<MapFilterPage> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colors.textPrimary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: GlassScope.of(context)
+            ? Center(
+                child: GlassIconButton.back(
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              )
+            : IconButton(
+                icon: Icon(Icons.arrow_back, color: colors.textPrimary),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
         title: Text(
           l10n.filterTitle,
           style: GoogleFonts.inter(

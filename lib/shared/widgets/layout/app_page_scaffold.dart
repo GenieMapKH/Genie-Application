@@ -9,15 +9,23 @@ import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
 class AppPageScaffold extends StatelessWidget {
   final String title;
   final Widget child;
+  final bool showBackButton;
 
   /// What the back arrow does. Defaults to leaving the screen.
   final VoidCallback? onBackPressed;
+
+  /// Whether [child] reaches the bottom of the screen, behind a floating
+  /// navigation bar. It then pads its own scrolling content by the bottom
+  /// inset (`MediaQuery.paddingOf(context).bottom`) to end above the bar.
+  final bool extendsToBottom;
 
   const AppPageScaffold({
     super.key,
     required this.title,
     required this.child,
+    this.showBackButton = true,
     this.onBackPressed,
+    this.extendsToBottom = false,
   });
 
   @override
@@ -25,10 +33,15 @@ class AppPageScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.colors.background,
       body: SafeArea(
+        bottom: !extendsToBottom,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppHeaderBar(title: title, onBackPressed: onBackPressed),
+            AppHeaderBar(
+              title: title,
+              onBackPressed: onBackPressed,
+              showBackButton: showBackButton,
+            ),
             Expanded(child: child),
           ],
         ),

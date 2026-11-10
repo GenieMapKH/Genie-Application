@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/call/presentation/mini_call_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,12 +12,13 @@ import 'package:tilomnov/core/theme/scroll_physics.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/call/models/call_state.dart';
 import 'package:tilomnov/features/call/providers/call_providers.dart';
-import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
+import 'package:tilomnov/features/home/presentation/providers/glass_navigation_provider.dart';
 import 'package:tilomnov/features/notifications/providers/notification_providers.dart';
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
-import 'package:tilomnov/shared/widgets/feedback/offline_banner.dart';
+import 'package:tilomnov/shared/widgets/feedback/connection_popups.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 
 class AppScrollBehavior extends ScrollBehavior {
   @override
@@ -46,8 +48,6 @@ class MyApp extends ConsumerWidget {
       }
     });
 
-    // Chat keys are made at sign-in, not first when a chat is opened.
-    ref.listen(chatKeysQuietSetupProvider, (_, _) {});
     // Notifications: shown and opened from the start, and this device
     // registered for them while someone is signed in.
     ref.listen(pushNotificationsProvider, (_, _) {});
@@ -55,6 +55,34 @@ class MyApp extends ConsumerWidget {
     // A call, placed or received, shows its screen over everything.
     ref.listen(callControllerProvider, (previous, call) {
       onCallChanged(ref, router, previous ?? const CallState(), call);
+      final callContext = router.routerDelegate.navigatorKey.currentContext;
+      if (callContext != null) {
+        ref
+            .read(nativeCallIntegrationProvider)
+            .update(
+              previous ?? const CallState(),
+              call,
+              title: callContext.l10n.callInProgress,
+              returnLabel: callContext.l10n.callReturn,
+              incomingTitle: callContext.l10n.callIncomingFrom(
+                call.peerName ?? '',
+              ),
+              acceptLabel: callContext.l10n.callAccept,
+              declineLabel: callContext.l10n.callDecline,
+              isScreenVisible: () =>
+                  ref.read(callScreenPresenterProvider).isVisible,
+            );
+      }
+    });
+
+    ref.listen(callMinimizedProvider, (_, minimized) {
+      ref
+          .read(callScreenPresenterProvider)
+          .update(
+            router,
+            ref.read(callControllerProvider),
+            minimized: minimized,
+          );
     });
 
     return MaterialApp.router(
@@ -71,9 +99,21 @@ class MyApp extends ConsumerWidget {
       routerConfig: router,
       builder: (context, child) => updateRequired
           ? const UpdateRequiredPage()
-          : OfflineBanner(
-              navigatorKey: router.routerDelegate.navigatorKey,
-              child: child ?? const SizedBox.shrink(),
+          // Every page's floating buttons follow the glass navigation bar.
+          : Consumer(
+              builder: (context, ref, _) => GlassScope(
+                enabled: watchGlassNavigation(ref, context),
+                child: ConnectionPopups(
+                  navigatorKey: router.routerDelegate.navigatorKey,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      child ?? const SizedBox.shrink(),
+                      const MiniCallBar(),
+                    ],
+                  ),
+                ),
+              ),
             ),
     );
   }

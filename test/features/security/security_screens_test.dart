@@ -1,8 +1,7 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tilomnov/features/chat/e2ee/e2ee_key_manager.dart';
-import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 import 'package:tilomnov/features/profile/data/models/user_profile.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:tilomnov/features/security/data/repositories/account_repository.dart';
@@ -30,10 +29,6 @@ Override _signedIn({String? firebaseUid, bool hasPassword = true}) =>
           _profile(firebaseUid: firebaseUid, hasPassword: hasPassword),
     );
 
-/// An account that signs in only with Google: it has no password.
-Override _signedInWithGoogleOnly() =>
-    _signedIn(firebaseUid: 'fb1', hasPassword: false);
-
 /// [established] is false for a device that signed in less than a day ago.
 String _sessionsJson({bool established = true}) {
   final recently = DateTime.now().toUtc().subtract(const Duration(hours: 3));
@@ -49,42 +44,6 @@ String _sessionsJson({bool established = true}) {
 
 /// Records which PINs and password were asked for, without doing any key
 /// work.
-class _FakeKeyManager extends Fake implements E2eeKeyManager {
-  String? currentPin;
-  String? newPin;
-  String? password;
-  bool holdsKeys = true;
-
-  @override
-  Future<bool> holdsCurrentKeys(String userId) async => holdsKeys;
-
-  @override
-  Future<RecoverPinResult> recoverWithPassword(
-    String userId, {
-    required String password,
-    required PinRequest askNewPin,
-  }) async {
-    this.password = password;
-    newPin = await askNewPin();
-    if (newPin == null) return RecoverPinResult.cancelled;
-    return holdsKeys
-        ? RecoverPinResult.recovered
-        : RecoverPinResult.startedOver;
-  }
-
-  @override
-  Future<ResetKeysResult> resetKeys(
-    String userId, {
-    required PinRequest askCurrentPin,
-    required PinRequest askNewPin,
-  }) async {
-    currentPin = await askCurrentPin();
-    if (currentPin == null) return ResetKeysResult.cancelled;
-    newPin = await askNewPin();
-    return newPin == null ? ResetKeysResult.cancelled : ResetKeysResult.reset;
-  }
-}
-
 /// Toasts stay for a few seconds; a test must not end while one is showing.
 Future<void> _letToastsLeave(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 5));
@@ -92,131 +51,16 @@ Future<void> _letToastsLeave(WidgetTester tester) async {
 }
 
 void main() {
-  group('security screen', () {
-    for (final (kind, account) in [
-      ('a password account', _signedIn()),
-      ('a Google-only account', _signedInWithGoogleOnly()),
-    ]) {
-      testWidgets('$kind has a chat PIN it cannot turn off', (tester) async {
-        await pumpTestApp(tester, const SecurityPage(), overrides: [account]);
-
-        expect(
-          find.textContaining('protected by your 6-digit chat PIN'),
-          findsOneWidget,
-        );
-        for (final row in [
-          'Change chat PIN',
-          'Forgot chat PIN',
-          'Reset encryption keys',
-          'Logged-in devices',
-          'Deactivate or delete account',
-        ]) {
-          await tester.scrollUntilVisible(find.text(row), 100);
-          expect(find.text(row), findsOneWidget);
-        }
-        expect(find.textContaining('Turn off'), findsNothing);
-        expect(find.textContaining('Set up'), findsNothing);
-      });
-    }
-
-    testWidgets('a forgotten PIN is replaced after the account password', (
-      tester,
-    ) async {
-      final manager = _FakeKeyManager();
-      await pumpTestApp(
-        tester,
-        const SecurityPage(),
-        overrides: [
-          _signedIn(),
-          e2eeKeyManagerProvider.overrideWithValue(manager),
-        ],
-      );
-
-      await tester.tap(find.text('Forgot chat PIN'));
-      await tester.pumpAndSettle();
-      // This phone holds the keys: nothing is lost, so it says so.
-      expect(find.textContaining('nothing is lost'), findsOneWidget);
-      await tester.tap(find.text('Continue'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Enter your account password'), findsOneWidget);
-      await tester.enterText(find.byType(TextField), 'my-password');
-      await tester.tap(find.text('Continue'));
-      await tester.pumpAndSettle();
-
-      expect(manager.password, 'my-password');
-      expect(find.text('Enter new PIN'), findsOneWidget);
-      await tester.enterText(find.byType(TextField), '739206');
-      await tester.tap(find.text('Submit'));
-      await tester.pumpAndSettle();
-
-      expect(manager.newPin, '739206');
-      expect(
-        find.text('Done. Your new chat PIN protects your chats.'),
-        findsOneWidget,
-      );
-      await _letToastsLeave(tester);
-    });
-
-    testWidgets('resetting keys asks for the current PIN before a new one', (
-      tester,
-    ) async {
-      final manager = _FakeKeyManager();
-      await pumpTestApp(
-        tester,
-        const SecurityPage(),
-        overrides: [
-          _signedInWithGoogleOnly(),
-          e2eeKeyManagerProvider.overrideWithValue(manager),
-        ],
-      );
-
-      await tester.tap(find.text('Reset encryption keys'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Reset keys'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Enter current PIN'), findsOneWidget);
-      expect(find.text('PIN for the new keys'), findsNothing);
-
-      await tester.enterText(find.byType(TextField), '482915');
-      await tester.tap(find.text('Submit'));
-      await tester.pumpAndSettle();
-
-      expect(manager.currentPin, '482915');
-      expect(find.text('PIN for the new keys'), findsOneWidget);
-
-      await tester.enterText(find.byType(TextField), '739206');
-      await tester.tap(find.text('Submit'));
-      await tester.pumpAndSettle();
-
-      expect(manager.newPin, '739206');
-      expect(find.text('Encryption keys reset.'), findsOneWidget);
-      await _letToastsLeave(tester);
-    });
-
-    testWidgets('cancelling the current PIN resets nothing', (tester) async {
-      final manager = _FakeKeyManager();
-      await pumpTestApp(
-        tester,
-        const SecurityPage(),
-        overrides: [
-          _signedInWithGoogleOnly(),
-          e2eeKeyManagerProvider.overrideWithValue(manager),
-        ],
-      );
-
-      await tester.tap(find.text('Reset encryption keys'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Reset keys'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-
-      expect(manager.newPin, isNull);
-      expect(find.text('Encryption keys reset.'), findsNothing);
-    });
-  });
+  testWidgets(
+    'security offers account controls without chat PIN or key setup',
+    (tester) async {
+      await pumpTestApp(tester, const SecurityPage(), overrides: [_signedIn()]);
+      expect(find.text('Logged-in devices'), findsOneWidget);
+      expect(find.text('Change password'), findsOneWidget);
+      expect(find.text('Change chat PIN'), findsNothing);
+      expect(find.text('Reset encryption keys'), findsNothing);
+    },
+  );
 
   group('logged-in devices', () {
     testWidgets('lists each device with its place and last use', (
@@ -389,7 +233,7 @@ void main() {
     testWidgets('explains both choices', (tester) async {
       await open(tester, status: 200);
 
-      expect(find.textContaining('Nothing is deleted'), findsOneWidget);
+      expect(find.textContaining('Sign in to restore them'), findsOneWidget);
       expect(find.textContaining('cannot be undone'), findsOneWidget);
     });
 
@@ -416,7 +260,7 @@ void main() {
         expect(server.requests.single.body, {'password': 'guess'});
         expect(find.text('The password is incorrect.'), findsOneWidget);
         // Still on the dialog: the account was not removed.
-        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(find.byType(AppDialog), findsOneWidget);
       },
     );
 

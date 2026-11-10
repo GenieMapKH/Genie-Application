@@ -25,6 +25,13 @@ sealed class PushMessage {
         );
       case 'security_sign_in':
         return const SignInAlertPush();
+      case 'publishing_expiry':
+        final kind = text('kind');
+        if (kind != 'listing' && kind != 'subscription') break;
+        if (kind == 'listing' && text('propertyId') == null) break;
+        return PublishingExpiryPush(
+          propertyId: kind == 'listing' ? text('propertyId') : null,
+        );
       case 'promotion':
         final promotionId = text('promotionId');
         if (promotionId == null) break;
@@ -73,16 +80,14 @@ sealed class PushMessage {
   }
 }
 
-/// Someone sent a chat message. Its text is end-to-end encrypted: only the
-/// keys on this phone can read it. Android gets the sealed message with the
-/// push ([ciphertext] and [nonce]) and writes the notification itself;
-/// otherwise the system shows a generic one.
+/// A chat notification carries no readable managed-message content.
+/// The authenticated app receives message text separately from the chat API.
 class ChatMessagePush extends PushMessage {
   final String senderId;
   final String senderName;
   final String? messageId;
 
-  /// Whose keys open it: the account this phone is signed in to.
+  /// The recipient account.
   final String? recipientId;
   final String? ciphertext;
   final String? nonce;
@@ -112,6 +117,11 @@ class ChatMessagePush extends PushMessage {
 }
 
 /// Another device signed in to this account.
+class PublishingExpiryPush extends PushMessage {
+  final String? propertyId;
+  const PublishingExpiryPush({this.propertyId});
+}
+
 class SignInAlertPush extends PushMessage {
   const SignInAlertPush();
 }

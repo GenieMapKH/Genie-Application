@@ -9,6 +9,21 @@ class AppLocalizationsKm extends AppLocalizations {
   AppLocalizationsKm([String locale = 'km']) : super(locale);
 
   @override
+  String get callInProgress => 'កំពុងហៅ';
+
+  @override
+  String get chatManagedSecurity => 'សារត្រូវបានអ៊ិនគ្រីបពេលផ្ញើ និងរក្សាទុក។';
+
+  @override
+  String get callMinimize => 'បង្រួមការហៅ';
+
+  @override
+  String get callReturn => 'ត្រឡប់ទៅការហៅ';
+
+  @override
+  String get propertyUnavailable => 'លែងមាន';
+
+  @override
   String get commonCancel => 'បោះបង់';
 
   @override
@@ -31,18 +46,50 @@ class AppLocalizationsKm extends AppLocalizations {
       'ព្យាយាមច្រើនដងពេក។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
 
   @override
-  String get commonOffline =>
-      'អ្នកមិនមានអ៊ីនធឺណិតទេ។ សូមភ្ជាប់អ៊ីនធឺណិតដើម្បីទទួលព័ត៌មានថ្មី។';
+  String get commonOffline => 'គ្មានអ៊ីនធឺណិត។ សូមភ្ជាប់ដើម្បីទទួលព័ត៌មានថ្មី។';
 
   @override
-  String get offlineDialogTitle => 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត';
+  String get connectionOffline => 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត';
 
   @override
-  String get offlineDialogMessage =>
-      'សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទរបស់អ្នក។ អ្នកនៅតែអាចមើលអ្វីដែលបានរក្សាទុកក្នុងទូរសព្ទនេះ។';
+  String get connectionWaiting => 'កំពុងរង់ចាំបណ្តាញ…';
 
   @override
-  String get offlineKeepBrowsing => 'បន្តមើល';
+  String get connectionWeak => 'ការតភ្ជាប់យឺត';
+
+  @override
+  String get connectionWeakDetail => 'ការផ្ទុកអាចចំណាយពេលយូរ';
+
+  @override
+  String get connectionRestored => 'បានភ្ជាប់អ៊ីនធឺណិតវិញ';
+
+  @override
+  String get loadFailureOfflineTitle => 'គ្មានការតភ្ជាប់អ៊ីនធឺណិត';
+
+  @override
+  String get loadFailureOfflineBody =>
+      'សូមពិនិត្យអ៊ីនធឺណិត។ ទំព័រនឹងផ្ទុកឡើងវិញពេលភ្ជាប់បាន។';
+
+  @override
+  String get loadFailureSlowTitle => 'ការតភ្ជាប់របស់អ្នកយឺតពេក';
+
+  @override
+  String get loadFailureSlowBody =>
+      'ផ្ទុកយូរពេក។ សូមពិនិត្យអ៊ីនធឺណិត ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get loadFailureServerBody => 'មានបញ្ហា។ សូមព្យាយាមម្តងទៀតបន្តិចទៀត។';
+
+  @override
+  String get failureOffline =>
+      'គ្មានការតភ្ជាប់អ៊ីនធឺណិត។ សូមពិនិត្យ Wi-Fi ឬទិន្នន័យទូរសព្ទរបស់អ្នក ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get failureSlow =>
+      'ការតភ្ជាប់របស់អ្នកយឺតពេក។ សូមទៅកន្លែងដែលមានសញ្ញាល្អជាង ហើយព្យាយាមម្តងទៀត។';
+
+  @override
+  String get failureServer => 'មានបញ្ហា។ សូមព្យាយាមម្តងទៀតបន្តិចទៀត។';
 
   @override
   String get navExplore => 'ស្វែងរក';
@@ -66,8 +113,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get loginRequiredTitle => 'ត្រូវការគណនី';
 
   @override
-  String get loginRequiredMessage =>
-      'សូមចូលគណនី ឬចុះឈ្មោះ ដើម្បីប្រើមុខងារនេះ។';
+  String get loginRequiredMessage => 'សូមចូល ឬបង្កើតគណនីដើម្បីបន្ត។';
 
   @override
   String get loginRequiredAction => 'ចូល / ចុះឈ្មោះ';
@@ -106,9 +152,6 @@ class AppLocalizationsKm extends AppLocalizations {
   String get accountSubscription => 'គម្រោងជាវ';
 
   @override
-  String get accountSubscriptionFree => 'ឥតគិតថ្លៃ';
-
-  @override
   String get accountSignOut => 'ចាកចេញ';
 
   @override
@@ -139,7 +182,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get languageTitle => 'ភាសា';
 
   @override
-  String get glassNavigationTitle => 'របាររុករកកញ្ចក់';
+  String get glassNavigationTitle => 'រចនាប័ទ្មរបាររុករក';
 
   @override
   String get glassNavigationSubtitle =>
@@ -162,7 +205,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get personalInfoUsernameHelp =>
-      'ឈ្មោះអ្នកប្រើជារបស់អ្នកតែម្នាក់គត់ ហើយអ្នកដទៃអាចស្វែងរកអ្នកតាមឈ្មោះនេះ។ ប្រើអក្សរឡាតាំងតូច លេខ \"_\" ឬ \".\" ចំនួន ៣ ដល់ ៣០ តួ។';
+      'អ្នកដទៃអាចរកអ្នកតាមឈ្មោះអ្នកប្រើ។ ប្រើអក្សរតូច លេខ \"_\" ឬ \".\" ចំនួន ៣–៣០ តួ។';
 
   @override
   String get personalInfoUsernameInvalid =>
@@ -175,8 +218,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get personalInfoName => 'ឈ្មោះ';
 
   @override
-  String get personalInfoNameHelp =>
-      'ឈ្មោះដែលអ្នកដទៃមើលឃើញ។ ឈ្មោះនេះអាចដូចអ្នកដទៃបាន ហើយអ្នកអាចប្ដូរបានគ្រប់ពេល។';
+  String get personalInfoNameHelp => 'ឈ្មោះដែលអ្នកដទៃឃើញ។ អាចប្តូរបានគ្រប់ពេល។';
 
   @override
   String get personalInfoFirstName => 'នាមខ្លួន';
@@ -200,8 +242,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get personalInfoPhone => 'លេខទូរសព្ទ';
 
   @override
-  String get personalInfoPhoneHelp =>
-      'ប្រើសម្រាប់ចូលគណនី និងឱ្យអ្នកទិញទាក់ទងអ្នក។';
+  String get personalInfoPhoneHelp => 'សម្រាប់ចូលគណនី និងទទួលការហៅពីអ្នកទិញ។';
 
   @override
   String get personalInfoPhoneTaken => 'លេខទូរសព្ទនេះមានគណនីផ្សេងប្រើរួចហើយ។';
@@ -225,19 +266,10 @@ class AppLocalizationsKm extends AppLocalizations {
   String get securityTitle => 'សុវត្ថិភាព';
 
   @override
-  String get securitySectionEncryption => 'ការអ៊ិនគ្រីបពីចុងដល់ចុង';
-
-  @override
   String get securitySectionSignIn => 'ការចូលគណនី';
 
   @override
   String get securitySectionAccount => 'គណនី';
-
-  @override
-  String get securityChangePin => 'ប្ដូរលេខកូដ PIN ជជែក';
-
-  @override
-  String get securityResetKeys => 'កំណត់សោអ៊ិនគ្រីបឡើងវិញ';
 
   @override
   String get securityChangePassword => 'ប្ដូរពាក្យសម្ងាត់';
@@ -247,77 +279,6 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get securityRemoveAccount => 'ផ្អាក ឬលុបគណនី';
-
-  @override
-  String get pinHint => 'លេខកូដ PIN ៦ ខ្ទង់';
-
-  @override
-  String get pinSubmit => 'បញ្ជូន';
-
-  @override
-  String get pinIncomplete => 'សូមបញ្ចូលលេខឱ្យគ្រប់ ៦ ខ្ទង់។';
-
-  @override
-  String get pinTooGuessable => 'ងាយទាយពេក។ សូមជ្រើសរើសលេខកូដ PIN ផ្សេង។';
-
-  @override
-  String get pinEnterCurrentTitle => 'បញ្ចូលលេខកូដ PIN បច្ចុប្បន្ន';
-
-  @override
-  String get pinEnterCurrentHelp =>
-      'បញ្ចូលលេខកូដ PIN ៦ ខ្ទង់បច្ចុប្បន្នរបស់អ្នក ដើម្បីបញ្ជាក់ថាជាអ្នក។';
-
-  @override
-  String get pinEnterNewTitle => 'បញ្ចូលលេខកូដ PIN ថ្មី';
-
-  @override
-  String get pinEnterNewHelp => 'លេខកូដ PIN ថ្មីនឹងការពារសោដែលអ្នកមានស្រាប់។';
-
-  @override
-  String get pinForNewKeysTitle => 'លេខកូដ PIN សម្រាប់សោថ្មី';
-
-  @override
-  String get pinForNewKeysHelp =>
-      'លេខកូដ PIN នេះនឹងការពារសោថ្មីរបស់អ្នក។ អ្នកត្រូវការវាដើម្បីអានសារនៅលើឧបករណ៍ផ្សេង។';
-
-  @override
-  String get pinChanged => 'បានប្ដូរលេខកូដ PIN ជជែក។';
-
-  @override
-  String get pinNoBackup => 'អ្នកមិនទាន់មានលេខកូដ PIN ជជែកនៅឡើយទេ។';
-
-  @override
-  String get pinLocked =>
-      'បញ្ចូលលេខកូដ PIN ខុសច្រើនដងពេក។ លេខកូដ PIN របស់អ្នកត្រូវបានចាក់សោមួយរយៈ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
-
-  @override
-  String get pinFetchFailed =>
-      'មិនអាចភ្ជាប់ទៅការបម្រុងទុកសោបានទេ។ សូមពិនិត្យអ៊ីនធឺណិតរបស់អ្នក។';
-
-  @override
-  String get pinWrong =>
-      'លេខកូដ PIN មិនត្រឹមត្រូវ។ បើខុស ៥ ដង លេខកូដ PIN របស់អ្នកនឹងត្រូវចាក់សោមួយរយៈ។';
-
-  @override
-  String get pinSaveFailed =>
-      'មិនអាចរក្សាទុកការបម្រុងទុកថ្មីបានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្ដូរឡើយ។';
-
-  @override
-  String get resetKeysConfirmTitle => 'កំណត់សោអ៊ិនគ្រីបឡើងវិញ?';
-
-  @override
-  String get resetKeysConfirmMessage =>
-      'សោថ្មីនឹងត្រូវបានបង្កើត ហើយអ្នកនឹងមិនអាចអានប្រវត្តិជជែកមុនៗទាំងអស់បានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។\n\nអ្នកនឹងត្រូវបញ្ចូលលេខកូដ PIN ជជែកបច្ចុប្បន្នរបស់អ្នកជាមុនសិន។';
-
-  @override
-  String get resetKeysConfirmAction => 'កំណត់សោឡើងវិញ';
-
-  @override
-  String get resetKeysDone => 'បានកំណត់សោអ៊ិនគ្រីបឡើងវិញ។';
-
-  @override
-  String get resetKeysFailed =>
-      'មិនអាចកំណត់សោឡើងវិញបានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្ដូរឡើយ។';
 
   @override
   String get passwordCurrent => 'ពាក្យសម្ងាត់បច្ចុប្បន្ន';
@@ -350,11 +311,11 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get passwordIntro =>
-      'បន្ទាប់ពីប្ដូររួច ឧបករណ៍ផ្សេងទៀតទាំងអស់ដែលបានចូលគណនីអ្នក នឹងត្រូវចាកចេញ។';
+      'ការប្តូរពាក្យសម្ងាត់នឹងចាកចេញពីឧបករណ៍ផ្សេងទាំងអស់។';
 
   @override
   String get devicesIntro =>
-      'ឧបករណ៍ទាំងនេះបានចូលគណនីរបស់អ្នក។ បើមានឧបករណ៍ណាដែលអ្នកមិនស្គាល់ សូមចាកចេញពីវា រួចប្ដូរពាក្យសម្ងាត់។';
+      'មិនស្គាល់ឧបករណ៍ណាមួយ? សូមឱ្យវាចាកចេញ ហើយប្តូរពាក្យសម្ងាត់។';
 
   @override
   String get devicesLoadFailed => 'មិនអាចបង្ហាញឧបករណ៍របស់អ្នកបានទេ';
@@ -443,7 +404,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get removeAccountDeactivateBody =>
-      'ប្រវត្តិរូប និងការប្រកាសរបស់អ្នកនឹងត្រូវលាក់ ហើយអ្នកនឹងត្រូវចាកចេញពីគ្រប់ឧបករណ៍។ គ្មានអ្វីត្រូវបានលុបទេ៖ ចូលគណនីម្តងទៀត ដើម្បីប្រើវាវិញ។';
+      'លាក់ប្រវត្តិរូប និងអចលនទ្រព្យ ហើយចាកចេញពីគ្រប់ឧបករណ៍។ ចូលវិញដើម្បីស្ដារឡើងវិញ។';
 
   @override
   String get removeAccountDeactivateAction => 'ផ្អាកគណនី';
@@ -453,7 +414,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get removeAccountDeleteBody =>
-      'គណនី ការប្រកាស អចលនទ្រព្យដែលបានរក្សាទុក និងសារជជែករបស់អ្នក នឹងត្រូវលុបជាអចិន្ត្រៃយ៍។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានឡើយ។';
+      'លុបគណនី អចលនទ្រព្យ អចលនទ្រព្យដែលបានរក្សាទុក និងការជជែកជាអចិន្ត្រៃយ៍។ មិនអាចស្ដារវិញបានទេ។';
 
   @override
   String get removeAccountDeleteAction => 'លុបគណនី';
@@ -485,7 +446,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get identityConfirmGoogleHelp =>
-      'អ្នកចូលគណនីដោយប្រើ Google។ សូមបញ្ជាក់ដោយគណនី Google របស់អ្នកដើម្បីបន្ត។';
+      'សូមបញ្ជាក់ជាមួយគណនី Google ដើម្បីបន្ត។';
 
   @override
   String get identityConfirmGoogleFailed =>
@@ -509,7 +470,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get authEnterYourEmailAddressToGet =>
-      'បញ្ចូលអាសយដ្ឋានអ៊ីមែលរបស់អ្នក ដើម្បីទទួលតំណកំណត់ពាក្យសម្ងាត់ឡើងវិញ។';
+      'បញ្ចូលអ៊ីមែលដើម្បីកំណត់ពាក្យសម្ងាត់ឡើងវិញ។';
 
   @override
   String get authPasswordReset => 'កំណត់ពាក្យសម្ងាត់ឡើងវិញ';
@@ -531,8 +492,26 @@ class AppLocalizationsKm extends AppLocalizations {
   String get authPhoneNumber => 'លេខទូរសព្ទ';
 
   @override
+  String get authGetCode => 'យកលេខកូដ';
+
+  @override
+  String get authPhoneVerified => 'លេខទូរសព្ទបានផ្ទៀងផ្ទាត់';
+
+  @override
+  String get authPhoneVerificationExpired =>
+      'ការផ្ទៀងផ្ទាត់លេខទូរសព្ទបានផុតកំណត់។ សូមយកលេខកូដថ្មី។';
+
+  @override
+  String get authPhoneVerificationUnavailable =>
+      'មិនអាចផ្ញើលេខកូដតាម SMS បានទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get authVerifyPhoneFirst =>
+      'សូមផ្ទៀងផ្ទាត់លេខទូរសព្ទរបស់អ្នកមុនពេលចុះឈ្មោះ។';
+
+  @override
   String get authLoginFailedPleaseCheckYourCredentials =>
-      'ចូលគណនីមិនបានទេ។ សូមពិនិត្យព័ត៌មានរបស់អ្នក រួចព្យាយាមម្តងទៀត។';
+      'មិនអាចចូលបាន។ សូមពិនិត្យព័ត៌មាន ហើយព្យាយាមម្តងទៀត។';
 
   @override
   String get authSuccessfullyLoggedIn => 'ចូលគណនីបានជោគជ័យ!';
@@ -542,7 +521,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get authEnterTheVerificationCodeWeJust =>
-      'បញ្ចូលលេខកូដផ្ទៀងផ្ទាត់ដែលយើងទើបផ្ញើទៅអ៊ីមែលរបស់អ្នក។';
+      'បញ្ចូលលេខកូដដែលបានផ្ញើទៅអ៊ីមែលអ្នក។';
 
   @override
   String get authVerify => 'ផ្ទៀងផ្ទាត់';
@@ -561,7 +540,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get authEnterYourNewPasswordTwiceBelow =>
-      'បញ្ចូលពាក្យសម្ងាត់ថ្មីរបស់អ្នកពីរដងខាងក្រោម ដើម្បីកំណត់ពាក្យសម្ងាត់ថ្មី';
+      'បញ្ចូលពាក្យសម្ងាត់ថ្មីពីរដង។';
 
   @override
   String get authEnterNewPassword => 'បញ្ចូលពាក្យសម្ងាត់ថ្មី';
@@ -571,7 +550,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get authPasswordResetSuccessfullyPleaseLogIn =>
-      'កំណត់ពាក្យសម្ងាត់ឡើងវិញបានជោគជ័យ! សូមចូលគណនីដោយប្រើពាក្យសម្ងាត់ថ្មី។';
+      'បានកំណត់ពាក្យសម្ងាត់ឡើងវិញ។ សូមចូលដោយប្រើពាក្យសម្ងាត់ថ្មី។';
 
   @override
   String get authWelcomeToTheApp => 'សូមស្វាគមន៍មកកាន់កម្មវិធី';
@@ -642,8 +621,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatNoArchivedChats => 'មិនមានការជជែកក្នុងបណ្ណសារទេ';
 
   @override
-  String get chatArchivedChatsHint =>
-      'ការជជែកក្នុងបណ្ណសារនឹងត្រឡប់មកបញ្ជីរបស់អ្នកវិញ ពេលមានសារថ្មី។';
+  String get chatArchivedChatsHint => 'សារថ្មីនឹងនាំការជជែកត្រឡប់ទៅបញ្ជីដើម។';
 
   @override
   String get chatArchive => 'ដាក់បណ្ណសារ';
@@ -668,7 +646,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String chatDeleteForMeExplained(String name) {
-    return 'វាត្រូវបានដកចេញពីការជជែករបស់អ្នកតែប៉ុណ្ណោះ។ $name នៅតែមានវា។';
+    return 'លុបសម្រាប់អ្នកតែប៉ុណ្ណោះ។ $name នៅតែមានការជជែកនេះ។';
   }
 
   @override
@@ -678,7 +656,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get chatDeleteForBothExplained =>
-      'សារ និងរូបថតទាំងអស់នឹងត្រូវលុបសម្រាប់អ្នកទាំងពីរ។ មិនអាចត្រឡប់វិញបានទេ។';
+      'លុបសារ និងរូបថតទាំងអស់សម្រាប់អ្នកទាំងពីរ។ មិនអាចស្ដារវិញបានទេ។';
 
   @override
   String get chatArchivedDone => 'បានដាក់ការជជែកក្នុងបណ្ណសារ';
@@ -694,7 +672,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get chatActionFailed =>
-      'មិនដំណើរការទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
+      'មិនអាចធ្វើបាន។ សូមពិនិត្យអ៊ីនធឺណិត ហើយព្យាយាមម្តងទៀត។';
 
   @override
   String get chatThisIsYourOwnAccount => 'នេះជាគណនីរបស់អ្នកផ្ទាល់។';
@@ -704,15 +682,11 @@ class AppLocalizationsKm extends AppLocalizations {
       'សូមចូលគណនីដើម្បីជជែក ឬពិនិត្យអ៊ីនធឺណិតរបស់អ្នក។';
 
   @override
-  String get chatMessagesAreEndToEndEncrypted =>
-      'សារត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ សូមនិយាយសួស្ដី!';
-
-  @override
   String get chatNoChatsYet => 'មិនទាន់មានការជជែកទេ!';
 
   @override
   String get chatMessageAPropertyOwnerToStart =>
-      'ផ្ញើសារទៅម្ចាស់អចលនទ្រព្យ ដើម្បីចាប់ផ្ដើមការសន្ទនា។';
+      'ផ្ញើសារទៅម្ចាស់ដើម្បីចាប់ផ្តើមជជែក។';
 
   @override
   String get chatCouldNotLoadYourChats => 'មិនអាចបង្ហាញការជជែករបស់អ្នកបានទេ។';
@@ -727,27 +701,13 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatMessage => 'សារ';
 
   @override
-  String get chatThisIsNormalIfTheyReinstalled =>
-      'នេះជារឿងធម្មតា បើគេដំឡើងកម្មវិធីឡើងវិញ ឬកំណត់សោឡើងវិញ។ បើអ្នកមិនបានរំពឹងទុកទេ អាចមាននរណាម្នាក់កំពុងព្យាយាមអានសាររបស់អ្នក៖ សូមទទួលយកសោថ្មី រួចផ្ទៀងផ្ទាត់លេខកូដសុវត្ថិភាពជាមួយគេ មុននឹងចែករំលែកអ្វីដែលជាឯកជន។';
-
-  @override
-  String get chatSecurityCode => 'លេខកូដសុវត្ថិភាព';
-
-  @override
-  String get chatAcceptNewKey => 'ទទួលយកសោថ្មី';
-
-  @override
-  String get chatAvailableOnceYouHaveBothSet =>
-      'អាចប្រើបាន នៅពេលអ្នកទាំងពីររៀបចំការជជែកសុវត្ថិភាពរួច។';
-
-  @override
-  String get chatTheSecurityCodeIsUnavailable => 'មិនមានលេខកូដសុវត្ថិភាពទេ។';
-
-  @override
   String get homeCoordinates => 'កូអរដោនេ';
 
   @override
   String get homeDraw => 'គូរ';
+
+  @override
+  String get homeAddPoint => 'បន្ថែមចំណុច';
 
   @override
   String get homeSearchByAreaRoadVillage => 'ស្វែងរកតាមតំបន់ ផ្លូវ ភូមិ...';
@@ -764,8 +724,7 @@ class AppLocalizationsKm extends AppLocalizations {
       'រកមិនឃើញកូអរដោនេនៅក្នុងរូបភាពទេ។';
 
   @override
-  String get homePleaseFillBothXAndY =>
-      'សូមបំពេញកូអរដោនេ X និង Y ទាំងពីរក្នុងមួយជួរ ឬទុកទទេទាំងពីរ។';
+  String get homePleaseFillBothXAndY => 'បញ្ចូលទាំង X និង Y ឬទុកទាំងពីរឱ្យទទេ។';
 
   @override
   String get homeCoordinatesMustBeValidNumbers =>
@@ -773,7 +732,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get homePleaseEnterAtLeast3Coordinates =>
-      'សូមបញ្ចូលកូអរដោនេយ៉ាងតិច ៣ ដើម្បីបង្កើតជារូបរាងអចលនទ្រព្យ។';
+      'បញ្ចូលកូអរដោនេយ៉ាងតិច ៣ ចំណុច។';
 
   @override
   String get homePreview => 'មើលជាមុន';
@@ -793,7 +752,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get homeUseUtmFromALandDocument =>
-      'ប្រើ UTM ពីប័ណ្ណកម្មសិទ្ធិដីធ្លី ឬបញ្ចូលកូអរដោនេដោយដៃ';
+      'ប្រើកូអរដោនេ UTM ពីឯកសារដី ឬបញ្ចូលដោយខ្លួនឯង។';
 
   @override
   String get homeCrsWgs84UtmZone48p => 'CRS: WGS84 / UTM Zone 48P';
@@ -889,7 +848,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get propertyTapTheHeartIconOnListings =>
-      'ចុចរូបបេះដូងលើការប្រកាស ដើម្បីរក្សាទុកសម្រាប់មើលពេលក្រោយ។';
+      'ចុចបេះដូងដើម្បីរក្សាទុកអចលនទ្រព្យ។';
 
   @override
   String get propertySavedProperties => 'អចលនទ្រព្យដែលបានរក្សាទុក';
@@ -899,7 +858,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get propertyAddAtLeast3ClearPhotos =>
-      'បន្ថែមរូបថតច្បាស់ៗយ៉ាងតិច ៣ សន្លឹក នៃអចលនទ្រព្យ និងតំបន់ជុំវិញ';
+      'បន្ថែមរូបថតអចលនទ្រព្យច្បាស់យ៉ាងតិច ៣ សន្លឹក។';
 
   @override
   String get propertyOpenCamera => 'បើកកាមេរ៉ា';
@@ -908,8 +867,23 @@ class AppLocalizationsKm extends AppLocalizations {
   String get propertyCallNow => 'ហៅទូរសព្ទឥឡូវនេះ';
 
   @override
-  String get propertyNoPhoneNumber =>
-      'មិនមានលេខទូរសព្ទសម្រាប់អចលនទ្រព្យនេះទេ។ សូមជជែកជាមួយម្ចាស់ជំនួសវិញ។';
+  String get propertyCallInApp => 'ហៅតាម Tilomnov';
+
+  @override
+  String get propertyCallPhone => 'ប្រើកម្មវិធីទូរសព្ទ';
+
+  @override
+  String get callFullScreenTitle => 'ការហៅចូលពេញអេក្រង់';
+
+  @override
+  String get callFullScreenHelp =>
+      'អនុញ្ញាតឱ្យការហៅចូលបង្ហាញលើអេក្រង់ចាក់សោ។ Android អាចបង្ហាញផ្ទាំងការហៅ នៅពេលទូរសព្ទរបស់អ្នកមិនជាប់សោ។';
+
+  @override
+  String get callFullScreenFailed => 'មិនអាចបើកការកំណត់ការហៅពេញអេក្រង់បានទេ។';
+
+  @override
+  String get propertyNoPhoneNumber => 'គ្មានលេខទូរសព្ទ។ សូមផ្ញើសារទៅម្ចាស់។';
 
   @override
   String get propertyCallFailed => 'មិនអាចបើកកម្មវិធីទូរសព្ទបានទេ។';
@@ -1008,7 +982,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get insightsEmptyHint =>
-      'មិនទាន់មាននរណាម្នាក់បើកមើលអចលនទ្រព្យនេះនៅឡើយទេ។ ការផ្សព្វផ្សាយ រូបថតល្អ និងការចែករំលែកតំណ នឹងនាំអ្នកមើលដំបូងមក។';
+      'មិនទាន់មានអ្នកមើល។ ចែករំលែកអចលនទ្រព្យដើម្បីឱ្យអ្នកដទៃឃើញ។';
 
   @override
   String get propertyShareThisProperty => 'ចែករំលែកអចលនទ្រព្យនេះ';
@@ -1065,15 +1039,15 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get propertyShareNotPublicDraft =>
-      'មានតែអ្នកទេដែលអាចមើលការផ្សាយនេះ រហូតដល់វាត្រូវបានផ្សព្វផ្សាយ។ សូមផ្សព្វផ្សាយវា ដើម្បីចែករំលែកតំណ និងកូដ QR របស់វា។';
+      'ចុះផ្សាយអចលនទ្រព្យនេះ ដើម្បីចែករំលែកតំណ ឬកូដ QR។';
 
   @override
   String get propertyShareNotPublicPending =>
-      'ការផ្សាយនេះនឹងបង្ហាញជាសាធារណៈ នៅពេលការទូទាត់បានបញ្ចប់។ បន្ទាប់មកអ្នកអាចចែករំលែកវាបាន។';
+      'បញ្ចប់ការទូទាត់មុនចែករំលែកអចលនទ្រព្យនេះ។';
 
   @override
   String get propertyShareNotPublicEnded =>
-      'ការផ្សាយនេះលែងបង្ហាញជាសាធារណៈហើយ ដូច្នេះមិនអាចចែករំលែកតំណ និងកូដ QR របស់វាបានទេ។';
+      'អចលនទ្រព្យនេះលែងបង្ហាញជាសាធារណៈ ហើយមិនអាចចែករំលែកបានទេ។';
 
   @override
   String get propertyTitleType => 'ប្រភេទប័ណ្ណកម្មសិទ្ធិ';
@@ -1268,11 +1242,6 @@ class AppLocalizationsKm extends AppLocalizations {
   String get propertyPropertyDeleted => 'បានលុបអចលនទ្រព្យ';
 
   @override
-  String chatSecurityCodeExplanation(String name) {
-    return 'សារត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ ដើម្បីប្រាកដថាគ្មាននរណានៅចន្លោះកណ្ដាល សូមផ្ទៀងផ្ទាត់លេខកូដនេះជាមួយ $name ដោយផ្ទាល់ ឬតាមការហៅទូរសព្ទ៖ វាត្រូវតែដូចគ្នានៅលើទូរសព្ទទាំងពីរ។';
-  }
-
-  @override
   String get commonContinue => 'បន្ត';
 
   @override
@@ -1283,17 +1252,14 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get updateRequiredMessage =>
-      'កំណែ Tilomnov នេះលែងដំណើរការជាមួយម៉ាស៊ីនមេរបស់យើងទៀតហើយ។ សូមធ្វើបច្ចុប្បន្នភាពកម្មវិធីពីហាងកម្មវិធី ដើម្បីបន្តប្រើប្រាស់។';
-
-  @override
-  String get securityForgotPin => 'ភ្លេចលេខកូដ PIN ជជែក';
+      'សូមធ្វើបច្ចុប្បន្នភាព Tilomnov ពីហាងកម្មវិធីដើម្បីបន្តប្រើ។';
 
   @override
   String get securityCreatePassword => 'បង្កើតពាក្យសម្ងាត់';
 
   @override
   String get createPasswordIntro =>
-      'អ្នកចូលគណនីដោយប្រើ Google ដូច្នេះគណនីនេះមិនទាន់មានពាក្យសម្ងាត់ទេ។ សូមជ្រើសរើសពាក្យសម្ងាត់មួយ រួចបញ្ជាក់ជាមួយគណនី Google របស់អ្នក។ អ្នកនៅតែអាចចូលដោយប្រើ Google បានដដែល។';
+      'កំណត់ពាក្យសម្ងាត់ ហើយបញ្ជាក់ជាមួយ Google។ អ្នកនៅតែអាចចូលតាម Google បាន។';
 
   @override
   String get createPasswordAction => 'បញ្ជាក់ជាមួយ Google រួចបង្កើត';
@@ -1302,54 +1268,19 @@ class AppLocalizationsKm extends AppLocalizations {
   String get createPasswordDone => 'បានបង្កើតពាក្យសម្ងាត់។';
 
   @override
-  String get forgotPinTitle => 'ភ្លេចលេខកូដ PIN ជជែក?';
-
-  @override
-  String get forgotPinKeepsHistory =>
-      'ទូរស័ព្ទនេះនៅមានសោជជែករបស់អ្នក ដូច្នេះគ្មានអ្វីបាត់បង់ទេ។ សូមបញ្ជាក់ថាជាអ្នកដោយប្រើពាក្យសម្ងាត់គណនី បន្ទាប់មកជ្រើសរើសលេខកូដ PIN ថ្មី។';
-
-  @override
-  String get forgotPinLosesHistory =>
-      'ទូរស័ព្ទនេះមិនមានសោជជែករបស់អ្នកទេ ហើយបើគ្មានលេខកូដ PIN គេមិនអាចយកវាមកវិញបានទេ។ បន្ទាប់ពីអ្នកបញ្ជាក់ដោយពាក្យសម្ងាត់គណនី និងជ្រើសរើសលេខកូដ PIN ថ្មី សោថ្មីនឹងត្រូវបានបង្កើត ហើយប្រវត្តិជជែកមុនៗនឹងមិនអាចអានបានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។\n\nបើទូរស័ព្ទផ្សេងទៀតរបស់អ្នកនៅតែអាចបើកការជជែកបាន សូមធ្វើវានៅទីនោះជំនួសវិញ ដើម្បីរក្សាប្រវត្តិរបស់អ្នក។';
-
-  @override
-  String get forgotPinNeedsPassword =>
-      'អ្នកចូលដោយប្រើ Google ដូច្នេះសូមបង្កើតពាក្យសម្ងាត់គណនីជាមុនសិន។ វាបញ្ជាក់ថាជាអ្នក នៅពេលអ្នកជ្រើសរើសលេខកូដ PIN ជជែកថ្មី។';
-
-  @override
-  String get pinForgotHint =>
-      'ភ្លេចលេខកូដ PIN? សូមចូលទៅ អ្នកប្រើ > សុវត្ថិភាព > ភ្លេចលេខកូដ PIN ជជែក។';
-
-  @override
-  String get chatPinNeeded =>
-      'សូមបញ្ចូលលេខកូដ PIN ជជែករបស់អ្នក ដើម្បីអាន និងផ្ញើសារនៅលើទូរស័ព្ទនេះ។';
-
-  @override
   String get chatOpenFailed =>
       'មិនអាចបើកការជជែកនេះបានទេ។ សូមពិនិត្យអ៊ីនធឺណិតរបស់អ្នក។';
 
   @override
-  String get pinSetUpHelp =>
-      'អ្នកនឹងត្រូវការលេខកូដ PIN នេះ ដើម្បីអានការជជែករបស់អ្នកនៅលើទូរស័ព្ទថ្មី។ សូមជ្រើសរើសលេខដែលអ្នកចាំបាន។';
-
-  @override
-  String get chatPinRestoreTitle => 'បញ្ចូលលេខកូដ PIN ជជែករបស់អ្នក';
-
-  @override
-  String get chatPinRestoreHelp =>
-      'ការជជែករបស់អ្នកត្រូវបានការពារដោយលេខកូដ PIN ជជែក ៦ ខ្ទង់។ សូមបញ្ចូលវា ដើម្បីអានការជជែកនៅលើទូរស័ព្ទនេះ។';
-
-  @override
-  String get devicesImmediateNote =>
-      'ឧបករណ៍ដែលអ្នកឱ្យចាកចេញ នឹងត្រូវចាកចេញភ្លាមៗ។';
+  String get devicesImmediateNote => 'ឧបករណ៍នឹងចាកចេញភ្លាមៗ។';
 
   @override
   String get devicesTooNew =>
-      'ឧបករណ៍នេះទើបចូលគណនីមិនដល់មួយថ្ងៃ ដូច្នេះមិនទាន់អាចឱ្យឧបករណ៍ផ្សេងចាកចេញបានទេ។ សូមប្រើឧបករណ៍ដែលអ្នកបានចូលគណនីយូរជាងនេះ។';
+      'សូមរង់ចាំ ២៤ ម៉ោងក្រោយចូល ដើម្បីឱ្យឧបករណ៍ផ្សេងចាកចេញ ឬប្រើឧបករណ៍ដែលបានចូលយូរជាងនេះ។';
 
   @override
   String devicesTooNewUntil(String when) {
-    return 'ដើម្បីការពារអ្នក ឧបករណ៍មួយអាចឱ្យឧបករណ៍ផ្សេងចាកចេញបាន លុះត្រាតែវាបានចូលគណនីរួចមួយថ្ងៃ។ ឧបករណ៍នេះអាចធ្វើបានចាប់ពី $when។ រហូតដល់ពេលនោះ សូមប្រើឧបករណ៍ដែលអ្នកបានចូលគណនីយូរជាងនេះ។';
+    return 'អ្នកអាចឱ្យឧបករណ៍ផ្សេងចាកចេញចាប់ពី $when។ ឥឡូវនេះ សូមប្រើឧបករណ៍ដែលបានចូលមុន។';
   }
 
   @override
@@ -1357,7 +1288,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get newSignInMessage =>
-      'មានឧបករណ៍ផ្សេងបានចូលគណនីរបស់អ្នក។ បើមិនមែនជាអ្នកទេ សូមឱ្យវាចាកចេញឥឡូវនេះ រួចប្ដូរពាក្យសម្ងាត់របស់អ្នក។';
+      'មានការចូលថ្មី។ មិនមែនអ្នក? សូមឱ្យឧបករណ៍នោះចាកចេញ ហើយប្តូរពាក្យសម្ងាត់។';
 
   @override
   String get newSignInWasMe => 'គឺខ្ញុំ';
@@ -1384,7 +1315,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get accountDeviceTooNew =>
-      'ឧបករណ៍នេះទើបចូលគណនីមិនដល់មួយថ្ងៃ ដូច្នេះដើម្បីការពារគណនីរបស់អ្នក វាមិនទាន់អាចធ្វើសកម្មភាពនេះបានទេ។ សូមប្រើឧបករណ៍ដែលអ្នកបានចូលគណនីយូរជាងនេះ ឬព្យាយាមម្តងទៀតនៅថ្ងៃស្អែក។';
+      'សូមរង់ចាំ ២៤ ម៉ោងក្រោយចូល ឬប្រើឧបករណ៍ដែលបានចូលមុន។';
 
   @override
   String get personalInfoUsernameChecking => 'កំពុងពិនិត្យ…';
@@ -1398,8 +1329,7 @@ class AppLocalizationsKm extends AppLocalizations {
   }
 
   @override
-  String get mediaStillTooLarge =>
-      'រូបភាពនេះនៅតែធំពេកបន្ទាប់ពីបង្ហាប់ហើយ។ សូមជ្រើសរើសរូបភាពតូចជាងនេះ។';
+  String get mediaStillTooLarge => 'រូបភាពធំពេក។ សូមជ្រើសរូបតូចជាងនេះ។';
 
   @override
   String get mediaUnreadable =>
@@ -1424,8 +1354,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get searchIdleTitle => 'ស្វែងរកទីតាំង អចលនទ្រព្យ ឬមនុស្ស';
 
   @override
-  String get searchIdleBody =>
-      'វាយឈ្មោះផ្លូវ ភូមិ ឬខណ្ឌ ដើម្បីមើលអ្វីដែលកំពុងលក់នៅទីនោះ ឬឈ្មោះម្ចាស់ ឬភ្នាក់ងារ។';
+  String get searchIdleBody => 'ស្វែងរកទីកន្លែង ម្ចាស់ ឬភ្នាក់ងារ។';
 
   @override
   String searchNoResultsTitle(String query) {
@@ -1490,11 +1419,13 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get searchAreaEmpty =>
-      'មិនទាន់មានអ្វីដាក់លក់នៅទីនេះទេ។ សូមរំកិលផែនទី ឬស្វែងរកតំបន់ធំជាងនេះ។';
+      'គ្មានអចលនទ្រព្យនៅទីនេះ។ សូមពង្រីកតំបន់ស្វែងរក។';
 
   @override
-  String get searchPersonEmpty =>
-      'បុគ្គលនេះមិនមានអចលនទ្រព្យដែលបានផ្សាយនៅពេលនេះទេ។';
+  String get searchPersonEmpty => 'មិនទាន់មានអចលនទ្រព្យចុះផ្សាយ។';
+
+  @override
+  String get searchViewProperty => 'មើលអចលនទ្រព្យ';
 
   @override
   String get searchCloseResults => 'បិទលទ្ធផលស្វែងរក';
@@ -1554,11 +1485,45 @@ class AppLocalizationsKm extends AppLocalizations {
   String get feedTitle => 'ថ្មីៗ';
 
   @override
+  String get feedSubtitle => 'អចលនទ្រព្យថ្មីៗពីអ្នកដែលអ្នកតាមដាន';
+
+  @override
+  String get feedNewestFirst => 'ថ្មីបំផុតមុន';
+
+  @override
+  String get feedSortTop => 'ពេញនិយម (រក្សាទុកច្រើនបំផុត)';
+
+  @override
+  String get feedListingDate => 'កាលបរិច្ឆេទចុះផ្សាយ';
+
+  @override
+  String get feedAnyTime => 'គ្រប់ពេល';
+
+  @override
+  String get feedLast7Days => '៧ ថ្ងៃចុងក្រោយ';
+
+  @override
+  String get feedLast30Days => '៣០ ថ្ងៃចុងក្រោយ';
+
+  @override
+  String get feedChooseDates => 'ជ្រើសរើសកាលបរិច្ឆេទ';
+
+  @override
+  String get feedPriceInvalid =>
+      'បញ្ចូលតម្លៃចន្លោះ \$0 និង \$9,999,999,999.99។';
+
+  @override
+  String get feedNoMatches => 'គ្មានអចលនទ្រព្យត្រូវនឹងការចម្រាញ់';
+
+  @override
+  String get feedTryOtherFilters =>
+      'សាកល្បងកាលបរិច្ឆេទ តម្លៃ ឬប្រភេទអចលនទ្រព្យផ្សេង។';
+
+  @override
   String get feedEmptyTitle => 'មិនទាន់មានអ្វីនៅទីនេះទេ';
 
   @override
-  String get feedEmptyHint =>
-      'តាមដានអ្នកដទៃពីប្រវត្តិរូបរបស់ពួកគេ ដើម្បីមើលអចលនទ្រព្យថ្មីៗរបស់ពួកគេនៅទីនេះ។';
+  String get feedEmptyHint => 'តាមដានអ្នកដទៃដើម្បីមើលអចលនទ្រព្យថ្មីរបស់ពួកគេ។';
 
   @override
   String get feedExplore => 'ស្វែងរកអចលនទ្រព្យ';
@@ -1602,6 +1567,9 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get profileNoContact => 'មិនមានព័ត៌មានទំនាក់ទំនងទេ។';
+
+  @override
+  String get propertySavePhoto => 'រក្សាទុករូបថត';
 
   @override
   String propertyPhotoLimit(int count) {
@@ -1736,123 +1704,17 @@ class AppLocalizationsKm extends AppLocalizations {
       'សូមគូសអចលនទ្រព្យលើផែនទីជាមុនសិន ដើម្បីវាស់ទំហំ។';
 
   @override
-  String get forgotPinPasswordHelp =>
-      'សូមបញ្ចូលពាក្យសម្ងាត់គណនីរបស់អ្នក ដើម្បីបញ្ជាក់ថាជាអ្នក។ បន្ទាប់មកជ្រើសរើសលេខកូដ PIN ជជែកថ្មី។';
-
-  @override
-  String get forgotPinRecovered =>
-      'រួចរាល់។ លេខកូដ PIN ជជែកថ្មីរបស់អ្នកកំពុងការពារការជជែករបស់អ្នក។';
-
-  @override
   String get securityPinRequiredNote =>
       'ការជជែករបស់អ្នកតែងតែត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង និងការពារដោយលេខកូដ PIN ជជែក ៦ ខ្ទង់។ អ្នកត្រូវការវា ដើម្បីអានការជជែករបស់អ្នកនៅលើទូរស័ព្ទថ្មី។';
 
   @override
-  String get pinUnlock => 'ដោះសោ';
-
-  @override
-  String get pinChecking => 'កំពុងពិនិត្យលេខកូដ PIN...';
-
-  @override
-  String pinWrongTriesLeft(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'លេខកូដ PIN មិនត្រឹមត្រូវ។ នៅសល់ $count ដងទៀត។',
-      one:
-          'លេខកូដ PIN មិនត្រឹមត្រូវ។ នៅសល់ ១ ដងទៀត មុនពេលលេខកូដ PIN ត្រូវចាក់សោមួយរយៈ។',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get pinWrongNoCount => 'លេខកូដ PIN មិនត្រឹមត្រូវ។ សូមព្យាយាមម្តងទៀត។';
-
-  @override
-  String pinLockedFor(String time) {
-    return 'បញ្ចូលលេខកូដ PIN ខុសច្រើនដងពេក។ សូមព្យាយាមម្តងទៀតក្នុងរយៈពេល $time។';
-  }
-
-  @override
-  String get pinLockedLater =>
-      'បញ្ចូលលេខកូដ PIN ខុសច្រើនដងពេក។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
-
-  @override
-  String get pinCheckFailed =>
-      'មិនអាចពិនិត្យលេខកូដ PIN បានទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
-
-  @override
-  String get chatPinSaving => 'កំពុងរក្សាទុកលេខកូដ PIN...';
-
-  @override
   String get chatPasswordChecking => 'កំពុងពិនិត្យពាក្យសម្ងាត់...';
-
-  @override
-  String get chatPinSetupSignOut => 'ចាកចេញ';
-
-  @override
-  String get chatPinCreateTitle => 'បង្កើតលេខកូដ PIN ជជែករបស់អ្នក';
-
-  @override
-  String get chatPinCreateHelp =>
-      'សាររបស់អ្នកត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ លេខកូដ PIN ៦ ខ្ទង់នេះនាំសារទាំងនោះមកវិញ នៅពេលអ្នកចូលលើទូរស័ព្ទថ្មី។ សូមជ្រើសរើសលេខដែលអ្នកចាំបាន៖ គ្មាននរណាម្នាក់ សូម្បីតែ Tilomnov អាចមើលឃើញវាបានទេ។';
-
-  @override
-  String get chatPinConfirmTitle => 'បញ្ជាក់លេខកូដ PIN ជជែករបស់អ្នក';
-
-  @override
-  String get chatPinConfirmHelp => 'សូមវាយលេខ ៦ ខ្ទង់ដដែលម្តងទៀត។';
-
-  @override
-  String get chatPinMismatch =>
-      'លេខកូដ PIN ទាំងពីរមិនដូចគ្នាទេ។ សូមជ្រើសរើសលេខកូដ PIN របស់អ្នកម្តងទៀត។';
-
-  @override
-  String get chatPinSaveFailed =>
-      'មិនអាចរក្សាទុកលេខកូដ PIN បានទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
-
-  @override
-  String get chatPinChooseAnother => 'ជ្រើសរើសលេខកូដ PIN ផ្សេង';
-
-  @override
-  String get chatPinMoveTitle => 'ការពារការជជែករបស់អ្នកដោយលេខកូដ PIN';
-
-  @override
-  String get chatPinMoveHelp =>
-      'ឥឡូវនេះ ការជជែករបស់អ្នកត្រូវបានការពារដោយលេខកូដ PIN ជជែក ៦ ខ្ទង់ ជំនួសពាក្យសម្ងាត់គណនី។ សូមបញ្ចូលពាក្យសម្ងាត់គណនីម្តង បន្ទាប់មកជ្រើសរើសលេខកូដ PIN របស់អ្នក។';
-
-  @override
-  String get chatPinStartOverLink => 'មិនអាចដោះសោបាន? ចាប់ផ្ដើមថ្មី';
-
-  @override
-  String get chatPinStartOverTitle => 'ចាប់ផ្ដើមថ្មីជាមួយសោជជែកថ្មី?';
-
-  @override
-  String get chatPinStartOverMessage =>
-      'បើពាក្យសម្ងាត់របស់អ្នកត្រូវបានកំណត់ឡើងវិញ ការជជែកចាស់ៗមិនអាចដោះសោបានទេ។ ការចាប់ផ្ដើមថ្មីរក្សាគណនីរបស់អ្នក ប៉ុន្តែសារមុនៗនឹងមិនអាចអានបានទៀតទេ។ សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។';
-
-  @override
-  String get chatPinStartOverAction => 'ចាប់ផ្ដើមថ្មី';
-
-  @override
-  String get chatPinRequiredMessage =>
-      'សាររបស់អ្នកត្រូវបានអ៊ិនគ្រីបពីចុងដល់ចុង។ សូមបង្កើតលេខកូដ PIN ជជែក ៦ ខ្ទង់ ដើម្បីការពារវា មុនពេលអ្នកចាប់ផ្ដើមជជែក។';
-
-  @override
-  String get chatPinCreateAction => 'បង្កើតលេខកូដ PIN';
 
   @override
   String get chatLockedTitle => 'ការជជែកត្រូវបានចាក់សោនៅលើទូរស័ព្ទនេះ';
 
   @override
   String get chatEnterPinAction => 'បញ្ចូលលេខកូដ PIN';
-
-  @override
-  String get chatPinLockedTitle => 'បញ្ចូលលេខកូដ PIN ខុសច្រើនដងពេក';
-
-  @override
-  String get chatPinLockedMessage =>
-      'ដើម្បីសុវត្ថិភាពរបស់អ្នក ការបញ្ចូលលេខកូដ PIN ជជែកត្រូវបានផ្អាកមួយរយៈ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
 
   @override
   String get authErrEnterName => 'សូមបញ្ចូលឈ្មោះរបស់អ្នក';
@@ -2015,10 +1877,6 @@ class AppLocalizationsKm extends AppLocalizations {
       'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។ សូមពិនិត្យការតភ្ជាប់របស់អ្នក។';
 
   @override
-  String get authErrorServer =>
-      'មានបញ្ហាពីខាងយើង។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
-
-  @override
   String get authErrorGeneric => 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។';
 
   @override
@@ -2129,17 +1987,16 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String chatDeleteOwnMessageExplained(String name) {
-    return 'សម្រាប់គ្រប់គ្នា៖ វាត្រូវបានលុបសម្រាប់អ្នក និង $name ដោយមិនទុកដានអ្វីទេ។ សម្រាប់ខ្ញុំ៖ មានតែអ្នកទេដែលលែងឃើញវា។';
+    return 'លុបសម្រាប់អ្នក និង $name ឬសម្រាប់អ្នកតែប៉ុណ្ណោះ។';
   }
 
   @override
   String chatDeleteMessageForMeExplained(String name) {
-    return 'វាត្រូវបានលុបសម្រាប់តែអ្នកប៉ុណ្ណោះ។ $name នៅតែឃើញវា។';
+    return 'លុបសម្រាប់អ្នកតែប៉ុណ្ណោះ។ $name នៅតែឃើញសារនេះ។';
   }
 
   @override
-  String get chatEditTooLate =>
-      'អាចកែសារបានតែក្នុងរយៈពេលមួយម៉ោងបន្ទាប់ពីផ្ញើប៉ុណ្ណោះ។';
+  String get chatEditTooLate => 'អ្នកអាចកែសារក្នុងរយៈពេល ១ ម៉ោងក្រោយផ្ញើ។';
 
   @override
   String get chatPresenceOnline => 'កំពុងអនឡាញ';
@@ -2168,11 +2025,6 @@ class AppLocalizationsKm extends AppLocalizations {
   }
 
   @override
-  String chatKeyChangedTitle(String name) {
-    return 'សោសុវត្ថិភាពរបស់ $name បានផ្លាស់ប្តូរ';
-  }
-
-  @override
   String get chatEmojiSmileys => 'ទឹកមុខ';
 
   @override
@@ -2185,7 +2037,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get chatEmojiPlaces => 'ទីកន្លែង';
 
   @override
-  String get chatPreviewEncrypted => 'សារដែលបានអ៊ិនគ្រីប';
+  String get chatPreviewEncrypted => 'សារមិនអាចប្រើបាន';
 
   @override
   String get chatPreviewPhoto => 'រូបភាព';
@@ -2204,14 +2056,10 @@ class AppLocalizationsKm extends AppLocalizations {
       'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។ សូមពិនិត្យការតភ្ជាប់របស់អ្នក។';
 
   @override
-  String get chatSendRejected =>
-      'ម៉ាស៊ីនមេមិនបានទទួលសារនេះទេ។ សូមព្យាយាមម្តងទៀត។';
+  String get chatSendRejected => 'សារមិនត្រូវបានទទួល។ សូមព្យាយាមម្តងទៀត។';
 
   @override
-  String get chatSendTooFast => 'អ្នកកំពុងផ្ញើសារលឿនពេក។ សូមរង់ចាំបន្តិច។';
-
-  @override
-  String get chatSendPinRequired => 'សូមបង្កើតលេខកូដ PIN ជជែក មុនពេលផ្ញើសារ។';
+  String get chatSendTooFast => 'ផ្ញើលឿនពេក។ សូមរង់ចាំបន្តិច។';
 
   @override
   String get chatSendBlocked => 'អ្នកមិនអាចផ្ញើសារទៅមនុស្សនេះបានទេ។';
@@ -2240,7 +2088,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get blockConfirmMessage =>
-      'ពួកគេនឹងមិនអាចផ្ញើសារ ឬហៅទូរសព្ទមកអ្នកបានទេ ហើយអ្នកទាំងពីរនឹងឈប់តាមដានគ្នា។ ពួកគេនឹងមិនត្រូវបានជូនដំណឹងទេ។';
+      'ពួកគេមិនអាចផ្ញើសារ ឬហៅអ្នកបានទេ។ អ្នកទាំងពីរនឹងឈប់តាមដានគ្នា។ ពួកគេមិនទទួលការជូនដំណឹងទេ។';
 
   @override
   String unblockConfirmTitle(String name) {
@@ -2249,7 +2097,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get unblockConfirmMessage =>
-      'អ្នកទាំងពីរនឹងអាចផ្ញើសារទៅគ្នាបានម្តងទៀត។ ការតាមដានដែលបានដកចេញ នឹងមិនត្រលប់មកវិញទេ។';
+      'អ្នកអាចផ្ញើសារទៅគ្នាវិញ។ អ្នកអាចតាមដានពួកគេម្តងទៀតបាន។';
 
   @override
   String blockDone(String name) {
@@ -2336,18 +2184,6 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get reportFailed =>
       'របាយការណ៍មិនត្រូវបានផ្ញើទេ។ សូមពិនិត្យការតភ្ជាប់ ហើយព្យាយាមម្តងទៀត។';
-
-  @override
-  String get chatSendKeyChanged =>
-      'សោសុវត្ថិភាពរបស់ពួកគេបានផ្លាស់ប្តូរ។ សូមទទួលយកសោថ្មី ដើម្បីបន្ត។';
-
-  @override
-  String get chatSendNotSetUp =>
-      'ការជជែកសុវត្ថិភាពមិនទាន់បានរៀបចំនៅលើឧបករណ៍នេះទេ។';
-
-  @override
-  String get chatSendPeerNotReady =>
-      'អ្នកនេះមិនទាន់បានរៀបចំការជជែកសុវត្ថិភាពនៅឡើយទេ។ ពួកគេអាចទទួលសារបាន នៅពេលពួកគេបើកកម្មវិធីម្តងទៀត។';
 
   @override
   String chatSendFileTooLarge(int megabytes) {
@@ -2877,7 +2713,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get savedSearchesEmpty =>
-      'មិនទាន់មានការស្វែងរកដែលបានរក្សាទុកទេ។ កំណត់តម្រងលើផែនទី ហើយចុចសញ្ញាចំណាំ ដើម្បីរក្សាទុក។';
+      'កំណត់តម្រងផែនទី រួចចុចសញ្ញាចំណាំដើម្បីរក្សាទុកការស្វែងរក។';
 
   @override
   String get savedSearchesLoadFailed =>
@@ -2937,15 +2773,14 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get notificationsAlwaysOn =>
-      'ការជូនដំណឹងសុវត្ថិភាព និងការហៅតែងតែបើកជានិច្ច ដើម្បីកុំឱ្យអ្នកខកខានការចូលគណនីថ្មី ឬការហៅមកអ្នក។';
+      'ការហៅ និងការជូនដំណឹងពេលចូលគណនីបើកជានិច្ច។';
 
   @override
   String get notificationsBlockedTitle =>
       'ការជូនដំណឹងត្រូវបានបិទសម្រាប់កម្មវិធីនេះ';
 
   @override
-  String get notificationsBlockedHelp =>
-      'សូមបើកវានៅក្នុងការកំណត់ទូរសព្ទរបស់អ្នក ដើម្បីទទួលដំណឹងអំពីសារថ្មី ការហៅ និងការចូលគណនី។';
+  String get notificationsBlockedHelp => 'បើកការជូនដំណឹងក្នុងការកំណត់ទូរសព្ទ។';
 
   @override
   String get chatPreviewNewMessage => 'សារថ្មី';
@@ -2955,7 +2790,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get notificationsShowTextHelp =>
-      'បង្ហាញអ្វីដែលសារនិយាយនៅក្នុងការជូនដំណឹង។ អ្នកដែលមើលឃើញអេក្រង់ចាក់សោរបស់អ្នកអាចអានវាបាន។';
+      'បង្ហាញអត្ថបទសារក្នុងការជូនដំណឹង រួមទាំងលើអេក្រង់ចាក់សោ។';
 
   @override
   String get notificationsLoadFailed =>
@@ -3160,7 +2995,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get addEmailIntro =>
-      'បន្ថែមអ៊ីមែល ដើម្បីអាចកំណត់ពាក្យសម្ងាត់ថ្មីបាន ពេលអ្នកភ្លេចវា។ សូមបញ្ចូលពាក្យសម្ងាត់របស់អ្នក ដើម្បីបញ្ជាក់ថាជាអ្នកពិតប្រាកដ។';
+      'បន្ថែមអ៊ីមែលសម្រាប់កំណត់ពាក្យសម្ងាត់ឡើងវិញ។ បញ្ជាក់ដោយពាក្យសម្ងាត់របស់អ្នក។';
 
   @override
   String get addEmailDone => 'បានបន្ថែមអ៊ីមែល';
@@ -3196,4 +3031,701 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get closestShowList => 'បង្ហាញអចលនទ្រព្យនៅជិតអ្នក';
+
+  @override
+  String get authEnterYourPhoneNumberToGet =>
+      'បញ្ចូលលេខទូរស័ព្ទរបស់អ្នក យើងនឹងផ្ញើលេខកូដជាសារ ដើម្បីកំណត់ពាក្យសម្ងាត់ឡើងវិញ។';
+
+  @override
+  String get authVerificationCodeSentToYourPhone =>
+      'បានផ្ញើលេខកូដផ្ទៀងផ្ទាត់ទៅទូរស័ព្ទរបស់អ្នក';
+
+  @override
+  String get authEnterTheVerificationCodeWeTexted =>
+      'បញ្ចូលលេខកូដផ្ទៀងផ្ទាត់ដែលយើងទើបផ្ញើជាសារទៅទូរស័ព្ទរបស់អ្នក។';
+
+  @override
+  String get authErrorNoAccountForPhone => 'មិនមានគណនីណាប្រើលេខទូរស័ព្ទនេះទេ។';
+
+  @override
+  String get authErrorSmsUnavailable =>
+      'មិនអាចផ្ញើសារបានទេនៅពេលនេះ។ សូមកំណត់ឡើងវិញតាមអ៊ីមែល ឬព្យាយាមម្តងទៀតពេលក្រោយ។';
+
+  @override
+  String get planFree => 'ឥតគិតថ្លៃ';
+
+  @override
+  String get planSilver => 'ប្រាក់';
+
+  @override
+  String get planGold => 'មាស';
+
+  @override
+  String get planDiamond => 'ពេជ្រ';
+
+  @override
+  String planMember(String tier) {
+    return 'សមាជិក$tier';
+  }
+
+  @override
+  String planAccount(String tier) {
+    return 'គណនី$tier';
+  }
+
+  @override
+  String get planPerMonth => '/ ខែ';
+
+  @override
+  String planListingsUsed(int used, int limit) {
+    return 'បានប្រើ $used / $limit ការផ្សាយ';
+  }
+
+  @override
+  String get planCurrent => 'គម្រោងបច្ចុប្បន្ន';
+
+  @override
+  String planUpgradeTo(String tier) {
+    return 'ដំឡើងទៅ$tier';
+  }
+
+  @override
+  String get planFeatures => 'លក្ខណៈពិសេស';
+
+  @override
+  String planFeatureLimit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ផ្សាយអចលនទ្រព្យបានរហូតដល់ $count',
+      one: 'ផ្សាយអចលនទ្រព្យ 1 ក្នុងពេលតែមួយ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planFeatureFree => 'ការបង្ហាញការផ្សាយកម្រិតមូលដ្ឋាន';
+
+  @override
+  String get planFeatureSilver => 'សមស្របសម្រាប់ភ្នាក់ងារតូចៗ';
+
+  @override
+  String get planFeatureGold => 'សមត្ថភាពផ្សាយខ្ពស់ជាង';
+
+  @override
+  String get planFeatureDiamond => 'សមត្ថភាពផ្សាយខ្ពស់បំផុត';
+
+  @override
+  String get planChooseIntro =>
+      'ជ្រើសរើសគម្រោង ដើម្បីផ្សាយអចលនទ្រព្យបានច្រើនទៀត។';
+
+  @override
+  String get planUpgradeTitle => 'ដំឡើងការជាវ';
+
+  @override
+  String get planUpgradeIntro =>
+      'គម្រោងថ្មីមានសុពលភាពមួយខែ។ ការដំឡើងគិតតែតម្លៃខុសគ្នាសម្រាប់ពេលនៅសល់ និងរក្សាថ្ងៃផុតកំណត់ដដែល។';
+
+  @override
+  String get planSubscribe => 'ជាវ';
+
+  @override
+  String get paymentSelectMethod => 'ជ្រើសរើសវិធីបង់ប្រាក់';
+
+  @override
+  String get paymentTaxIncluded => 'តម្លៃសរុបរួមបញ្ចូលពន្ធ 10%។';
+
+  @override
+  String get paymentAbaPay => 'ABA PAY';
+
+  @override
+  String get paymentAbaPayHint => 'បង់ប្រាក់តាម ABA Mobile';
+
+  @override
+  String get paymentAbaKhqr => 'ABA KHQR';
+
+  @override
+  String get paymentAbaKhqrHint => 'ស្កេនដើម្បីបង់ជាមួយកម្មវិធីធនាគារណាមួយ';
+
+  @override
+  String get paymentAwaitingConfirmation =>
+      'កំពុងរង់ចាំ ABA បញ្ជាក់ការបង់ប្រាក់របស់អ្នក។ ជាធម្មតាចំណាយពេលប្រហែលមួយនាទី។';
+
+  @override
+  String get paymentFailed => 'ការបង់ប្រាក់មិនបានបញ្ចប់ទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get paymentRefundRequired =>
+      'ការបង់ប្រាក់របស់អ្នកបានមកដល់បន្ទាប់ពីការដំឡើងគម្រោងផុតកំណត់។ សូមទាក់ទងផ្នែកជំនួយជាមួយលេខយោងប្រតិបត្តិការរបស់អ្នក ដើម្បីស្នើសុំការបង្វិលប្រាក់។';
+
+  @override
+  String get paymentAppNotOpened =>
+      'មិនអាចបើក ABA Mobile ឬទំព័របង់ប្រាក់បានទេ។';
+
+  @override
+  String get paymentUnavailable =>
+      'ការបង់ប្រាក់តាមអនឡាញមិនទាន់មាននៅឡើយទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get paymentCouldNotStart =>
+      'មិនអាចចាប់ផ្តើមការបង់ប្រាក់បានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get paymentBillingSummary => 'សេចក្តីសង្ខេបវិក្កយបត្រ';
+
+  @override
+  String get paymentPlan => 'គម្រោង';
+
+  @override
+  String get paymentPrice => 'តម្លៃ';
+
+  @override
+  String get paymentBillingCycle => 'វដ្តបង់ប្រាក់';
+
+  @override
+  String get paymentMonthly => 'ប្រចាំខែ';
+
+  @override
+  String get paymentTotal => 'សរុប';
+
+  @override
+  String get paymentOneTimeTitle => 'ការបង់ប្រាក់តែម្តង';
+
+  @override
+  String get paymentOneTimeIntro => 'អចលនទ្រព្យរបស់អ្នករួចរាល់សម្រាប់ផ្សាយហើយ។';
+
+  @override
+  String get publishingRenewListingTitle => 'បន្តការផ្សាយអចលនទ្រព្យ';
+
+  @override
+  String get publishingRenewListingMessage =>
+      'បន្តការផ្សាយអចលនទ្រព្យនេះរយៈពេលមួយខែ។ បង់ប្រាក់សម្រាប់ការផ្សាយនេះ ឬប្រើគម្រោងដែលនៅមានសុពលភាព និងមានកន្លែងទំនេរ។';
+
+  @override
+  String get publishingRenewSubscriptionTitle => 'បន្តគម្រោងរបស់អ្នក';
+
+  @override
+  String get publishingRenewSubscriptionMessage =>
+      'គម្រោងរបស់អ្នកបានផុតកំណត់ហើយ។ បន្តគម្រោង ដើម្បីផ្សាយអចលនទ្រព្យរបស់អ្នកម្តងទៀត។ ការផ្សាយឥតគិតថ្លៃដើមរបស់អ្នកនៅតែអាចប្រើបាន។';
+
+  @override
+  String get paymentPropertyInformation => 'ព័ត៌មានអចលនទ្រព្យ';
+
+  @override
+  String get paymentOneTime => 'មួយខែ · បង់តែម្តង';
+
+  @override
+  String get paymentPublishProperty => 'ផ្សាយអចលនទ្រព្យ';
+
+  @override
+  String get paymentProperty => 'អចលនទ្រព្យ';
+
+  @override
+  String get paymentCategory => 'ប្រភេទ';
+
+  @override
+  String get publishPlanTitle => 'ជ្រើសរើសគម្រោងផ្សាយ';
+
+  @override
+  String get publishPlanOneTime => 'ផ្សាយតែម្តង';
+
+  @override
+  String publishPlanOneTimeHint(String price) {
+    return 'បង់ $price ដើម្បីផ្សាយអចលនទ្រព្យនេះរយៈពេលមួយខែ។';
+  }
+
+  @override
+  String get publishPlanSubscription => 'គម្រោងជាវ';
+
+  @override
+  String get publishPlanSubscriptionHint => 'ផ្សាយអចលនទ្រព្យច្រើនរៀងរាល់ខែ។';
+
+  @override
+  String get publishPlanChooseFirst => 'ជ្រើសគម្រោង ឬបង់ម្តងដើម្បីចុះផ្សាយ។';
+
+  @override
+  String get privacyLastUpdated =>
+      'ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ៖ ថ្ងៃទី 4 ខែវិច្ឆិកា ឆ្នាំ 2026';
+
+  @override
+  String get privacyIntro =>
+      'ព័ត៌មានដែលយើងប្រមូល របៀបប្រើប្រាស់ និងជម្រើសរបស់អ្នក។';
+
+  @override
+  String get privacyCollectTitle => 'អ្វីដែលយើងប្រមូល';
+
+  @override
+  String get privacyCollectAccount =>
+      'ឈ្មោះ ឈ្មោះអ្នកប្រើ លេខទូរសព្ទ អ៊ីមែលបើមាន និងរូបប្រវត្តិរូប។';
+
+  @override
+  String get privacyCollectListings =>
+      'រូបថត ពិពណ៌នា តម្លៃ ទីតាំង ព្រំដី និងលេខទំនាក់ទំនងអចលនទ្រព្យ។';
+
+  @override
+  String get privacyCollectLocation =>
+      'ទីតាំងរបស់អ្នក តែនៅពេលអ្នកអនុញ្ញាត ដើម្បីបង្ហាញការផ្សាយ និងផ្លូវនៅជិតអ្នក។';
+
+  @override
+  String get privacyCollectActivity =>
+      'អចលនទ្រព្យ និងការស្វែងរកដែលបានរក្សាទុក ការតាមដាន និងចំនួនមើល សម្រាប់ស្ថិតិ។';
+
+  @override
+  String get privacyCollectDevice =>
+      'កំណែកម្មវិធី ម៉ូដែលទូរសព្ទ សោសម្គាល់ឧបករណ៍ចូលគណនី និងកូដជូនដំណឹង សម្រាប់សុវត្ថិភាព និងការជូនដំណឹង។';
+
+  @override
+  String get privacyUseTitle => 'របៀបដែលយើងប្រើវា';
+
+  @override
+  String get privacyUseRun =>
+      'ដើម្បីដំណើរការទីផ្សារ៖ បង្ហាញការផ្សាយ ភ្ជាប់អ្នកទិញជាមួយម្ចាស់ និងបញ្ជូនការជជែក និងការហៅ។';
+
+  @override
+  String get privacyUseProtect =>
+      'ដើម្បីការពារគណនី៖ រកឃើញការចូលគណនីគួរឱ្យសង្ស័យ កំណត់ការប្រើប្រាស់ខុស និងដោះស្រាយរបាយការណ៍។';
+
+  @override
+  String get privacyUseFix =>
+      'ដើម្បីជួសជុលបញ្ហា៖ របាយការណ៍គាំង និងកំហុសជួយយើងរកកំហុស។';
+
+  @override
+  String get privacyUseNoSale => 'យើងមិនលក់ព័ត៌មានផ្ទាល់ខ្លួនរបស់អ្នកទេ។';
+
+  @override
+  String get privacyChatTitle => 'សារ និងការហៅ';
+
+  @override
+  String get privacyChatBody =>
+      'សារត្រូវបានអ៊ិនគ្រីបពេលផ្ញើ និងរក្សាទុក។ មានតែអ្នកក្នុងការជជែកអាចចូលមើលតាមកម្មវិធី។ Tilomnov គ្រប់គ្រងសោអ៊ិនគ្រីប។ មិនត្រូវការ PIN ទេ។ សារអ៊ិនគ្រីបចាស់នៅតែរក្សាទុក ប៉ុន្តែមិនអាចបើកបាន។';
+
+  @override
+  String get privacyPaymentsTitle => 'ការបង់ប្រាក់';
+
+  @override
+  String get privacyPaymentsBody =>
+      'ABA PayWay ដំណើរការទូទាត់។ យើងមិនឃើញ ឬរក្សាទុកព័ត៌មានកាត ឬគណនីធនាគារទេ។ យើងរក្សាទុកលេខយោង ចំនួនប្រាក់ ស្ថានភាព និងកាលបរិច្ឆេទជាមួយគណនីអ្នក។';
+
+  @override
+  String get privacySharingTitle => 'អ្នកណាអាចមើលឃើញព័ត៌មានរបស់អ្នក';
+
+  @override
+  String get privacySharingIntro =>
+      'យើងចែករំលែកព័ត៌មានតែតាមដែលកម្មវិធីត្រូវការប៉ុណ្ណោះ៖';
+
+  @override
+  String get privacySharingUsers =>
+      'អ្នកដទៃអាចឃើញអចលនទ្រព្យ ប្រវត្តិរូបសាធារណៈ និងលេខទំនាក់ទំនងលើអចលនទ្រព្យ។';
+
+  @override
+  String get privacySharingProviders =>
+      'Google ផ្តល់ផែនទី ការចូល ផ្ទៀងផ្ទាត់ទូរសព្ទ និងការជូនដំណឹង។ Sentry ទទួលរបាយការណ៍កំហុស។ ABA Bank ដំណើរការទូទាត់។';
+
+  @override
+  String get privacySharingLaw => 'អាជ្ញាធរ នៅពេលច្បាប់តម្រូវ។';
+
+  @override
+  String get privacyCookiesTitle => 'ខូគី និងការរក្សាទុកនៅលើទូរសព្ទរបស់អ្នក';
+
+  @override
+  String get privacyCookiesIntro =>
+      'គ្មានខូគីផ្សាយពាណិជ្ជកម្ម ឬតាមដាន។ យើងរក្សាទុកលើទូរសព្ទ៖';
+
+  @override
+  String get privacyCookiesSignIn =>
+      'ការចូលគណនីរបស់អ្នក ដែលរក្សាទុកក្នុងកន្លែងផ្ទុកសុវត្ថិភាពរបស់ទូរសព្ទ។';
+
+  @override
+  String get privacyCookiesSettings =>
+      'ការកំណត់របស់អ្នក ដូចជារចនាប័ទ្ម និងភាសា។';
+
+  @override
+  String get privacyCookiesOffline =>
+      'ទំព័រ និងរូបថតថ្មីៗ សម្រាប់ផ្ទុកលឿន និងប្រើពេលគ្មានអ៊ីនធឺណិត។';
+
+  @override
+  String get privacyCookiesClear =>
+      'ចាកចេញដើម្បីលុបការចូលគណនី។ សម្អាតទិន្នន័យកម្មវិធីក្នុងការកំណត់ទូរសព្ទ ដើម្បីលុបទិន្នន័យផ្សេងទៀត។';
+
+  @override
+  String get privacyChoicesTitle => 'ជម្រើសរបស់អ្នក';
+
+  @override
+  String get privacyChoicesEdit =>
+      'មើល និងកែប្រែព័ត៌មានរបស់អ្នកបានគ្រប់ពេលនៅក្នុង គណនី > ព័ត៌មានផ្ទាល់ខ្លួន។';
+
+  @override
+  String get privacyChoicesLocation =>
+      'បិទការចូលប្រើទីតាំងក្នុងការកំណត់ទូរសព្ទ ផែនទីនៅតែដំណើរការដោយគ្មានវា។';
+
+  @override
+  String get privacyChoicesNotifications =>
+      'ជ្រើសរើសការជូនដំណឹងដែលអ្នកចង់ទទួលនៅក្នុង គណនី > ការជូនដំណឹង។';
+
+  @override
+  String get privacyChoicesDelete =>
+      'លុបការផ្សាយរបស់អ្នកបានគ្រប់ពេល។ ដើម្បីបិទគណនីរបស់អ្នក សូមទាក់ទងមកយើង។';
+
+  @override
+  String get privacyContactTitle => 'ទាក់ទងមកយើង';
+
+  @override
+  String get privacyContactBody =>
+      'ទាក់ទងក្រុម Tilomnov បើមានសំណួរ។ កាលបរិច្ឆេទខាងលើបង្ហាញការកែប្រែចុងក្រោយ។';
+
+  @override
+  String get paymentSuccessTitle => 'ជោគជ័យ';
+
+  @override
+  String paymentSuccessAmount(String amount) {
+    return '$amount ដុល្លារ';
+  }
+
+  @override
+  String paymentSuccessTransaction(String id) {
+    return 'លេខប្រតិបត្តិការ  #$id';
+  }
+
+  @override
+  String get paymentSuccessEmailed => 'អ៊ីមែលបញ្ជាក់ការទិញ:';
+
+  @override
+  String get paymentSuccessNoEmail =>
+      'បញ្ចូលអ៊ីមែលនៅក្នុង ព័ត៌មានផ្ទាល់ខ្លួន ដើម្បីទទួលបង្កាន់ដៃតាមអ៊ីមែល។';
+
+  @override
+  String get paymentDownloadReceipt => 'ទាញយកបង្កាន់ដៃ';
+
+  @override
+  String get paymentBackToHome => 'ត្រឡប់ទៅទំព័រដើម';
+
+  @override
+  String get paymentReceiptSaved => 'បានរក្សាទុកបង្កាន់ដៃក្នុងរូបថតរបស់អ្នក។';
+
+  @override
+  String get paymentReceiptSaveFailed =>
+      'មិនអាចរក្សាទុកបង្កាន់ដៃបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get paymentReceiptPhotosDenied =>
+      'សូមអនុញ្ញាតឱ្យចូលប្រើរូបថត ដើម្បីរក្សាទុកបង្កាន់ដៃ។';
+
+  @override
+  String get paymentReceiptTitle => 'បង្កាន់ដៃបង់ប្រាក់';
+
+  @override
+  String get paymentReceiptTransaction => 'លេខប្រតិបត្តិការ';
+
+  @override
+  String get paymentReceiptDate => 'កាលបរិច្ឆេទ';
+
+  @override
+  String get paymentReceiptItem => 'មុខទំនិញ';
+
+  @override
+  String get paymentReceiptMethod => 'វិធីបង់ប្រាក់';
+
+  @override
+  String get paymentReceiptEmail => 'អ៊ីមែល';
+
+  @override
+  String get paymentReceiptStatus => 'ស្ថានភាព';
+
+  @override
+  String get paymentReceiptPaid => 'បានបង់';
+
+  @override
+  String paymentItemSubscription(String tier) {
+    return 'គម្រោង$tier · ប្រចាំខែ';
+  }
+
+  @override
+  String get paymentItemOneTimePublish => 'ការផ្សាយអចលនទ្រព្យ · មួយខែ';
+
+  @override
+  String get planCancelAction => 'បោះបង់គម្រោង';
+
+  @override
+  String get planCancelTitle => 'បោះបង់គម្រោងរបស់អ្នក?';
+
+  @override
+  String planCancelExplanation(String date) {
+    return 'គម្រោងមានសុពលភាពរហូតដល់ $date។ អ្នករក្សាអត្ថប្រយោជន៍ដែលបានបង់ប្រាក់រហូតដល់ពេលនោះ។';
+  }
+
+  @override
+  String planActiveUntil(String date) {
+    return 'គម្រោងមានសុពលភាពរហូតដល់ $date។';
+  }
+
+  @override
+  String planCancelledUntil(String date) {
+    return 'គម្រោងត្រូវបានបោះបង់។ គម្រោងរបស់អ្នកនៅតែមានសុពលភាពរហូតដល់ $date។';
+  }
+
+  @override
+  String get planCancelFailed => 'មិនអាចបោះបង់គម្រោងបានទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get planStatusRetry =>
+      'មិនអាចផ្ទុកគម្រោងបានទេ។ ចុចដើម្បីព្យាយាមម្តងទៀត។';
+
+  @override
+  String get listingTypeTakeover => 'លក់បន្តការបង់រំលស់';
+
+  @override
+  String get takeoverIntro =>
+      'បញ្ចូលផែនការបង់ប្រាក់បច្ចុប្បន្ន។ អ្នកទិញបង់ប្រាក់ឱ្យអ្នកលក់ រួចទទួលខុសត្រូវលើសមតុល្យនៅសល់ ដោយអាស្រ័យលើការយល់ព្រមពីអ្នកផ្តល់ហិរញ្ញប្បទាន។';
+
+  @override
+  String get takeoverProviderType => 'ប្រភេទអ្នកផ្តល់ហិរញ្ញប្បទាន';
+
+  @override
+  String get takeoverProviderName => 'ឈ្មោះក្រុមហ៊ុនអភិវឌ្ឍន៍ ឬធនាគារ';
+
+  @override
+  String get takeoverProjectName => 'ឈ្មោះគម្រោង';
+
+  @override
+  String get takeoverSellerAmount => 'ប្រាក់ដែលត្រូវបង់ឱ្យអ្នកលក់ (ដុល្លារ)';
+
+  @override
+  String get takeoverBalance => 'សមតុល្យនៅសល់ (ដុល្លារ)';
+
+  @override
+  String get takeoverBalanceHelp =>
+      'សមតុល្យកិច្ចសន្យា ឬប្រាក់ដើមកម្ចីនៅសល់ ដោយមិនរាប់ការប្រាក់នាពេលអនាគត។ រួមបញ្ចូលការបង់ប្រាក់ធំៗតាមកាលវិភាគក្នុងសមតុល្យនេះ។';
+
+  @override
+  String get takeoverBalanceDate => 'សមតុល្យគិតត្រឹមថ្ងៃទី';
+
+  @override
+  String get takeoverPaymentAmount => 'ប្រាក់រំលស់ប្រចាំគ្រា (ដុល្លារ)';
+
+  @override
+  String get takeoverFrequency => 'ភាពញឹកញាប់នៃការបង់ប្រាក់';
+
+  @override
+  String get takeoverRemainingMonths => 'ចំនួនខែនៅសល់';
+
+  @override
+  String get takeoverNextPayment => 'កាលបរិច្ឆេទបង់ប្រាក់បន្ទាប់';
+
+  @override
+  String get takeoverInterestType => 'លក្ខខណ្ឌការប្រាក់';
+
+  @override
+  String get takeoverAnnualRate => 'អត្រាការប្រាក់ប្រចាំឆ្នាំបច្ចុប្បន្ន (%)';
+
+  @override
+  String get takeoverTransferStatus => 'ការអនុញ្ញាតឱ្យផ្ទេរ (តាមអ្នកលក់)';
+
+  @override
+  String get takeoverTransferFee => 'ថ្លៃផ្ទេរ (ដុល្លារ ទុកទទេបើមិនដឹង)';
+
+  @override
+  String get takeoverFeePayer => 'អ្នកណាបង់ថ្លៃផ្ទេរ?';
+
+  @override
+  String get takeoverArrears => 'ប្រាក់ហួសកំណត់ (ដុល្លារ បញ្ចូល 0 បើគ្មាន)';
+
+  @override
+  String get takeoverArrearsHelp =>
+      'បញ្ជាក់ប្រាក់រំលស់មិនទាន់បង់ និងប្រាក់ពិន័យ។ ពន្យល់ក្នុងកំណត់សម្គាល់ថា តើប្រាក់ដើមហួសកំណត់បានរាប់ក្នុងសមតុល្យហើយឬនៅ។';
+
+  @override
+  String get takeoverArrearsPayer => 'អ្នកណាទូទាត់ប្រាក់ហួសកំណត់?';
+
+  @override
+  String get takeoverHasAdditional =>
+      'មានការបង់ប្រាក់ធំៗបន្ថែមតាមកាលវិភាគដែរឬទេ?';
+
+  @override
+  String get takeoverAdditionalAmount => 'ប្រាក់ត្រូវបង់តាមកាលវិភាគ (ដុល្លារ)';
+
+  @override
+  String get takeoverAdditionalDate => 'ថ្ងៃផុតកំណត់បង់ប្រាក់តាមកាលវិភាគ';
+
+  @override
+  String get takeoverAddPayment => 'បន្ថែមការបង់ប្រាក់តាមកាលវិភាគ';
+
+  @override
+  String get takeoverRemovePayment => 'លុបការបង់ប្រាក់តាមកាលវិភាគ';
+
+  @override
+  String get takeoverAdditionalHelp =>
+      'បញ្ចូលប្រាក់ត្រូវបង់ពេលប្រគល់អចលនទ្រព្យ ឬប្រាក់បង់ដុំចុងក្រោយ។ ប្រាក់ទាំងនេះជាផ្នែកនៃសមតុល្យនៅសល់រួចហើយ។';
+
+  @override
+  String get takeoverNotes => 'កំណត់សម្គាល់អំពីផែនការបង់ប្រាក់ និងការផ្ទេរ';
+
+  @override
+  String get takeoverCombinedPrice => 'តម្លៃសរុបមុនការប្រាក់ និងថ្លៃសេវា';
+
+  @override
+  String get takeoverCombinedHelp =>
+      'ប្រាក់បង់ឱ្យអ្នកលក់ + សមតុល្យនៅសល់។ ការប្រាក់នាពេលអនាគត ថ្លៃផ្ទេរ និងប្រាក់ហួសកំណត់អាចបន្ថែមចំណាយរបស់អ្នកទិញ។';
+
+  @override
+  String get takeoverInvalid =>
+      'សូមបំពេញ ឬកែតម្រូវព័ត៌មានបង់រំលស់ដែលបានបន្លិច មុនផ្សព្វផ្សាយ។';
+
+  @override
+  String get takeoverFieldError => 'តម្លៃចាំបាច់ ឬមិនត្រឹមត្រូវ';
+
+  @override
+  String get takeoverNotAllowed =>
+      'មិនអាចផ្សព្វផ្សាយកិច្ចសន្យានេះជាការលក់បន្តការបង់រំលស់ ខណៈដែលមិនអនុញ្ញាតឱ្យផ្ទេរ។';
+
+  @override
+  String get takeoverBuyerNotice =>
+      'លក្ខខណ្ឌ និងការអនុញ្ញាតរាយការណ៍ដោយអ្នកលក់ មិនទាន់បានផ្ទៀងផ្ទាត់ដោយ Tilomnov ទេ។ សូមបញ្ជាក់សមតុល្យ ថ្លៃសេវា និងដំណើរការផ្ទេរដោយផ្ទាល់ជាមួយក្រុមហ៊ុនអភិវឌ្ឍន៍ ឬធនាគារ។ ការផ្សព្វផ្សាយមិនមានន័យថាបានផ្ទេរកិច្ចសន្យា ឬកម្ចីទេ។';
+
+  @override
+  String get takeoverDateHint => 'ឆ្នាំ-ខែ-ថ្ងៃ (YYYY-MM-DD)';
+
+  @override
+  String get takeoverProviderDeveloper => 'បង់រំលស់ជាមួយក្រុមហ៊ុនអភិវឌ្ឍន៍';
+
+  @override
+  String get takeoverProviderBank => 'កម្ចីធនាគារ';
+
+  @override
+  String get takeoverMonthly => 'ប្រចាំខែ';
+
+  @override
+  String get takeoverQuarterly => 'រៀងរាល់ 3 ខែ';
+
+  @override
+  String get takeoverYearly => 'ប្រចាំឆ្នាំ';
+
+  @override
+  String get takeoverInterestNone => 'គ្មានការប្រាក់';
+
+  @override
+  String get takeoverInterestFixed => 'អត្រាថេរ';
+
+  @override
+  String get takeoverInterestVariable => 'អត្រាប្រែប្រួល';
+
+  @override
+  String get takeoverUnknown => 'មិនដឹង / ត្រូវបញ្ជាក់';
+
+  @override
+  String get takeoverNotChecked => 'មិនទាន់បានសួរអ្នកផ្តល់ហិរញ្ញប្បទាន';
+
+  @override
+  String get takeoverConditional => 'អនុញ្ញាតតាមលក្ខខណ្ឌអ្នកផ្តល់ហិរញ្ញប្បទាន';
+
+  @override
+  String get takeoverWrittenApproval => 'មានការអនុញ្ញាតជាលាយលក្ខណ៍អក្សរ';
+
+  @override
+  String get takeoverNotPermitted => 'មិនអនុញ្ញាតឱ្យផ្ទេរ';
+
+  @override
+  String get takeoverBuyer => 'អ្នកទិញ';
+
+  @override
+  String get takeoverSeller => 'អ្នកលក់';
+
+  @override
+  String get takeoverShared => 'អ្នកទិញ និងអ្នកលក់រួមគ្នា';
+
+  @override
+  String takeoverMonthsValue(int months) {
+    return '$months ខែ';
+  }
+
+  @override
+  String takeoverToSellerValue(String amount) {
+    return '$amount បង់ឱ្យអ្នកលក់';
+  }
+
+  @override
+  String takeoverPriceLabel(String amount) {
+    return '$amount សរុប';
+  }
+
+  @override
+  String takeoverPaymentValue(String amount, String frequency) {
+    return '$amount · $frequency';
+  }
+
+  @override
+  String get takeoverBuyerTransferFee => 'ថ្លៃផ្ទេរ';
+
+  @override
+  String get takeoverBuyerArrears => 'ប្រាក់ហួសកំណត់ និងប្រាក់ពិន័យ';
+
+  @override
+  String get adminEmailTitle => 'ពិនិត្យអ៊ីមែលអ្នកគ្រប់គ្រងរបស់អ្នក';
+
+  @override
+  String get adminEmailWaiting =>
+      'ពាក្យសម្ងាត់របស់អ្នកត្រឹមត្រូវ។ បើក Gmail ហើយចុច Open Tilomnov ក្នុងអ៊ីមែលចូលគណនី។ តំណនេះនឹងផុតកំណត់ក្នុងរយៈពេល ១០ នាទី។';
+
+  @override
+  String get adminEmailVerifying => 'កំពុងផ្ទៀងផ្ទាត់តំណចូលគណនី...';
+
+  @override
+  String get adminEmailInvalid =>
+      'មិនអាចផ្ទៀងផ្ទាត់តំណនេះបានទេ។ តំណអាចផុតកំណត់ ត្រូវបានប្រើរួច ឬការតភ្ជាប់បរាជ័យ។ សូមចូលម្តងទៀតដើម្បីស្នើអ៊ីមែលថ្មី។';
+
+  @override
+  String get adminEmailBack => 'ត្រឡប់ទៅចូលគណនី';
+
+  @override
+  String get advertisementLabel => 'ពាណិជ្ជកម្ម';
+
+  @override
+  String get themeLiquidGlass => 'កញ្ចក់រាវ (Liquid Glass)';
+
+  @override
+  String get themeMinimalistic => 'សាមញ្ញ (Minimalistic)';
+
+  @override
+  String get planAnnualOffer => 'ប្រចាំឆ្នាំ · ឥតគិតថ្លៃ ២ ខែ';
+
+  @override
+  String get paymentAnnual => '១២ ខែ';
+
+  @override
+  String get planPerYear => '/ ឆ្នាំ';
+
+  @override
+  String get planExpiryDate => 'ប្រើបានរហូតដល់';
+
+  @override
+  String get planManualRenewal =>
+      'បង់ប្រាក់តែម្តង។ មិនបន្តដោយស្វ័យប្រវត្តិទេ។ បន្តដោយខ្លួនឯងតាមតម្លៃគម្រោងដែលបានបង្ហាញនៅពេលផុតកំណត់។';
+
+  @override
+  String get paymentOneTimeDuration => '៣០ ថ្ងៃ · បន្តដោយខ្លួនឯង';
+
+  @override
+  String get authRecoveryEmailOnly =>
+      'ការស្ដារពាក្យសម្ងាត់ប្រើអ៊ីមែលដែលភ្ជាប់នឹងគណនី។ បើអ្នកចុះឈ្មោះតាម Google សូមចូលតាម Google។ បន្ថែមអ៊ីមែលក្នុងសុវត្ថិភាពគណនី ដើម្បីស្ដារពាក្យសម្ងាត់ដែលភ្លេច។';
+
+  @override
+  String get propertyAddPhone => 'បន្ថែមលេខទូរសព្ទមួយទៀត';
+
+  @override
+  String get propertyAdditionalPhone => 'លេខទូរសព្ទបន្ថែម';
+
+  @override
+  String get propertyRemovePhone => 'ដកលេខទូរសព្ទចេញ';
+
+  @override
+  String get searchApproximateArea => 'តំបន់ប្រហាក់ប្រហែល';
+
+  @override
+  String get authRecoveryEmailHint =>
+      'បន្ថែមអ៊ីមែលសម្រាប់ស្ដារពាក្យសម្ងាត់។ លេខទូរសព្ទប្រើសម្រាប់ទំនាក់ទំនងប៉ុណ្ណោះ។';
+
+  @override
+  String get paymentEstimatedExpiry => 'កាលបរិច្ឆេទផុតកំណត់ប៉ាន់ស្មាន';
+
+  @override
+  String get paymentRenewalPrice => 'តម្លៃបន្តសម្រាប់ ៣០ ថ្ងៃទៀត';
 }

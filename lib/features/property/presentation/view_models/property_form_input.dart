@@ -1,4 +1,6 @@
+import 'package:tilomnov/shared/utils/phone_number.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/property/data/models/takeover_terms.dart';
 
 /// Everything typed or picked on the add-property form, as the form holds
 /// it (text and dropdown labels). Converts to the request body the server
@@ -8,6 +10,7 @@ class PropertyFormInput {
   final String title;
   final String price;
   final String listingType;
+  final TakeoverTerms? takeover;
   final String titleType;
   final String landSize;
   final String buildingSize;
@@ -28,6 +31,7 @@ class PropertyFormInput {
   final String reasonForSelling;
   final String description;
   final String contactPhone;
+  final List<String> additionalContactPhones;
 
   /// Empty for no discount; [discountType] says how to read it.
   final String discount;
@@ -55,6 +59,7 @@ class PropertyFormInput {
     this.title = '',
     this.price = '',
     this.listingType = 'Sale',
+    this.takeover,
     this.titleType = 'Hard Title',
     this.landSize = '',
     this.buildingSize = '',
@@ -71,6 +76,7 @@ class PropertyFormInput {
     this.reasonForSelling = '',
     this.description = '',
     this.contactPhone = '',
+    this.additionalContactPhones = const [],
     this.discount = '',
     this.discountType = 'percent',
     this.bedrooms,
@@ -101,16 +107,26 @@ class PropertyFormInput {
   /// the details that do not belong to the type.
   Map<String, dynamic> toRequestBody() {
     final isBorey = _type == 'Borey';
+    final isTakeover = listingType == takeoverListingType;
     return {
       'title': title.trim().isEmpty ? 'Untitled Property' : title.trim(),
-      'price': _decimal(isBorey ? startingPrice : price) ?? 0,
+      'price': isTakeover
+          ? takeover?.combinedPrice ?? 0
+          : _decimal(isBorey ? startingPrice : price) ?? 0,
+      'takeover': isTakeover ? takeover?.toJson() : null,
       'propertyType': _type,
-      'discountType': _decimal(discount) == null ? null : discountType,
-      'discountValue': _decimal(discount),
+      'discountType': isTakeover || _decimal(discount) == null
+          ? null
+          : discountType,
+      'discountValue': isTakeover ? null : _decimal(discount),
       'listingType': listingType.isEmpty ? null : listingType,
       'titleType': titleType.isEmpty ? null : titleType,
       'description': _text(description),
-      'contactPhone': _text(contactPhone),
+      'contactPhone': normalizePhoneNumber(contactPhone) ?? _text(contactPhone),
+      'additionalContactPhones': additionalContactPhones
+          .map((number) => normalizePhoneNumber(number) ?? number.trim())
+          .toSet()
+          .toList(),
       'landSize': _decimal(landSize),
       'buildingSize': _decimal(buildingSize),
       'unitSize': _decimal(unitSize),
@@ -152,6 +168,7 @@ class PropertyFormInput {
       price: isBorey ? '' : _number(double.tryParse(property.price)),
       startingPrice: isBorey ? _number(double.tryParse(property.price)) : '',
       listingType: property.listingType ?? 'Sale',
+      takeover: property.takeover,
       titleType: details.titleType ?? 'Hard Title',
       landSize: _number(property.landSize),
       buildingSize: _number(property.buildingSize),
@@ -165,6 +182,7 @@ class PropertyFormInput {
       reasonForSelling: details.reasonForSelling ?? '',
       description: property.description ?? '',
       contactPhone: details.contactPhone ?? '',
+      additionalContactPhones: details.additionalContactPhones,
       discount: _number(property.discountValue),
       discountType: property.discountType ?? 'percent',
       bedrooms: isCondo && property.bedrooms == 0

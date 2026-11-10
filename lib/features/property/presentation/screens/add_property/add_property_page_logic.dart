@@ -1,20 +1,27 @@
+import 'package:tilomnov/shared/utils/phone_number.dart';
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'add_property_page.dart';
 import 'add_property_page_form_binding.dart';
+import 'add_property_paid_publish.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
 
 extension AddPropertyPageLogic on AddPropertyPageState {
   /// Publishes a new listing, or saves the edits to an existing one. A
   /// draft being edited may stay incomplete; anything else must be complete.
   void validateAndSubmit() async {
+    if (isLoading || ref.read(addPropertyControllerProvider).isLoading) return;
     final editedDraft = isEditing && widget.property!.status == 'Draft';
     if (!editedDraft && !_isComplete()) return;
 
@@ -33,13 +40,13 @@ extension AddPropertyPageLogic on AddPropertyPageState {
         .read(addPropertyControllerProvider.notifier)
         .validatePropertyForm(
           title: titleController.text,
-          price: effectivePrice,
+          price: isTakeover ? '0' : effectivePrice,
           propertyType: selectedPropertyType,
           listingSetting: selectedListingSetting,
           landSize: landSizeController.text,
           buildingSize: buildingSizeController.text,
           unitSize: unitSizeController.text,
-          discount: discountController.text,
+          discount: isTakeover ? '' : discountController.text,
           discountType: selectedDiscountType,
         );
 
@@ -76,11 +83,38 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       }
       return false;
     }
+    if (isTakeover &&
+        (takeoverTerms == null || takeoverTerms!.errors.isNotEmpty)) {
+      AppPopup.showError(context, context.l10n.takeoverInvalid);
+      if (takeoverKey.currentContext != null) {
+        Scrollable.ensureVisible(
+          takeoverKey.currentContext!,
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+      return false;
+    }
+    final phones = [phoneController, ...additionalPhoneControllers];
+    if (phones.any((c) => normalizePhoneNumber(c.text) == null)) {
+      AppPopup.showError(context, context.l10n.authErrEnterValidPhone);
+      if (contactPhoneKey.currentContext != null) {
+        Scrollable.ensureVisible(
+          contactPhoneKey.currentContext!,
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+      return false;
+    }
     return true;
   }
 
   Future<void> _saveChanges() async {
     try {
+      if (widget.property!.status != 'Draft') {
+        await ref
+            .read(addPropertyControllerProvider.notifier)
+            .ensureAccountPhone(phoneController.text);
+      }
       final property = await ref
           .read(addPropertyControllerProvider.notifier)
           .updateProperty(
@@ -96,7 +130,11 @@ extension AddPropertyPageLogic on AddPropertyPageState {
     } catch (e) {
       AppLogger.error('Saving property changes failed', e);
       if (!mounted) return;
-      AppPopup.showError(context, context.l10n.propertyCouldNotSaveChanges);
+      showFailure(
+        context,
+        error: e,
+        fallback: context.l10n.propertyCouldNotSaveChanges,
+      );
     }
   }
 
@@ -118,16 +156,35 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       Navigator.of(context).pop(property);
     } catch (e, stackTrace) {
       AppLogger.error('Could not archive the property', e, stackTrace);
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.propertySaveFailed)));
+      _showSaveFailed(e);
     } finally {
       if (mounted) setState(() => isArchiving = false);
     }
   }
 
+  /// Publishes a new listing: free while it fits in the user's plan, else
+  /// the way they chose to pay for it.
   Future<void> _publish() async {
+    setState(() => isLoading = true);
+    try {
+      await ref
+          .read(addPropertyControllerProvider.notifier)
+          .ensureAccountPhone(phoneController.text);
+      final allowance = await ref.read(publishingAllowanceProvider.future);
+      if (!mounted) return;
+      if (!allowance.hasRoom) {
+        await publishBeyondPlan(publishInPlan: _publishInPlan);
+      } else {
+        await _publishInPlan();
+      }
+    } catch (error) {
+      _showSaveFailed(error);
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _publishInPlan() async {
     try {
       final property = await ref
           .read(addPropertyControllerProvider.notifier)
@@ -143,22 +200,34 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       }
     } catch (e, stackTrace) {
       AppLogger.error('Could not publish the property', e, stackTrace);
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.propertySaveFailed)));
+      _showSaveFailed(e);
     }
   }
 
+  void _showSaveFailed(Object error) {
+    if (!mounted) return;
+    if (error is DioException &&
+        error.response?.data is Map &&
+        error.response!.data['code'] == 'PUBLISHING_PLAN_REQUIRED') {
+      ref.invalidate(publishingAllowanceProvider);
+      setState(() => publishingPlanMissing = true);
+    }
+    final message = failureMessage(
+      context.l10n,
+      error: error,
+      fallback: context.l10n.propertySaveFailed,
+    );
+    AppPopup.showError(context, message);
+  }
+
   void showErrorDialog(GlobalKey firstErrorKey) {
-    showDialog(
-      context: context,
+    AppDialog.show(
+      context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          contentPadding: const EdgeInsets.all(24),
+        return AppDialog.custom(
+          icon: Icons.home_outlined,
+          tone: AppDialogTone.neutral,
+
           title: Text(
             context.l10n.propertyValidateRequiredFields,
             style: GoogleFonts.inter(
@@ -176,7 +245,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
             ),
             textAlign: TextAlign.center,
           ),
-          actionsAlignment: MainAxisAlignment.center,
+
           actions: [
             TextButton(
               onPressed: () {
@@ -205,14 +274,13 @@ extension AddPropertyPageLogic on AddPropertyPageState {
   }
 
   void showSuccessDialog(PropertyModel property) {
-    showDialog(
-      context: context,
+    AppDialog.show(
+      context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          contentPadding: const EdgeInsets.all(24),
+        return AppDialog.custom(
+          icon: Icons.home_outlined,
+          tone: AppDialogTone.neutral,
+
           title: Text(
             context.l10n.propertyPublishedTitle,
             style: GoogleFonts.inter(
@@ -230,7 +298,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
             ),
             textAlign: TextAlign.center,
           ),
-          actionsAlignment: MainAxisAlignment.center,
+
           actions: [
             TextButton(
               onPressed: () {

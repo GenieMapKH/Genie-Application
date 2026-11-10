@@ -10,6 +10,7 @@ import 'package:tilomnov/features/security/presentation/view_models/security_pro
 import 'package:tilomnov/features/security/presentation/widgets/info_note.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
@@ -17,7 +18,7 @@ import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
 /// Gives an account that signs in with Google a password of its own.
 ///
 /// Such an account has nothing to type where the app asks for a password
-/// (recovering a forgotten chat PIN, for one). The owner confirms with
+/// (for account security). The owner confirms with
 /// Google once more, then chooses a password. Pops with true once it is set.
 class CreatePasswordPage extends ConsumerStatefulWidget {
   /// Said at the top when the user was sent here from something that needs
@@ -85,7 +86,7 @@ class _CreatePasswordPageState extends ConsumerState<CreatePasswordPage> {
           l10n.identityConfirmGoogleFailed,
         AccountActionResult.tooManyAttempts => l10n.commonTooManyAttempts,
         AccountActionResult.deviceTooNew => l10n.accountDeviceTooNew,
-        _ => l10n.commonSomethingWentWrong,
+        _ => failureMessage(l10n, fallback: l10n.commonSomethingWentWrong),
       };
     });
   }

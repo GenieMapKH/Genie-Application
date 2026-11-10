@@ -10,6 +10,15 @@ abstract final class MainTab {
   static const user = 5;
 }
 
+abstract final class AdminTab {
+  static const explore = 0;
+  static const services = 1;
+  static const account = 2;
+  static const activity = 3;
+  static const financial = 4;
+  static const profile = 5;
+}
+
 class MainNavState {
   final int currentIndex;
   final int previousIndex;

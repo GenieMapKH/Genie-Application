@@ -3,6 +3,7 @@
 class PropertyDetails {
   final String? titleType;
   final String? contactPhone;
+  final List<String> additionalContactPhones;
 
   /// Floors of a house or building; total floors of the tower for a condo.
   final int? floors;
@@ -29,6 +30,7 @@ class PropertyDetails {
   const PropertyDetails({
     this.titleType,
     this.contactPhone,
+    this.additionalContactPhones = const [],
     this.floors,
     this.floorNumber,
     this.totalUnits,
@@ -60,6 +62,9 @@ class PropertyDetails {
     return PropertyDetails(
       titleType: json['titleType'] as String?,
       contactPhone: json['contactPhone'] as String?,
+      additionalContactPhones:
+          (json['additionalContactPhones'] as List<dynamic>? ?? const [])
+              .cast<String>(),
       floors: json['floors'] as int?,
       floorNumber: json['floorNumber'] as int?,
       totalUnits: json['totalUnits'] as int?,

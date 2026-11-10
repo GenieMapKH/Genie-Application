@@ -7,12 +7,12 @@ import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.
 import 'package:tilomnov/features/home/presentation/widgets/layout/nav_tabs.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
-import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// The full-width bottom bar shown on every phone whose own interface is not
 /// glass (see `GlassBottomNav` for those that are).
 class ClassicBottomNav extends ConsumerWidget {
-  const ClassicBottomNav({super.key});
+  final bool isAdmin;
+  const ClassicBottomNav({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +34,7 @@ class ClassicBottomNav extends ConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (final tab in mainNavTabs)
+          for (final tab in navTabsFor(isAdmin: isAdmin))
             _buildNavItem(context, ref, tab, currentIndex),
         ],
       ),
@@ -71,13 +71,8 @@ class ClassicBottomNav extends ConsumerWidget {
           children: [
             const SizedBox(height: 16),
             NavUnreadBadge(
-              tabIndex: tab.index,
-              icon: TintedSvg(
-                tab.iconAsset,
-                width: 24,
-                height: 24,
-                color: color,
-              ),
+              tabIndex: tab.showUnread ? MainTab.chat : -1,
+              icon: tab.buildIcon(color),
             ),
             const SizedBox(height: 4),
             Padding(

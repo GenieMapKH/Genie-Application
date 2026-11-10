@@ -68,6 +68,7 @@ class FakeSystemNotifications implements SystemNotifications {
     required NotificationChannel channel,
     required Map<String, dynamic> data,
     String? tag,
+    bool quiet = false,
   }) async {
     shown.add((title: title, body: body, channel: channel, tag: tag));
     shownData.add(data);

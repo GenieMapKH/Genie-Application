@@ -13,6 +13,8 @@ class UserProfile {
   final String id;
   final String? email;
   final String? phone;
+  final bool emailVerified;
+  final bool phoneVerified;
 
   /// The unique handle. Null only for an account the server has not given
   /// one yet.
@@ -36,10 +38,17 @@ class UserProfile {
   /// a password yet: it has nothing to type where a password is asked for.
   final bool hasPassword;
 
+  /// The subscription tier as the server names it (`subscription.tier`),
+  /// null on Free or from a server without subscriptions. The subscription
+  /// feature reads it.
+  final String? subscriptionTier;
+
   const UserProfile({
     required this.id,
     this.email,
     this.phone,
+    this.emailVerified = false,
+    this.phoneVerified = false,
     this.username,
     this.name,
     this.firstName,
@@ -51,6 +60,7 @@ class UserProfile {
     this.avatarUrl,
     this.avatarFromGoogle = false,
     this.hasPassword = true,
+    this.subscriptionTier,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -58,6 +68,8 @@ class UserProfile {
       id: json['id'] as String,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
+      emailVerified: json['emailVerified'] == true,
+      phoneVerified: json['phoneVerified'] == true,
       username: json['username'] as String?,
       name: json['name'] as String?,
       firstName: json['firstName'] as String?,
@@ -71,6 +83,10 @@ class UserProfile {
       // A server that does not say (an older one) is taken at its word
       // that a password exists, as before.
       hasPassword: json['hasPassword'] != false,
+      subscriptionTier: switch (json['subscription']) {
+        {'tier': final String tier} => tier,
+        _ => null,
+      },
     );
   }
 

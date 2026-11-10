@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tilomnov/core/config/app_config.dart';
 import 'package:tilomnov/core/device/device_description.dart';
+import 'package:tilomnov/core/device/sign_in_device_key.dart';
 import 'api_cache_manager.dart';
 import 'api_version_interceptor.dart';
 import 'auth_interceptor.dart';
@@ -10,6 +11,7 @@ import 'network_status.dart';
 import 'network_status_interceptor.dart';
 import 'retry_interceptor.dart';
 import 'safe_log_interceptor.dart';
+import 'slow_connection_interceptor.dart';
 
 /// [onSessionEnded] is called when the server stops accepting this device's
 /// session (see [AuthInterceptor.onSessionEnded]); [onApiVersionRetired]
@@ -44,17 +46,21 @@ Dio createApiClient({
   // Order matters for failures, which pass through in this order: a
   // retired API version is noticed before anything can answer instead, the
   // status sees every one, the cache answers what it kept, and only what
-  // is left is retried.
+  // is left is retried. Reads are timed only once they really go out:
+  // not when the cache answers, nor while a session is being renewed.
   dio.interceptors.add(
     ApiVersionInterceptor(onRetired: onApiVersionRetired ?? () {}),
   );
   dio.interceptors.add(NetworkStatusInterceptor(status));
   dio.interceptors.add(CacheInterceptor());
-  dio.interceptors.add(RetryInterceptor(dio));
+  dio.interceptors.add(RetryInterceptor(dio, status: status));
   dio.interceptors.add(AuthInterceptor(dio, onSessionEnded: onSessionEnded));
+  dio.interceptors.add(SlowConnectionInterceptor(status));
   // Not on the web: a browser would need the server to allow these headers.
   if (!kIsWeb) {
-    dio.interceptors.add(DeviceHeadersInterceptor(DeviceDescriptionReader()));
+    dio.interceptors.add(
+      DeviceHeadersInterceptor(DeviceDescriptionReader(), SignInDeviceKey()),
+    );
   }
   if (kDebugMode) {
     dio.interceptors.add(SafeLogInterceptor());

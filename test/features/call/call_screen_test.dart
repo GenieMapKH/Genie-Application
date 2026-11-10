@@ -1,4 +1,6 @@
+import 'package:tilomnov/features/call/presentation/mini_call_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/core/device/microphone_permission.dart';
@@ -31,7 +33,14 @@ void main() {
     );
   }
 
-  Future<void> showScreen(WidgetTester tester) async {
+  Future<void> showScreen(
+    WidgetTester tester, {
+    bool allowUnlock = true,
+  }) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('tilomnov/call'),
+      (call) async => allowUnlock,
+    );
     makeController();
     await tester.pumpWidget(
       ProviderScope(
@@ -42,8 +51,44 @@ void main() {
     await tester.pump();
   }
 
+  testWidgets(
+    'minimize keeps the call connected and the mini bar restores it',
+    (tester) async {
+      await showScreen(tester);
+      await controller.call('bob', 'Bob');
+      await tester.pump();
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(CallScreen)),
+      );
+      await tester.tap(find.byTooltip('Minimize call'));
+      await tester.pump();
+      expect(container.read(callMinimizedProvider), isTrue);
+      expect(controller.state.isLive, isTrue);
+      expect(signaling.sent, ['invite bob']);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [callControllerProvider.overrideWith((ref) => controller)],
+          child: MaterialApp(
+            home: const Scaffold(body: Text('Conversations')),
+            builder: (context, child) =>
+                Stack(children: [child!, const MiniCallBar()]),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Bob'), findsOneWidget);
+      await tester.tap(find.text('Bob'));
+      await tester.pump();
+      expect(container.read(callMinimizedProvider), isFalse);
+      expect(controller.state.isLive, isTrue);
+      await controller.hangUp();
+      await tester.pump(CallController.endedShownFor);
+    },
+  );
+
   testWidgets('a ringing call can be answered or declined', (tester) async {
-    await showScreen(tester);
+    await showScreen(tester, allowUnlock: false);
     signaling.eventStream.add(
       const CallIncoming('c9', callerId: 'alice', callerName: 'Alice'),
     );
@@ -53,6 +98,14 @@ void main() {
     expect(find.text('Alice'), findsOneWidget);
     expect(find.text('Incoming voice call'), findsOneWidget);
     expect(find.text('Decline'), findsOneWidget);
+    // The incoming screen may be above the keyguard; Back must not expose listings.
+    expect(find.byTooltip('Minimize call'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(CallScreen)),
+    );
+    expect(container.read(callMinimizedProvider), isFalse);
 
     await tester.tap(find.text('Accept'));
     await tester.pump();
@@ -60,6 +113,22 @@ void main() {
 
     expect(signaling.sent, ['accept']);
     expect(find.text('Connecting…'), findsOneWidget);
+  });
+
+  testWidgets('cancelling device unlock keeps the call screen in place', (
+    tester,
+  ) async {
+    await showScreen(tester, allowUnlock: false);
+    await controller.call('bob', 'Bob');
+    await tester.pump();
+    await tester.tap(find.byTooltip('Minimize call'));
+    await tester.pump();
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(CallScreen)),
+    );
+    expect(container.read(callMinimizedProvider), isFalse);
+    await controller.hangUp();
+    await tester.pump(CallController.endedShownFor);
   });
 
   testWidgets('a call being made can be muted and ended', (tester) async {
@@ -125,8 +194,7 @@ void main() {
           chatRepositoryProvider.overrideWithValue(FakeChatRepository()),
           chatSocketServiceProvider.overrideWithValue(FakeChatSocket()),
           noBlocksOverride(),
-          e2eeSetupServiceProvider.overrideWithValue(FakeSetupService()),
-          messageCipherProvider.overrideWith((ref, userId) => FakeCipher()),
+          messageCodecProvider.overrideWith((ref, userId) => FakeCipher()),
           chatAttachmentServiceProvider.overrideWithValue(
             FakeAttachmentService(),
           ),

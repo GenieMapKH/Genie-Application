@@ -32,6 +32,7 @@ class _Server extends PropertyRepository {
   Future<OwnListingsPage> fetchOwnPage({
     required int offset,
     int limit = PropertyRepository.ownPageSize,
+    List<String> statuses = const [],
   }) async => (
     items: listings,
     nextOffset: null,

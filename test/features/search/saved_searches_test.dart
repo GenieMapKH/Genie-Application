@@ -33,7 +33,7 @@ Map<String, Object?> _json({
   'minLng': 104.85,
   'maxLng': 104.95,
   'propertyType': 'House',
-  'listingTypes': ['Sale'],
+  'listingTypes': ['Sale', 'Takeover Payments'],
   'minPrice': 50000,
   'maxPrice': 200000,
   'minSize': null,
@@ -65,7 +65,7 @@ void main() {
         'minLng': 104.85,
         'maxLng': 104.95,
         'propertyType': 'House',
-        'listingTypes': ['Sale'],
+        'listingTypes': ['Sale', 'Takeover Payments'],
         'minPrice': 50000.0,
         'maxPrice': 200000.0,
         'keywords': ['near_school'],
@@ -229,7 +229,7 @@ void main() {
       'minLng': 104.85,
       'maxLng': 104.95,
       'propertyType': 'House',
-      'listingTypes': ['Sale'],
+      'listingTypes': ['Sale', 'Takeover Payments'],
     });
     await tester.pump(const Duration(seconds: 5));
   });

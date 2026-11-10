@@ -16,6 +16,42 @@ final _listing = PropertyModel.fromJson({
 });
 
 void main() {
+  group('previewing scanned coordinates', () {
+    test('keeps the boundary in the editor until saved', () {
+      final notifier = MapStateNotifier()..startDrawing(initialPoints: _square);
+      addTearDown(notifier.dispose);
+
+      expect(notifier.state.isDrawing, isTrue);
+      expect(notifier.state.isEditingPolygon, isTrue);
+      expect(notifier.state.drawnPoints, _square);
+      expect(notifier.state.finalizedProperties, isEmpty);
+      expect(notifier.state.backupPoints, isNull);
+    });
+
+    test('cancelling does not leave an unpublished polygon on the map', () {
+      final notifier = MapStateNotifier()
+        ..startDrawing(initialPoints: _square)
+        ..updatePoint(0, const LatLng(0.5, 0.5))
+        ..cancelDrawing();
+      addTearDown(notifier.dispose);
+
+      expect(notifier.state.isDrawing, isFalse);
+      expect(notifier.state.drawnPoints, isEmpty);
+      expect(notifier.state.finalizedProperties, isEmpty);
+    });
+
+    test('a new scan clears the previous edit backup', () {
+      final notifier = MapStateNotifier()
+        ..editProperty(_square, null)
+        ..startDrawing(initialPoints: _square)
+        ..cancelDrawing();
+      addTearDown(notifier.dispose);
+
+      expect(notifier.state.backupPoints, isNull);
+      expect(notifier.state.finalizedProperties, isEmpty);
+    });
+  });
+
   group('editing a saved listing', () {
     test('remembers which listing is being edited', () {
       final notifier = MapStateNotifier()..editProperty(_square, _listing);

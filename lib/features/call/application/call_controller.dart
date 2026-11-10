@@ -100,14 +100,27 @@ class CallController extends StateNotifier<CallState> {
     required String callerName,
     DateTime? sentAt,
   }) {
-    if (sentAt != null && _now().difference(sentAt) > pushFreshFor) return;
-    _ring(callId, callerId, callerName);
+    final age = sentAt == null || sentAt.isAfter(_now())
+        ? Duration.zero
+        : _now().difference(sentAt);
+    if (age >= pushFreshFor) return;
+    _ring(callId, callerId, callerName, timeout: pushFreshFor - age);
+  }
+
+  /// Also works while the chat socket is disconnected; answering locally wins.
+  void endFromPush(String callId, {required bool missed}) {
+    if (_isCurrent(callId) && state.phase == CallPhase.incoming) {
+      _finish(
+        missed ? CallEndReason.noAnswer : CallEndReason.answeredElsewhere,
+      );
+    }
   }
 
   /// Answers the ringing call.
   Future<void> accept() async {
     final callId = state.callId;
     if (state.phase != CallPhase.incoming || callId == null) return;
+    _ringTimer?.cancel();
     state = state.copyWith(phase: CallPhase.connecting);
 
     if (await requestMicrophone() != MicrophoneAccess.granted) {
@@ -203,7 +216,12 @@ class CallController extends StateNotifier<CallState> {
     }
   }
 
-  void _ring(String callId, String callerId, String callerName) {
+  void _ring(
+    String callId,
+    String callerId,
+    String callerName, {
+    Duration timeout = ringTimeout,
+  }) {
     // One call at a time; the server keeps a second caller out anyway.
     if (state.isLive || callId == state.callId) return;
     _closeTimer?.cancel();
@@ -213,6 +231,11 @@ class CallController extends StateNotifier<CallState> {
       peerId: callerId,
       peerName: callerName,
     );
+    _ringTimer = Timer(timeout, () {
+      if (_isCurrent(callId) && state.phase == CallPhase.incoming) {
+        _finish(CallEndReason.noAnswer);
+      }
+    });
   }
 
   /// The microphone and the connection for [callId]. False (and the call

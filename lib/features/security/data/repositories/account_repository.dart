@@ -85,8 +85,17 @@ class AccountRepository {
   Future<void> addEmail({
     required String email,
     required String password,
+    required String emailProof,
   }) async {
-    await _post('/auth/account/email', {'email': email, 'password': password});
+    await _post('/auth/account/email', {
+      'email': email,
+      'password': password,
+      'emailProof': emailProof,
+    });
+  }
+
+  Future<void> changePhone(String phone, IdentityProof proof) async {
+    await _post('/auth/account/phone', {'phone': phone, ...proof.toJson()});
   }
 
   /// A token, good for a few minutes, that proves the account password was

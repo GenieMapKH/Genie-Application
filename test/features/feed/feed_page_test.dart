@@ -1,8 +1,15 @@
+import 'dart:io';
+
+import 'package:tilomnov/features/advertisements/data/advertisement.dart';
+import 'package:tilomnov/features/advertisements/presentation/advertisements_provider.dart';
+import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 import 'package:tilomnov/features/feed/data/feed_repository.dart';
+import 'package:tilomnov/features/feed/data/feed_filters.dart';
 import 'package:tilomnov/features/feed/presentation/screens/feed_page.dart';
 import 'package:tilomnov/features/feed/presentation/view_models/feed_provider.dart';
 import 'package:tilomnov/features/feed/presentation/widgets/feed_listing_card.dart';
@@ -68,6 +75,7 @@ Future<ProviderContainer> _pumpFeed(
   bool signedIn = true,
   Map<String, Object> kept = const {},
   _Clock? clock,
+  List<Advertisement> ads = const [],
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -78,6 +86,7 @@ Future<ProviderContainer> _pumpFeed(
     const FeedPage(),
     savedSettings: kept,
     overrides: [
+      activeAdvertisementsProvider.overrideWith((_) async => ads),
       feedRepositoryProvider.overrideWithValue(
         FeedRepository(server.dio, accountId: () async => _me),
       ),
@@ -108,6 +117,181 @@ List<ReceivedRequest> _feedRequests(StubServer server) =>
     server.requests.where((r) => r.path == '/feed').toList();
 
 void main() {
+  setUpAll(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (_) async => Directory.systemTemp.path,
+        );
+  });
+
+  for (final count in [0, 1, 4]) {
+    testWidgets('photo ads appear with $count feed listings', (tester) async {
+      await _pumpFeed(
+        tester,
+        _api(
+          (_) => _page([
+            for (var i = 0; i < count; i++) _listing('short-$i', 'Post $i'),
+          ]),
+        ),
+        ads: const [
+          Advertisement(id: 'ad', imageUrl: 'https://images.test/ad.jpg'),
+        ],
+      );
+      await tester.scrollUntilVisible(
+        find.byType(AdvertisementBanner),
+        300,
+        scrollable: find.byType(Scrollable).last,
+      );
+      expect(find.byType(AdvertisementBanner), findsOneWidget);
+      if (count == 0) expect(find.text('Your feed is empty'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      // Let the image cache's delayed cleanup finish on the test clock.
+      await tester.pump(const Duration(seconds: 11));
+      await tester.pumpAndSettle();
+    });
+  }
+
+  testWidgets(
+    'configured photo ads appear between the fourth and fifth feed posts',
+    (tester) async {
+      final server = _api(
+        (_) =>
+            _page([for (var i = 0; i < 5; i++) _listing('ad-p-$i', 'Post $i')]),
+      );
+      await _pumpFeed(
+        tester,
+        server,
+        ads: const [
+          Advertisement(id: 'ad', imageUrl: 'https://images.test/ad.jpg'),
+        ],
+      );
+      await tester.scrollUntilVisible(
+        find.byType(AdvertisementBanner),
+        600,
+        scrollable: find
+            .descendant(
+              of: find.byType(ListView),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(AdvertisementBanner), findsOneWidget);
+      final fifth = find.byWidgetPredicate(
+        (widget) => widget is FeedListingCard && widget.property.id == 'ad-p-4',
+      );
+      await tester.ensureVisible(fifth);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.byType(AdvertisementBanner)).bottom,
+        lessThanOrEqualTo(tester.getRect(fifth).top),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'filters apply to page one and later pages; Reset restores the feed',
+    (tester) async {
+      final requests = <Map<String, dynamic>>[];
+      final server = StubServer((request) {
+        if (request.path == '/properties/my/favorites/ids') return (200, '[]');
+        if (request.path != '/feed') return (404, '{}');
+        requests.add(Map.of(request.queryParameters));
+        if (request.queryParameters['sort'] == 'top') {
+          return (
+            200,
+            request.queryParameters['cursor'] == null
+                ? _page([
+                    for (var i = 0; i < 20; i++)
+                      _listing('filtered-$i', 'Filtered $i'),
+                  ], next: 'filtered-next')
+                : _page([_listing('last', 'Filtered last')]),
+          );
+        }
+        return (200, _page([_listing('default', 'Default listing')]));
+      });
+      final container = await _pumpFeed(tester, server);
+      expect(find.text('Newest first'), findsNothing);
+      await tester.tap(find.byIcon(Icons.tune_rounded));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Top (most saved)'));
+      await tester.tap(find.text('Last 7 days'));
+      await tester.ensureVisible(find.widgetWithText(TextField, 'No min'));
+      await tester.enterText(find.widgetWithText(TextField, 'No min'), '100');
+      await tester.enterText(
+        find.widgetWithText(TextField, 'No max'),
+        '200000',
+      );
+      await tester.ensureVisible(find.text('House'));
+      await tester.tap(find.text('House'));
+      await tester.tap(find.text('See results'));
+      await _settle(tester);
+
+      final filters = container.read(feedFiltersProvider);
+      expect(filters.activeCount, 4);
+      expect(filters.sort, FeedSort.top);
+      expect(filters.propertyType, 'House');
+      expect(filters.toDate!.difference(filters.fromDate!).inDays, 6);
+      expect(find.text('Filters (4)'), findsOneWidget);
+      expect(find.text('Filtered 0'), findsOneWidget);
+      expect(requests.last, containsPair('since', filters.toQuery()['since']));
+      expect(requests.last, containsPair('until', filters.toQuery()['until']));
+      final loadingMore = container.read(feedProvider.notifier).loadMore();
+      await _settle(tester);
+      await loadingMore;
+      expect(requests.last, containsPair('cursor', 'filtered-next'));
+      for (final entry in filters.toQuery().entries) {
+        expect(requests.last, containsPair(entry.key, entry.value));
+      }
+      final kept = await SharedPreferences.getInstance();
+      expect(kept.getString(_keptKey), contains('Default listing'));
+      expect(kept.getString(_keptKey), isNot(contains('Filtered')));
+
+      await tester.tap(find.byIcon(Icons.tune_rounded));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Reset'));
+      await tester.tap(find.text('See results'));
+      await _settle(tester);
+      expect(container.read(feedFiltersProvider).isDefault, isTrue);
+      expect(requests.last, isNot(contains('cursor')));
+      expect(requests.last, isNot(contains('propertyType')));
+      expect(find.text('Default listing'), findsOneWidget);
+    },
+  );
+
+  testWidgets('dismissing filters keeps the selection and makes no request', (
+    tester,
+  ) async {
+    final server = _api((_) => _page([_listing('p-1', 'Villa')]));
+    final container = await _pumpFeed(tester, server);
+    final before = _feedRequests(server).length;
+    await tester.tap(find.byIcon(Icons.tune_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Top (most saved)'));
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+    expect(container.read(feedFiltersProvider).isDefault, isTrue);
+    expect(_feedRequests(server), hasLength(before));
+  });
+
+  testWidgets(
+    'filtered empty state resets filters rather than suggesting a follow',
+    (tester) async {
+      final container = await _pumpFeed(tester, _api((_) => _page([])));
+      container.read(feedFiltersProvider.notifier).state = const FeedFilters(
+        propertyType: 'House',
+      );
+      await _settle(tester);
+      expect(find.text('No matching listings'), findsOneWidget);
+      await tester.tap(find.text('Reset'));
+      await _settle(tester);
+      expect(container.read(feedFiltersProvider).isDefault, isTrue);
+      expect(find.text('Your feed is empty'), findsOneWidget);
+    },
+  );
+
   testWidgets('shows followed listings with who posted them and when', (
     tester,
   ) async {
@@ -144,6 +328,7 @@ void main() {
       ),
     );
     await tester.scrollUntilVisible(find.text('Dara'), 200);
+    await tester.pumpAndSettle();
     final avatar = tester.getRect(
       find.descendant(
         of: find.ancestor(
@@ -347,13 +532,13 @@ void main() {
       expect(_feedRequests(server), hasLength(1), reason: 'just read');
 
       nav.setIndex(MainTab.chat);
-      clock.now = clock.now.add(const Duration(minutes: 4));
+      clock.now = clock.now.add(const Duration(seconds: 20));
       nav.setIndex(MainTab.feed);
       await _settle(tester);
       expect(_feedRequests(server), hasLength(1), reason: '4 minutes old');
 
       nav.setIndex(MainTab.chat);
-      clock.now = clock.now.add(const Duration(minutes: 2));
+      clock.now = clock.now.add(const Duration(seconds: 15));
       nav.setIndex(MainTab.feed);
       await _settle(tester);
       expect(_feedRequests(server), hasLength(2), reason: '6 minutes old');

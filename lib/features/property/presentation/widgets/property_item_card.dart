@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:tilomnov/features/property/presentation/widgets/property_type_pill.dart';
+import 'takeover_badge.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_image_gallery.dart';
 import 'package:tilomnov/features/property/utils/property_format.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
-import 'package:tilomnov/features/property/presentation/property_labels.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/owner_display_name.dart';
-import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 import 'package:tilomnov/features/property/presentation/widgets/favorite_heart_button.dart';
 
 /// The card that rises above the bottom nav when a property is selected on the
@@ -66,7 +66,7 @@ class PropertyItemCard extends StatelessWidget {
                           Positioned(
                             top: 12,
                             left: 12,
-                            child: _TypePill(
+                            child: PropertyTypePill(
                               propertyType: property.propertyType,
                             ),
                           ),
@@ -78,6 +78,12 @@ class PropertyItemCard extends StatelessWidget {
                               onPressed: onFavoriteToggled,
                             ),
                           ),
+                          if (property.isTakeover)
+                            const Positioned(
+                              bottom: 10,
+                              left: 12,
+                              child: TakeoverBadge(),
+                            ),
                         ],
                       ),
                     ),
@@ -138,9 +144,11 @@ class _Details extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          context.l10n.propertyListingBy(
-            ownerDisplayName(context.l10n, property.ownerName),
-          ),
+          property.isTakeover
+              ? PropertyFormat.takeoverSummary(context.l10n, property)
+              : context.l10n.propertyListingBy(
+                  ownerDisplayName(context.l10n, property.ownerName),
+                ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.inter(
@@ -150,50 +158,6 @@ class _Details extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _TypePill extends StatelessWidget {
-  final String propertyType;
-
-  const _TypePill({required this.propertyType});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TintedSvg(
-            PropertyFormat.typeIconPath(propertyType),
-            width: 14,
-            height: 14,
-            color: context.colors.textSecondary,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            propertyValueLabel(context.l10n, propertyType),
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: context.colors.textPrimary,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

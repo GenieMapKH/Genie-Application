@@ -4,6 +4,7 @@ class PublisherSummary {
   final String? name;
   final String? username;
   final String? avatarUrl;
+  final bool isAdmin;
 
   /// Published listings only.
   final int listingCount;
@@ -21,6 +22,7 @@ class PublisherSummary {
     this.name,
     this.username,
     this.avatarUrl,
+    this.isAdmin = false,
     this.listingCount = 0,
     this.memberSince,
     this.email,
@@ -40,6 +42,7 @@ class PublisherSummary {
       name: json['name'] as String?,
       username: json['username'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
+      isAdmin: json['isAdmin'] == true,
       listingCount: (json['listingCount'] as num?)?.toInt() ?? 0,
       memberSince: DateTime.tryParse(json['memberSince'] as String? ?? ''),
       email: _present(json['email']),

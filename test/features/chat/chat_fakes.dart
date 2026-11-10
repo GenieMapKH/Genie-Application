@@ -5,9 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/chat/data/chat_attachment_service.dart';
 import 'package:tilomnov/features/chat/data/chat_repository.dart';
 import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
-import 'package:tilomnov/features/chat/e2ee/e2ee_setup_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
-import 'package:tilomnov/features/chat/e2ee/backup/pin_check.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
 import 'package:tilomnov/features/chat/models/chat_attachment.dart';
 import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
@@ -38,13 +36,8 @@ EncryptedMessage encrypted(
 }
 
 /// "Encrypts" by prefixing, so tests can tell sealed text from plain text.
-class FakeCipher extends Fake implements MessageCipher {
+class FakeCipher extends Fake implements MessageCodec {
   Object? encryptError;
-
-  /// What the server would say about the other person's key.
-  PeerKeyStatus peerKeyStatus = PeerKeyStatus.trusted;
-  int keyChecks = 0;
-  int acceptedKeys = 0;
 
   /// The attachment sealed into each message, in sending order.
   final sealedAttachments = <ChatAttachment?>[];
@@ -62,7 +55,7 @@ class FakeCipher extends Fake implements MessageCipher {
   String get userId => me;
 
   @override
-  Future<({String ciphertext, String nonce})> encrypt(
+  Future<({String ciphertext, String nonce})> encode(
     String text, {
     required String id,
     required String peerId,
@@ -74,9 +67,6 @@ class FakeCipher extends Fake implements MessageCipher {
     sealedAttachments.add(attachment);
     sealedListings[id] = listing;
     if (replyToId != null) sealedReplies[id] = replyToId;
-    if (peerKeyStatus == PeerKeyStatus.changed) {
-      throw const PeerKeyChangedException();
-    }
     return (ciphertext: 'sealed:$text', nonce: 'nonce');
   }
 
@@ -84,10 +74,7 @@ class FakeCipher extends Fake implements MessageCipher {
   int decrypts = 0;
 
   @override
-  Future<OpenedMessage?> decrypt(
-    EncryptedMessage message, {
-    bool askServer = true,
-  }) async {
+  Future<OpenedMessage?> decode(EncryptedMessage message) async {
     decrypts++;
     return message.ciphertext.startsWith('sealed:')
         ? (
@@ -99,22 +86,6 @@ class FakeCipher extends Fake implements MessageCipher {
           )
         : null;
   }
-
-  @override
-  Future<PeerKeyStatus> checkPeerKey(String peerId) async {
-    keyChecks++;
-    return peerKeyStatus;
-  }
-
-  @override
-  Future<void> trustCurrentPeerKey(String peerId) async {
-    acceptedKeys++;
-    peerKeyStatus = PeerKeyStatus.trusted;
-  }
-
-  @override
-  Future<String?> safetyCode(String peerId) async =>
-      '11111 22222 33333 44444 55555 66666';
 }
 
 /// Pretends to encrypt and upload: remembers what was sent and can fail.
@@ -280,6 +251,12 @@ class FakeChatRepository extends Fake implements ChatRepository {
   final conversationCursors = <String?>[];
 
   /// Serves [conversations] (or [archivedConversations]) a page at a time,
+  /// The main list as kept on the device, when a test keeps one.
+  ConversationPage? kept;
+
+  @override
+  Future<ConversationPage?> keptFirstPage() async => kept;
+
   /// in their order; the cursor is the index the next page starts at.
   @override
   Future<ConversationPage> fetchConversationPage({
@@ -449,17 +426,3 @@ class FakeChatSocket extends Fake implements ChatSocketService {
     return message;
   }
 }
-
-class FakeSetupService extends Fake implements E2eeSetupService {
-  E2eeSetupResult result = E2eeSetupResult.ready;
-  int runs = 0;
-
-  @override
-  Future<E2eeSetupResult> initialize(String userId, {PinPrompt? askPin}) async {
-    runs++;
-    return result;
-  }
-}
-
-Future<bool> neverAskPin(PinCheck check) async =>
-    fail('must not ask for a PIN');

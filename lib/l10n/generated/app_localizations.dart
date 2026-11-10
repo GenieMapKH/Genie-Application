@@ -98,6 +98,36 @@ abstract class AppLocalizations {
     Locale('km'),
   ];
 
+  /// No description provided for @callInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Call in progress'**
+  String get callInProgress;
+
+  /// No description provided for @chatManagedSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages are encrypted when sent and stored.'**
+  String get chatManagedSecurity;
+
+  /// No description provided for @callMinimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize call'**
+  String get callMinimize;
+
+  /// No description provided for @callReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to call'**
+  String get callReturn;
+
+  /// No description provided for @propertyUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get propertyUnavailable;
+
   /// No description provided for @commonCancel.
   ///
   /// In en, this message translates to:
@@ -143,26 +173,86 @@ abstract class AppLocalizations {
   /// No description provided for @commonOffline.
   ///
   /// In en, this message translates to:
-  /// **'You are offline. Connect to the internet for updates.'**
+  /// **'You’re offline. Connect for updates.'**
   String get commonOffline;
 
-  /// No description provided for @offlineDialogTitle.
+  /// No description provided for @connectionOffline.
   ///
   /// In en, this message translates to:
   /// **'No internet connection'**
-  String get offlineDialogTitle;
+  String get connectionOffline;
 
-  /// No description provided for @offlineDialogMessage.
+  /// No description provided for @connectionWaiting.
   ///
   /// In en, this message translates to:
-  /// **'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.'**
-  String get offlineDialogMessage;
+  /// **'Waiting for network…'**
+  String get connectionWaiting;
 
-  /// No description provided for @offlineKeepBrowsing.
+  /// No description provided for @connectionWeak.
   ///
   /// In en, this message translates to:
-  /// **'Keep browsing'**
-  String get offlineKeepBrowsing;
+  /// **'Slow connection'**
+  String get connectionWeak;
+
+  /// No description provided for @connectionWeakDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading may take longer'**
+  String get connectionWeakDetail;
+
+  /// No description provided for @connectionRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Back online'**
+  String get connectionRestored;
+
+  /// No description provided for @loadFailureOfflineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get loadFailureOfflineTitle;
+
+  /// No description provided for @loadFailureOfflineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your internet. This page will reload when you reconnect.'**
+  String get loadFailureOfflineBody;
+
+  /// No description provided for @loadFailureSlowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your connection is too slow'**
+  String get loadFailureSlowTitle;
+
+  /// No description provided for @loadFailureSlowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading took too long. Check your connection and retry.'**
+  String get loadFailureSlowBody;
+
+  /// No description provided for @loadFailureServerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Try again shortly.'**
+  String get loadFailureServerBody;
+
+  /// No description provided for @failureOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Check your Wi-Fi or mobile data and try again.'**
+  String get failureOffline;
+
+  /// No description provided for @failureSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your connection is too slow. Move to a better spot and try again.'**
+  String get failureSlow;
+
+  /// No description provided for @failureServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Try again shortly.'**
+  String get failureServer;
 
   /// No description provided for @navExplore.
   ///
@@ -209,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginRequiredMessage.
   ///
   /// In en, this message translates to:
-  /// **'Please log in or sign up to access this feature.'**
+  /// **'Log in or sign up to continue.'**
   String get loginRequiredMessage;
 
   /// No description provided for @loginRequiredAction.
@@ -284,12 +374,6 @@ abstract class AppLocalizations {
   /// **'Subscription Plan'**
   String get accountSubscription;
 
-  /// No description provided for @accountSubscriptionFree.
-  ///
-  /// In en, this message translates to:
-  /// **'Free'**
-  String get accountSubscriptionFree;
-
   /// No description provided for @accountSignOut.
   ///
   /// In en, this message translates to:
@@ -353,7 +437,7 @@ abstract class AppLocalizations {
   /// No description provided for @glassNavigationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Glass navigation'**
+  /// **'Navigation theme'**
   String get glassNavigationTitle;
 
   /// No description provided for @glassNavigationSubtitle.
@@ -395,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoUsernameHelp.
   ///
   /// In en, this message translates to:
-  /// **'Your username is yours alone and is how people find you. Use 3 to 30 lowercase letters, numbers, \"_\" or \".\".'**
+  /// **'People can find you by username. Use 3–30 lowercase letters, numbers, \"_\" or \".\".'**
   String get personalInfoUsernameHelp;
 
   /// No description provided for @personalInfoUsernameInvalid.
@@ -419,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoNameHelp.
   ///
   /// In en, this message translates to:
-  /// **'The name other people see. It does not have to be unique, and you can change it any time.'**
+  /// **'The name people see. Change it anytime.'**
   String get personalInfoNameHelp;
 
   /// No description provided for @personalInfoFirstName.
@@ -467,7 +551,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoPhoneHelp.
   ///
   /// In en, this message translates to:
-  /// **'Used for signing in and so buyers can reach you.'**
+  /// **'For signing in and calls from buyers.'**
   String get personalInfoPhoneHelp;
 
   /// No description provided for @personalInfoPhoneTaken.
@@ -506,12 +590,6 @@ abstract class AppLocalizations {
   /// **'Security'**
   String get securityTitle;
 
-  /// No description provided for @securitySectionEncryption.
-  ///
-  /// In en, this message translates to:
-  /// **'End-to-end encryption'**
-  String get securitySectionEncryption;
-
   /// No description provided for @securitySectionSignIn.
   ///
   /// In en, this message translates to:
@@ -523,18 +601,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account'**
   String get securitySectionAccount;
-
-  /// No description provided for @securityChangePin.
-  ///
-  /// In en, this message translates to:
-  /// **'Change chat PIN'**
-  String get securityChangePin;
-
-  /// No description provided for @securityResetKeys.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset encryption keys'**
-  String get securityResetKeys;
 
   /// No description provided for @securityChangePassword.
   ///
@@ -553,132 +619,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deactivate or delete account'**
   String get securityRemoveAccount;
-
-  /// No description provided for @pinHint.
-  ///
-  /// In en, this message translates to:
-  /// **'6-digit PIN'**
-  String get pinHint;
-
-  /// No description provided for @pinSubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Submit'**
-  String get pinSubmit;
-
-  /// No description provided for @pinIncomplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter all 6 digits.'**
-  String get pinIncomplete;
-
-  /// No description provided for @pinTooGuessable.
-  ///
-  /// In en, this message translates to:
-  /// **'Too easy to guess. Choose another PIN.'**
-  String get pinTooGuessable;
-
-  /// No description provided for @pinEnterCurrentTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter current PIN'**
-  String get pinEnterCurrentTitle;
-
-  /// No description provided for @pinEnterCurrentHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your current 6-digit PIN to confirm it is you.'**
-  String get pinEnterCurrentHelp;
-
-  /// No description provided for @pinEnterNewTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter new PIN'**
-  String get pinEnterNewTitle;
-
-  /// No description provided for @pinEnterNewHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'The new PIN will protect your existing keys.'**
-  String get pinEnterNewHelp;
-
-  /// No description provided for @pinForNewKeysTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'PIN for the new keys'**
-  String get pinForNewKeysTitle;
-
-  /// No description provided for @pinForNewKeysHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'This PIN will protect your new keys. You need it to read your chats on another device.'**
-  String get pinForNewKeysHelp;
-
-  /// No description provided for @pinChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat PIN changed.'**
-  String get pinChanged;
-
-  /// No description provided for @pinNoBackup.
-  ///
-  /// In en, this message translates to:
-  /// **'You have no chat PIN yet.'**
-  String get pinNoBackup;
-
-  /// No description provided for @pinLocked.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs. Your PIN is locked for a while; try again later.'**
-  String get pinLocked;
-
-  /// No description provided for @pinFetchFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not reach the key backup. Check your connection.'**
-  String get pinFetchFailed;
-
-  /// No description provided for @pinWrong.
-  ///
-  /// In en, this message translates to:
-  /// **'Incorrect PIN. After 5 wrong tries your PIN locks for a while.'**
-  String get pinWrong;
-
-  /// No description provided for @pinSaveFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not save the new backup. Nothing was changed.'**
-  String get pinSaveFailed;
-
-  /// No description provided for @resetKeysConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset encryption keys?'**
-  String get resetKeysConfirmTitle;
-
-  /// No description provided for @resetKeysConfirmMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current chat PIN first.'**
-  String get resetKeysConfirmMessage;
-
-  /// No description provided for @resetKeysConfirmAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset keys'**
-  String get resetKeysConfirmAction;
-
-  /// No description provided for @resetKeysDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Encryption keys reset.'**
-  String get resetKeysDone;
-
-  /// No description provided for @resetKeysFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not reset the keys. Nothing was changed.'**
-  String get resetKeysFailed;
 
   /// No description provided for @passwordCurrent.
   ///
@@ -737,13 +677,13 @@ abstract class AppLocalizations {
   /// No description provided for @passwordIntro.
   ///
   /// In en, this message translates to:
-  /// **'After the change, every other device signed in to your account will be signed out.'**
+  /// **'Changing your password signs out all other devices.'**
   String get passwordIntro;
 
   /// No description provided for @devicesIntro.
   ///
   /// In en, this message translates to:
-  /// **'These devices are signed in to your account. Sign out any you do not recognise, then change your password.'**
+  /// **'Don’t recognise a device? Sign it out and change your password.'**
   String get devicesIntro;
 
   /// No description provided for @devicesLoadFailed.
@@ -863,7 +803,7 @@ abstract class AppLocalizations {
   /// No description provided for @removeAccountDeactivateBody.
   ///
   /// In en, this message translates to:
-  /// **'Your profile and listings are hidden and you are signed out everywhere. Nothing is deleted: sign in again to bring it all back.'**
+  /// **'Hide your profile and listings, and sign out everywhere. Sign in to restore them.'**
   String get removeAccountDeactivateBody;
 
   /// No description provided for @removeAccountDeactivateAction.
@@ -881,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @removeAccountDeleteBody.
   ///
   /// In en, this message translates to:
-  /// **'Your account, listings, saved properties and chats are permanently deleted. This cannot be undone.'**
+  /// **'Permanently delete your account, listings, saved properties and chats. This cannot be undone.'**
   String get removeAccountDeleteBody;
 
   /// No description provided for @removeAccountDeleteAction.
@@ -941,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @identityConfirmGoogleHelp.
   ///
   /// In en, this message translates to:
-  /// **'You sign in with Google. Confirm with your Google account to continue.'**
+  /// **'Confirm with your Google account to continue.'**
   String get identityConfirmGoogleHelp;
 
   /// No description provided for @identityConfirmGoogleFailed.
@@ -983,7 +923,7 @@ abstract class AppLocalizations {
   /// No description provided for @authEnterYourEmailAddressToGet.
   ///
   /// In en, this message translates to:
-  /// **'Enter your email address to get the password reset link.'**
+  /// **'Enter your email to reset your password.'**
   String get authEnterYourEmailAddressToGet;
 
   /// No description provided for @authPasswordReset.
@@ -1022,10 +962,40 @@ abstract class AppLocalizations {
   /// **'Phone Number'**
   String get authPhoneNumber;
 
+  /// No description provided for @authGetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Get code'**
+  String get authGetCode;
+
+  /// No description provided for @authPhoneVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number verified'**
+  String get authPhoneVerified;
+
+  /// No description provided for @authPhoneVerificationExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone verification expired. Get a new code.'**
+  String get authPhoneVerificationExpired;
+
+  /// No description provided for @authPhoneVerificationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send the SMS code. Please try again later.'**
+  String get authPhoneVerificationUnavailable;
+
+  /// No description provided for @authVerifyPhoneFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your phone number before signing up.'**
+  String get authVerifyPhoneFirst;
+
   /// No description provided for @authLoginFailedPleaseCheckYourCredentials.
   ///
   /// In en, this message translates to:
-  /// **'Login failed. Please check your credentials and try again.'**
+  /// **'Could not sign in. Check your details and retry.'**
   String get authLoginFailedPleaseCheckYourCredentials;
 
   /// No description provided for @authSuccessfullyLoggedIn.
@@ -1043,7 +1013,7 @@ abstract class AppLocalizations {
   /// No description provided for @authEnterTheVerificationCodeWeJust.
   ///
   /// In en, this message translates to:
-  /// **'Enter the verification code we just sent to your email.'**
+  /// **'Enter the code sent to your email.'**
   String get authEnterTheVerificationCodeWeJust;
 
   /// No description provided for @authVerify.
@@ -1079,7 +1049,7 @@ abstract class AppLocalizations {
   /// No description provided for @authEnterYourNewPasswordTwiceBelow.
   ///
   /// In en, this message translates to:
-  /// **'Enter your new password twice below to reset a new password'**
+  /// **'Enter your new password twice.'**
   String get authEnterYourNewPasswordTwiceBelow;
 
   /// No description provided for @authEnterNewPassword.
@@ -1097,7 +1067,7 @@ abstract class AppLocalizations {
   /// No description provided for @authPasswordResetSuccessfullyPleaseLogIn.
   ///
   /// In en, this message translates to:
-  /// **'Password reset successfully! Please log in with your new password.'**
+  /// **'Password reset. Sign in with your new password.'**
   String get authPasswordResetSuccessfullyPleaseLogIn;
 
   /// No description provided for @authWelcomeToTheApp.
@@ -1235,7 +1205,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatArchivedChatsHint.
   ///
   /// In en, this message translates to:
-  /// **'An archived chat comes back to your list when a new message arrives.'**
+  /// **'New messages move chats back to your inbox.'**
   String get chatArchivedChatsHint;
 
   /// No description provided for @chatArchive.
@@ -1283,7 +1253,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatDeleteForMeExplained.
   ///
   /// In en, this message translates to:
-  /// **'It is removed from your chats only. {name} still has it.'**
+  /// **'Only deleted for you. {name} keeps the chat.'**
   String chatDeleteForMeExplained(String name);
 
   /// No description provided for @chatDeleteForBoth.
@@ -1295,7 +1265,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatDeleteForBothExplained.
   ///
   /// In en, this message translates to:
-  /// **'Every message and photo is deleted for both of you. This cannot be undone.'**
+  /// **'Delete all messages and photos for both of you. This cannot be undone.'**
   String get chatDeleteForBothExplained;
 
   /// No description provided for @chatArchivedDone.
@@ -1325,7 +1295,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatActionFailed.
   ///
   /// In en, this message translates to:
-  /// **'That did not work. Check your connection and try again.'**
+  /// **'Could not do that. Check your connection and retry.'**
   String get chatActionFailed;
 
   /// No description provided for @chatThisIsYourOwnAccount.
@@ -1340,12 +1310,6 @@ abstract class AppLocalizations {
   /// **'Sign in to chat, or check your connection.'**
   String get chatSignInToChatOrCheck;
 
-  /// No description provided for @chatMessagesAreEndToEndEncrypted.
-  ///
-  /// In en, this message translates to:
-  /// **'Messages are end-to-end encrypted. Say hello!'**
-  String get chatMessagesAreEndToEndEncrypted;
-
   /// No description provided for @chatNoChatsYet.
   ///
   /// In en, this message translates to:
@@ -1355,7 +1319,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatMessageAPropertyOwnerToStart.
   ///
   /// In en, this message translates to:
-  /// **'Message a property owner to start a conversation.'**
+  /// **'Message an owner to start chatting.'**
   String get chatMessageAPropertyOwnerToStart;
 
   /// No description provided for @chatCouldNotLoadYourChats.
@@ -1382,36 +1346,6 @@ abstract class AppLocalizations {
   /// **'Message'**
   String get chatMessage;
 
-  /// No description provided for @chatThisIsNormalIfTheyReinstalled.
-  ///
-  /// In en, this message translates to:
-  /// **'This is normal if they reinstalled the app or reset their keys. If you did not expect it, someone may be trying to read your messages: accept the new key, then compare the security code with them before sharing anything private.'**
-  String get chatThisIsNormalIfTheyReinstalled;
-
-  /// No description provided for @chatSecurityCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Security code'**
-  String get chatSecurityCode;
-
-  /// No description provided for @chatAcceptNewKey.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept new key'**
-  String get chatAcceptNewKey;
-
-  /// No description provided for @chatAvailableOnceYouHaveBothSet.
-  ///
-  /// In en, this message translates to:
-  /// **'Available once you have both set up secure chat.'**
-  String get chatAvailableOnceYouHaveBothSet;
-
-  /// No description provided for @chatTheSecurityCodeIsUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'The security code is unavailable.'**
-  String get chatTheSecurityCodeIsUnavailable;
-
   /// No description provided for @homeCoordinates.
   ///
   /// In en, this message translates to:
@@ -1423,6 +1357,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Draw'**
   String get homeDraw;
+
+  /// No description provided for @homeAddPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add point'**
+  String get homeAddPoint;
 
   /// No description provided for @homeSearchByAreaRoadVillage.
   ///
@@ -1451,7 +1391,7 @@ abstract class AppLocalizations {
   /// No description provided for @homePleaseFillBothXAndY.
   ///
   /// In en, this message translates to:
-  /// **'Please fill both X and Y coordinates for a row, or leave both empty.'**
+  /// **'Enter both X and Y, or leave both blank.'**
   String get homePleaseFillBothXAndY;
 
   /// No description provided for @homeCoordinatesMustBeValidNumbers.
@@ -1463,7 +1403,7 @@ abstract class AppLocalizations {
   /// No description provided for @homePleaseEnterAtLeast3Coordinates.
   ///
   /// In en, this message translates to:
-  /// **'Please enter at least 3 coordinates to form a property.'**
+  /// **'Enter at least 3 coordinates.'**
   String get homePleaseEnterAtLeast3Coordinates;
 
   /// No description provided for @homePreview.
@@ -1499,7 +1439,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeUseUtmFromALandDocument.
   ///
   /// In en, this message translates to:
-  /// **'Use UTM from a land document or enter coordinates manually'**
+  /// **'Use UTM coordinates from your land document or enter them.'**
   String get homeUseUtmFromALandDocument;
 
   /// No description provided for @homeCrsWgs84UtmZone48p.
@@ -1673,7 +1613,7 @@ abstract class AppLocalizations {
   /// No description provided for @propertyTapTheHeartIconOnListings.
   ///
   /// In en, this message translates to:
-  /// **'Tap the heart icon on listings to save them for later.'**
+  /// **'Tap the heart to save a listing.'**
   String get propertyTapTheHeartIconOnListings;
 
   /// No description provided for @propertySavedProperties.
@@ -1691,7 +1631,7 @@ abstract class AppLocalizations {
   /// No description provided for @propertyAddAtLeast3ClearPhotos.
   ///
   /// In en, this message translates to:
-  /// **'Add at least 3 clear photos of the property and surrounding area'**
+  /// **'Add at least 3 clear property photos.'**
   String get propertyAddAtLeast3ClearPhotos;
 
   /// No description provided for @propertyOpenCamera.
@@ -1706,10 +1646,40 @@ abstract class AppLocalizations {
   /// **'Call Now'**
   String get propertyCallNow;
 
+  /// No description provided for @propertyCallInApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Call in Tilomnov'**
+  String get propertyCallInApp;
+
+  /// No description provided for @propertyCallPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Use phone dialer'**
+  String get propertyCallPhone;
+
+  /// No description provided for @callFullScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full-screen incoming calls'**
+  String get callFullScreenTitle;
+
+  /// No description provided for @callFullScreenHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow incoming calls to appear over the lock screen. Android may show a call banner while your phone is unlocked.'**
+  String get callFullScreenHelp;
+
+  /// No description provided for @callFullScreenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open full-screen call settings.'**
+  String get callFullScreenFailed;
+
   /// No description provided for @propertyNoPhoneNumber.
   ///
   /// In en, this message translates to:
-  /// **'No phone number was shared for this listing. Try chatting with the owner instead.'**
+  /// **'No phone number. Message the owner instead.'**
   String get propertyNoPhoneNumber;
 
   /// No description provided for @propertyCallFailed.
@@ -1853,7 +1823,7 @@ abstract class AppLocalizations {
   /// No description provided for @insightsEmptyHint.
   ///
   /// In en, this message translates to:
-  /// **'Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.'**
+  /// **'No views yet. Share your listing to reach more people.'**
   String get insightsEmptyHint;
 
   /// No description provided for @propertyShareThisProperty.
@@ -1955,19 +1925,19 @@ abstract class AppLocalizations {
   /// No description provided for @propertyShareNotPublicDraft.
   ///
   /// In en, this message translates to:
-  /// **'Only you can see this listing until it is published. Publish it to share its link and QR code.'**
+  /// **'Publish this listing to share its link or QR code.'**
   String get propertyShareNotPublicDraft;
 
   /// No description provided for @propertyShareNotPublicPending.
   ///
   /// In en, this message translates to:
-  /// **'This listing goes public once its payment is complete. You can share it then.'**
+  /// **'Complete payment before sharing this listing.'**
   String get propertyShareNotPublicPending;
 
   /// No description provided for @propertyShareNotPublicEnded.
   ///
   /// In en, this message translates to:
-  /// **'This listing is no longer public, so its link and QR code cannot be shared.'**
+  /// **'This listing is no longer public and can’t be shared.'**
   String get propertyShareNotPublicEnded;
 
   /// No description provided for @propertyTitleType.
@@ -2342,12 +2312,6 @@ abstract class AppLocalizations {
   /// **'Property deleted'**
   String get propertyPropertyDeleted;
 
-  /// No description provided for @chatSecurityCodeExplanation.
-  ///
-  /// In en, this message translates to:
-  /// **'Messages are end-to-end encrypted. To be sure nobody is in between, compare this code with {name} in person or on a call: it must be the same on both phones.'**
-  String chatSecurityCodeExplanation(String name);
-
   /// No description provided for @commonContinue.
   ///
   /// In en, this message translates to:
@@ -2369,14 +2333,8 @@ abstract class AppLocalizations {
   /// No description provided for @updateRequiredMessage.
   ///
   /// In en, this message translates to:
-  /// **'This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.'**
+  /// **'Update Tilomnov from your app store to keep using it.'**
   String get updateRequiredMessage;
-
-  /// No description provided for @securityForgotPin.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot chat PIN'**
-  String get securityForgotPin;
 
   /// No description provided for @securityCreatePassword.
   ///
@@ -2387,7 +2345,7 @@ abstract class AppLocalizations {
   /// No description provided for @createPasswordIntro.
   ///
   /// In en, this message translates to:
-  /// **'You sign in with Google, so this account has no password yet. Choose one, then confirm with your Google account. You can keep signing in with Google.'**
+  /// **'Set a password and confirm with Google. You can still sign in with Google.'**
   String get createPasswordIntro;
 
   /// No description provided for @createPasswordAction.
@@ -2402,82 +2360,28 @@ abstract class AppLocalizations {
   /// **'Password created.'**
   String get createPasswordDone;
 
-  /// No description provided for @forgotPinTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot your chat PIN?'**
-  String get forgotPinTitle;
-
-  /// No description provided for @forgotPinKeepsHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'This phone still has your chat keys, so nothing is lost. Confirm it is you with your account password, then choose a new PIN.'**
-  String get forgotPinKeepsHistory;
-
-  /// No description provided for @forgotPinLosesHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'This phone does not have your chat keys, and without the PIN they cannot be recovered. After you confirm with your account password and choose a new PIN, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your phones can still open your chats, do this there instead to keep your history.'**
-  String get forgotPinLosesHistory;
-
-  /// No description provided for @forgotPinNeedsPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'You sign in with Google, so create an account password first. It confirms it is you when you choose a new chat PIN.'**
-  String get forgotPinNeedsPassword;
-
-  /// No description provided for @pinForgotHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot your PIN? Go to User > Security > Forgot chat PIN.'**
-  String get pinForgotHint;
-
-  /// No description provided for @chatPinNeeded.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your chat PIN to read and send messages on this phone.'**
-  String get chatPinNeeded;
-
   /// No description provided for @chatOpenFailed.
   ///
   /// In en, this message translates to:
   /// **'Could not open this chat. Check your connection.'**
   String get chatOpenFailed;
 
-  /// No description provided for @pinSetUpHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'You will need this PIN to read your chats on a new phone. Choose one you will remember.'**
-  String get pinSetUpHelp;
-
-  /// No description provided for @chatPinRestoreTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your chat PIN'**
-  String get chatPinRestoreTitle;
-
-  /// No description provided for @chatPinRestoreHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are protected by your 6-digit chat PIN. Enter it to read them on this phone.'**
-  String get chatPinRestoreHelp;
-
   /// No description provided for @devicesImmediateNote.
   ///
   /// In en, this message translates to:
-  /// **'A device you sign out is signed out immediately.'**
+  /// **'Devices are signed out right away.'**
   String get devicesImmediateNote;
 
   /// No description provided for @devicesTooNew.
   ///
   /// In en, this message translates to:
-  /// **'This device signed in less than a day ago, so it cannot sign other devices out yet. Use a device you have been signed in on for longer.'**
+  /// **'Wait 24 hours after signing in to sign out other devices, or use an older device.'**
   String get devicesTooNew;
 
   /// No description provided for @devicesTooNewUntil.
   ///
   /// In en, this message translates to:
-  /// **'For your protection, a device can sign other devices out only after it has been signed in for a day. This device can from {when}. Until then, use a device you have been signed in on for longer.'**
+  /// **'You can sign out other devices from {when}. Until then, use a device signed in earlier.'**
   String devicesTooNewUntil(String when);
 
   /// No description provided for @newSignInTitle.
@@ -2489,7 +2393,7 @@ abstract class AppLocalizations {
   /// No description provided for @newSignInMessage.
   ///
   /// In en, this message translates to:
-  /// **'Another device signed in to your account. If this was not you, sign it out now and change your password.'**
+  /// **'New sign-in. Not you? Sign out that device and change your password.'**
   String get newSignInMessage;
 
   /// No description provided for @newSignInWasMe.
@@ -2537,7 +2441,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDeviceTooNew.
   ///
   /// In en, this message translates to:
-  /// **'This device signed in less than a day ago, so to protect your account it cannot do this yet. Use a device you have been signed in on for longer, or try again tomorrow.'**
+  /// **'Wait 24 hours after signing in, or use a device signed in earlier.'**
   String get accountDeviceTooNew;
 
   /// No description provided for @personalInfoUsernameChecking.
@@ -2561,7 +2465,7 @@ abstract class AppLocalizations {
   /// No description provided for @mediaStillTooLarge.
   ///
   /// In en, this message translates to:
-  /// **'This picture is still too large after compression. Please choose a smaller one.'**
+  /// **'Picture too large. Choose a smaller one.'**
   String get mediaStillTooLarge;
 
   /// No description provided for @mediaUnreadable.
@@ -2609,7 +2513,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchIdleBody.
   ///
   /// In en, this message translates to:
-  /// **'Type a road, village or district to see what is for sale there, or the name of an owner or agency.'**
+  /// **'Search for a place, owner or agency.'**
   String get searchIdleBody;
 
   /// No description provided for @searchNoResultsTitle.
@@ -2675,14 +2579,20 @@ abstract class AppLocalizations {
   /// No description provided for @searchAreaEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Nothing is listed here yet. Move the map or search a wider area.'**
+  /// **'No listings here. Try a wider area.'**
   String get searchAreaEmpty;
 
   /// No description provided for @searchPersonEmpty.
   ///
   /// In en, this message translates to:
-  /// **'This person has no published listings right now.'**
+  /// **'No published listings yet.'**
   String get searchPersonEmpty;
+
+  /// No description provided for @searchViewProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'View property'**
+  String get searchViewProperty;
 
   /// No description provided for @searchCloseResults.
   ///
@@ -2786,6 +2696,72 @@ abstract class AppLocalizations {
   /// **'Feed'**
   String get feedTitle;
 
+  /// No description provided for @feedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fresh finds from people you follow'**
+  String get feedSubtitle;
+
+  /// No description provided for @feedNewestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get feedNewestFirst;
+
+  /// No description provided for @feedSortTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Top (most saved)'**
+  String get feedSortTop;
+
+  /// No description provided for @feedListingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing date'**
+  String get feedListingDate;
+
+  /// No description provided for @feedAnyTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Any time'**
+  String get feedAnyTime;
+
+  /// No description provided for @feedLast7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get feedLast7Days;
+
+  /// No description provided for @feedLast30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get feedLast30Days;
+
+  /// No description provided for @feedChooseDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose dates'**
+  String get feedChooseDates;
+
+  /// No description provided for @feedPriceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a price between \$0 and \$9,999,999,999.99.'**
+  String get feedPriceInvalid;
+
+  /// No description provided for @feedNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching listings'**
+  String get feedNoMatches;
+
+  /// No description provided for @feedTryOtherFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different date, price or property type.'**
+  String get feedTryOtherFilters;
+
   /// No description provided for @feedEmptyTitle.
   ///
   /// In en, this message translates to:
@@ -2795,7 +2771,7 @@ abstract class AppLocalizations {
   /// No description provided for @feedEmptyHint.
   ///
   /// In en, this message translates to:
-  /// **'Follow people from their profile to see their new listings here.'**
+  /// **'Follow people to see their new listings.'**
   String get feedEmptyHint;
 
   /// No description provided for @feedExplore.
@@ -2875,6 +2851,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No contact details shared.'**
   String get profileNoContact;
+
+  /// No description provided for @propertySavePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Save photo'**
+  String get propertySavePhoto;
 
   /// No description provided for @propertyPhotoLimit.
   ///
@@ -3092,173 +3074,17 @@ abstract class AppLocalizations {
   /// **'Draw the property on the map first to measure it.'**
   String get propertyDrawBoundaryFirst;
 
-  /// No description provided for @forgotPinPasswordHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your account password to confirm it is you. Then choose a new chat PIN.'**
-  String get forgotPinPasswordHelp;
-
-  /// No description provided for @forgotPinRecovered.
-  ///
-  /// In en, this message translates to:
-  /// **'Done. Your new chat PIN protects your chats.'**
-  String get forgotPinRecovered;
-
   /// No description provided for @securityPinRequiredNote.
   ///
   /// In en, this message translates to:
   /// **'Your chats are always end-to-end encrypted and protected by your 6-digit chat PIN. You need it to read your chats on a new phone.'**
   String get securityPinRequiredNote;
 
-  /// No description provided for @pinUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock'**
-  String get pinUnlock;
-
-  /// No description provided for @pinChecking.
-  ///
-  /// In en, this message translates to:
-  /// **'Checking your PIN...'**
-  String get pinChecking;
-
-  /// No description provided for @pinWrongTriesLeft.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{Incorrect PIN. 1 try left before your PIN locks for a while.} other{Incorrect PIN. {count} tries left.}}'**
-  String pinWrongTriesLeft(int count);
-
-  /// No description provided for @pinWrongNoCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Incorrect PIN. Please try again.'**
-  String get pinWrongNoCount;
-
-  /// No description provided for @pinLockedFor.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs. Try again in {time}.'**
-  String pinLockedFor(String time);
-
-  /// No description provided for @pinLockedLater.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs. Please try again later.'**
-  String get pinLockedLater;
-
-  /// No description provided for @pinCheckFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not check your PIN. Check your connection and try again.'**
-  String get pinCheckFailed;
-
-  /// No description provided for @chatPinSaving.
-  ///
-  /// In en, this message translates to:
-  /// **'Saving your PIN...'**
-  String get chatPinSaving;
-
   /// No description provided for @chatPasswordChecking.
   ///
   /// In en, this message translates to:
   /// **'Checking your password...'**
   String get chatPasswordChecking;
-
-  /// No description provided for @chatPinSetupSignOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign out'**
-  String get chatPinSetupSignOut;
-
-  /// No description provided for @chatPinCreateTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create your chat PIN'**
-  String get chatPinCreateTitle;
-
-  /// No description provided for @chatPinCreateHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.'**
-  String get chatPinCreateHelp;
-
-  /// No description provided for @chatPinConfirmTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm your chat PIN'**
-  String get chatPinConfirmTitle;
-
-  /// No description provided for @chatPinConfirmHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Type the same 6 digits again.'**
-  String get chatPinConfirmHelp;
-
-  /// No description provided for @chatPinMismatch.
-  ///
-  /// In en, this message translates to:
-  /// **'The PINs did not match. Choose your PIN again.'**
-  String get chatPinMismatch;
-
-  /// No description provided for @chatPinSaveFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not save your PIN. Check your connection and try again.'**
-  String get chatPinSaveFailed;
-
-  /// No description provided for @chatPinChooseAnother.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a different PIN'**
-  String get chatPinChooseAnother;
-
-  /// No description provided for @chatPinMoveTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Protect your chats with a PIN'**
-  String get chatPinMoveTitle;
-
-  /// No description provided for @chatPinMoveHelp.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chats are now protected by a 6-digit chat PIN instead of your account password. Enter your account password once, then choose your PIN.'**
-  String get chatPinMoveHelp;
-
-  /// No description provided for @chatPinStartOverLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Can\'t unlock? Start over'**
-  String get chatPinStartOverLink;
-
-  /// No description provided for @chatPinStartOverTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Start over with new chat keys?'**
-  String get chatPinStartOverTitle;
-
-  /// No description provided for @chatPinStartOverMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'If your password was reset, your old chats cannot be unlocked. Starting over keeps your account, but your earlier messages can no longer be read. This cannot be undone.'**
-  String get chatPinStartOverMessage;
-
-  /// No description provided for @chatPinStartOverAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Start over'**
-  String get chatPinStartOverAction;
-
-  /// No description provided for @chatPinRequiredMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Your messages are end-to-end encrypted. Create a 6-digit chat PIN to protect them before you start chatting.'**
-  String get chatPinRequiredMessage;
-
-  /// No description provided for @chatPinCreateAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Create PIN'**
-  String get chatPinCreateAction;
 
   /// No description provided for @chatLockedTitle.
   ///
@@ -3271,18 +3097,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter PIN'**
   String get chatEnterPinAction;
-
-  /// No description provided for @chatPinLockedTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong PINs'**
-  String get chatPinLockedTitle;
-
-  /// No description provided for @chatPinLockedMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'For your security, entering your chat PIN is paused for a while. Please try again later.'**
-  String get chatPinLockedMessage;
 
   /// No description provided for @authErrEnterName.
   ///
@@ -3554,12 +3368,6 @@ abstract class AppLocalizations {
   /// **'Could not reach the server. Check your connection.'**
   String get authErrorNoConnection;
 
-  /// No description provided for @authErrorServer.
-  ///
-  /// In en, this message translates to:
-  /// **'Something went wrong on our side. Please try again later.'**
-  String get authErrorServer;
-
   /// No description provided for @authErrorGeneric.
   ///
   /// In en, this message translates to:
@@ -3755,19 +3563,19 @@ abstract class AppLocalizations {
   /// No description provided for @chatDeleteOwnMessageExplained.
   ///
   /// In en, this message translates to:
-  /// **'For everyone: it is removed for you and {name}, with nothing left in its place. For me: only you stop seeing it.'**
+  /// **'Delete for you and {name}, or just for you.'**
   String chatDeleteOwnMessageExplained(String name);
 
   /// No description provided for @chatDeleteMessageForMeExplained.
   ///
   /// In en, this message translates to:
-  /// **'It is removed for you only. {name} still sees it.'**
+  /// **'Only deleted for you. {name} can still see it.'**
   String chatDeleteMessageForMeExplained(String name);
 
   /// No description provided for @chatEditTooLate.
   ///
   /// In en, this message translates to:
-  /// **'A message can only be edited within an hour of sending it.'**
+  /// **'You can edit messages for up to 1 hour.'**
   String get chatEditTooLate;
 
   /// No description provided for @chatPresenceOnline.
@@ -3806,12 +3614,6 @@ abstract class AppLocalizations {
   /// **'Last seen {date}'**
   String chatLastSeenOn(String date);
 
-  /// No description provided for @chatKeyChangedTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'{name}\'s security key has changed'**
-  String chatKeyChangedTitle(String name);
-
   /// No description provided for @chatEmojiSmileys.
   ///
   /// In en, this message translates to:
@@ -3839,7 +3641,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatPreviewEncrypted.
   ///
   /// In en, this message translates to:
-  /// **'Encrypted message'**
+  /// **'Message unavailable'**
   String get chatPreviewEncrypted;
 
   /// No description provided for @chatPreviewPhoto.
@@ -3875,20 +3677,14 @@ abstract class AppLocalizations {
   /// No description provided for @chatSendRejected.
   ///
   /// In en, this message translates to:
-  /// **'The server did not accept this message. Please try again.'**
+  /// **'Message not accepted. Try again.'**
   String get chatSendRejected;
 
   /// No description provided for @chatSendTooFast.
   ///
   /// In en, this message translates to:
-  /// **'You are sending messages too quickly. Wait a moment.'**
+  /// **'Sending too fast. Wait a moment.'**
   String get chatSendTooFast;
-
-  /// No description provided for @chatSendPinRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Create your chat PIN before sending messages.'**
-  String get chatSendPinRequired;
 
   /// No description provided for @chatSendBlocked.
   ///
@@ -3935,7 +3731,7 @@ abstract class AppLocalizations {
   /// No description provided for @blockConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'They won\'t be able to message or call you, and you\'ll stop following each other. They won\'t be told.'**
+  /// **'They can’t message or call you. You’ll unfollow each other. They won’t be notified.'**
   String get blockConfirmMessage;
 
   /// No description provided for @unblockConfirmTitle.
@@ -3947,7 +3743,7 @@ abstract class AppLocalizations {
   /// No description provided for @unblockConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'You\'ll be able to message each other again. Follows removed by the block don\'t come back.'**
+  /// **'You can message each other again. Follow them again if you want to.'**
   String get unblockConfirmMessage;
 
   /// No description provided for @blockDone.
@@ -4105,24 +3901,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The report wasn\'t sent. Check your connection and try again.'**
   String get reportFailed;
-
-  /// No description provided for @chatSendKeyChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Their security key has changed. Accept the new key to continue.'**
-  String get chatSendKeyChanged;
-
-  /// No description provided for @chatSendNotSetUp.
-  ///
-  /// In en, this message translates to:
-  /// **'Secure chat is not set up on this device.'**
-  String get chatSendNotSetUp;
-
-  /// No description provided for @chatSendPeerNotReady.
-  ///
-  /// In en, this message translates to:
-  /// **'This person has not set up secure chat yet. They can receive messages once they open the app again.'**
-  String get chatSendPeerNotReady;
 
   /// No description provided for @chatSendFileTooLarge.
   ///
@@ -5039,7 +4817,7 @@ abstract class AppLocalizations {
   /// No description provided for @savedSearchesEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No saved searches yet. Set a filter on the map and tap the bookmark to save it.'**
+  /// **'Set map filters, then tap the bookmark to save your search.'**
   String get savedSearchesEmpty;
 
   /// No description provided for @savedSearchesLoadFailed.
@@ -5129,7 +4907,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsAlwaysOn.
   ///
   /// In en, this message translates to:
-  /// **'Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.'**
+  /// **'Calls and sign-in alerts are always on.'**
   String get notificationsAlwaysOn;
 
   /// No description provided for @notificationsBlockedTitle.
@@ -5141,7 +4919,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsBlockedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.'**
+  /// **'Enable notifications in your phone’s settings.'**
   String get notificationsBlockedHelp;
 
   /// No description provided for @chatPreviewNewMessage.
@@ -5159,7 +4937,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsShowTextHelp.
   ///
   /// In en, this message translates to:
-  /// **'Show what a message says in its notification. Anyone who can see your lock screen can read it.'**
+  /// **'Show message text in notifications, including on your lock screen.'**
   String get notificationsShowTextHelp;
 
   /// No description provided for @notificationsLoadFailed.
@@ -5537,7 +5315,7 @@ abstract class AppLocalizations {
   /// No description provided for @addEmailIntro.
   ///
   /// In en, this message translates to:
-  /// **'Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.'**
+  /// **'Add an email for password resets. Confirm with your password.'**
   String get addEmailIntro;
 
   /// No description provided for @addEmailDone.
@@ -5605,6 +5383,1212 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show listings near you'**
   String get closestShowList;
+
+  /// No description provided for @authEnterYourPhoneNumberToGet.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number and we will text you a code to reset your password.'**
+  String get authEnterYourPhoneNumberToGet;
+
+  /// No description provided for @authVerificationCodeSentToYourPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent to your phone'**
+  String get authVerificationCodeSentToYourPhone;
+
+  /// No description provided for @authEnterTheVerificationCodeWeTexted.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the verification code we just texted to your phone.'**
+  String get authEnterTheVerificationCodeWeTexted;
+
+  /// No description provided for @authErrorNoAccountForPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'No account uses this phone number.'**
+  String get authErrorNoAccountForPhone;
+
+  /// No description provided for @authErrorSmsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Text messages cannot be sent right now. Reset with your email, or try again later.'**
+  String get authErrorSmsUnavailable;
+
+  /// No description provided for @planFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get planFree;
+
+  /// No description provided for @planSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get planSilver;
+
+  /// No description provided for @planGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get planGold;
+
+  /// No description provided for @planDiamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond'**
+  String get planDiamond;
+
+  /// No description provided for @planMember.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} member'**
+  String planMember(String tier);
+
+  /// No description provided for @planAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} Account'**
+  String planAccount(String tier);
+
+  /// No description provided for @planPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'/ month'**
+  String get planPerMonth;
+
+  /// No description provided for @planListingsUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'{used} / {limit} listings used'**
+  String planListingsUsed(int used, int limit);
+
+  /// No description provided for @planCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Plan'**
+  String get planCurrent;
+
+  /// No description provided for @planUpgradeTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to {tier}'**
+  String planUpgradeTo(String tier);
+
+  /// No description provided for @planFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get planFeatures;
+
+  /// No description provided for @planFeatureLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Publish 1 property at a time} other{Publish up to {count} properties}}'**
+  String planFeatureLimit(int count);
+
+  /// No description provided for @planFeatureFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic listing visibility'**
+  String get planFeatureFree;
+
+  /// No description provided for @planFeatureSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Suits small agents'**
+  String get planFeatureSilver;
+
+  /// No description provided for @planFeatureGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher listing capacity'**
+  String get planFeatureGold;
+
+  /// No description provided for @planFeatureDiamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest listing capacity'**
+  String get planFeatureDiamond;
+
+  /// No description provided for @planChooseIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan to publish more properties.'**
+  String get planChooseIntro;
+
+  /// No description provided for @planUpgradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Subscription'**
+  String get planUpgradeTitle;
+
+  /// No description provided for @planUpgradeIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'New plans last one month. Upgrades charge only the price difference for your remaining time and keep your expiry date.'**
+  String get planUpgradeIntro;
+
+  /// No description provided for @planSubscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get planSubscribe;
+
+  /// No description provided for @paymentSelectMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Payment Method'**
+  String get paymentSelectMethod;
+
+  /// No description provided for @paymentTaxIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Total price includes 10% tax.'**
+  String get paymentTaxIncluded;
+
+  /// No description provided for @paymentAbaPay.
+  ///
+  /// In en, this message translates to:
+  /// **'ABA PAY'**
+  String get paymentAbaPay;
+
+  /// No description provided for @paymentAbaPayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with ABA Mobile'**
+  String get paymentAbaPayHint;
+
+  /// No description provided for @paymentAbaKhqr.
+  ///
+  /// In en, this message translates to:
+  /// **'ABA KHQR'**
+  String get paymentAbaKhqr;
+
+  /// No description provided for @paymentAbaKhqrHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to pay with any banking app'**
+  String get paymentAbaKhqrHint;
+
+  /// No description provided for @paymentAwaitingConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for ABA to confirm your payment. This usually takes a minute.'**
+  String get paymentAwaitingConfirmation;
+
+  /// No description provided for @paymentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment was not completed. Please try again.'**
+  String get paymentFailed;
+
+  /// No description provided for @paymentRefundRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment arrived after the upgrade expired. Please contact support with your transaction reference for a refund.'**
+  String get paymentRefundRequired;
+
+  /// No description provided for @paymentAppNotOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open ABA Mobile or the payment page.'**
+  String get paymentAppNotOpened;
+
+  /// No description provided for @paymentUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Online payment is not available yet. Please try again later.'**
+  String get paymentUnavailable;
+
+  /// No description provided for @paymentCouldNotStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start the payment. Please try again.'**
+  String get paymentCouldNotStart;
+
+  /// No description provided for @paymentBillingSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Summary'**
+  String get paymentBillingSummary;
+
+  /// No description provided for @paymentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get paymentPlan;
+
+  /// No description provided for @paymentPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get paymentPrice;
+
+  /// No description provided for @paymentBillingCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Cycle'**
+  String get paymentBillingCycle;
+
+  /// No description provided for @paymentMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get paymentMonthly;
+
+  /// No description provided for @paymentTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get paymentTotal;
+
+  /// No description provided for @paymentOneTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One-Time Payment'**
+  String get paymentOneTimeTitle;
+
+  /// No description provided for @paymentOneTimeIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your property is ready to be published.'**
+  String get paymentOneTimeIntro;
+
+  /// No description provided for @publishingRenewListingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew property post'**
+  String get publishingRenewListingTitle;
+
+  /// No description provided for @publishingRenewListingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this property public for one month. Pay for this post, or use an active subscription with space available.'**
+  String get publishingRenewListingMessage;
+
+  /// No description provided for @publishingRenewSubscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew your subscription'**
+  String get publishingRenewSubscriptionTitle;
+
+  /// No description provided for @publishingRenewSubscriptionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription has expired. Renew your plan to publish your properties again. Your original free listing stays available.'**
+  String get publishingRenewSubscriptionMessage;
+
+  /// No description provided for @paymentPropertyInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Property information'**
+  String get paymentPropertyInformation;
+
+  /// No description provided for @paymentOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One month · one-time payment'**
+  String get paymentOneTime;
+
+  /// No description provided for @paymentPublishProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Property'**
+  String get paymentPublishProperty;
+
+  /// No description provided for @paymentProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property'**
+  String get paymentProperty;
+
+  /// No description provided for @paymentCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get paymentCategory;
+
+  /// No description provided for @publishPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Publishing Plan'**
+  String get publishPlanTitle;
+
+  /// No description provided for @publishPlanOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One-Time Publish'**
+  String get publishPlanOneTime;
+
+  /// No description provided for @publishPlanOneTimeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {price} to publish this property for one month.'**
+  String publishPlanOneTimeHint(String price);
+
+  /// No description provided for @publishPlanSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Plan'**
+  String get publishPlanSubscription;
+
+  /// No description provided for @publishPlanSubscriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish many properties every month.'**
+  String get publishPlanSubscriptionHint;
+
+  /// No description provided for @publishPlanChooseFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan or one-time payment to publish.'**
+  String get publishPlanChooseFirst;
+
+  /// No description provided for @privacyLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: November 4, 2026'**
+  String get privacyLastUpdated;
+
+  /// No description provided for @privacyIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'What we collect, how we use it, and your choices.'**
+  String get privacyIntro;
+
+  /// No description provided for @privacyCollectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What we collect'**
+  String get privacyCollectTitle;
+
+  /// No description provided for @privacyCollectAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name, username, phone number, optional email and profile photo.'**
+  String get privacyCollectAccount;
+
+  /// No description provided for @privacyCollectListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing photos, descriptions, prices, map locations, boundaries and contact numbers.'**
+  String get privacyCollectListings;
+
+  /// No description provided for @privacyCollectLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location, only when you allow it, to show listings and routes near you.'**
+  String get privacyCollectLocation;
+
+  /// No description provided for @privacyCollectActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved listings and searches, follows and listing views, used for insights.'**
+  String get privacyCollectActivity;
+
+  /// No description provided for @privacyCollectDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'App version, phone model, sign-in device key and notification token for security and notifications.'**
+  String get privacyCollectDevice;
+
+  /// No description provided for @privacyUseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How we use it'**
+  String get privacyUseTitle;
+
+  /// No description provided for @privacyUseRun.
+  ///
+  /// In en, this message translates to:
+  /// **'To run the marketplace: show listings, connect buyers with owners, and deliver chats and calls.'**
+  String get privacyUseRun;
+
+  /// No description provided for @privacyUseProtect.
+  ///
+  /// In en, this message translates to:
+  /// **'To protect accounts: spot suspicious sign-ins, limit misuse and act on reports.'**
+  String get privacyUseProtect;
+
+  /// No description provided for @privacyUseFix.
+  ///
+  /// In en, this message translates to:
+  /// **'To fix problems: crash and error reports help us find bugs.'**
+  String get privacyUseFix;
+
+  /// No description provided for @privacyUseNoSale.
+  ///
+  /// In en, this message translates to:
+  /// **'We do not sell your personal information.'**
+  String get privacyUseNoSale;
+
+  /// No description provided for @privacyChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages and calls'**
+  String get privacyChatTitle;
+
+  /// No description provided for @privacyChatBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages are encrypted when sent and stored. Only chat participants can access them through the app. Tilomnov manages the encryption keys. No chat PIN is needed. Older encrypted messages are kept but can’t be opened.'**
+  String get privacyChatBody;
+
+  /// No description provided for @privacyPaymentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get privacyPaymentsTitle;
+
+  /// No description provided for @privacyPaymentsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'ABA PayWay handles payments. We never see or store card or bank details. We keep the transaction reference, amount, status and date with your account.'**
+  String get privacyPaymentsBody;
+
+  /// No description provided for @privacySharingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can see your information'**
+  String get privacySharingTitle;
+
+  /// No description provided for @privacySharingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'We share information only as far as the app needs it:'**
+  String get privacySharingIntro;
+
+  /// No description provided for @privacySharingUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Others can see your listings, public profile and listing contact number.'**
+  String get privacySharingUsers;
+
+  /// No description provided for @privacySharingProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Google handles maps, sign-in, phone verification and notifications; Sentry handles error reports; ABA Bank handles payments.'**
+  String get privacySharingProviders;
+
+  /// No description provided for @privacySharingLaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorities, when the law requires it.'**
+  String get privacySharingLaw;
+
+  /// No description provided for @privacyCookiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cookies and storage on your phone'**
+  String get privacyCookiesTitle;
+
+  /// No description provided for @privacyCookiesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'No advertising or tracking cookies. We store these on your phone:'**
+  String get privacyCookiesIntro;
+
+  /// No description provided for @privacyCookiesSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sign-in, kept in your phone\'s secure storage.'**
+  String get privacyCookiesSignIn;
+
+  /// No description provided for @privacyCookiesSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Your settings, such as theme and language.'**
+  String get privacyCookiesSettings;
+
+  /// No description provided for @privacyCookiesOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent pages and photos for faster loading and offline use.'**
+  String get privacyCookiesOffline;
+
+  /// No description provided for @privacyCookiesClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out to remove your login. Clear app storage in your phone’s settings to remove other stored data.'**
+  String get privacyCookiesClear;
+
+  /// No description provided for @privacyChoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your choices'**
+  String get privacyChoicesTitle;
+
+  /// No description provided for @privacyChoicesEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'View and change your details at any time in Account > Personal information.'**
+  String get privacyChoicesEdit;
+
+  /// No description provided for @privacyChoicesLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn location access off in your phone\'s settings; the map still works without it.'**
+  String get privacyChoicesLocation;
+
+  /// No description provided for @privacyChoicesNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which notifications you get in Account > Notifications.'**
+  String get privacyChoicesNotifications;
+
+  /// No description provided for @privacyChoicesDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your listings at any time. To close your account, contact us.'**
+  String get privacyChoicesDelete;
+
+  /// No description provided for @privacyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get privacyContactTitle;
+
+  /// No description provided for @privacyContactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact the Tilomnov team with questions. The date above shows the latest update.'**
+  String get privacyContactBody;
+
+  /// No description provided for @paymentSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get paymentSuccessTitle;
+
+  /// No description provided for @paymentSuccessAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} USD'**
+  String paymentSuccessAmount(String amount);
+
+  /// No description provided for @paymentSuccessTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID  #{id}'**
+  String paymentSuccessTransaction(String id);
+
+  /// No description provided for @paymentSuccessEmailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Order confirmation email:'**
+  String get paymentSuccessEmailed;
+
+  /// No description provided for @paymentSuccessNoEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email in Personal information to get receipts by email.'**
+  String get paymentSuccessNoEmail;
+
+  /// No description provided for @paymentDownloadReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Receipt'**
+  String get paymentDownloadReceipt;
+
+  /// No description provided for @paymentBackToHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get paymentBackToHome;
+
+  /// No description provided for @paymentReceiptSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt saved to your photos.'**
+  String get paymentReceiptSaved;
+
+  /// No description provided for @paymentReceiptSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the receipt. Please try again.'**
+  String get paymentReceiptSaveFailed;
+
+  /// No description provided for @paymentReceiptPhotosDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access to your photos to save the receipt.'**
+  String get paymentReceiptPhotosDenied;
+
+  /// No description provided for @paymentReceiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment receipt'**
+  String get paymentReceiptTitle;
+
+  /// No description provided for @paymentReceiptTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get paymentReceiptTransaction;
+
+  /// No description provided for @paymentReceiptDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get paymentReceiptDate;
+
+  /// No description provided for @paymentReceiptItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get paymentReceiptItem;
+
+  /// No description provided for @paymentReceiptMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get paymentReceiptMethod;
+
+  /// No description provided for @paymentReceiptEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get paymentReceiptEmail;
+
+  /// No description provided for @paymentReceiptStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get paymentReceiptStatus;
+
+  /// No description provided for @paymentReceiptPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get paymentReceiptPaid;
+
+  /// No description provided for @paymentItemSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} plan · Monthly'**
+  String paymentItemSubscription(String tier);
+
+  /// No description provided for @paymentItemOneTimePublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Property post · one month'**
+  String get paymentItemOneTimePublish;
+
+  /// No description provided for @planCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel plan'**
+  String get planCancelAction;
+
+  /// No description provided for @planCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel your plan?'**
+  String get planCancelTitle;
+
+  /// No description provided for @planCancelExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan stays active until {date}. You keep your paid benefits until then.'**
+  String planCancelExplanation(String date);
+
+  /// No description provided for @planActiveUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan active until {date}.'**
+  String planActiveUntil(String date);
+
+  /// No description provided for @planCancelledUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan cancelled. Your access stays active until {date}.'**
+  String planCancelledUntil(String date);
+
+  /// No description provided for @planCancelFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not cancel your plan. Please try again.'**
+  String get planCancelFailed;
+
+  /// No description provided for @planStatusRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your plan. Tap to retry.'**
+  String get planStatusRetry;
+
+  /// No description provided for @listingTypeTakeover.
+  ///
+  /// In en, this message translates to:
+  /// **'Takeover Payments'**
+  String get listingTypeTakeover;
+
+  /// No description provided for @takeoverIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the existing payment plan. Buyers pay you the seller amount, then take responsibility for the remaining balance, subject to provider approval.'**
+  String get takeoverIntro;
+
+  /// No description provided for @takeoverProviderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment provider type'**
+  String get takeoverProviderType;
+
+  /// No description provided for @takeoverProviderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer or bank name'**
+  String get takeoverProviderName;
+
+  /// No description provided for @takeoverProjectName.
+  ///
+  /// In en, this message translates to:
+  /// **'Project name'**
+  String get takeoverProjectName;
+
+  /// No description provided for @takeoverSellerAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount payable to seller (USD)'**
+  String get takeoverSellerAmount;
+
+  /// No description provided for @takeoverBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining balance (USD)'**
+  String get takeoverBalance;
+
+  /// No description provided for @takeoverBalanceHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding contract balance or loan principal, excluding future financing interest. Include any larger scheduled payments in this balance.'**
+  String get takeoverBalanceHelp;
+
+  /// No description provided for @takeoverBalanceDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance as of'**
+  String get takeoverBalanceDate;
+
+  /// No description provided for @takeoverPaymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular instalment (USD)'**
+  String get takeoverPaymentAmount;
+
+  /// No description provided for @takeoverFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment frequency'**
+  String get takeoverFrequency;
+
+  /// No description provided for @takeoverRemainingMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Months remaining'**
+  String get takeoverRemainingMonths;
+
+  /// No description provided for @takeoverNextPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Next payment due'**
+  String get takeoverNextPayment;
+
+  /// No description provided for @takeoverInterestType.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest terms'**
+  String get takeoverInterestType;
+
+  /// No description provided for @takeoverAnnualRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Current annual interest rate (%)'**
+  String get takeoverAnnualRate;
+
+  /// No description provided for @takeoverTransferStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer permission (seller-reported)'**
+  String get takeoverTransferStatus;
+
+  /// No description provided for @takeoverTransferFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer fee (USD, leave blank if unknown)'**
+  String get takeoverTransferFee;
+
+  /// No description provided for @takeoverFeePayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Who pays the transfer fee?'**
+  String get takeoverFeePayer;
+
+  /// No description provided for @takeoverArrears.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue amount (USD, enter 0 if none)'**
+  String get takeoverArrears;
+
+  /// No description provided for @takeoverArrearsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Disclose unpaid instalments and penalties. Explain in the notes whether overdue principal is already included in the balance.'**
+  String get takeoverArrearsHelp;
+
+  /// No description provided for @takeoverArrearsPayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Who settles the overdue amount?'**
+  String get takeoverArrearsPayer;
+
+  /// No description provided for @takeoverHasAdditional.
+  ///
+  /// In en, this message translates to:
+  /// **'Any additional large scheduled payments?'**
+  String get takeoverHasAdditional;
+
+  /// No description provided for @takeoverAdditionalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled payment amount (USD)'**
+  String get takeoverAdditionalAmount;
+
+  /// No description provided for @takeoverAdditionalDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled payment due'**
+  String get takeoverAdditionalDate;
+
+  /// No description provided for @takeoverAddPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add scheduled payment'**
+  String get takeoverAddPayment;
+
+  /// No description provided for @takeoverRemovePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove scheduled payment'**
+  String get takeoverRemovePayment;
+
+  /// No description provided for @takeoverAdditionalHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Include handover or balloon payments here. These amounts are already part of the remaining balance.'**
+  String get takeoverAdditionalHelp;
+
+  /// No description provided for @takeoverNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment plan and transfer notes'**
+  String get takeoverNotes;
+
+  /// No description provided for @takeoverCombinedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Combined price before future interest and fees'**
+  String get takeoverCombinedPrice;
+
+  /// No description provided for @takeoverCombinedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller amount + remaining balance. Future interest, transfer fees and overdue charges may add to the buyer\'s cost.'**
+  String get takeoverCombinedHelp;
+
+  /// No description provided for @takeoverInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete or correct the highlighted takeover details before publishing.'**
+  String get takeoverInvalid;
+
+  /// No description provided for @takeoverFieldError.
+  ///
+  /// In en, this message translates to:
+  /// **'Required or invalid value'**
+  String get takeoverFieldError;
+
+  /// No description provided for @takeoverNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'This contract cannot be listed for takeover while transfers are not allowed.'**
+  String get takeoverNotAllowed;
+
+  /// No description provided for @takeoverBuyerNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and permission are reported by the seller, not verified by Tilomnov. Confirm the balance, fees and transfer process directly with the developer or bank. Listing a property does not transfer its contract or loan.'**
+  String get takeoverBuyerNotice;
+
+  /// No description provided for @takeoverDateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'YYYY-MM-DD'**
+  String get takeoverDateHint;
+
+  /// No description provided for @takeoverProviderDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer instalments'**
+  String get takeoverProviderDeveloper;
+
+  /// No description provided for @takeoverProviderBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank loan'**
+  String get takeoverProviderBank;
+
+  /// No description provided for @takeoverMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get takeoverMonthly;
+
+  /// No description provided for @takeoverQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 3 months'**
+  String get takeoverQuarterly;
+
+  /// No description provided for @takeoverYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get takeoverYearly;
+
+  /// No description provided for @takeoverInterestNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest-free'**
+  String get takeoverInterestNone;
+
+  /// No description provided for @takeoverInterestFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed rate'**
+  String get takeoverInterestFixed;
+
+  /// No description provided for @takeoverInterestVariable.
+  ///
+  /// In en, this message translates to:
+  /// **'Variable rate'**
+  String get takeoverInterestVariable;
+
+  /// No description provided for @takeoverUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown / to be confirmed'**
+  String get takeoverUnknown;
+
+  /// No description provided for @takeoverNotChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet checked with provider'**
+  String get takeoverNotChecked;
+
+  /// No description provided for @takeoverConditional.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed subject to provider conditions'**
+  String get takeoverConditional;
+
+  /// No description provided for @takeoverWrittenApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Written permission available'**
+  String get takeoverWrittenApproval;
+
+  /// No description provided for @takeoverNotPermitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer not allowed'**
+  String get takeoverNotPermitted;
+
+  /// No description provided for @takeoverBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get takeoverBuyer;
+
+  /// No description provided for @takeoverSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller'**
+  String get takeoverSeller;
+
+  /// No description provided for @takeoverShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared by buyer and seller'**
+  String get takeoverShared;
+
+  /// No description provided for @takeoverMonthsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{months} months'**
+  String takeoverMonthsValue(int months);
+
+  /// No description provided for @takeoverToSellerValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} to seller'**
+  String takeoverToSellerValue(String amount);
+
+  /// No description provided for @takeoverPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} combined'**
+  String takeoverPriceLabel(String amount);
+
+  /// No description provided for @takeoverPaymentValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} · {frequency}'**
+  String takeoverPaymentValue(String amount, String frequency);
+
+  /// No description provided for @takeoverBuyerTransferFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer fee'**
+  String get takeoverBuyerTransferFee;
+
+  /// No description provided for @takeoverBuyerArrears.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue payments and penalties'**
+  String get takeoverBuyerArrears;
+
+  /// No description provided for @adminEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your admin email'**
+  String get adminEmailTitle;
+
+  /// No description provided for @adminEmailWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password was accepted. Open Gmail and tap Open Tilomnov in the sign-in email to finish signing in. The link expires in 10 minutes.'**
+  String get adminEmailWaiting;
+
+  /// No description provided for @adminEmailVerifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying your sign-in link...'**
+  String get adminEmailVerifying;
+
+  /// No description provided for @adminEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This sign-in link could not be verified. It may be expired or already used, or the connection failed. Please sign in again to request a new email.'**
+  String get adminEmailInvalid;
+
+  /// No description provided for @adminEmailBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to login'**
+  String get adminEmailBack;
+
+  /// No description provided for @advertisementLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement'**
+  String get advertisementLabel;
+
+  /// No description provided for @themeLiquidGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'Liquid Glass'**
+  String get themeLiquidGlass;
+
+  /// No description provided for @themeMinimalistic.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimalistic'**
+  String get themeMinimalistic;
+
+  /// No description provided for @planAnnualOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual · 2 months free'**
+  String get planAnnualOffer;
+
+  /// No description provided for @paymentAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'12 months'**
+  String get paymentAnnual;
+
+  /// No description provided for @planPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'/ year'**
+  String get planPerYear;
+
+  /// No description provided for @planExpiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Access until'**
+  String get planExpiryDate;
+
+  /// No description provided for @planManualRenewal.
+  ///
+  /// In en, this message translates to:
+  /// **'One payment only. No automatic renewal. Renew manually at the displayed plan price when this period ends.'**
+  String get planManualRenewal;
+
+  /// No description provided for @paymentOneTimeDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days · manual renewal'**
+  String get paymentOneTimeDuration;
+
+  /// No description provided for @authRecoveryEmailOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Password recovery uses the email linked to your account. If you signed up with Google, sign in with Google. Add an email in Account Security so you can recover a forgotten password.'**
+  String get authRecoveryEmailOnly;
+
+  /// No description provided for @propertyAddPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Add another phone number'**
+  String get propertyAddPhone;
+
+  /// No description provided for @propertyAdditionalPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional phone number'**
+  String get propertyAdditionalPhone;
+
+  /// No description provided for @propertyRemovePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove phone number'**
+  String get propertyRemovePhone;
+
+  /// No description provided for @searchApproximateArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Approximate search area'**
+  String get searchApproximateArea;
+
+  /// No description provided for @authRecoveryEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email for password recovery. Your phone number is for contact only.'**
+  String get authRecoveryEmailHint;
+
+  /// No description provided for @paymentEstimatedExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated expiry'**
+  String get paymentEstimatedExpiry;
+
+  /// No description provided for @paymentRenewalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal for another 30 days'**
+  String get paymentRenewalPrice;
 }
 
 class _AppLocalizationsDelegate

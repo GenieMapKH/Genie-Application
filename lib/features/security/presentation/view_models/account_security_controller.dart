@@ -89,15 +89,20 @@ class AccountSecurityController {
   Future<AccountActionResult> addEmail({
     required String email,
     required String password,
+    required String emailProof,
   }) {
     return _attempt(
       'add email',
       () => _repository.addEmail(
         email: email.trim().toLowerCase(),
         password: password,
+        emailProof: emailProof,
       ),
     );
   }
+
+  Future<AccountActionResult> changePhone(String phone, IdentityProof proof) =>
+      _attempt('verify phone', () => _repository.changePhone(phone, proof));
 
   /// Asks the server to confirm the account password in [proof]. With
   /// [AccountActionResult.done] comes the token that stands in for a

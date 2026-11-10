@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/core/storage/kept_copy_store.dart';
+import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 import 'package:tilomnov/features/chat/models/chat_participant.dart';
@@ -23,8 +25,17 @@ class ChatRepository {
   /// client sends no session token to the storage host.
   final Dio storageDio;
 
-  ChatRepository({required this.dio, Dio? storageDio})
-    : storageDio = storageDio ?? Dio();
+  /// The first page of the main list, still encrypted as the server sent
+  /// it, kept for the signed-in account by default ([keptFirstPage]).
+  final KeptCopyStore _kept;
+  static const _keptName = 'chat.conversations.first_page.v1';
+
+  ChatRepository({
+    required this.dio,
+    Dio? storageDio,
+    Future<String?> Function()? accountId,
+  }) : storageDio = storageDio ?? Dio(),
+       _kept = KeptCopyStore(account: accountId ?? AuthStorage.signedInUserId);
 
   /// Conversations per page of the chat list.
   static const conversationPageSize = 30;
@@ -48,14 +59,21 @@ class ChatRepository {
       },
     );
     final data = _asJson(response.data);
-    return (
-      items: (data['items'] as List)
-          .map((json) => ChatConversation.fromJson(_asJson(json)))
-          .toList(),
-      nextCursor: data['nextCursor'] as String?,
-      unreadTotal: data['unreadTotal'] as int? ?? 0,
-    );
+    if (!archived && cursor == null) await _kept.write(_keptName, data);
+    return _conversationPageOf(data);
   }
+
+  /// The first page of the main list as last read on this device, or null.
+  Future<ConversationPage?> keptFirstPage() =>
+      _kept.read(_keptName, parse: _conversationPageOf);
+
+  ConversationPage _conversationPageOf(Map<String, dynamic> data) => (
+    items: (data['items'] as List)
+        .map((json) => ChatConversation.fromJson(_asJson(json)))
+        .toList(),
+    nextCursor: data['nextCursor'] as String?,
+    unreadTotal: data['unreadTotal'] as int? ?? 0,
+  );
 
   /// The newest messages exchanged with [participantId], oldest first.
   Future<List<EncryptedMessage>> fetchMessages(String participantId) async {

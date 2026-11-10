@@ -1,31 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_visibility.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// Lets the owner pick Public, Draft or Sold for a listing now of [status].
-/// Resolves to the choice, or null when dismissed. A choice the server would
-/// refuse is shown disabled, with why.
-class PropertyVisibilitySheet extends StatelessWidget {
+/// Resolves after saving the choice, or null when dismissed. Unavailable
+/// choices are shown disabled, with why.
+class PropertyVisibilitySheet extends StatefulWidget {
   final String status;
+  final Future<void> Function(PropertyVisibility) onChanged;
+  final Future<bool> Function()? onPaymentRequired;
 
-  const PropertyVisibilitySheet({super.key, required this.status});
+  const PropertyVisibilitySheet({
+    super.key,
+    required this.status,
+    required this.onChanged,
+    this.onPaymentRequired,
+  });
 
-  static Future<PropertyVisibility?> show(BuildContext context, String status) {
+  static Future<PropertyVisibility?> show(
+    BuildContext context,
+    String status, {
+    required Future<void> Function(PropertyVisibility) onChanged,
+    Future<bool> Function()? onPaymentRequired,
+  }) {
     return showModalBottomSheet<PropertyVisibility>(
       context: context,
       useRootNavigator: true,
+      enableDrag: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => PropertyVisibilitySheet(status: status),
+      builder: (_) => PropertyVisibilitySheet(
+        status: status,
+        onChanged: onChanged,
+        onPaymentRequired: onPaymentRequired,
+      ),
     );
   }
 
   @override
+  State<PropertyVisibilitySheet> createState() =>
+      _PropertyVisibilitySheetState();
+}
+
+class _PropertyVisibilitySheetState extends State<PropertyVisibilitySheet> {
+  PropertyVisibility? _saving;
+  Object? _error;
+
+  Future<void> _save(PropertyVisibility value) async {
+    if (_saving != null) return;
+    setState(() {
+      _saving = value;
+      _error = null;
+    });
+    try {
+      try {
+        await widget.onChanged(value);
+      } on DioException catch (error) {
+        if (error.response?.statusCode != 402 ||
+            widget.onPaymentRequired == null) {
+          rethrow;
+        }
+        if (!mounted) return;
+        if (!await widget.onPaymentRequired!()) {
+          if (mounted) setState(() => _saving = null);
+          return;
+        }
+      }
+      if (!mounted) return;
+      setState(() => _saving = null);
+      Navigator.of(context).pop(value);
+    } catch (error, stack) {
+      AppLogger.error('Changing listing visibility failed', error, stack);
+      if (!mounted) return;
+      setState(() {
+        _saving = null;
+        _error = error;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final status = widget.status;
     final current = PropertyVisibility.of(status);
     final l10n = context.l10n;
 
@@ -45,7 +108,7 @@ class PropertyVisibilitySheet extends StatelessWidget {
           : context.colors.textHint;
 
       return ListTile(
-        enabled: allowed,
+        enabled: allowed && _saving == null,
         leading: Icon(icon, color: isCurrent ? context.colors.accent : color),
         title: Text(
           title,
@@ -62,50 +125,75 @@ class PropertyVisibilitySheet extends StatelessWidget {
             color: context.colors.textMuted,
           ),
         ),
-        trailing: isCurrent
+        trailing: _saving == value
+            ? const SizedBox.square(
+                dimension: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : isCurrent
             ? Icon(Icons.check_circle, color: context.colors.accent)
             : null,
-        onTap: () => Navigator.of(context).pop(value),
+        onTap: () => _save(value),
       );
     }
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: Text(
-                l10n.propertyVisibility,
-                style: GoogleFonts.inter(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.textPrimary,
+    return PopScope(
+      canPop: _saving == null,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                child: Text(
+                  l10n.propertyVisibility,
+                  style: GoogleFonts.inter(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.textPrimary,
+                  ),
                 ),
               ),
-            ),
-            option(
-              PropertyVisibility.public,
-              Icons.public,
-              l10n.propertyVisibilityPublic,
-              l10n.propertyVisibilityPublicHint,
-            ),
-            option(
-              PropertyVisibility.draft,
-              Icons.lock_outline,
-              l10n.propertyVisibilityDraft,
-              l10n.propertyVisibilityDraftHint,
-            ),
-            option(
-              PropertyVisibility.sold,
-              Icons.sell_outlined,
-              l10n.propertyVisibilitySold,
-              l10n.propertyVisibilitySoldHint,
-            ),
-          ],
+              option(
+                PropertyVisibility.public,
+                Icons.public,
+                l10n.propertyVisibilityPublic,
+                l10n.propertyVisibilityPublicHint,
+              ),
+              option(
+                PropertyVisibility.draft,
+                Icons.lock_outline,
+                l10n.propertyVisibilityDraft,
+                l10n.propertyVisibilityDraftHint,
+              ),
+              option(
+                PropertyVisibility.sold,
+                Icons.sell_outlined,
+                l10n.propertyVisibilitySold,
+                l10n.propertyVisibilitySoldHint,
+              ),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Text(
+                    failureMessage(
+                      l10n,
+                      error: _error,
+                      fallback: l10n.propertyCouldNotChangeVisibility,
+                    ),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

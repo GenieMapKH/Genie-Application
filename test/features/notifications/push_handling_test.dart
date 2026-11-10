@@ -11,6 +11,29 @@ Future<void> _settle() => Future<void>.delayed(Duration.zero);
 
 void main() {
   group('reading a push', () {
+    test(
+      'expiry reminders distinguish subscriptions from individual posts',
+      () {
+        final listing = PushMessage.fromData({
+          'type': 'publishing_expiry',
+          'kind': 'listing',
+          'propertyId': 'p1',
+        });
+        final subscription = PushMessage.fromData({
+          'type': 'publishing_expiry',
+          'kind': 'subscription',
+        });
+        expect((listing as PublishingExpiryPush).propertyId, 'p1');
+        expect((subscription as PublishingExpiryPush).propertyId, isNull);
+        expect(
+          PushMessage.fromData({
+            'type': 'publishing_expiry',
+            'kind': 'listing',
+          }),
+          isA<UnknownPush>(),
+        );
+      },
+    );
     test('a chat message names who sent it', () {
       final push = PushMessage.fromData({
         'type': 'chat_message',
@@ -272,6 +295,24 @@ void main() {
       expect(system.shown.single.channel, NotificationChannel.chatMessages);
       expect(system.shown.single.tag, 'chat:alice');
     });
+
+    test(
+      'also when the server sent its generic notification with it',
+      () async {
+        await controller.start();
+
+        messaging.foreground.add((
+          data: sealedChat.data,
+          title: 'Alice',
+          body: 'New message',
+        ));
+        await _settle();
+        await _settle();
+
+        expect(written.single.ciphertext, 'sealed');
+        expect(system.shown.single.body, 'see you at 5');
+      },
+    );
 
     test('its sealed text is not kept in the notification', () async {
       await controller.start();

@@ -9,6 +9,13 @@ enum PropertyVisibility {
   /// Status 'Sold': taken off the map.
   sold;
 
+  /// The listing status this visibility stands for.
+  String get status => switch (this) {
+    public => 'Active',
+    draft => 'Draft',
+    sold => 'Sold',
+  };
+
   /// The visibility of a listing [status]; null for one in between
   /// (being paid for, expired).
   static PropertyVisibility? of(String status) => switch (status) {

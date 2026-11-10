@@ -101,25 +101,29 @@ class SettingsRow extends StatelessWidget {
           children: [
             Icon(icon, size: 22, color: emphasis ?? colors.textMuted),
             const SizedBox(width: 14),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: emphasis ?? colors.textPrimary,
+            Expanded(
+              flex: 2,
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: emphasis ?? colors.textPrimary,
+                ),
               ),
             ),
             const SizedBox(width: 12),
             // The value gives way to the title: it shrinks and ends in "…".
-            Expanded(
-              child: Text(
-                value ?? '',
-                textAlign: TextAlign.end,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 14, color: colors.textMuted),
+            if (value != null && value!.isNotEmpty)
+              Flexible(
+                child: Text(
+                  value ?? '',
+                  textAlign: TextAlign.end,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14, color: colors.textMuted),
+                ),
               ),
-            ),
             if (onTap != null && !isAction) ...[
               const SizedBox(width: 8),
               Icon(Icons.chevron_right, size: 20, color: colors.iconSubtle),

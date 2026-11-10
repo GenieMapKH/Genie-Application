@@ -12,8 +12,7 @@ import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/owner_display_name.dart';
 
 /// App-bar title of a conversation: who it is with and whether they are
-/// online. Tapping it opens the participant sheet: their profile (with a way
-/// to their full profile page) and the security code, as two tabs.
+/// online. Tapping it opens their profile summary and safety menu.
 class ChatConversationHeader extends ConsumerWidget {
   final String participantName;
 
@@ -29,12 +28,11 @@ class ChatConversationHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chat = this.chat;
-    final avatarUrl = chat == null
+    final profile = chat == null
         ? null
         : ref
               .watch(chatParticipantProfileProvider(chat.participantId))
-              .valueOrNull
-              ?.avatarUrl;
+              .valueOrNull;
 
     return InkWell(
       borderRadius: BorderRadius.circular(8),
@@ -50,7 +48,12 @@ class ChatConversationHeader extends ConsumerWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            UserAvatar(name: participantName, avatarUrl: avatarUrl, radius: 18),
+            UserAvatar(
+              name: participantName,
+              avatarUrl: profile?.avatarUrl,
+              radius: 18,
+              isAdmin: profile?.isAdmin ?? false,
+            ),
             const SizedBox(width: 10),
             Flexible(
               child: Column(

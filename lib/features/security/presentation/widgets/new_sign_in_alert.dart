@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -71,15 +72,16 @@ class _NewSignInAlertState extends ConsumerState<NewSignInAlert>
 
   /// True when the user wants to review the devices.
   Future<bool?> _show(List<DeviceSession> devices) {
-    return showDialog<bool>(
-      context: context,
+    return AppDialog.show<bool>(
+      context,
       useRootNavigator: true,
       barrierDismissible: false,
       builder: (dialogContext) {
         final l10n = dialogContext.l10n;
         final colors = dialogContext.colors;
-        return AlertDialog(
-          icon: Icon(Icons.gpp_maybe_outlined, color: colors.danger, size: 32),
+        return AppDialog.custom(
+          icon: Icons.gpp_maybe_outlined,
+          tone: AppDialogTone.danger,
           title: Text(l10n.newSignInTitle),
           content: SingleChildScrollView(
             child: Column(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/layout/legal_text.dart';
 
 /// Terms of Service screen for Tilomnov, for reading. Ticking the box on
 /// the sign-up form is enough to agree; the box here does the same, without
@@ -42,14 +45,22 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
               ),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: context.colors.textPrimary,
-                      size: 24,
+                  if (GlassScope.of(context))
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: GlassIconButton.back(
+                        onPressed: () => Navigator.of(context).pop(_isAgreed),
+                      ),
+                    )
+                  else
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: context.colors.textPrimary,
+                        size: 24,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(_isAgreed),
                     ),
-                    onPressed: () => Navigator.of(context).pop(_isAgreed),
-                  ),
                 ],
               ),
             ),
@@ -81,53 +92,51 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                     ),
                     const SizedBox(height: 20),
 
-                    _buildParagraph(context.l10n.termsWelcome),
+                    LegalParagraph(context.l10n.termsWelcome),
                     const SizedBox(height: 12),
-                    _buildParagraph(context.l10n.termsDisagree),
+                    LegalParagraph(context.l10n.termsDisagree),
                     const SizedBox(height: 20),
 
                     // Section 1
-                    _buildSectionHeader(context.l10n.termsAboutTitle),
-                    _buildParagraph(context.l10n.termsAboutIntro),
+                    LegalSectionHeader(context.l10n.termsAboutTitle),
+                    LegalParagraph(context.l10n.termsAboutIntro),
                     const SizedBox(height: 8),
-                    _buildBulletPoint(context.l10n.termsAboutView),
-                    _buildBulletPoint(context.l10n.termsAboutManage),
-                    _buildBulletPoint(context.l10n.termsAboutConnect),
-                    _buildBulletPoint(context.l10n.termsAboutTools),
+                    LegalBullet(context.l10n.termsAboutView),
+                    LegalBullet(context.l10n.termsAboutManage),
+                    LegalBullet(context.l10n.termsAboutConnect),
+                    LegalBullet(context.l10n.termsAboutTools),
                     const SizedBox(height: 12),
-                    _buildParagraph(context.l10n.termsAboutPlatformOnly),
+                    LegalParagraph(context.l10n.termsAboutPlatformOnly),
                     const SizedBox(height: 20),
 
                     // Section 2
-                    _buildSectionHeader(context.l10n.termsAccountsTitle),
-                    _buildParagraph(context.l10n.termsAccountsIntro),
+                    LegalSectionHeader(context.l10n.termsAccountsTitle),
+                    LegalParagraph(context.l10n.termsAccountsIntro),
                     const SizedBox(height: 8),
-                    _buildBulletPoint(context.l10n.termsAccountsAccurate),
-                    _buildBulletPoint(context.l10n.termsAccountsConfidential),
-                    _buildBulletPoint(
-                      context.l10n.termsAccountsNoImpersonation,
-                    ),
+                    LegalBullet(context.l10n.termsAccountsAccurate),
+                    LegalBullet(context.l10n.termsAccountsConfidential),
+                    LegalBullet(context.l10n.termsAccountsNoImpersonation),
                     const SizedBox(height: 12),
-                    _buildParagraph(context.l10n.termsAccountsSuspend),
+                    LegalParagraph(context.l10n.termsAccountsSuspend),
                     const SizedBox(height: 20),
 
                     // Section 3
-                    _buildSectionHeader(context.l10n.termsListingsTitle),
-                    _buildParagraph(context.l10n.termsListingsIntro),
+                    LegalSectionHeader(context.l10n.termsListingsTitle),
+                    LegalParagraph(context.l10n.termsListingsIntro),
                     const SizedBox(height: 8),
-                    _buildBulletPoint(context.l10n.termsListingsTruthful),
-                    _buildBulletPoint(context.l10n.termsListingsRight),
-                    _buildBulletPoint(context.l10n.termsListingsCoordinates),
+                    LegalBullet(context.l10n.termsListingsTruthful),
+                    LegalBullet(context.l10n.termsListingsRight),
+                    LegalBullet(context.l10n.termsListingsCoordinates),
                     const SizedBox(height: 12),
-                    _buildParagraph(context.l10n.termsListingsNotResponsible),
+                    LegalParagraph(context.l10n.termsListingsNotResponsible),
                     const SizedBox(height: 20),
 
                     // Section 4
-                    _buildSectionHeader(context.l10n.termsMapTitle),
-                    _buildParagraph(context.l10n.termsMapIntro),
+                    LegalSectionHeader(context.l10n.termsMapTitle),
+                    LegalParagraph(context.l10n.termsMapIntro),
                     const SizedBox(height: 8),
-                    _buildBulletPoint(context.l10n.termsMapGuidanceOnly),
-                    _buildBulletPoint(context.l10n.termsMapVerify),
+                    LegalBullet(context.l10n.termsMapGuidanceOnly),
+                    LegalBullet(context.l10n.termsMapVerify),
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -190,62 +199,6 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        title,
-        style: GoogleFonts.inter(
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-          color: context.colors.textPrimary,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildParagraph(String text) {
-    return Text(
-      text,
-      style: GoogleFonts.inter(
-        fontSize: 13.5,
-        fontWeight: FontWeight.w400,
-        color: context.colors.textSecondary,
-        height: 1.5,
-      ),
-    );
-  }
-
-  Widget _buildBulletPoint(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0, bottom: 6.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 7.0, right: 8.0),
-            child: Icon(
-              Icons.circle,
-              size: 4.5,
-              color: context.colors.textSecondary,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              text,
-              style: GoogleFonts.inter(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w400,
-                color: context.colors.textSecondary,
-                height: 1.45,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

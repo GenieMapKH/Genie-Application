@@ -9,6 +9,22 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get callInProgress => 'Call in progress';
+
+  @override
+  String get chatManagedSecurity =>
+      'Messages are encrypted when sent and stored.';
+
+  @override
+  String get callMinimize => 'Minimize call';
+
+  @override
+  String get callReturn => 'Return to call';
+
+  @override
+  String get propertyUnavailable => 'Unavailable';
+
+  @override
   String get commonCancel => 'Cancel';
 
   @override
@@ -32,18 +48,51 @@ class AppLocalizationsEn extends AppLocalizations {
       'Too many attempts. Please try again later.';
 
   @override
-  String get commonOffline =>
-      'You are offline. Connect to the internet for updates.';
+  String get commonOffline => 'You’re offline. Connect for updates.';
 
   @override
-  String get offlineDialogTitle => 'No internet connection';
+  String get connectionOffline => 'No internet connection';
 
   @override
-  String get offlineDialogMessage =>
-      'Check your Wi-Fi or mobile data. You can keep browsing what is saved on this phone.';
+  String get connectionWaiting => 'Waiting for network…';
 
   @override
-  String get offlineKeepBrowsing => 'Keep browsing';
+  String get connectionWeak => 'Slow connection';
+
+  @override
+  String get connectionWeakDetail => 'Loading may take longer';
+
+  @override
+  String get connectionRestored => 'Back online';
+
+  @override
+  String get loadFailureOfflineTitle => 'No internet connection';
+
+  @override
+  String get loadFailureOfflineBody =>
+      'Check your internet. This page will reload when you reconnect.';
+
+  @override
+  String get loadFailureSlowTitle => 'Your connection is too slow';
+
+  @override
+  String get loadFailureSlowBody =>
+      'Loading took too long. Check your connection and retry.';
+
+  @override
+  String get loadFailureServerBody =>
+      'Something went wrong. Try again shortly.';
+
+  @override
+  String get failureOffline =>
+      'No internet connection. Check your Wi-Fi or mobile data and try again.';
+
+  @override
+  String get failureSlow =>
+      'Your connection is too slow. Move to a better spot and try again.';
+
+  @override
+  String get failureServer => 'Something went wrong. Try again shortly.';
 
   @override
   String get navExplore => 'Explore';
@@ -67,8 +116,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginRequiredTitle => 'Account Required';
 
   @override
-  String get loginRequiredMessage =>
-      'Please log in or sign up to access this feature.';
+  String get loginRequiredMessage => 'Log in or sign up to continue.';
 
   @override
   String get loginRequiredAction => 'Login / Sign Up';
@@ -107,9 +155,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountSubscription => 'Subscription Plan';
 
   @override
-  String get accountSubscriptionFree => 'Free';
-
-  @override
   String get accountSignOut => 'Sign out';
 
   @override
@@ -140,7 +185,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageTitle => 'Language';
 
   @override
-  String get glassNavigationTitle => 'Glass navigation';
+  String get glassNavigationTitle => 'Navigation theme';
 
   @override
   String get glassNavigationSubtitle => 'Match your phone\'s see-through bars';
@@ -162,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personalInfoUsernameHelp =>
-      'Your username is yours alone and is how people find you. Use 3 to 30 lowercase letters, numbers, \"_\" or \".\".';
+      'People can find you by username. Use 3–30 lowercase letters, numbers, \"_\" or \".\".';
 
   @override
   String get personalInfoUsernameInvalid =>
@@ -175,8 +220,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personalInfoName => 'Name';
 
   @override
-  String get personalInfoNameHelp =>
-      'The name other people see. It does not have to be unique, and you can change it any time.';
+  String get personalInfoNameHelp => 'The name people see. Change it anytime.';
 
   @override
   String get personalInfoFirstName => 'First name';
@@ -200,8 +244,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personalInfoPhone => 'Phone number';
 
   @override
-  String get personalInfoPhoneHelp =>
-      'Used for signing in and so buyers can reach you.';
+  String get personalInfoPhoneHelp => 'For signing in and calls from buyers.';
 
   @override
   String get personalInfoPhoneTaken =>
@@ -226,19 +269,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityTitle => 'Security';
 
   @override
-  String get securitySectionEncryption => 'End-to-end encryption';
-
-  @override
   String get securitySectionSignIn => 'Sign-in';
 
   @override
   String get securitySectionAccount => 'Account';
-
-  @override
-  String get securityChangePin => 'Change chat PIN';
-
-  @override
-  String get securityResetKeys => 'Reset encryption keys';
 
   @override
   String get securityChangePassword => 'Change password';
@@ -248,77 +282,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get securityRemoveAccount => 'Deactivate or delete account';
-
-  @override
-  String get pinHint => '6-digit PIN';
-
-  @override
-  String get pinSubmit => 'Submit';
-
-  @override
-  String get pinIncomplete => 'Enter all 6 digits.';
-
-  @override
-  String get pinTooGuessable => 'Too easy to guess. Choose another PIN.';
-
-  @override
-  String get pinEnterCurrentTitle => 'Enter current PIN';
-
-  @override
-  String get pinEnterCurrentHelp =>
-      'Enter your current 6-digit PIN to confirm it is you.';
-
-  @override
-  String get pinEnterNewTitle => 'Enter new PIN';
-
-  @override
-  String get pinEnterNewHelp => 'The new PIN will protect your existing keys.';
-
-  @override
-  String get pinForNewKeysTitle => 'PIN for the new keys';
-
-  @override
-  String get pinForNewKeysHelp =>
-      'This PIN will protect your new keys. You need it to read your chats on another device.';
-
-  @override
-  String get pinChanged => 'Chat PIN changed.';
-
-  @override
-  String get pinNoBackup => 'You have no chat PIN yet.';
-
-  @override
-  String get pinLocked =>
-      'Too many wrong PINs. Your PIN is locked for a while; try again later.';
-
-  @override
-  String get pinFetchFailed =>
-      'Could not reach the key backup. Check your connection.';
-
-  @override
-  String get pinWrong =>
-      'Incorrect PIN. After 5 wrong tries your PIN locks for a while.';
-
-  @override
-  String get pinSaveFailed =>
-      'Could not save the new backup. Nothing was changed.';
-
-  @override
-  String get resetKeysConfirmTitle => 'Reset encryption keys?';
-
-  @override
-  String get resetKeysConfirmMessage =>
-      'New keys will be created and you will lose access to all earlier chat history. This cannot be undone.\n\nYou will be asked for your current chat PIN first.';
-
-  @override
-  String get resetKeysConfirmAction => 'Reset keys';
-
-  @override
-  String get resetKeysDone => 'Encryption keys reset.';
-
-  @override
-  String get resetKeysFailed =>
-      'Could not reset the keys. Nothing was changed.';
 
   @override
   String get passwordCurrent => 'Current password';
@@ -351,11 +314,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordIntro =>
-      'After the change, every other device signed in to your account will be signed out.';
+      'Changing your password signs out all other devices.';
 
   @override
   String get devicesIntro =>
-      'These devices are signed in to your account. Sign out any you do not recognise, then change your password.';
+      'Don’t recognise a device? Sign it out and change your password.';
 
   @override
   String get devicesLoadFailed => 'Could not load your devices';
@@ -446,7 +409,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeAccountDeactivateBody =>
-      'Your profile and listings are hidden and you are signed out everywhere. Nothing is deleted: sign in again to bring it all back.';
+      'Hide your profile and listings, and sign out everywhere. Sign in to restore them.';
 
   @override
   String get removeAccountDeactivateAction => 'Deactivate account';
@@ -456,7 +419,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeAccountDeleteBody =>
-      'Your account, listings, saved properties and chats are permanently deleted. This cannot be undone.';
+      'Permanently delete your account, listings, saved properties and chats. This cannot be undone.';
 
   @override
   String get removeAccountDeleteAction => 'Delete account';
@@ -487,7 +450,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get identityConfirmGoogleHelp =>
-      'You sign in with Google. Confirm with your Google account to continue.';
+      'Confirm with your Google account to continue.';
 
   @override
   String get identityConfirmGoogleFailed =>
@@ -511,7 +474,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authEnterYourEmailAddressToGet =>
-      'Enter your email address to get the password reset link.';
+      'Enter your email to reset your password.';
 
   @override
   String get authPasswordReset => 'Password Reset';
@@ -533,8 +496,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPhoneNumber => 'Phone Number';
 
   @override
+  String get authGetCode => 'Get code';
+
+  @override
+  String get authPhoneVerified => 'Phone number verified';
+
+  @override
+  String get authPhoneVerificationExpired =>
+      'Phone verification expired. Get a new code.';
+
+  @override
+  String get authPhoneVerificationUnavailable =>
+      'We couldn\'t send the SMS code. Please try again later.';
+
+  @override
+  String get authVerifyPhoneFirst =>
+      'Verify your phone number before signing up.';
+
+  @override
   String get authLoginFailedPleaseCheckYourCredentials =>
-      'Login failed. Please check your credentials and try again.';
+      'Could not sign in. Check your details and retry.';
 
   @override
   String get authSuccessfullyLoggedIn => 'Successfully logged in!';
@@ -544,7 +525,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authEnterTheVerificationCodeWeJust =>
-      'Enter the verification code we just sent to your email.';
+      'Enter the code sent to your email.';
 
   @override
   String get authVerify => 'Verify';
@@ -563,7 +544,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authEnterYourNewPasswordTwiceBelow =>
-      'Enter your new password twice below to reset a new password';
+      'Enter your new password twice.';
 
   @override
   String get authEnterNewPassword => 'Enter new password';
@@ -573,7 +554,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authPasswordResetSuccessfullyPleaseLogIn =>
-      'Password reset successfully! Please log in with your new password.';
+      'Password reset. Sign in with your new password.';
 
   @override
   String get authWelcomeToTheApp => 'Welcome to the app';
@@ -645,7 +626,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatArchivedChatsHint =>
-      'An archived chat comes back to your list when a new message arrives.';
+      'New messages move chats back to your inbox.';
 
   @override
   String get chatArchive => 'Archive';
@@ -670,7 +651,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String chatDeleteForMeExplained(String name) {
-    return 'It is removed from your chats only. $name still has it.';
+    return 'Only deleted for you. $name keeps the chat.';
   }
 
   @override
@@ -680,7 +661,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatDeleteForBothExplained =>
-      'Every message and photo is deleted for both of you. This cannot be undone.';
+      'Delete all messages and photos for both of you. This cannot be undone.';
 
   @override
   String get chatArchivedDone => 'Chat archived';
@@ -696,7 +677,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatActionFailed =>
-      'That did not work. Check your connection and try again.';
+      'Could not do that. Check your connection and retry.';
 
   @override
   String get chatThisIsYourOwnAccount => 'This is your own account.';
@@ -706,15 +687,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign in to chat, or check your connection.';
 
   @override
-  String get chatMessagesAreEndToEndEncrypted =>
-      'Messages are end-to-end encrypted. Say hello!';
-
-  @override
   String get chatNoChatsYet => 'No chats yet!';
 
   @override
   String get chatMessageAPropertyOwnerToStart =>
-      'Message a property owner to start a conversation.';
+      'Message an owner to start chatting.';
 
   @override
   String get chatCouldNotLoadYourChats => 'Could not load your chats.';
@@ -729,28 +706,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatMessage => 'Message';
 
   @override
-  String get chatThisIsNormalIfTheyReinstalled =>
-      'This is normal if they reinstalled the app or reset their keys. If you did not expect it, someone may be trying to read your messages: accept the new key, then compare the security code with them before sharing anything private.';
-
-  @override
-  String get chatSecurityCode => 'Security code';
-
-  @override
-  String get chatAcceptNewKey => 'Accept new key';
-
-  @override
-  String get chatAvailableOnceYouHaveBothSet =>
-      'Available once you have both set up secure chat.';
-
-  @override
-  String get chatTheSecurityCodeIsUnavailable =>
-      'The security code is unavailable.';
-
-  @override
   String get homeCoordinates => 'Coordinates';
 
   @override
   String get homeDraw => 'Draw';
+
+  @override
+  String get homeAddPoint => 'Add point';
 
   @override
   String get homeSearchByAreaRoadVillage => 'Search by area, road, village...';
@@ -768,7 +730,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homePleaseFillBothXAndY =>
-      'Please fill both X and Y coordinates for a row, or leave both empty.';
+      'Enter both X and Y, or leave both blank.';
 
   @override
   String get homeCoordinatesMustBeValidNumbers =>
@@ -776,7 +738,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homePleaseEnterAtLeast3Coordinates =>
-      'Please enter at least 3 coordinates to form a property.';
+      'Enter at least 3 coordinates.';
 
   @override
   String get homePreview => 'Preview';
@@ -796,7 +758,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeUseUtmFromALandDocument =>
-      'Use UTM from a land document or enter coordinates manually';
+      'Use UTM coordinates from your land document or enter them.';
 
   @override
   String get homeCrsWgs84UtmZone48p => 'CRS: WGS84 / UTM Zone 48P';
@@ -892,7 +854,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertyTapTheHeartIconOnListings =>
-      'Tap the heart icon on listings to save them for later.';
+      'Tap the heart to save a listing.';
 
   @override
   String get propertySavedProperties => 'Saved Properties';
@@ -902,7 +864,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertyAddAtLeast3ClearPhotos =>
-      'Add at least 3 clear photos of the property and surrounding area';
+      'Add at least 3 clear property photos.';
 
   @override
   String get propertyOpenCamera => 'Open camera';
@@ -911,8 +873,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyCallNow => 'Call Now';
 
   @override
+  String get propertyCallInApp => 'Call in Tilomnov';
+
+  @override
+  String get propertyCallPhone => 'Use phone dialer';
+
+  @override
+  String get callFullScreenTitle => 'Full-screen incoming calls';
+
+  @override
+  String get callFullScreenHelp =>
+      'Allow incoming calls to appear over the lock screen. Android may show a call banner while your phone is unlocked.';
+
+  @override
+  String get callFullScreenFailed =>
+      'Could not open full-screen call settings.';
+
+  @override
   String get propertyNoPhoneNumber =>
-      'No phone number was shared for this listing. Try chatting with the owner instead.';
+      'No phone number. Message the owner instead.';
 
   @override
   String get propertyCallFailed => 'The phone app could not be opened.';
@@ -1013,7 +992,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get insightsEmptyHint =>
-      'Nobody has opened this listing yet. Publishing it, good photos and sharing its link bring the first viewers.';
+      'No views yet. Share your listing to reach more people.';
 
   @override
   String get propertyShareThisProperty => 'Share This Property';
@@ -1070,15 +1049,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertyShareNotPublicDraft =>
-      'Only you can see this listing until it is published. Publish it to share its link and QR code.';
+      'Publish this listing to share its link or QR code.';
 
   @override
   String get propertyShareNotPublicPending =>
-      'This listing goes public once its payment is complete. You can share it then.';
+      'Complete payment before sharing this listing.';
 
   @override
   String get propertyShareNotPublicEnded =>
-      'This listing is no longer public, so its link and QR code cannot be shared.';
+      'This listing is no longer public and can’t be shared.';
 
   @override
   String get propertyTitleType => 'Title Type';
@@ -1275,11 +1254,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyPropertyDeleted => 'Property deleted';
 
   @override
-  String chatSecurityCodeExplanation(String name) {
-    return 'Messages are end-to-end encrypted. To be sure nobody is in between, compare this code with $name in person or on a call: it must be the same on both phones.';
-  }
-
-  @override
   String get commonContinue => 'Continue';
 
   @override
@@ -1290,17 +1264,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateRequiredMessage =>
-      'This version of Tilomnov no longer works with our servers. Please update the app from your app store to keep using it.';
-
-  @override
-  String get securityForgotPin => 'Forgot chat PIN';
+      'Update Tilomnov from your app store to keep using it.';
 
   @override
   String get securityCreatePassword => 'Create password';
 
   @override
   String get createPasswordIntro =>
-      'You sign in with Google, so this account has no password yet. Choose one, then confirm with your Google account. You can keep signing in with Google.';
+      'Set a password and confirm with Google. You can still sign in with Google.';
 
   @override
   String get createPasswordAction => 'Confirm with Google and create';
@@ -1309,54 +1280,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createPasswordDone => 'Password created.';
 
   @override
-  String get forgotPinTitle => 'Forgot your chat PIN?';
-
-  @override
-  String get forgotPinKeepsHistory =>
-      'This phone still has your chat keys, so nothing is lost. Confirm it is you with your account password, then choose a new PIN.';
-
-  @override
-  String get forgotPinLosesHistory =>
-      'This phone does not have your chat keys, and without the PIN they cannot be recovered. After you confirm with your account password and choose a new PIN, new keys are made and your earlier chat history can no longer be read. This cannot be undone.\n\nIf another of your phones can still open your chats, do this there instead to keep your history.';
-
-  @override
-  String get forgotPinNeedsPassword =>
-      'You sign in with Google, so create an account password first. It confirms it is you when you choose a new chat PIN.';
-
-  @override
-  String get pinForgotHint =>
-      'Forgot your PIN? Go to User > Security > Forgot chat PIN.';
-
-  @override
-  String get chatPinNeeded =>
-      'Enter your chat PIN to read and send messages on this phone.';
-
-  @override
   String get chatOpenFailed =>
       'Could not open this chat. Check your connection.';
 
   @override
-  String get pinSetUpHelp =>
-      'You will need this PIN to read your chats on a new phone. Choose one you will remember.';
-
-  @override
-  String get chatPinRestoreTitle => 'Enter your chat PIN';
-
-  @override
-  String get chatPinRestoreHelp =>
-      'Your chats are protected by your 6-digit chat PIN. Enter it to read them on this phone.';
-
-  @override
-  String get devicesImmediateNote =>
-      'A device you sign out is signed out immediately.';
+  String get devicesImmediateNote => 'Devices are signed out right away.';
 
   @override
   String get devicesTooNew =>
-      'This device signed in less than a day ago, so it cannot sign other devices out yet. Use a device you have been signed in on for longer.';
+      'Wait 24 hours after signing in to sign out other devices, or use an older device.';
 
   @override
   String devicesTooNewUntil(String when) {
-    return 'For your protection, a device can sign other devices out only after it has been signed in for a day. This device can from $when. Until then, use a device you have been signed in on for longer.';
+    return 'You can sign out other devices from $when. Until then, use a device signed in earlier.';
   }
 
   @override
@@ -1364,7 +1300,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newSignInMessage =>
-      'Another device signed in to your account. If this was not you, sign it out now and change your password.';
+      'New sign-in. Not you? Sign out that device and change your password.';
 
   @override
   String get newSignInWasMe => 'It was me';
@@ -1391,7 +1327,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountDeviceTooNew =>
-      'This device signed in less than a day ago, so to protect your account it cannot do this yet. Use a device you have been signed in on for longer, or try again tomorrow.';
+      'Wait 24 hours after signing in, or use a device signed in earlier.';
 
   @override
   String get personalInfoUsernameChecking => 'Checking…';
@@ -1405,8 +1341,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get mediaStillTooLarge =>
-      'This picture is still too large after compression. Please choose a smaller one.';
+  String get mediaStillTooLarge => 'Picture too large. Choose a smaller one.';
 
   @override
   String get mediaUnreadable =>
@@ -1431,8 +1366,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchIdleTitle => 'Find a place, a listing or a person';
 
   @override
-  String get searchIdleBody =>
-      'Type a road, village or district to see what is for sale there, or the name of an owner or agency.';
+  String get searchIdleBody => 'Search for a place, owner or agency.';
 
   @override
   String searchNoResultsTitle(String query) {
@@ -1499,12 +1433,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get searchAreaEmpty =>
-      'Nothing is listed here yet. Move the map or search a wider area.';
+  String get searchAreaEmpty => 'No listings here. Try a wider area.';
 
   @override
-  String get searchPersonEmpty =>
-      'This person has no published listings right now.';
+  String get searchPersonEmpty => 'No published listings yet.';
+
+  @override
+  String get searchViewProperty => 'View property';
 
   @override
   String get searchCloseResults => 'Close search results';
@@ -1564,11 +1499,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedTitle => 'Feed';
 
   @override
+  String get feedSubtitle => 'Fresh finds from people you follow';
+
+  @override
+  String get feedNewestFirst => 'Newest first';
+
+  @override
+  String get feedSortTop => 'Top (most saved)';
+
+  @override
+  String get feedListingDate => 'Listing date';
+
+  @override
+  String get feedAnyTime => 'Any time';
+
+  @override
+  String get feedLast7Days => 'Last 7 days';
+
+  @override
+  String get feedLast30Days => 'Last 30 days';
+
+  @override
+  String get feedChooseDates => 'Choose dates';
+
+  @override
+  String get feedPriceInvalid =>
+      'Enter a price between \$0 and \$9,999,999,999.99.';
+
+  @override
+  String get feedNoMatches => 'No matching listings';
+
+  @override
+  String get feedTryOtherFilters =>
+      'Try a different date, price or property type.';
+
+  @override
   String get feedEmptyTitle => 'Your feed is empty';
 
   @override
-  String get feedEmptyHint =>
-      'Follow people from their profile to see their new listings here.';
+  String get feedEmptyHint => 'Follow people to see their new listings.';
 
   @override
   String get feedExplore => 'Explore listings';
@@ -1612,6 +1581,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileNoContact => 'No contact details shared.';
+
+  @override
+  String get propertySavePhoto => 'Save photo';
 
   @override
   String propertyPhotoLimit(int count) {
@@ -1745,121 +1717,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Draw the property on the map first to measure it.';
 
   @override
-  String get forgotPinPasswordHelp =>
-      'Enter your account password to confirm it is you. Then choose a new chat PIN.';
-
-  @override
-  String get forgotPinRecovered =>
-      'Done. Your new chat PIN protects your chats.';
-
-  @override
   String get securityPinRequiredNote =>
       'Your chats are always end-to-end encrypted and protected by your 6-digit chat PIN. You need it to read your chats on a new phone.';
 
   @override
-  String get pinUnlock => 'Unlock';
-
-  @override
-  String get pinChecking => 'Checking your PIN...';
-
-  @override
-  String pinWrongTriesLeft(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Incorrect PIN. $count tries left.',
-      one: 'Incorrect PIN. 1 try left before your PIN locks for a while.',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get pinWrongNoCount => 'Incorrect PIN. Please try again.';
-
-  @override
-  String pinLockedFor(String time) {
-    return 'Too many wrong PINs. Try again in $time.';
-  }
-
-  @override
-  String get pinLockedLater => 'Too many wrong PINs. Please try again later.';
-
-  @override
-  String get pinCheckFailed =>
-      'Could not check your PIN. Check your connection and try again.';
-
-  @override
-  String get chatPinSaving => 'Saving your PIN...';
-
-  @override
   String get chatPasswordChecking => 'Checking your password...';
-
-  @override
-  String get chatPinSetupSignOut => 'Sign out';
-
-  @override
-  String get chatPinCreateTitle => 'Create your chat PIN';
-
-  @override
-  String get chatPinCreateHelp =>
-      'Your messages are end-to-end encrypted. This 6-digit PIN brings them back when you sign in on a new phone. Choose one you will remember: nobody, not even Tilomnov, can see it.';
-
-  @override
-  String get chatPinConfirmTitle => 'Confirm your chat PIN';
-
-  @override
-  String get chatPinConfirmHelp => 'Type the same 6 digits again.';
-
-  @override
-  String get chatPinMismatch =>
-      'The PINs did not match. Choose your PIN again.';
-
-  @override
-  String get chatPinSaveFailed =>
-      'Could not save your PIN. Check your connection and try again.';
-
-  @override
-  String get chatPinChooseAnother => 'Choose a different PIN';
-
-  @override
-  String get chatPinMoveTitle => 'Protect your chats with a PIN';
-
-  @override
-  String get chatPinMoveHelp =>
-      'Your chats are now protected by a 6-digit chat PIN instead of your account password. Enter your account password once, then choose your PIN.';
-
-  @override
-  String get chatPinStartOverLink => 'Can\'t unlock? Start over';
-
-  @override
-  String get chatPinStartOverTitle => 'Start over with new chat keys?';
-
-  @override
-  String get chatPinStartOverMessage =>
-      'If your password was reset, your old chats cannot be unlocked. Starting over keeps your account, but your earlier messages can no longer be read. This cannot be undone.';
-
-  @override
-  String get chatPinStartOverAction => 'Start over';
-
-  @override
-  String get chatPinRequiredMessage =>
-      'Your messages are end-to-end encrypted. Create a 6-digit chat PIN to protect them before you start chatting.';
-
-  @override
-  String get chatPinCreateAction => 'Create PIN';
 
   @override
   String get chatLockedTitle => 'Chats are locked on this phone';
 
   @override
   String get chatEnterPinAction => 'Enter PIN';
-
-  @override
-  String get chatPinLockedTitle => 'Too many wrong PINs';
-
-  @override
-  String get chatPinLockedMessage =>
-      'For your security, entering your chat PIN is paused for a while. Please try again later.';
 
   @override
   String get authErrEnterName => 'Please enter your name';
@@ -2022,10 +1890,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not reach the server. Check your connection.';
 
   @override
-  String get authErrorServer =>
-      'Something went wrong on our side. Please try again later.';
-
-  @override
   String get authErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
@@ -2147,17 +2011,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String chatDeleteOwnMessageExplained(String name) {
-    return 'For everyone: it is removed for you and $name, with nothing left in its place. For me: only you stop seeing it.';
+    return 'Delete for you and $name, or just for you.';
   }
 
   @override
   String chatDeleteMessageForMeExplained(String name) {
-    return 'It is removed for you only. $name still sees it.';
+    return 'Only deleted for you. $name can still see it.';
   }
 
   @override
-  String get chatEditTooLate =>
-      'A message can only be edited within an hour of sending it.';
+  String get chatEditTooLate => 'You can edit messages for up to 1 hour.';
 
   @override
   String get chatPresenceOnline => 'Online';
@@ -2186,11 +2049,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String chatKeyChangedTitle(String name) {
-    return '$name\'s security key has changed';
-  }
-
-  @override
   String get chatEmojiSmileys => 'Smileys';
 
   @override
@@ -2203,7 +2061,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatEmojiPlaces => 'Places';
 
   @override
-  String get chatPreviewEncrypted => 'Encrypted message';
+  String get chatPreviewEncrypted => 'Message unavailable';
 
   @override
   String get chatPreviewPhoto => 'Photo';
@@ -2222,16 +2080,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not reach the server. Check your connection.';
 
   @override
-  String get chatSendRejected =>
-      'The server did not accept this message. Please try again.';
+  String get chatSendRejected => 'Message not accepted. Try again.';
 
   @override
-  String get chatSendTooFast =>
-      'You are sending messages too quickly. Wait a moment.';
-
-  @override
-  String get chatSendPinRequired =>
-      'Create your chat PIN before sending messages.';
+  String get chatSendTooFast => 'Sending too fast. Wait a moment.';
 
   @override
   String get chatSendBlocked => 'You can\'t message this person.';
@@ -2260,7 +2112,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get blockConfirmMessage =>
-      'They won\'t be able to message or call you, and you\'ll stop following each other. They won\'t be told.';
+      'They can’t message or call you. You’ll unfollow each other. They won’t be notified.';
 
   @override
   String unblockConfirmTitle(String name) {
@@ -2269,7 +2121,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unblockConfirmMessage =>
-      'You\'ll be able to message each other again. Follows removed by the block don\'t come back.';
+      'You can message each other again. Follow them again if you want to.';
 
   @override
   String blockDone(String name) {
@@ -2356,17 +2208,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reportFailed =>
       'The report wasn\'t sent. Check your connection and try again.';
-
-  @override
-  String get chatSendKeyChanged =>
-      'Their security key has changed. Accept the new key to continue.';
-
-  @override
-  String get chatSendNotSetUp => 'Secure chat is not set up on this device.';
-
-  @override
-  String get chatSendPeerNotReady =>
-      'This person has not set up secure chat yet. They can receive messages once they open the app again.';
 
   @override
   String chatSendFileTooLarge(int megabytes) {
@@ -2897,7 +2738,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedSearchesEmpty =>
-      'No saved searches yet. Set a filter on the map and tap the bookmark to save it.';
+      'Set map filters, then tap the bookmark to save your search.';
 
   @override
   String get savedSearchesLoadFailed => 'Couldn\'t load your saved searches.';
@@ -2956,15 +2797,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedSearchDeleted => 'Saved search deleted.';
 
   @override
-  String get notificationsAlwaysOn =>
-      'Security alerts and calls are always on, so you never miss a new sign-in to your account or someone calling you.';
+  String get notificationsAlwaysOn => 'Calls and sign-in alerts are always on.';
 
   @override
   String get notificationsBlockedTitle => 'Notifications are off for this app';
 
   @override
   String get notificationsBlockedHelp =>
-      'Turn them on in your phone\'s settings to hear about new messages, calls and sign-ins.';
+      'Enable notifications in your phone’s settings.';
 
   @override
   String get chatPreviewNewMessage => 'New message';
@@ -2974,7 +2814,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsShowTextHelp =>
-      'Show what a message says in its notification. Anyone who can see your lock screen can read it.';
+      'Show message text in notifications, including on your lock screen.';
 
   @override
   String get notificationsLoadFailed =>
@@ -3185,7 +3025,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addEmailIntro =>
-      'Add an email so you can reset your password if you forget it. Enter your password to confirm it is you.';
+      'Add an email for password resets. Confirm with your password.';
 
   @override
   String get addEmailDone => 'Email added';
@@ -3221,4 +3061,704 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get closestShowList => 'Show listings near you';
+
+  @override
+  String get authEnterYourPhoneNumberToGet =>
+      'Enter your phone number and we will text you a code to reset your password.';
+
+  @override
+  String get authVerificationCodeSentToYourPhone =>
+      'Verification code sent to your phone';
+
+  @override
+  String get authEnterTheVerificationCodeWeTexted =>
+      'Enter the verification code we just texted to your phone.';
+
+  @override
+  String get authErrorNoAccountForPhone => 'No account uses this phone number.';
+
+  @override
+  String get authErrorSmsUnavailable =>
+      'Text messages cannot be sent right now. Reset with your email, or try again later.';
+
+  @override
+  String get planFree => 'Free';
+
+  @override
+  String get planSilver => 'Silver';
+
+  @override
+  String get planGold => 'Gold';
+
+  @override
+  String get planDiamond => 'Diamond';
+
+  @override
+  String planMember(String tier) {
+    return '$tier member';
+  }
+
+  @override
+  String planAccount(String tier) {
+    return '$tier Account';
+  }
+
+  @override
+  String get planPerMonth => '/ month';
+
+  @override
+  String planListingsUsed(int used, int limit) {
+    return '$used / $limit listings used';
+  }
+
+  @override
+  String get planCurrent => 'Current Plan';
+
+  @override
+  String planUpgradeTo(String tier) {
+    return 'Upgrade to $tier';
+  }
+
+  @override
+  String get planFeatures => 'Features';
+
+  @override
+  String planFeatureLimit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Publish up to $count properties',
+      one: 'Publish 1 property at a time',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planFeatureFree => 'Basic listing visibility';
+
+  @override
+  String get planFeatureSilver => 'Suits small agents';
+
+  @override
+  String get planFeatureGold => 'Higher listing capacity';
+
+  @override
+  String get planFeatureDiamond => 'Highest listing capacity';
+
+  @override
+  String get planChooseIntro => 'Choose a plan to publish more properties.';
+
+  @override
+  String get planUpgradeTitle => 'Upgrade Subscription';
+
+  @override
+  String get planUpgradeIntro =>
+      'New plans last one month. Upgrades charge only the price difference for your remaining time and keep your expiry date.';
+
+  @override
+  String get planSubscribe => 'Subscribe';
+
+  @override
+  String get paymentSelectMethod => 'Select Payment Method';
+
+  @override
+  String get paymentTaxIncluded => 'Total price includes 10% tax.';
+
+  @override
+  String get paymentAbaPay => 'ABA PAY';
+
+  @override
+  String get paymentAbaPayHint => 'Pay with ABA Mobile';
+
+  @override
+  String get paymentAbaKhqr => 'ABA KHQR';
+
+  @override
+  String get paymentAbaKhqrHint => 'Scan to pay with any banking app';
+
+  @override
+  String get paymentAwaitingConfirmation =>
+      'Waiting for ABA to confirm your payment. This usually takes a minute.';
+
+  @override
+  String get paymentFailed =>
+      'The payment was not completed. Please try again.';
+
+  @override
+  String get paymentRefundRequired =>
+      'Your payment arrived after the upgrade expired. Please contact support with your transaction reference for a refund.';
+
+  @override
+  String get paymentAppNotOpened =>
+      'Could not open ABA Mobile or the payment page.';
+
+  @override
+  String get paymentUnavailable =>
+      'Online payment is not available yet. Please try again later.';
+
+  @override
+  String get paymentCouldNotStart =>
+      'Could not start the payment. Please try again.';
+
+  @override
+  String get paymentBillingSummary => 'Billing Summary';
+
+  @override
+  String get paymentPlan => 'Plan';
+
+  @override
+  String get paymentPrice => 'Price';
+
+  @override
+  String get paymentBillingCycle => 'Billing Cycle';
+
+  @override
+  String get paymentMonthly => 'Monthly';
+
+  @override
+  String get paymentTotal => 'Total';
+
+  @override
+  String get paymentOneTimeTitle => 'One-Time Payment';
+
+  @override
+  String get paymentOneTimeIntro => 'Your property is ready to be published.';
+
+  @override
+  String get publishingRenewListingTitle => 'Renew property post';
+
+  @override
+  String get publishingRenewListingMessage =>
+      'Keep this property public for one month. Pay for this post, or use an active subscription with space available.';
+
+  @override
+  String get publishingRenewSubscriptionTitle => 'Renew your subscription';
+
+  @override
+  String get publishingRenewSubscriptionMessage =>
+      'Your subscription has expired. Renew your plan to publish your properties again. Your original free listing stays available.';
+
+  @override
+  String get paymentPropertyInformation => 'Property information';
+
+  @override
+  String get paymentOneTime => 'One month · one-time payment';
+
+  @override
+  String get paymentPublishProperty => 'Publish Property';
+
+  @override
+  String get paymentProperty => 'Property';
+
+  @override
+  String get paymentCategory => 'Category';
+
+  @override
+  String get publishPlanTitle => 'Choose Publishing Plan';
+
+  @override
+  String get publishPlanOneTime => 'One-Time Publish';
+
+  @override
+  String publishPlanOneTimeHint(String price) {
+    return 'Pay $price to publish this property for one month.';
+  }
+
+  @override
+  String get publishPlanSubscription => 'Subscription Plan';
+
+  @override
+  String get publishPlanSubscriptionHint =>
+      'Publish many properties every month.';
+
+  @override
+  String get publishPlanChooseFirst =>
+      'Choose a plan or one-time payment to publish.';
+
+  @override
+  String get privacyLastUpdated => 'Last updated: November 4, 2026';
+
+  @override
+  String get privacyIntro =>
+      'What we collect, how we use it, and your choices.';
+
+  @override
+  String get privacyCollectTitle => 'What we collect';
+
+  @override
+  String get privacyCollectAccount =>
+      'Your name, username, phone number, optional email and profile photo.';
+
+  @override
+  String get privacyCollectListings =>
+      'Listing photos, descriptions, prices, map locations, boundaries and contact numbers.';
+
+  @override
+  String get privacyCollectLocation =>
+      'Your location, only when you allow it, to show listings and routes near you.';
+
+  @override
+  String get privacyCollectActivity =>
+      'Saved listings and searches, follows and listing views, used for insights.';
+
+  @override
+  String get privacyCollectDevice =>
+      'App version, phone model, sign-in device key and notification token for security and notifications.';
+
+  @override
+  String get privacyUseTitle => 'How we use it';
+
+  @override
+  String get privacyUseRun =>
+      'To run the marketplace: show listings, connect buyers with owners, and deliver chats and calls.';
+
+  @override
+  String get privacyUseProtect =>
+      'To protect accounts: spot suspicious sign-ins, limit misuse and act on reports.';
+
+  @override
+  String get privacyUseFix =>
+      'To fix problems: crash and error reports help us find bugs.';
+
+  @override
+  String get privacyUseNoSale => 'We do not sell your personal information.';
+
+  @override
+  String get privacyChatTitle => 'Messages and calls';
+
+  @override
+  String get privacyChatBody =>
+      'Messages are encrypted when sent and stored. Only chat participants can access them through the app. Tilomnov manages the encryption keys. No chat PIN is needed. Older encrypted messages are kept but can’t be opened.';
+
+  @override
+  String get privacyPaymentsTitle => 'Payments';
+
+  @override
+  String get privacyPaymentsBody =>
+      'ABA PayWay handles payments. We never see or store card or bank details. We keep the transaction reference, amount, status and date with your account.';
+
+  @override
+  String get privacySharingTitle => 'Who can see your information';
+
+  @override
+  String get privacySharingIntro =>
+      'We share information only as far as the app needs it:';
+
+  @override
+  String get privacySharingUsers =>
+      'Others can see your listings, public profile and listing contact number.';
+
+  @override
+  String get privacySharingProviders =>
+      'Google handles maps, sign-in, phone verification and notifications; Sentry handles error reports; ABA Bank handles payments.';
+
+  @override
+  String get privacySharingLaw => 'Authorities, when the law requires it.';
+
+  @override
+  String get privacyCookiesTitle => 'Cookies and storage on your phone';
+
+  @override
+  String get privacyCookiesIntro =>
+      'No advertising or tracking cookies. We store these on your phone:';
+
+  @override
+  String get privacyCookiesSignIn =>
+      'Your sign-in, kept in your phone\'s secure storage.';
+
+  @override
+  String get privacyCookiesSettings =>
+      'Your settings, such as theme and language.';
+
+  @override
+  String get privacyCookiesOffline =>
+      'Recent pages and photos for faster loading and offline use.';
+
+  @override
+  String get privacyCookiesClear =>
+      'Sign out to remove your login. Clear app storage in your phone’s settings to remove other stored data.';
+
+  @override
+  String get privacyChoicesTitle => 'Your choices';
+
+  @override
+  String get privacyChoicesEdit =>
+      'View and change your details at any time in Account > Personal information.';
+
+  @override
+  String get privacyChoicesLocation =>
+      'Turn location access off in your phone\'s settings; the map still works without it.';
+
+  @override
+  String get privacyChoicesNotifications =>
+      'Choose which notifications you get in Account > Notifications.';
+
+  @override
+  String get privacyChoicesDelete =>
+      'Delete your listings at any time. To close your account, contact us.';
+
+  @override
+  String get privacyContactTitle => 'Contact us';
+
+  @override
+  String get privacyContactBody =>
+      'Contact the Tilomnov team with questions. The date above shows the latest update.';
+
+  @override
+  String get paymentSuccessTitle => 'Success';
+
+  @override
+  String paymentSuccessAmount(String amount) {
+    return '$amount USD';
+  }
+
+  @override
+  String paymentSuccessTransaction(String id) {
+    return 'Transaction ID  #$id';
+  }
+
+  @override
+  String get paymentSuccessEmailed => 'Order confirmation email:';
+
+  @override
+  String get paymentSuccessNoEmail =>
+      'Add an email in Personal information to get receipts by email.';
+
+  @override
+  String get paymentDownloadReceipt => 'Download Receipt';
+
+  @override
+  String get paymentBackToHome => 'Back to Home';
+
+  @override
+  String get paymentReceiptSaved => 'Receipt saved to your photos.';
+
+  @override
+  String get paymentReceiptSaveFailed =>
+      'Could not save the receipt. Please try again.';
+
+  @override
+  String get paymentReceiptPhotosDenied =>
+      'Allow access to your photos to save the receipt.';
+
+  @override
+  String get paymentReceiptTitle => 'Payment receipt';
+
+  @override
+  String get paymentReceiptTransaction => 'Transaction ID';
+
+  @override
+  String get paymentReceiptDate => 'Date';
+
+  @override
+  String get paymentReceiptItem => 'Item';
+
+  @override
+  String get paymentReceiptMethod => 'Payment method';
+
+  @override
+  String get paymentReceiptEmail => 'Email';
+
+  @override
+  String get paymentReceiptStatus => 'Status';
+
+  @override
+  String get paymentReceiptPaid => 'Paid';
+
+  @override
+  String paymentItemSubscription(String tier) {
+    return '$tier plan · Monthly';
+  }
+
+  @override
+  String get paymentItemOneTimePublish => 'Property post · one month';
+
+  @override
+  String get planCancelAction => 'Cancel plan';
+
+  @override
+  String get planCancelTitle => 'Cancel your plan?';
+
+  @override
+  String planCancelExplanation(String date) {
+    return 'Your plan stays active until $date. You keep your paid benefits until then.';
+  }
+
+  @override
+  String planActiveUntil(String date) {
+    return 'Plan active until $date.';
+  }
+
+  @override
+  String planCancelledUntil(String date) {
+    return 'Plan cancelled. Your access stays active until $date.';
+  }
+
+  @override
+  String get planCancelFailed =>
+      'We could not cancel your plan. Please try again.';
+
+  @override
+  String get planStatusRetry => 'Could not load your plan. Tap to retry.';
+
+  @override
+  String get listingTypeTakeover => 'Takeover Payments';
+
+  @override
+  String get takeoverIntro =>
+      'Enter the existing payment plan. Buyers pay you the seller amount, then take responsibility for the remaining balance, subject to provider approval.';
+
+  @override
+  String get takeoverProviderType => 'Payment provider type';
+
+  @override
+  String get takeoverProviderName => 'Developer or bank name';
+
+  @override
+  String get takeoverProjectName => 'Project name';
+
+  @override
+  String get takeoverSellerAmount => 'Amount payable to seller (USD)';
+
+  @override
+  String get takeoverBalance => 'Remaining balance (USD)';
+
+  @override
+  String get takeoverBalanceHelp =>
+      'Outstanding contract balance or loan principal, excluding future financing interest. Include any larger scheduled payments in this balance.';
+
+  @override
+  String get takeoverBalanceDate => 'Balance as of';
+
+  @override
+  String get takeoverPaymentAmount => 'Regular instalment (USD)';
+
+  @override
+  String get takeoverFrequency => 'Payment frequency';
+
+  @override
+  String get takeoverRemainingMonths => 'Months remaining';
+
+  @override
+  String get takeoverNextPayment => 'Next payment due';
+
+  @override
+  String get takeoverInterestType => 'Interest terms';
+
+  @override
+  String get takeoverAnnualRate => 'Current annual interest rate (%)';
+
+  @override
+  String get takeoverTransferStatus => 'Transfer permission (seller-reported)';
+
+  @override
+  String get takeoverTransferFee =>
+      'Transfer fee (USD, leave blank if unknown)';
+
+  @override
+  String get takeoverFeePayer => 'Who pays the transfer fee?';
+
+  @override
+  String get takeoverArrears => 'Overdue amount (USD, enter 0 if none)';
+
+  @override
+  String get takeoverArrearsHelp =>
+      'Disclose unpaid instalments and penalties. Explain in the notes whether overdue principal is already included in the balance.';
+
+  @override
+  String get takeoverArrearsPayer => 'Who settles the overdue amount?';
+
+  @override
+  String get takeoverHasAdditional =>
+      'Any additional large scheduled payments?';
+
+  @override
+  String get takeoverAdditionalAmount => 'Scheduled payment amount (USD)';
+
+  @override
+  String get takeoverAdditionalDate => 'Scheduled payment due';
+
+  @override
+  String get takeoverAddPayment => 'Add scheduled payment';
+
+  @override
+  String get takeoverRemovePayment => 'Remove scheduled payment';
+
+  @override
+  String get takeoverAdditionalHelp =>
+      'Include handover or balloon payments here. These amounts are already part of the remaining balance.';
+
+  @override
+  String get takeoverNotes => 'Payment plan and transfer notes';
+
+  @override
+  String get takeoverCombinedPrice =>
+      'Combined price before future interest and fees';
+
+  @override
+  String get takeoverCombinedHelp =>
+      'Seller amount + remaining balance. Future interest, transfer fees and overdue charges may add to the buyer\'s cost.';
+
+  @override
+  String get takeoverInvalid =>
+      'Complete or correct the highlighted takeover details before publishing.';
+
+  @override
+  String get takeoverFieldError => 'Required or invalid value';
+
+  @override
+  String get takeoverNotAllowed =>
+      'This contract cannot be listed for takeover while transfers are not allowed.';
+
+  @override
+  String get takeoverBuyerNotice =>
+      'Terms and permission are reported by the seller, not verified by Tilomnov. Confirm the balance, fees and transfer process directly with the developer or bank. Listing a property does not transfer its contract or loan.';
+
+  @override
+  String get takeoverDateHint => 'YYYY-MM-DD';
+
+  @override
+  String get takeoverProviderDeveloper => 'Developer instalments';
+
+  @override
+  String get takeoverProviderBank => 'Bank loan';
+
+  @override
+  String get takeoverMonthly => 'Monthly';
+
+  @override
+  String get takeoverQuarterly => 'Every 3 months';
+
+  @override
+  String get takeoverYearly => 'Yearly';
+
+  @override
+  String get takeoverInterestNone => 'Interest-free';
+
+  @override
+  String get takeoverInterestFixed => 'Fixed rate';
+
+  @override
+  String get takeoverInterestVariable => 'Variable rate';
+
+  @override
+  String get takeoverUnknown => 'Unknown / to be confirmed';
+
+  @override
+  String get takeoverNotChecked => 'Not yet checked with provider';
+
+  @override
+  String get takeoverConditional => 'Allowed subject to provider conditions';
+
+  @override
+  String get takeoverWrittenApproval => 'Written permission available';
+
+  @override
+  String get takeoverNotPermitted => 'Transfer not allowed';
+
+  @override
+  String get takeoverBuyer => 'Buyer';
+
+  @override
+  String get takeoverSeller => 'Seller';
+
+  @override
+  String get takeoverShared => 'Shared by buyer and seller';
+
+  @override
+  String takeoverMonthsValue(int months) {
+    return '$months months';
+  }
+
+  @override
+  String takeoverToSellerValue(String amount) {
+    return '$amount to seller';
+  }
+
+  @override
+  String takeoverPriceLabel(String amount) {
+    return '$amount combined';
+  }
+
+  @override
+  String takeoverPaymentValue(String amount, String frequency) {
+    return '$amount · $frequency';
+  }
+
+  @override
+  String get takeoverBuyerTransferFee => 'Transfer fee';
+
+  @override
+  String get takeoverBuyerArrears => 'Overdue payments and penalties';
+
+  @override
+  String get adminEmailTitle => 'Check your admin email';
+
+  @override
+  String get adminEmailWaiting =>
+      'Your password was accepted. Open Gmail and tap Open Tilomnov in the sign-in email to finish signing in. The link expires in 10 minutes.';
+
+  @override
+  String get adminEmailVerifying => 'Verifying your sign-in link...';
+
+  @override
+  String get adminEmailInvalid =>
+      'This sign-in link could not be verified. It may be expired or already used, or the connection failed. Please sign in again to request a new email.';
+
+  @override
+  String get adminEmailBack => 'Back to login';
+
+  @override
+  String get advertisementLabel => 'Advertisement';
+
+  @override
+  String get themeLiquidGlass => 'Liquid Glass';
+
+  @override
+  String get themeMinimalistic => 'Minimalistic';
+
+  @override
+  String get planAnnualOffer => 'Annual · 2 months free';
+
+  @override
+  String get paymentAnnual => '12 months';
+
+  @override
+  String get planPerYear => '/ year';
+
+  @override
+  String get planExpiryDate => 'Access until';
+
+  @override
+  String get planManualRenewal =>
+      'One payment only. No automatic renewal. Renew manually at the displayed plan price when this period ends.';
+
+  @override
+  String get paymentOneTimeDuration => '30 days · manual renewal';
+
+  @override
+  String get authRecoveryEmailOnly =>
+      'Password recovery uses the email linked to your account. If you signed up with Google, sign in with Google. Add an email in Account Security so you can recover a forgotten password.';
+
+  @override
+  String get propertyAddPhone => 'Add another phone number';
+
+  @override
+  String get propertyAdditionalPhone => 'Additional phone number';
+
+  @override
+  String get propertyRemovePhone => 'Remove phone number';
+
+  @override
+  String get searchApproximateArea => 'Approximate search area';
+
+  @override
+  String get authRecoveryEmailHint =>
+      'Add an email for password recovery. Your phone number is for contact only.';
+
+  @override
+  String get paymentEstimatedExpiry => 'Estimated expiry';
+
+  @override
+  String get paymentRenewalPrice => 'Renewal for another 30 days';
 }

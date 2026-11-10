@@ -1,4 +1,9 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tilomnov/core/errors/app_exceptions.dart';
 import 'package:tilomnov/core/observability/error_reporting.dart';
 import 'package:sentry/sentry.dart';
 
@@ -34,4 +39,14 @@ void main() {
       expect(ran, isTrue);
     },
   );
+
+  test('a failed request or a refusal is expected; a bug is not', () {
+    final request = DioException(requestOptions: RequestOptions(path: '/x'));
+    expect(ErrorReporting.isExpected(request), isTrue);
+    expect(ErrorReporting.isExpected(const NetworkException('x')), isTrue);
+    expect(ErrorReporting.isExpected(TimeoutException('x')), isTrue);
+    expect(ErrorReporting.isExpected(PlatformException(code: 'x')), isTrue);
+    expect(ErrorReporting.isExpected(StateError('bug')), isFalse);
+    expect(ErrorReporting.isExpected(const FormatException('bug')), isFalse);
+  });
 }

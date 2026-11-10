@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
 
 import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -32,28 +33,42 @@ class PublisherListingsGrid extends ConsumerWidget {
 
     return SliverPadding(
       padding: EdgeInsets.fromLTRB(gutter, 16, gutter, 0),
-      sliver: SliverGrid.builder(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 240,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 12,
-          childAspectRatio: 0.68,
+      sliver: SliverLayoutBuilder(
+        builder: (context, constraints) => SliverGrid.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:
+                PropertyListLayout.compactColumns(
+                  context,
+                  constraints.crossAxisExtent,
+                ).clamp(
+                  1,
+                  PropertyListLayout.columnCount(
+                    constraints.crossAxisExtent,
+                    240,
+                  ),
+                ),
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.68,
+          ),
+          itemCount: properties.length,
+          itemBuilder: (context, index) {
+            final property = properties[index];
+            return SavedPropertyCard(
+              property: property,
+              isFavorite: savedIds.contains(property.id),
+              heroTag: heroTagOf(property),
+              onTap: () => onOpen(property),
+              onFavoriteToggled: () {
+                if (requireSignIn(context, ref)) {
+                  ref
+                      .read(savedPropertyIdsProvider.notifier)
+                      .toggle(property.id);
+                }
+              },
+            );
+          },
         ),
-        itemCount: properties.length,
-        itemBuilder: (context, index) {
-          final property = properties[index];
-          return SavedPropertyCard(
-            property: property,
-            isFavorite: savedIds.contains(property.id),
-            heroTag: heroTagOf(property),
-            onTap: () => onOpen(property),
-            onFavoriteToggled: () {
-              if (requireSignIn(context, ref)) {
-                ref.read(savedPropertyIdsProvider.notifier).toggle(property.id);
-              }
-            },
-          );
-        },
       ),
     );
   }

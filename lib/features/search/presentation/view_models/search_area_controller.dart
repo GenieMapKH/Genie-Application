@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/search/data/models/search_area.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_providers.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
@@ -9,7 +10,11 @@ class SearchAreaState {
   final SearchTarget target;
   final AsyncValue<SearchArea> area;
 
-  const SearchAreaState(this.target, this.area);
+  /// The listing of the panel the map is flown to, before its detail is
+  /// opened; null while none is.
+  final PropertyModel? focused;
+
+  const SearchAreaState(this.target, this.area, {this.focused});
 }
 
 /// Null while the map is not showing a search.
@@ -32,6 +37,13 @@ class SearchAreaController extends Notifier<SearchAreaState?> {
   Future<void> retry() async {
     final target = state?.target;
     if (target != null) await show(target);
+  }
+
+  /// Flies the map to [property], one of the shown listings.
+  void focus(PropertyModel property) {
+    final current = state;
+    if (current == null || current.focused?.id == property.id) return;
+    state = SearchAreaState(current.target, current.area, focused: property);
   }
 
   void clear() {

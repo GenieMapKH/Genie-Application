@@ -10,21 +10,35 @@ import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 class ProfileHeader extends StatelessWidget {
   final UserProfile profile;
 
-  const ProfileHeader({super.key, required this.profile});
+  /// Wraps the picture (a subscriber's frame, say); the picture alone
+  /// when null.
+  final Widget Function(Widget avatar)? frameAvatar;
+
+  /// Shown under the handle (the subscription tier, say).
+  final Widget? badge;
+
+  const ProfileHeader({
+    super.key,
+    required this.profile,
+    this.frameAvatar,
+    this.badge,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final name = profile.displayName ?? context.l10n.accountDefaultName;
     final username = profile.username;
+    final avatar = ProfileAvatar(
+      avatarUrl: profile.avatarUrl,
+      name: name,
+      onEditPressed: () => showAvatarOptions(context, profile),
+    );
+    final badge = this.badge;
 
     return Column(
       children: [
-        ProfileAvatar(
-          avatarUrl: profile.avatarUrl,
-          name: name,
-          onEditPressed: () => showAvatarOptions(context, profile),
-        ),
+        frameAvatar?.call(avatar) ?? avatar,
         const SizedBox(height: 12),
         Text(
           name,
@@ -42,6 +56,7 @@ class ProfileHeader extends StatelessWidget {
             style: TextStyle(fontSize: 14, color: colors.textMuted),
           ),
         ],
+        if (badge != null) ...[const SizedBox(height: 10), badge],
       ],
     );
   }

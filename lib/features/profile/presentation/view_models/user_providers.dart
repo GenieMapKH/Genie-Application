@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tilomnov/core/network/connection_restored_provider.dart';
+import 'package:tilomnov/core/network/load_failure.dart';
 import 'package:tilomnov/features/auth/data/google_sign_in_service.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/profile/data/models/user_profile.dart';
@@ -14,10 +16,20 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
 /// The signed-in user's profile; null for a guest. Signing out turns it to
 /// null at once, so no screen keeps showing the previous user, or the
 /// owner's actions on their listings.
+/// The signed-in user's profile; null for a guest. Without internet it is
+/// the one kept from last time, read again once the internet is back.
 final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
   if (!ref.watch(isSignedInProvider)) return null;
   final repo = ref.watch(userRepositoryProvider);
-  return repo.getProfile();
+  try {
+    return await repo.getProfile();
+  } catch (e) {
+    if (!LoadFailure.of(e).isConnection) rethrow;
+    final kept = await repo.keptProfile();
+    if (kept == null) rethrow;
+    ref.listen(connectionRestoredProvider, (_, _) => ref.invalidateSelf());
+    return kept;
+  }
 });
 
 final profileEditControllerProvider = Provider<ProfileEditController>((ref) {

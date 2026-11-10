@@ -7,7 +7,7 @@ import 'package:tilomnov/features/property/data/models/property_model.dart';
 @immutable
 class MapPropertyFilter {
   /// The listing types of the filter page's "For sale" tab.
-  static const List<String> forSale = ['Sale'];
+  static const List<String> forSale = ['Sale', 'Takeover Payments'];
 
   /// The listing types of the filter page's "For rent" tab.
   static const List<String> forRent = ['Rent', 'To Let'];

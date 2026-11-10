@@ -48,6 +48,8 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref.watch(apiClientProvider));
 });
 
+class AdminEmailRequired implements Exception {}
+
 class AuthService {
   final Dio dio;
 
@@ -63,11 +65,19 @@ class AuthService {
         }
       }
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
-        return AuthException(message, code: e.response?.statusCode.toString());
+        return AuthException(
+          message,
+          code: e.response?.statusCode.toString(),
+          cause: e,
+        );
       }
-      return NetworkException(message, code: e.response?.statusCode.toString());
+      return NetworkException(
+        message,
+        code: e.response?.statusCode.toString(),
+        cause: e,
+      );
     }
-    return UnknownException(e.toString());
+    return UnknownException(e.toString(), cause: e);
   }
 
   bool _isEmail(String value) {
@@ -102,6 +112,7 @@ class AuthService {
     String? email,
     String? name,
     required String password,
+    String? emailProof,
   }) async {
     try {
       await dio.post(
@@ -111,8 +122,32 @@ class AuthService {
           'email': ?email,
           'name': ?name,
           'password': password,
+          'emailProof': ?emailProof,
         },
       );
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> requestEmailVerification(String email) async {
+    try {
+      await dio.post(
+        '/auth/verification/email/request',
+        data: {'email': email},
+      );
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<String> confirmEmailVerification(String email, String otp) async {
+    try {
+      final response = await dio.post(
+        '/auth/verification/email/confirm',
+        data: {'email': email, 'otp': otp},
+      );
+      return response.data['proofToken'] as String;
     } catch (e) {
       throw _handleError(e);
     }
@@ -127,6 +162,26 @@ class AuthService {
         data: {isEmail ? 'email' : 'phone': identifier, 'password': password},
       );
 
+      if (response.data['status'] == 'admin_email_required') {
+        throw AdminEmailRequired();
+      }
+
+      await AuthStorage.saveTokens(
+        access: response.data['accessToken'],
+        refresh: response.data['refreshToken'],
+      );
+    } catch (e) {
+      if (e is AdminEmailRequired) rethrow;
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> completeAdminLogin(String token) async {
+    try {
+      final response = await dio.post(
+        '/auth/admin-login/complete',
+        data: {'token': token},
+      );
       await AuthStorage.saveTokens(
         access: response.data['accessToken'],
         refresh: response.data['refreshToken'],
@@ -162,7 +217,9 @@ class AuthService {
       try {
         await dio.post('/auth/logout', data: {'refreshToken': refreshToken});
       } catch (e) {
-        // Ignore errors, force local logout
+        // Signed out on this phone anyway; the server ends the session
+        // when its refresh token expires.
+        AppLogger.error('Ending the session on the server failed', e);
       }
     }
     await AuthStorage.clearTokens();

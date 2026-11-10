@@ -44,7 +44,7 @@ void main() {
     tester,
   ) async {
     final forEveryone = await answer(tester, () async {
-      expect(find.textContaining('Sokha still has it'), findsOneWidget);
+      expect(find.textContaining('Sokha keeps the chat'), findsOneWidget);
       await tester.tap(find.text('Also delete for Sokha'));
       await tester.pump();
       expect(find.textContaining('cannot be undone'), findsOneWidget);

@@ -1,11 +1,14 @@
+import 'package:tilomnov/features/property/presentation/view_models/listing_refresh_provider.dart';
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/core/network/connection_restored_provider.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/feed/data/feed_repository.dart';
+import 'package:tilomnov/features/feed/data/feed_filters.dart';
 import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
 import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -18,14 +21,19 @@ final feedRepositoryProvider = Provider<FeedRepository>((ref) {
 /// What time it is, for how old the feed shown is. Replaced in tests.
 final feedClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 
+final feedFiltersProvider = StateProvider<FeedFilters>(
+  (ref) => const FeedFilters(),
+);
+
 /// The Feed tab: listings of the people the user follows, a page at a time.
 ///
 /// Opens on the first page kept from last time, read again behind it. Read
 /// again, keeping what is shown, after each follow or unfollow, and when the
-/// tab is shown or the app comes back after [staleAfter]. None for a guest.
+/// tab is shown or the app comes back after [staleAfter], and when the
+/// internet comes back. None for a guest.
 class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
   /// How old what is shown may get before showing the tab reads it again.
-  static const staleAfter = Duration(minutes: 5);
+  static const staleAfter = Duration(seconds: 30);
 
   String? _nextCursor;
 
@@ -38,13 +46,20 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
 
   @override
   Future<PagedList<PropertyModel>> build() async {
-    _generation++;
+    final generation = ++_generation;
     _nextCursor = null;
     _loadedAt = null;
     final repository = ref.watch(feedRepositoryProvider);
+    final filters = ref.watch(feedFiltersProvider);
     if (!ref.watch(isSignedInProvider)) return const PagedList();
 
+    ref.listen(listingRefreshProvider, (_, _) {
+      if (ref.read(mainNavProvider).currentIndex == MainTab.feed) {
+        _reloadQuietly();
+      }
+    });
     ref.listen(followChangesProvider, (_, _) => _reloadQuietly());
+    ref.listen(connectionRestoredProvider, (_, _) => _reloadQuietly());
     ref.listen(
       mainNavProvider.select((nav) => nav.currentIndex == MainTab.feed),
       (_, shown) {
@@ -60,7 +75,8 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
     );
     ref.onDispose(lifecycle.dispose);
 
-    final saved = await repository.savedFirstPage();
+    final saved = await repository.savedFirstPage(filters: filters);
+    if (generation != _generation) return const PagedList();
     if (saved != null) {
       // Shown at once; the server's page replaces it when it arrives.
       _nextCursor = saved.nextCursor;
@@ -71,9 +87,18 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
   }
 
   Future<PagedList<PropertyModel>> _firstPage() async {
-    final page = await ref.read(feedRepositoryProvider).fetchPage();
-    _nextCursor = page.nextCursor;
-    _loadedAt = ref.read(feedClockProvider)();
+    final generation = _generation;
+    final shown = state.valueOrNull?.items.length ?? FeedRepository.pageSize;
+    final page = await ref
+        .read(feedRepositoryProvider)
+        .fetchPage(
+          limit: shown.clamp(FeedRepository.pageSize, 50),
+          filters: ref.read(feedFiltersProvider),
+        );
+    if (generation == _generation) {
+      _nextCursor = page.nextCursor;
+      _loadedAt = ref.read(feedClockProvider)();
+    }
     return _listOf(page);
   }
 
@@ -91,7 +116,7 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
     try {
       final page = await ref
           .read(feedRepositoryProvider)
-          .fetchPage(cursor: cursor);
+          .fetchPage(cursor: cursor, filters: ref.read(feedFiltersProvider));
       if (generation != _generation) return;
       _nextCursor = page.nextCursor;
       state = AsyncData(

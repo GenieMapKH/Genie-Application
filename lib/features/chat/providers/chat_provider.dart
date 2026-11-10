@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/chat/data/chat_repository.dart';
 import 'package:tilomnov/features/chat/data/chat_socket_service.dart';
-import 'package:tilomnov/features/chat/e2ee/keys/message_cipher.dart';
+import 'package:tilomnov/features/chat/data/message_codec.dart';
 import 'package:tilomnov/features/chat/models/chat_models.dart';
 import 'package:tilomnov/features/chat/providers/chat_service_providers.dart';
 import 'package:tilomnov/features/chat/providers/conversation_list.dart';
@@ -23,7 +23,7 @@ class ConversationsNotifier
   final bool archived;
 
   /// Decrypts the last-message previews. Null for a guest, who has no chats.
-  final MessageCipher? cipher;
+  final MessageCodec? cipher;
 
   final ConversationPreviews? _previews;
   final _subscriptions = <StreamSubscription<void>>[];
@@ -37,17 +37,23 @@ class ConversationsNotifier
   int _generation = 0;
 
   /// [signInPending] keeps the list loading while it is not yet known who,
-  /// if anyone, is signed in.
+  /// if anyone, is signed in; [signInError] is why that could not be found
+  /// out (offline), shown instead of an empty list.
   ConversationsNotifier({
     required this.repository,
     required this.socketService,
     required this.cipher,
     this.archived = false,
     bool signInPending = false,
+    Object? signInError,
   }) : _previews = cipher == null ? null : ConversationPreviews(cipher),
        super(const AsyncValue.loading()) {
     if (cipher == null) {
-      if (!signInPending) state = const AsyncValue.data(ConversationList());
+      if (signInError != null) {
+        state = AsyncValue.error(signInError, StackTrace.current);
+      } else if (!signInPending) {
+        state = const AsyncValue.data(ConversationList());
+      }
       return;
     }
     _subscriptions
@@ -64,7 +70,28 @@ class ConversationsNotifier
       )
       // Messages may have been missed while disconnected.
       ..add(socketService.onConnected.listen((_) => refresh()));
+    if (!archived) _showKept();
     refresh();
+  }
+
+  /// The main list as last read on this device, shown until the server's
+  /// arrives, or instead of it while offline.
+  Future<void> _showKept() async {
+    try {
+      final page = await repository.keptFirstPage();
+      if (page == null || !mounted || state.hasValue) return;
+      final items = await Future.wait(page.items.map(_previews!.shown));
+      if (!mounted || state.hasValue) return;
+      _nextCursor = page.nextCursor;
+      state = AsyncValue.data(
+        ConversationList(
+          page: PagedList(items: items, hasMore: page.nextCursor != null),
+          unreadTotal: page.unreadTotal,
+        ),
+      );
+    } catch (e) {
+      AppLogger.error('The kept chat list could not be shown', e);
+    }
   }
 
   /// Updates the one conversation [message] belongs to, instead of loading
@@ -124,7 +151,7 @@ class ConversationsNotifier
       refresh();
       return;
     }
-    _previews!.remember(message.id, message.nonce, preview);
+    _previews!.remember(message.id, message.ciphertext, preview);
     final sent = list.items[index]
         .withNewMessage(message)
         .copyWith(lastMessage: preview);
@@ -180,7 +207,8 @@ class ConversationsNotifier
         for (final current in list.items)
           current.participantId == conversation.participantId &&
                   current.lastMessageId == conversation.lastMessageId &&
-                  current.lastNonce == conversation.lastNonce
+                  current.lastNonce == conversation.lastNonce &&
+                  current.lastCiphertext == conversation.lastCiphertext
               ? current.copyWith(lastMessage: withPreview.lastMessage)
               : current,
       ]),
@@ -333,12 +361,15 @@ final conversationsProvider =
       return ConversationsNotifier(
         repository: ref.watch(chatRepositoryProvider),
         socketService: ref.watch(chatSocketServiceProvider),
-        cipher: userId == null
-            ? null
-            : ref.watch(messageCipherProvider(userId)),
+        cipher: userId == null ? null : ref.watch(messageCodecProvider(userId)),
         signInPending:
             userId == null &&
             ref.watch(userProfileProvider.select((p) => p.isLoading)),
+        signInError: userId == null
+            ? ref.watch(
+                userProfileProvider.select((p) => p.isLoading ? null : p.error),
+              )
+            : null,
       );
     });
 
@@ -352,9 +383,7 @@ final archivedConversationsProvider =
       return ConversationsNotifier(
         repository: ref.watch(chatRepositoryProvider),
         socketService: ref.watch(chatSocketServiceProvider),
-        cipher: userId == null
-            ? null
-            : ref.watch(messageCipherProvider(userId)),
+        cipher: userId == null ? null : ref.watch(messageCodecProvider(userId)),
         archived: true,
       );
     });

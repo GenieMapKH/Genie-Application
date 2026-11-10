@@ -1,120 +1,6 @@
-import 'dart:ui' show lerpDouble;
-
-import 'package:flutter/animation.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:tilomnov/features/home/utils/map/cluster_label.dart';
 import 'package:tilomnov/features/home/utils/map/cluster_layout.dart';
-import 'package:tilomnov/features/home/utils/map/markers/price_tag_layout.dart';
-
-/// One listing gliding from the spot that showed it to the one that will.
-/// Drops heading for the same spot meet and fuse; drops leaving one spot
-/// pull apart. Zooming in to price tags, a drop that has arrived stretches
-/// into its [tag]; zooming out, the tag first rounds into a drop.
-///
-/// Every `...At` method takes the transition's linear progress, 0 to 1.
-class LiquidDrop {
-  final LatLng from;
-  final LatLng to;
-  final double fromRadius;
-  final double toRadius;
-  final double fromRing;
-  final double toRing;
-  final double fromLift;
-  final double toLift;
-
-  /// How much the drop looks like its [tag], at the start and at the end:
-  /// 0 is a round drop, 1 the tag.
-  final double fromTagness;
-  final double toTagness;
-  final PriceTagLayout? tag;
-
-  const LiquidDrop({
-    required this.from,
-    required this.to,
-    required this.fromRadius,
-    required this.toRadius,
-    required this.fromRing,
-    required this.toRing,
-    this.fromLift = 0,
-    this.toLift = 0,
-    this.fromTagness = 0,
-    this.toTagness = 0,
-    this.tag,
-  });
-
-  LiquidDrop.between(ClusterSpot from, ClusterSpot to)
-    : this(
-        from: from.position,
-        to: to.position,
-        fromRadius: from.radius,
-        toRadius: to.radius,
-        fromRing: from.ring,
-        toRing: to.ring,
-        fromLift: from.lift,
-        toLift: to.lift,
-        fromTagness: from.tag == null ? 0 : 1,
-        toTagness: to.tag == null ? 0 : 1,
-        tag: to.tag ?? from.tag,
-      );
-
-  bool get moves =>
-      from != to ||
-      fromRadius != toRadius ||
-      fromRing != toRing ||
-      fromTagness != toTagness;
-
-  bool get _becomesTag => toTagness > fromTagness;
-  bool get _becomesDrop => toTagness < fromTagness;
-
-  /// Becoming a tag, the drop travels first and then takes shape; becoming
-  /// a drop, it first rounds and then travels.
-  Interval get _travel => _becomesTag
-      ? const Interval(0, 0.7)
-      : _becomesDrop
-      ? const Interval(0.3, 1)
-      : const Interval(0, 1);
-
-  Interval get _reshape =>
-      _becomesTag ? const Interval(0.55, 1) : const Interval(0, 0.45);
-
-  double _travelled(double p) =>
-      ClusterTransition.curve.transform(_travel.transform(p));
-
-  LatLng positionAt(double p) {
-    final t = _travelled(p);
-    return LatLng(
-      lerpDouble(from.latitude, to.latitude, t)!,
-      lerpDouble(from.longitude, to.longitude, t)!,
-    );
-  }
-
-  double radiusAt(double p) => lerpDouble(fromRadius, toRadius, _travelled(p))!;
-
-  double ringAt(double p) => lerpDouble(fromRing, toRing, _travelled(p))!;
-
-  double liftAt(double p) => lerpDouble(fromLift, toLift, _travelled(p))!;
-
-  double tagnessAt(double p) => lerpDouble(
-    fromTagness,
-    toTagness,
-    Curves.easeInOut.transform(_reshape.transform(p)),
-  )!;
-
-  /// From where and how this drop is at [p] to [spot].
-  LiquidDrop redirectedAt(double p, ClusterSpot spot) => LiquidDrop(
-    from: positionAt(p),
-    to: spot.position,
-    fromRadius: radiusAt(p),
-    toRadius: spot.radius,
-    fromRing: ringAt(p),
-    toRing: spot.ring,
-    fromLift: liftAt(p),
-    toLift: spot.lift,
-    fromTagness: tagnessAt(p),
-    toTagness: spot.tag == null ? 0 : 1,
-    tag: spot.tag ?? tag,
-  );
-}
+import 'package:tilomnov/features/home/utils/map/liquid_drop.dart';
 
 /// The listing markers merging or splitting after the zoom level changed:
 /// dots into bubbles and back, and bubbles into price tags and back.
@@ -128,19 +14,15 @@ class ClusterTransition {
   /// To or from price tags, which also change shape.
   static const reshapeDuration = Duration(milliseconds: 600);
 
-  /// How the drops speed up and settle.
-  static const curve = Curves.easeInOutCubic;
-
   /// More drops than this are not animated: the map just switches.
   static const maxDrops = 600;
 
   /// By listing key.
   final Map<String, LiquidDrop> drops;
 
-  /// Counts and prices on the markers being left (fading out) and being
-  /// formed (fading in).
-  final List<ClusterSpot> outgoingLabels;
-  final List<ClusterSpot> incomingLabels;
+  /// Counts and prices: on the markers being left (fading out), being
+  /// formed (fading in), and on those there before and after (kept).
+  final List<ClusterLabel> labels;
 
   /// The new layout's markers, shown again when the drops have arrived.
   final Set<String> hiddenMarkerIds;
@@ -149,8 +31,7 @@ class ClusterTransition {
 
   const ClusterTransition({
     required this.drops,
-    required this.outgoingLabels,
-    required this.incomingLabels,
+    required this.labels,
     required this.hiddenMarkerIds,
     required this.startedAt,
     this.duration = glideDuration,
@@ -189,13 +70,17 @@ class ClusterTransition {
     if (drops.isEmpty || drops.length > maxDrops) return null;
     if (!drops.values.any((drop) => drop.moves)) return null;
 
-    bool hasLabel(ClusterSpot spot) => spot.count > 1 || spot.tag != null;
+    // An interrupted animation's labels carry on from how they look now
+    // rather than vanishing or restarting their fade.
+    final showing = interrupted
+        ? [
+            for (final label in running.labels)
+              label.heldAt(p, running.drops, drops),
+          ]
+        : ClusterLabel.showingIn(from, drops);
     return ClusterTransition(
       drops: drops,
-      // An interrupted animation's labels are mid-fade; dropping them is
-      // less jarring than restarting their fade.
-      outgoingLabels: interrupted ? const [] : [...from.spots.where(hasLabel)],
-      incomingLabels: [...to.spots.where(hasLabel)],
+      labels: ClusterLabel.fading(showing: showing, to: to, drops: drops),
       hiddenMarkerIds: {for (final spot in to.spots) spot.markerId},
       startedAt: now,
       duration: drops.values.any((d) => d.fromTagness != d.toTagness)

@@ -1,3 +1,5 @@
+import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
+import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,6 +13,7 @@ import 'package:tilomnov/features/feed/presentation/widgets/feed_message_view.da
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/view_models/saved_property_ids_provider.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/shared/widgets/feedback/load_failure_view.dart';
 import 'package:tilomnov/shared/utils/paged_list.dart';
 import 'package:tilomnov/shared/widgets/lists/loading_more_indicator.dart';
 
@@ -48,22 +51,26 @@ class ClosestListingsBody extends ConsumerWidget {
           ),
         ),
       ),
-      error: (_, _) => _message(
-        FeedMessageView(
-          icon: Icons.cloud_off_rounded,
-          title: l10n.closestLoadFailed,
-          actionLabel: l10n.commonRetry,
-          onAction: retry,
+      error: (error, _) => _message(
+        LoadFailureView(
+          error: error,
+          message: l10n.closestLoadFailed,
+          onRetry: retry,
         ),
       ),
       data: (state) => state.listings.items.isEmpty
           ? _message(
-              FeedMessageView(
-                icon: Icons.travel_explore_rounded,
-                title: l10n.closestEmptyTitle,
-                hint: l10n.closestEmptyHint,
-                actionLabel: l10n.commonRetry,
-                onAction: retry,
+              Column(
+                children: [
+                  FeedMessageView(
+                    icon: Icons.travel_explore_rounded,
+                    title: l10n.closestEmptyTitle,
+                    hint: l10n.closestEmptyHint,
+                    actionLabel: l10n.commonRetry,
+                    onAction: retry,
+                  ),
+                  const AdvertisementSlot(rotationOffset: 1),
+                ],
               ),
             )
           : _grid(context, ref, state.listings),
@@ -92,7 +99,8 @@ class ClosestListingsBody extends ConsumerWidget {
       slivers: [
         SliverPadding(
           padding: EdgeInsets.fromLTRB(gutter, 4, gutter, 0),
-          sliver: SliverGrid.builder(
+          sliver: AdvertisedSliverGrid(
+            rotationOffset: 1,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: ClosestSheetLayout.columns(width),
               mainAxisExtent: tileHeight,

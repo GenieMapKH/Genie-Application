@@ -19,6 +19,7 @@ class ChatConversation {
   final String participantName;
   final String participantId;
   final String? participantAvatar;
+  final bool participantIsAdmin;
   final String lastMessage;
   final String lastMessageTime;
   final int unreadCount;
@@ -34,6 +35,7 @@ class ChatConversation {
     required this.participantName,
     required this.participantId,
     this.participantAvatar,
+    this.participantIsAdmin = false,
     required this.lastMessage,
     required this.lastMessageTime,
     this.unreadCount = 0,
@@ -60,6 +62,7 @@ class ChatConversation {
       participantName: json['participantName'] ?? 'Property Owner',
       participantId: json['participantId'] ?? '',
       participantAvatar: json['participantAvatar'],
+      participantIsAdmin: json['participantIsAdmin'] == true,
       lastMessage: ciphertext != null ? encryptedPreview : '',
       lastMessageTime: formattedTime,
       unreadCount: json['unreadCount'] ?? 0,
@@ -115,6 +118,7 @@ class ChatConversation {
       participantName: participantName,
       participantId: participantId,
       participantAvatar: participantAvatar,
+      participantIsAdmin: participantIsAdmin,
       lastMessage: encryptedPreview,
       lastMessageTime: lastMessageTime,
       unreadCount: unreadCount,
@@ -134,6 +138,7 @@ class ChatConversation {
       participantName: participantName,
       participantId: participantId,
       participantAvatar: participantAvatar,
+      participantIsAdmin: participantIsAdmin,
       lastMessage: encryptedPreview,
       lastMessageTime: _timeOf(message.createdAt),
       unreadCount: message.senderId == participantId
@@ -160,6 +165,7 @@ class ChatConversation {
       participantName: participantName ?? this.participantName,
       participantId: participantId ?? this.participantId,
       participantAvatar: participantAvatar ?? this.participantAvatar,
+      participantIsAdmin: participantIsAdmin,
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
       unreadCount: unreadCount ?? this.unreadCount,
@@ -171,8 +177,7 @@ class ChatConversation {
   }
 }
 
-/// A message as the server stores and delivers it. Only the two people in
-/// the conversation can turn it into a [ChatMessage].
+/// The authenticated API transport envelope of a message.
 class EncryptedMessage {
   final String id;
   final String senderId;

@@ -15,7 +15,7 @@ import 'package:tilomnov/features/home/utils/map/map_measurements.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/utils/app_popup.dart';
+import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 class MainMapControls extends ConsumerWidget {
   final VoidCallback onGoToCurrentPosition;
@@ -23,6 +23,7 @@ class MainMapControls extends ConsumerWidget {
   final VoidCallback onAddPinToCenter;
   final VoidCallback onSavePropertySuccess;
   final ValueChanged<PropertyModel> onOpenProperty;
+  final VoidCallback? onMessengerPressed;
 
   /// Lifts the floating buttons above a results sheet: how much of the
   /// screen's bottom the sheet covers, or 0 when there is none.
@@ -36,6 +37,7 @@ class MainMapControls extends ConsumerWidget {
     required this.onSavePropertySuccess,
     required this.onOpenProperty,
     this.searchSheetHeight = 0,
+    this.onMessengerPressed,
   });
 
   /// Resting offset above the bottom nav bar.
@@ -76,6 +78,7 @@ class MainMapControls extends ConsumerWidget {
         // Coordinates, Draw and Current Position (Bottom Right)
         if (!mapState.isDrawing)
           MapSideButtons(
+            onMessengerPressed: onMessengerPressed,
             bottom: sideButtonBottom,
             buttonSize: buttonSize,
             // Drawing is how a listing is posted: a guest is asked to sign
@@ -176,7 +179,11 @@ class MainMapControls extends ConsumerWidget {
     } catch (e, stack) {
       AppLogger.error('Opening the listing editor failed', e, stack);
       if (context.mounted) {
-        AppPopup.showError(context, context.l10n.propertyCouldNotOpenEditor);
+        showFailure(
+          context,
+          error: e,
+          fallback: context.l10n.propertyCouldNotOpenEditor,
+        );
       }
       return;
     }

@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,8 +16,8 @@ Future<MessageDeletionScope?> showDeleteMessageDialog(
   required bool isMine,
   required String participantName,
 }) {
-  return showDialog<MessageDeletionScope>(
-    context: context,
+  return AppDialog.show<MessageDeletionScope>(
+    context,
     builder: (context) {
       final l10n = context.l10n;
       Widget choice(MessageDeletionScope scope, String label) => TextButton(
@@ -25,8 +26,9 @@ Future<MessageDeletionScope?> showDeleteMessageDialog(
         child: Text(label),
       );
 
-      return AlertDialog(
-        backgroundColor: context.colors.surface,
+      return AppDialog.custom(
+        icon: Icons.delete_outline,
+        tone: AppDialogTone.danger,
         title: Text(
           l10n.chatDeleteMessageQuestion,
           style: GoogleFonts.inter(fontWeight: FontWeight.w700),
@@ -40,7 +42,7 @@ Future<MessageDeletionScope?> showDeleteMessageDialog(
             color: context.colors.textMuted,
           ),
         ),
-        actionsOverflowDirection: VerticalDirection.up,
+
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

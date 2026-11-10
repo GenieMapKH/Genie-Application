@@ -60,7 +60,6 @@ void main() {
       participantId: peer,
       repository: repository,
       socketService: socket,
-      setupService: FakeSetupService(),
       cipher: cipher,
       attachments: FakeAttachmentService(),
       conversations: conversations,
@@ -75,7 +74,7 @@ void main() {
   group('replying', () {
     test('seals and sends which message the reply quotes', () async {
       repository.history = [recent('m1', 'Is it available?', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       await chat.sendMessage('Yes', replyTo: messageWithId('m1'));
 
@@ -95,14 +94,14 @@ void main() {
         recent('m2', 'Yes', from: peer, replyTo: quoted),
       ];
 
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       expect(messageWithId('m2').replyTo?.text, 'Is it available?');
       expect(messageWithId('m2').replyTo?.senderId, me);
     });
 
     test('an ordinary message quotes nothing', () async {
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       await chat.sendMessage('Hello');
 
@@ -114,7 +113,7 @@ void main() {
   group('editing', () {
     test('seals the new text and shows it, marked as edited', () async {
       repository.history = [recent('m1', 'See you at 5', from: me)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       final problem = await chat.editMessage('m1', 'See you at 6');
 
@@ -131,7 +130,7 @@ void main() {
         quoted,
         recent('m2', 'OK', from: peer, replyTo: quoted),
       ];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       await chat.editMessage('m1', 'See you at 6');
 
@@ -145,7 +144,7 @@ void main() {
         quoted,
         recent('m2', 'Yes', from: me, replyTo: quoted),
       ];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       await chat.editMessage('m2', 'Yes, it is');
 
@@ -157,7 +156,7 @@ void main() {
       'is refused an hour after sending, without asking the server',
       () async {
         repository.history = [encrypted('m1', 'Old news', from: me)];
-        await chat.open(askPin: neverAskPin);
+        await chat.open();
 
         expect(
           await chat.editMessage('m1', 'New news'),
@@ -170,7 +169,7 @@ void main() {
 
     test('says it is too late when the server says so', () async {
       repository.history = [recent('m1', 'See you at 5', from: me)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
       repository.messageChangeError = httpError(403);
 
       expect(
@@ -182,7 +181,7 @@ void main() {
 
     test('keeps the old text when the edit cannot be sent', () async {
       repository.history = [recent('m1', 'See you at 5', from: me)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
       repository.messageChangeError = httpError(503);
 
       expect(
@@ -194,7 +193,7 @@ void main() {
 
     test("cannot edit the other person's message", () async {
       repository.history = [recent('m1', 'Hello', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       expect(
         await chat.editMessage('m1', 'Bye'),
@@ -205,7 +204,7 @@ void main() {
 
     test("shows the other person's edit as it happens", () async {
       repository.history = [recent('m1', 'See you at 5', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       socket.editedMessages.add(
         EncryptedMessage(
@@ -234,7 +233,7 @@ void main() {
           recent('m1', '', from: me),
           recent('m2', 'Hi', from: peer),
         ];
-        await chat.open(askPin: neverAskPin);
+        await chat.open();
 
         final problem = await chat.deleteMessage('m1', forEveryone: true);
 
@@ -253,7 +252,7 @@ void main() {
         quoted,
         recent('m2', 'OK', from: peer, replyTo: quoted),
       ];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       await chat.deleteMessage('m1', forEveryone: true);
 
@@ -263,7 +262,7 @@ void main() {
 
     test("deletes the other person's message for me only", () async {
       repository.history = [recent('m1', 'Hi', from: peer)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       await chat.deleteMessage('m1', forEveryone: true);
 
@@ -273,7 +272,7 @@ void main() {
 
     test('a message already deleted is simply removed', () async {
       repository.history = [recent('m1', 'Hi', from: me)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
       repository.messageChangeError = httpError(404);
 
       expect(await chat.deleteMessage('m1', forEveryone: false), isNull);
@@ -282,7 +281,7 @@ void main() {
 
     test('keeps the message when the delete cannot be sent', () async {
       repository.history = [recent('m1', 'Hi', from: me)];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
       repository.messageChangeError = httpError(503);
 
       expect(
@@ -293,7 +292,7 @@ void main() {
     });
 
     test('a message that was never sent is only removed here', () async {
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
       socket.sendError = Exception('offline');
       await chat.sendMessage('unsent');
       final failed = chat.state.messages.single;
@@ -310,7 +309,7 @@ void main() {
         recent('m1', 'Hi', from: peer),
         recent('m2', 'Hello', from: me),
       ];
-      await chat.open(askPin: neverAskPin);
+      await chat.open();
 
       socket.deletedMessages.add(
         const MessageDeletion(messageId: 'm1', participantId: peer),

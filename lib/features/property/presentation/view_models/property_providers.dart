@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/property/presentation/view_models/listing_refresh_provider.dart';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -124,6 +125,10 @@ class PublicPropertiesNotifier extends AsyncNotifier<List<PropertyModel>> {
       if (next != null) _refresh(next);
     });
     // A new filter asks again for the same area.
+    ref.listen(listingRefreshProvider, (_, _) {
+      final bounds = ref.read(mapBoundsProvider);
+      if (bounds != null) _refresh(bounds);
+    });
     ref.listen(mapPropertyFilterProvider, (_, _) {
       final bounds = ref.read(mapBoundsProvider);
       if (bounds != null) _refresh(bounds);

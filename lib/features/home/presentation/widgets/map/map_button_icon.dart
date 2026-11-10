@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/home/presentation/providers/glass_navigation_provider.dart';
-import 'package:tilomnov/features/home/presentation/widgets/glass/glass_surface.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 
 /// A round floating map button drawn from an SVG, repainted in the current
 /// theme. The artwork bakes in a white disc, a light-grey ring and a grey

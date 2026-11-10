@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -8,8 +9,13 @@ import 'package:google_fonts/google_fonts.dart';
 /// (assets/google_fonts), so they are loaded here once: a font that finished
 /// loading halfway through a test's frame would make text change size
 /// between layout and paint. Tests never download fonts.
+///
+/// Secure storage starts empty (signed out, no account to keep copies for):
+/// unmocked, its platform channel never answers in a widget test. Tests
+/// that need stored tokens set their own.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   TestWidgetsFlutterBinding.ensureInitialized();
+  FlutterSecureStorage.setMockInitialValues({});
   GoogleFonts.config.allowRuntimeFetching = false;
   for (final weight in const [
     FontWeight.w400,

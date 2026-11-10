@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/home/presentation/providers/glass_navigation_provider.dart';
-import 'package:tilomnov/features/home/presentation/widgets/glass/glass_surface.dart';
+import 'package:tilomnov/shared/widgets/glass/glass_surface.dart';
 
 /// A rounded capsule floating over the map (the search bar, a filter pill):
 /// glass where the navigation is glass, a solid surface otherwise, so these

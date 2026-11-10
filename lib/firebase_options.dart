@@ -52,22 +52,25 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA09tajV9U_0usXkav7m6y6s_xlmy_SGAk',
-    appId: '1:67344886415:android:6df3cd111b1bb52060defa',
+    // Must match Gradle's applicationId, including the staging build.
+    appId: String.fromEnvironment('APP_ENV') == 'staging'
+        ? '1:67344886415:android:87f852fd2445a72b60defa'
+        : '1:67344886415:android:a92484fe3dd922b060defa',
     messagingSenderId: '67344886415',
     projectId: 'genie-a0c66',
     storageBucket: 'genie-a0c66.firebasestorage.app',
   );
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAlSRnOsBVWpZ_oJ-fG2vkAr6t6vJvPMFg',
-    appId: '1:67344886415:ios:5f05618b2272865360defa',
+    appId: '1:67344886415:ios:d5ac512f0724bc7060defa',
     messagingSenderId: '67344886415',
     projectId: 'genie-a0c66',
     storageBucket: 'genie-a0c66.firebasestorage.app',
     androidClientId:
         '67344886415-7hfaneh8s0pjmn6s03f0ups5v74k1ef6.apps.googleusercontent.com',
     iosClientId:
-        '67344886415-d4oo5ehf5up4elfrsubeg9q07pgs54ib.apps.googleusercontent.com',
-    iosBundleId: 'com.example.genie',
+        '67344886415-g26d87aetcsfci6fauc8t87ba94k64gs.apps.googleusercontent.com',
+    iosBundleId: 'com.sparkbytekh.tilomnov',
   );
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAlSRnOsBVWpZ_oJ-fG2vkAr6t6vJvPMFg',

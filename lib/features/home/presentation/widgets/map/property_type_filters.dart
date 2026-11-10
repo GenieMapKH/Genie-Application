@@ -74,6 +74,7 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
                     _buildDropdownPill('Sale'),
                     _buildDropdownPill('Rent'),
                     _buildDropdownPill('To Let'),
+                    _buildDropdownPill('Takeover Payments'),
                   ],
                 ],
               ),
@@ -104,6 +105,7 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
   String? _listingLabel(List<String> types) {
     if (types.isEmpty) return null;
     if (types.length == 1) return propertyValueLabel(context.l10n, types.first);
+    if (_filter.isForSale) return context.l10n.filterForSale;
     return _filter.isForRent ? context.l10n.filterForRent : null;
   }
 

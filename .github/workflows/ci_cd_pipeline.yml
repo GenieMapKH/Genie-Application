@@ -65,10 +65,10 @@ jobs:
           } > android/key.properties
 
       # The API server is compiled in; no env file is shipped inside the APK.
-      # Without the secret the app uses its built-in default (production).
+      # This workflow publishes production; the gateway is public configuration.
       - name: Build Release APK
         env:
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_BASE_URL: https://tilomnovgateway.sparkbytekh.com
           # Android Maps key, restricted to this app (see android/app/build.gradle.kts).
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
           # Optional: without it the release build reports no errors.
@@ -78,7 +78,7 @@ jobs:
             echo "::error::MAPS_API_KEY is not set; the released app would show a blank map."
             exit 1
           fi
-          flutter build apk --release --split-per-abi --dart-define=API_BASE_URL="$API_BASE_URL" --dart-define=SENTRY_DSN="$SENTRY_DSN"
+          flutter build apk --release --split-per-abi --dart-define=APP_ENV=production --dart-define=API_BASE_URL="$API_BASE_URL" --dart-define=SENTRY_ENVIRONMENT=production --dart-define=SENTRY_DSN="$SENTRY_DSN"
 
       - name: Prepare Telegram Message
         env:

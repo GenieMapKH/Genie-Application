@@ -41,6 +41,7 @@ class _Listings extends PropertyRepository {
   Future<OwnListingsPage> fetchOwnPage({
     required int offset,
     int limit = PropertyRepository.ownPageSize,
+    List<String> statuses = const [],
   }) async =>
       (items: [_listing], nextOffset: null, countByStatus: {'Active': 1});
 }
