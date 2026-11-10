@@ -92,6 +92,12 @@ class SettingsRow extends StatelessWidget {
     final emphasis = isDestructive
         ? colors.danger
         : (isAction ? colors.accent : null);
+    final showChevron = onTap != null && !isAction;
+    final chevron = Icon(
+      Icons.chevron_right,
+      size: 20,
+      color: colors.iconSubtle,
+    );
 
     return InkWell(
       onTap: onTap,
@@ -116,18 +122,24 @@ class SettingsRow extends StatelessWidget {
             // The value gives way to the title: it shrinks and ends in "…".
             if (value != null && value!.isNotEmpty)
               Expanded(
-                child: Text(
-                  value ?? '',
-                  textAlign: TextAlign.end,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 14, color: colors.textMuted),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        value ?? '',
+                        textAlign: TextAlign.end,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14, color: colors.textMuted),
+                      ),
+                    ),
+                    if (showChevron) ...[const SizedBox(width: 8), chevron],
+                  ],
                 ),
-              ),
-            if (onTap != null && !isAction) ...[
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right, size: 20, color: colors.iconSubtle),
-            ],
+              )
+            else if (showChevron)
+              chevron,
           ],
         ),
       ),
