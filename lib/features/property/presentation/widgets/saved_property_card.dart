@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/features/property/presentation/widgets/property_type_pill.dart';
@@ -29,6 +30,9 @@ class SavedPropertyCard extends StatelessWidget {
   /// first page's card into it.
   final String? heroTag;
 
+  /// Moderators can open drafts and removed listings too.
+  final bool allowNonPublic;
+
   const SavedPropertyCard({
     super.key,
     required this.property,
@@ -37,6 +41,7 @@ class SavedPropertyCard extends StatelessWidget {
     this.onFavoriteToggled,
     this.onViewOnMap,
     this.heroTag,
+    this.allowNonPublic = false,
   });
 
   @override
@@ -45,9 +50,9 @@ class SavedPropertyCard extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         Opacity(
-          opacity: property.isPublic ? 1 : 0.45,
+          opacity: property.isPublic || allowNonPublic ? 1 : 0.45,
           child: GestureDetector(
-            onTap: property.isPublic ? onTap : null,
+            onTap: property.isPublic || allowNonPublic ? onTap : null,
             child: Hero(
               tag: heroTag ?? 'saved_property_hero_${property.id}',
               flightShuttleBuilder: propertyCardFlightShuttle,
@@ -112,6 +117,16 @@ class SavedPropertyCard extends StatelessWidget {
                                     child: CardMapButton(
                                       onPressed: onViewOnMap!,
                                     ),
+                                  ),
+                                if (property.isTakeover)
+                                  Positioned(
+                                    bottom: 8,
+                                    left: 10,
+                                    right:
+                                        property.isPublic && onViewOnMap != null
+                                        ? 50
+                                        : 10,
+                                    child: const TakeoverBadge(),
                                   ),
                               ],
                             ),
@@ -205,7 +220,9 @@ class SavedPropertyCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    context.l10n.propertyUnavailable,
+                    allowNonPublic
+                        ? property.status
+                        : context.l10n.propertyUnavailable,
                     style: TextStyle(
                       color: context.colors.textPrimary,
                       fontWeight: FontWeight.w700,

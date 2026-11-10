@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
@@ -12,9 +14,40 @@ class DrawingControlsPanel extends StatelessWidget {
       MediaQuery.viewPaddingOf(context).bottom + 24;
 
   /// How far up from the screen's bottom the buttons hide the map: the
-  /// undo and delete column is the tallest.
+  /// action labels can wrap or stack on narrow screens.
   static double coveredBottomOf(BuildContext context) =>
-      _bottomOf(context) + 48 + 12 + 48;
+      _bottomOf(context) +
+      math.max(
+        108,
+        _actionHeight(context) * (_stackActions(context) ? 2 : 1) +
+            (_stackActions(context) ? 12 : 0),
+      );
+
+  static bool _stackActions(BuildContext context) =>
+      MediaQuery.sizeOf(context).width < 400 ||
+      MediaQuery.textScalerOf(context).scale(16) > 20;
+
+  static double _actionHeight(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width - 32 - 48 - 24 - 64;
+    final labelWidth = _stackActions(context) ? width : (width - 12) / 2;
+    final painter = TextPainter(
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    );
+    var height = 48.0;
+    for (final label in [context.l10n.commonCancel, context.l10n.commonSave]) {
+      painter.text = TextSpan(
+        text: label,
+        style: DefaultTextStyle.of(context).style.merge(
+          GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+      );
+      painter.layout(maxWidth: math.max(1, labelWidth - 18));
+      height = math.max(height, painter.height + 26);
+    }
+    painter.dispose();
+    return height;
+  }
 
   final bool isEditingPolygon;
   final VoidCallback onRevertPressed;
@@ -66,149 +99,127 @@ class DrawingControlsPanel extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final bottom = _bottomOf(context);
-    return Stack(
-      children: [
-        // Left Column: Revert and Delete
-        Positioned(
-          left: 16,
-          bottom: bottom,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {}, // Prevent taps from bleeding through to the map
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildCircleButton(
-                  context,
-                  'assets/icons/revert.svg',
-                  onPressed: onRevertPressed,
-                ),
-                const SizedBox(height: 12),
-                _buildCircleButton(
-                  context,
-                  'assets/icons/bin.svg',
-                  onPressed: onDeletePressed,
-                ),
-              ],
-            ),
+  Widget _action(
+    BuildContext context,
+    String label,
+    VoidCallback onPressed, {
+    bool primary = false,
+  }) {
+    return TactileButton(
+      onPressed: onPressed,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 48),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        decoration: BoxDecoration(
+          color: primary ? context.colors.accent : context.colors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: primary ? null : Border.all(color: context.colors.border),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.inter(
+            color: primary
+                ? context.colors.onPrimary
+                : context.colors.textPrimary,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        // Bottom Center: Cancel and Save
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final stacked = _stackActions(context);
+    final cancel = _action(context, context.l10n.commonCancel, onCancelPressed);
+    final save = _action(
+      context,
+      context.l10n.commonSave,
+      onSavePressed,
+      primary: true,
+    );
+    return Stack(
+      children: [
         Positioned(
-          bottom: bottom,
-          left: 0,
-          right: 0,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {}, // Prevent taps from bleeding through
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TactileButton(
-                    onPressed: onCancelPressed,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 12.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.colors.surface,
-                        borderRadius: BorderRadius.circular(12.0),
-                        border: Border.all(
-                          color: context.colors.border,
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.08),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        context.l10n.commonCancel,
-                        style: GoogleFonts.inter(
-                          color: context.colors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+          left: 16,
+          right: 16,
+          bottom: _bottomOf(context),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {}, // Keep control taps from reaching the map.
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildCircleButton(
+                      context,
+                      'assets/icons/revert.svg',
+                      onPressed: onRevertPressed,
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    _buildCircleButton(
+                      context,
+                      'assets/icons/bin.svg',
+                      onPressed: onDeletePressed,
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: stacked
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [cancel, const SizedBox(height: 12), save],
+                        )
+                      : Row(
+                          children: [
+                            Expanded(child: cancel),
+                            const SizedBox(width: 12),
+                            Expanded(child: save),
+                          ],
+                        ),
+                ),
+                if (!isEditingPolygon) ...[
                   const SizedBox(width: 12),
-                  TactileButton(
-                    onPressed: onSavePressed,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 12.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.colors.accent,
-                        borderRadius: BorderRadius.circular(12.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.08),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        context.l10n.commonSave,
-                        style: GoogleFonts.inter(
-                          color: context.colors.onPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                  Tooltip(
+                    message: context.l10n.homeAddPoint,
+                    child: TactileButton(
+                      onPressed: onAddPinPressed,
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE5484D),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(
+                                0xFFE5484D,
+                              ).withValues(alpha: 0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.add_location_alt,
+                          color: Colors.white,
+                          size: 34,
                         ),
                       ),
                     ),
                   ),
                 ],
-              ),
+              ],
             ),
           ),
         ),
-        // Right Column: Add Pin (only if not editing)
-        if (!isEditingPolygon)
-          Positioned(
-            right: 16,
-            bottom: bottom,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {}, // Prevent taps from bleeding through to the map
-              child: TactileButton(
-                onPressed: onAddPinPressed,
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE5484D),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFE5484D).withValues(alpha: 0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.add_location_alt,
-                    color: Colors.white,
-                    size: 34,
-                  ),
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }

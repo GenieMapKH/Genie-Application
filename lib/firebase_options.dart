@@ -52,7 +52,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA09tajV9U_0usXkav7m6y6s_xlmy_SGAk',
-    appId: '1:67344886415:android:6df3cd111b1bb52060defa',
+    // Must match Gradle's applicationId, including the staging build.
+    appId: String.fromEnvironment('APP_ENV') == 'staging'
+        ? '1:67344886415:android:87f852fd2445a72b60defa'
+        : '1:67344886415:android:a92484fe3dd922b060defa',
     messagingSenderId: '67344886415',
     projectId: 'genie-a0c66',
     storageBucket: 'genie-a0c66.firebasestorage.app',

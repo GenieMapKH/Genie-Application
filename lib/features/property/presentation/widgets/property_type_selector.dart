@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -30,58 +32,90 @@ class PropertyTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: _propertyTypes.map((type) {
-        final isSelected = selectedPropertyType == type['name'];
-        return GestureDetector(
-          onTap: () => onChanged(type['name']),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            width:
-                (MediaQuery.sizeOf(context).width - 32 - 24) / 3, // 3 columns
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? context.colors.accent.withValues(alpha: 0.05)
-                  : context.colors.surface,
-              border: Border.all(
-                color: isSelected
-                    ? context.colors.accent
-                    : context.colors.border,
-                width: 1.5,
-              ),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Column(
-              children: [
-                TintedSvg(
-                  type['iconPath'],
-                  color: isSelected
-                      ? context.colors.accent
-                      : context.colors.textMuted,
-                  width: 24,
-                  height: 24,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final scaler = MediaQuery.textScalerOf(context);
+        final columns =
+            ((constraints.maxWidth + 12) / (80 * scaler.scale(12) / 12 + 12))
+                .floor()
+                .clamp(1, 3);
+        final width = (constraints.maxWidth - 12 * (columns - 1)) / columns;
+        final labelStyle = DefaultTextStyle.of(context).style.merge(
+          GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
+        );
+        final painter = TextPainter(
+          textDirection: Directionality.of(context),
+          textScaler: scaler,
+        );
+        var labelHeight = 0.0;
+        for (final type in _propertyTypes) {
+          painter.text = TextSpan(
+            text: propertyValueLabel(context.l10n, type['name']),
+            style: labelStyle,
+          );
+          painter.layout(maxWidth: math.max(1, width - 19));
+          labelHeight = math.max(labelHeight, painter.height);
+        }
+        painter.dispose();
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: _propertyTypes.map((type) {
+            final isSelected = selectedPropertyType == type['name'];
+            return GestureDetector(
+              onTap: () => onChanged(type['name']),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                width: width,
+                height: 24 + 8 + 32 + labelHeight + 3,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 16,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  propertyValueLabel(context.l10n, type['name']),
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? context.colors.accent.withValues(alpha: 0.05)
+                      : context.colors.surface,
+                  border: Border.all(
                     color: isSelected
                         ? context.colors.accent
-                        : context.colors.textMuted,
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        : context.colors.border,
+                    width: 1.5,
                   ),
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-              ],
-            ),
-          ),
+                child: Column(
+                  children: [
+                    TintedSvg(
+                      type['iconPath'],
+                      color: isSelected
+                          ? context.colors.accent
+                          : context.colors.textMuted,
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      propertyValueLabel(context.l10n, type['name']),
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        color: isSelected
+                            ? context.colors.accent
+                            : context.colors.textMuted,
+                        fontSize: 12,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 }

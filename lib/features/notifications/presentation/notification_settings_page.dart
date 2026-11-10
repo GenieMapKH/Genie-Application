@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/device/system_settings.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/call/data/call_notifications.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/features/notifications/models/notification_preferences.dart';
 import 'package:tilomnov/features/notifications/providers/notification_preferences_provider.dart';
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
@@ -50,6 +53,26 @@ class NotificationSettingsPage extends ConsumerWidget {
                 style: TextStyle(fontSize: 13, color: context.colors.textMuted),
               ),
             ),
+            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+              ListTile(
+                leading: const Icon(Icons.fullscreen),
+                title: Text(l10n.callFullScreenTitle),
+                subtitle: Text(l10n.callFullScreenHelp),
+                onTap: () async {
+                  try {
+                    await CallNotifications().requestFullScreenPermission();
+                  } catch (e, stack) {
+                    AppLogger.error(
+                      'Full-screen call settings could not open',
+                      e,
+                      stack,
+                    );
+                    if (context.mounted) {
+                      AppPopup.showError(context, l10n.callFullScreenFailed);
+                    }
+                  }
+                },
+              ),
           ],
         ),
       ),

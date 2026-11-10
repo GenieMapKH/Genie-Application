@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/admin/presentation/admin_property_actions.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,7 @@ import 'package:tilomnov/features/profile/presentation/view_models/user_provider
 import 'package:tilomnov/features/safety/presentation/widgets/safety_menu_button.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_detail_summary.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_facts_section.dart';
+import 'sections/takeover_details_section.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_grid_section.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/header/property_highlights.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/sections/property_map_preview.dart';
@@ -30,6 +32,7 @@ import 'package:tilomnov/features/property/presentation/widgets/detail/sections/
 import 'package:tilomnov/features/property/presentation/widgets/share/property_share_sheet.dart';
 import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
 import 'package:tilomnov/features/chat/presentation/screens/chat_conversation_page.dart';
+import 'package:tilomnov/features/chat/providers/chat_call_starter.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/owner_display_name.dart';
@@ -206,7 +209,9 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
         widget.heroTag ?? 'property_card_hero_${widget.property.id}';
 
     // The owner manages the listing instead of contacting themselves.
-    final viewerId = ref.watch(userProfileProvider).valueOrNull?.id;
+    final viewer = ref.watch(userProfileProvider).valueOrNull;
+    final viewerId = viewer?.id;
+    final isAdmin = viewer?.role == 'admin';
     final isOwner = viewerId != null && viewerId == property.ownerId;
 
     return Scaffold(
@@ -252,7 +257,10 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                       context,
                                       property,
                                     ),
-                                    menu: isOwner || property.ownerId == null
+                                    menu:
+                                        isOwner ||
+                                            isAdmin ||
+                                            property.ownerId == null
                                         ? null
                                         : SafetyMenuButton(
                                             userId: property.ownerId!,
@@ -276,7 +284,12 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                 ],
                               ),
                             ),
-                            if (isOwner)
+                            if (isAdmin)
+                              AdminPropertyActions(
+                                property: property,
+                                onChanged: _dismiss,
+                              )
+                            else if (isOwner)
                               PropertyOwnerActions(
                                 property: property,
                                 onEdited: _dismiss,
@@ -326,6 +339,39 @@ class _PropertyDetailSheetState extends ConsumerState<PropertyDetailSheet> {
                                 onCall: () async {
                                   // Guests are sent no numbers to call.
                                   if (!requireSignIn(context, ref)) return;
+                                  final method = await choosePropertyCallMethod(
+                                    context,
+                                  );
+                                  if (method == null || !context.mounted) {
+                                    return;
+                                  }
+                                  if (method == PropertyCallMethod.inApp) {
+                                    final startCall = ref.read(
+                                      chatCallStarterProvider,
+                                    );
+                                    final ownerId = property.ownerId;
+                                    if (ownerId == null || startCall == null) {
+                                      AppPopup.showError(
+                                        context,
+                                        context.l10n.callUnavailable,
+                                      );
+                                      return;
+                                    }
+                                    ref
+                                        .read(propertyRepositoryProvider)
+                                        .recordLead(
+                                          property.id,
+                                          LeadChannel.call,
+                                        );
+                                    await startCall(
+                                      ownerId,
+                                      ownerDisplayName(
+                                        context.l10n,
+                                        property.ownerName,
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   // A list's card has no number: the full
                                   // listing has, once it is read.
                                   final callable = await _withFullDetails(
@@ -397,6 +443,10 @@ class _Body extends StatelessWidget {
           _DragHandle(onDismiss: onDismiss),
           const SizedBox(height: 14),
           PropertyDetailSummary(property: property),
+          if (property.isTakeover && property.takeover != null) ...[
+            const _SectionGap(),
+            TakeoverDetailsSection(terms: property.takeover!),
+          ],
           if (isReady) ...[
             const _SectionGap(),
             PropertyHighlights(property: property),

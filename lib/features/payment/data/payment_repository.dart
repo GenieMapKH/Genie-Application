@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:tilomnov/features/payment/domain/payment_checkout.dart';
 import 'package:tilomnov/features/payment/domain/payment_method.dart';
 import 'package:tilomnov/features/subscription/domain/account_subscription.dart';
+import 'package:tilomnov/features/subscription/domain/subscription_quote.dart';
 import 'package:tilomnov/core/network/api_cache_manager.dart';
 
 /// The payment service (`/payments`). It alone talks to ABA PayWay, holds
@@ -29,14 +30,19 @@ class PaymentRepository {
   /// Starts paying the first month of the [tier] subscription (its API name).
   Future<PaymentCheckout> startSubscriptionCheckout(
     String tier,
-    PaymentMethod method,
-  ) => _checkout('/payments/subscriptions/checkout', {
+    PaymentMethod method, {
+    String? quote,
+  }) => _checkout('/payments/subscriptions/checkout', {
     'tier': tier,
     'method': method.apiName,
+    'quote': ?quote,
   });
 
   /// Where transaction [transactionId] stands now.
-  Future<PaymentState> fetchState(String transactionId) async {
+  Future<PaymentState> fetchState(String transactionId) async =>
+      (await fetchTransaction(transactionId)).state;
+
+  Future<PaymentCheckout> fetchTransaction(String transactionId) async {
     final response = await _guard(
       () => dio.get(
         '/payments/transactions/$transactionId',
@@ -44,7 +50,7 @@ class PaymentRepository {
       ),
     );
     final data = response.data as Map<String, dynamic>;
-    return PaymentState.fromApi(data['status']);
+    return PaymentCheckout.fromJson(data);
   }
 
   Future<PaymentCheckout> _checkout(
@@ -55,25 +61,18 @@ class PaymentRepository {
     return PaymentCheckout.fromJson(response.data as Map<String, dynamic>);
   }
 
-  Future<String> simulateListing(String propertyId, PaymentMethod method) =>
-      _simulate('/payments/checkout', {
-        'propertyId': propertyId,
-        'method': method.apiName,
-      });
-
-  Future<String> simulateSubscription(String tier, PaymentMethod method) =>
-      _simulate('/payments/subscriptions/checkout', {
-        'tier': tier,
-        'method': method.apiName,
-      });
-
-  Future<String> _simulate(String path, Map<String, dynamic> body) async {
-    final response = await _sendCheckout(path, body);
-    final data = response.data as Map<String, dynamic>;
-    if (data['isSimulation'] != true || data['status'] != 'Success') {
-      throw const PaymentsUnavailableException();
-    }
-    return data['transactionId'] as String;
+  Future<SubscriptionQuote> subscriptionQuote(
+    String tier, {
+    String billingPeriod = 'monthly',
+  }) async {
+    final response = await _guard(
+      () => dio.get(
+        '/payments/subscriptions/quote/$tier',
+        queryParameters: {'billingPeriod': billingPeriod},
+        options: Options(extra: {CacheInterceptor.skipCache: true}),
+      ),
+    );
+    return SubscriptionQuote.fromJson(response.data as Map<String, dynamic>);
   }
 
   Future<Response<dynamic>> _sendCheckout(
@@ -81,7 +80,8 @@ class PaymentRepository {
     Map<String, dynamic> body,
   ) async {
     // shortcut: retry references live in memory; persist pending checkout recovery before live bank payments.
-    final intent = '$path:${body['propertyId'] ?? body['tier']}';
+    final intent =
+        '$path:${body['propertyId'] ?? body['tier']}:${body['quote'] ?? ''}';
     final requestId = _requestIds.putIfAbsent(intent, () {
       final random = Random.secure();
       final bytes = List.generate(16, (_) => random.nextInt(256));
@@ -93,7 +93,11 @@ class PaymentRepository {
     final response = await _guard(
       () => dio.post(path, data: {...body, 'requestId': requestId}),
     );
-    _requestIds.remove(intent);
+    final data = response.data;
+    if (data is Map &&
+        ['Success', 'Failed', 'RefundRequired'].contains(data['status'])) {
+      _requestIds.remove(intent);
+    }
     return response;
   }
 
@@ -107,6 +111,14 @@ class PaymentRepository {
 
   Future<AccountSubscription?> cancelSubscription() async {
     final response = await dio.post('/payments/subscriptions/cancel');
+    return _subscription(response.data as Map<String, dynamic>);
+  }
+
+  Future<AccountSubscription?> fetchExpiredSubscription() async {
+    final response = await dio.get(
+      '/payments/subscriptions/expired',
+      options: Options(extra: {CacheInterceptor.skipCache: true}),
+    );
     return _subscription(response.data as Map<String, dynamic>);
   }
 

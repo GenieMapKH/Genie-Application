@@ -8,6 +8,7 @@ import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/core/network/connection_restored_provider.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/feed/data/feed_repository.dart';
+import 'package:tilomnov/features/feed/data/feed_filters.dart';
 import 'package:tilomnov/features/follow/presentation/view_models/follow_providers.dart';
 import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -19,6 +20,10 @@ final feedRepositoryProvider = Provider<FeedRepository>((ref) {
 
 /// What time it is, for how old the feed shown is. Replaced in tests.
 final feedClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
+final feedFiltersProvider = StateProvider<FeedFilters>(
+  (ref) => const FeedFilters(),
+);
 
 /// The Feed tab: listings of the people the user follows, a page at a time.
 ///
@@ -41,10 +46,11 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
 
   @override
   Future<PagedList<PropertyModel>> build() async {
-    _generation++;
+    final generation = ++_generation;
     _nextCursor = null;
     _loadedAt = null;
     final repository = ref.watch(feedRepositoryProvider);
+    final filters = ref.watch(feedFiltersProvider);
     if (!ref.watch(isSignedInProvider)) return const PagedList();
 
     ref.listen(listingRefreshProvider, (_, _) {
@@ -69,7 +75,8 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
     );
     ref.onDispose(lifecycle.dispose);
 
-    final saved = await repository.savedFirstPage();
+    final saved = await repository.savedFirstPage(filters: filters);
+    if (generation != _generation) return const PagedList();
     if (saved != null) {
       // Shown at once; the server's page replaces it when it arrives.
       _nextCursor = saved.nextCursor;
@@ -80,12 +87,18 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
   }
 
   Future<PagedList<PropertyModel>> _firstPage() async {
+    final generation = _generation;
     final shown = state.valueOrNull?.items.length ?? FeedRepository.pageSize;
     final page = await ref
         .read(feedRepositoryProvider)
-        .fetchPage(limit: shown.clamp(FeedRepository.pageSize, 50));
-    _nextCursor = page.nextCursor;
-    _loadedAt = ref.read(feedClockProvider)();
+        .fetchPage(
+          limit: shown.clamp(FeedRepository.pageSize, 50),
+          filters: ref.read(feedFiltersProvider),
+        );
+    if (generation == _generation) {
+      _nextCursor = page.nextCursor;
+      _loadedAt = ref.read(feedClockProvider)();
+    }
     return _listOf(page);
   }
 
@@ -103,7 +116,7 @@ class FeedNotifier extends AsyncNotifier<PagedList<PropertyModel>> {
     try {
       final page = await ref
           .read(feedRepositoryProvider)
-          .fetchPage(cursor: cursor);
+          .fetchPage(cursor: cursor, filters: ref.read(feedFiltersProvider));
       if (generation != _generation) return;
       _nextCursor = page.nextCursor;
       state = AsyncData(

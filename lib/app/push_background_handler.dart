@@ -15,13 +15,13 @@ import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
 /// Runs when a push arrives while the app is closed or in the background
 /// (a separate isolate, without the app's state), when Android lets the app
-/// start. The system has already shown the push's own notification, if it
-/// has one; this replaces it with a better one where it can: a call rings
-/// full screen (and stops, or becomes a missed call), and a chat message
-/// sent with its sealed text shows what it says.
+/// start. Data-only call pushes ring full screen (and stop, or become missed
+/// calls). A chat message sent with sealed text replaces the system's generic
+/// notification with a preview where it can.
 @pragma('vm:entry-point')
 Future<void> handleBackgroundPush(RemoteMessage message) async {
   if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+  DartPluginRegistrant.ensureInitialized();
   final push = PushMessage.fromData(message.data);
   if (push is ChatMessagePush) {
     if (push.isSealed) {

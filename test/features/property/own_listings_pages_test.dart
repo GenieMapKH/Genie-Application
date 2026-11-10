@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,6 +30,7 @@ class _Server extends PropertyRepository {
   final offsets = <int>[];
   final statusesAsked = <List<String>>[];
   bool refusePublish = false;
+  Completer<void>? publishGate;
 
   _Server(this.listings) : super(Dio());
 
@@ -57,6 +60,7 @@ class _Server extends PropertyRepository {
 
   @override
   Future<PropertyModel> publish(String id) async {
+    await publishGate?.future;
     if (refusePublish) throw Exception('refused');
     listings = [
       for (final p in listings) p.id == id ? p.copyWith(status: 'Active') : p,
@@ -138,21 +142,31 @@ void main() {
     expect(server.offsets, [0, 20]);
   });
 
-  test('a publish moves its count to Active at once', () async {
+  test('a publish moves its count only after server confirmation', () async {
+    server.publishGate = Completer<void>();
     await container.read(propertiesProvider.future);
     final publishing = container
         .read(propertiesProvider.notifier)
         .changeVisibility('p0', 'Draft', PropertyVisibility.public);
 
+    await pumpEventQueue();
+    expect(shown().count('Draft'), 5);
+    expect(shown().count('Active'), 20);
+    expect(shown().items.first.status, 'Draft');
+    server.publishGate!.complete();
+    await publishing;
     expect(shown().count('Draft'), 4);
     expect(shown().count('Active'), 21);
     expect(shown().items.first.status, 'Active');
-    await publishing;
   });
 
-  test('a refused publish is undone by reading the listings again', () async {
+  test('a refused publish never changes the card or tab counts', () async {
     server.refusePublish = true;
     await container.read(propertiesProvider.future);
+    final counts = <Map<String, int>>[];
+    container.listen(propertiesProvider, (_, next) {
+      if (next.hasValue) counts.add(next.requireValue.countByStatus);
+    });
 
     await expectLater(
       container
@@ -164,6 +178,10 @@ void main() {
 
     expect(shown().count('Draft'), 5);
     expect(shown().items.first.status, 'Draft');
+    expect(
+      counts.every((count) => count['Draft'] == 5 && count['Active'] == 20),
+      isTrue,
+    );
   });
 
   test('marking an active listing sold moves its count to Sold', () async {
@@ -178,15 +196,16 @@ void main() {
     expect(shown().count('Active'), 19);
   });
 
-  test('a listing moved to another tab leaves this one at once', () async {
+  test('a listing moved to another tab leaves after confirmation', () async {
     await container.read(propertiesProvider.future);
     final moving = container
         .read(propertiesProvider.notifier)
         .changeVisibility('p7', 'Active', PropertyVisibility.sold);
 
+    expect(_ids(shown()), contains('p7'));
+    await moving;
     expect(_ids(shown()), isNot(contains('p7')));
     expect(shown().count('Sold'), 1);
-    await moving;
   });
 
   test('a tab asks the server only for its statuses', () async {
@@ -203,8 +222,8 @@ void main() {
   test('a move the server does not allow is refused before asking', () async {
     await container.read(propertiesProvider.future);
 
-    expect(
-      () => container
+    await expectLater(
+      container
           .read(propertiesProvider.notifier)
           .changeVisibility('p0', 'Draft', PropertyVisibility.sold),
       throwsStateError,

@@ -11,7 +11,11 @@ import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
 import 'package:tilomnov/l10n/generated/app_localizations.dart';
 
-Future<List<String>> _pump(WidgetTester tester, {bool glass = false}) async {
+Future<List<String>> _pump(
+  WidgetTester tester, {
+  bool glass = false,
+  bool admin = false,
+}) async {
   final pressed = <String>[];
   SharedPreferences.setMockInitialValues({});
   final settings = AppSettingsStorage(await SharedPreferences.getInstance());
@@ -29,6 +33,9 @@ Future<List<String>> _pump(WidgetTester tester, {bool glass = false}) async {
           body: Stack(
             children: [
               MapSideButtons(
+                onMessengerPressed: admin
+                    ? () => pressed.add('messenger')
+                    : null,
                 bottom: 110,
                 buttonSize: 76,
                 onDrawPressed: () => pressed.add('draw'),
@@ -44,14 +51,30 @@ Future<List<String>> _pump(WidgetTester tester, {bool glass = false}) async {
   return pressed;
 }
 
-Finder _disc(String tooltip) => find.descendant(
-  of: find.byTooltip(tooltip),
-  matching: find.byWidgetPredicate(
-    (w) => w is DecoratedBox || w is GlassSurface,
-  ),
-).first;
+Finder _disc(String tooltip) => find
+    .descendant(
+      of: find.byTooltip(tooltip),
+      matching: find.byWidgetPredicate(
+        (w) => w is DecoratedBox || w is GlassSurface,
+      ),
+    )
+    .first;
 
 void main() {
+  testWidgets('admin messenger sits above UTM and opens on one tap', (
+    tester,
+  ) async {
+    final pressed = await _pump(tester, admin: true);
+    expect(
+      tester.getRect(_disc('Chat')).bottom,
+      lessThan(tester.getRect(_disc('Coordinates')).top),
+    );
+    await tester.tap(find.byTooltip('Chat'));
+    expect(pressed, ['messenger']);
+    await _pump(tester);
+    expect(find.byTooltip('Chat'), findsNothing);
+  });
+
   testWidgets('draw and current position each take one tap', (tester) async {
     final pressed = await _pump(tester);
 

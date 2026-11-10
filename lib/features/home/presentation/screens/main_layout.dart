@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/chat/presentation/screens/chat_list_page.dart';
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:tilomnov/features/closest_listings/presentation/closest_sheet_layout.dart';
 import 'package:tilomnov/features/closest_listings/presentation/widgets/closest_listings_sheet.dart';
@@ -32,6 +33,7 @@ import 'package:tilomnov/features/search/presentation/view_models/saved_searches
 import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
 import 'package:tilomnov/features/security/presentation/widgets/new_sign_in_alert.dart';
+import 'package:tilomnov/features/subscription/presentation/widgets/expired_subscription_alert.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
@@ -44,16 +46,19 @@ class MainLayout extends ConsumerStatefulWidget {
 class _MainLayoutState extends ConsumerState<MainLayout> {
   final Completer<GoogleMapController> _mapControllerCompleter =
       Completer<GoogleMapController>();
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
-    MapLocationService.warmUp();
     _checkAuthNavState();
   }
 
   Future<void> _checkAuthNavState() async {
     final token = await AuthStorage.getAccessToken();
+    final isAdmin = AuthStorage.isAdminAccessToken(token);
+    MapLocationService.warmUp();
+    if (mounted) setState(() => _isAdmin = isAdmin);
     if ((token == null || token.isEmpty) && mounted) {
       // Every tab but Explore shows the user's own data.
       if (ref.read(mainNavProvider).currentIndex != MainTab.explore) {
@@ -231,8 +236,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
           Size(size.width, size.height + _mapFrameOverflow),
           covered,
           maxZoom: maxZoom,
-          // Below this the map shows dots instead of price tags.
-          minZoom: MapOverlayBuilder.clusterZoomThreshold + 1,
+          // Place searches must fit the whole region; focused listings keep readable tags.
+          minZoom: focused ? MapOverlayBuilder.clusterZoomThreshold + 1 : 0,
         ),
       ),
     );
@@ -314,13 +319,22 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
               IgnorePointer(
                 ignoring: overlayPage,
                 child: MainMapControls(
+                  onMessengerPressed: _isAdmin
+                      ? () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const ChatListPage(),
+                          ),
+                        )
+                      : null,
                   onGoToCurrentPosition: _goToCurrentPosition,
                   onAnimateToCoordinates: _animateToCoordinates,
                   onAddPinToCenter: _addPinToCenter,
                   onSavePropertySuccess: () {
                     ref
                         .read(mainNavProvider.notifier)
-                        .setIndex(MainTab.myProperties);
+                        .setIndex(
+                          _isAdmin ? MainTab.explore : MainTab.myProperties,
+                        );
                   },
                   onOpenProperty: _openPropertyDetail,
                   searchSheetHeight: searchSheetHeight,
@@ -362,10 +376,11 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 onOpenProperty: _openPropertyDetail,
               ),
 
-              MainLayoutPages(navState: navState),
+              MainLayoutPages(navState: navState, isAdmin: _isAdmin),
 
               // Draws nothing: speaks up when another device signs in.
               const NewSignInAlert(),
+              if (!_isAdmin) const ExpiredSubscriptionAlert(),
             ],
           ),
           // Slid away while drawing a boundary so a stray tap near the drawing
@@ -376,7 +391,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
               offset: isHome && isDrawing ? const Offset(0, 1) : Offset.zero,
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeOutCubic,
-              child: const MainBottomNav(),
+              child: MainBottomNav(isAdmin: _isAdmin),
             ),
           ),
         ),

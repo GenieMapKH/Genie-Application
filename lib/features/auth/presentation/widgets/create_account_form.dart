@@ -19,6 +19,7 @@ class CreateAccountForm extends StatelessWidget {
   final String? termsError;
   final bool obscurePassword;
   final bool agreeToTerms;
+  final bool enabled;
 
   /// Any field was edited.
   final VoidCallback onChanged;
@@ -41,6 +42,7 @@ class CreateAccountForm extends StatelessWidget {
     this.termsError,
     required this.obscurePassword,
     required this.agreeToTerms,
+    this.enabled = true,
     required this.onChanged,
     required this.onTogglePasswordVisibility,
     required this.onTermsChanged,
@@ -71,6 +73,7 @@ class CreateAccountForm extends StatelessWidget {
           controller: phoneController,
           keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.next,
+          enabled: enabled,
           onChanged: (_) => onChanged(),
         ),
         const SizedBox(height: 20),
@@ -83,6 +86,11 @@ class CreateAccountForm extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           onChanged: (_) => onChanged(),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          context.l10n.authRecoveryEmailHint,
+          style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(height: 20),
         AppTextField(

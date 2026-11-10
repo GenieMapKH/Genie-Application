@@ -10,6 +10,10 @@ Color _tag(String listingType, {bool isVisited = false}) =>
     ).background;
 
 void main() {
+  test('takeover payments are purple, pale purple once visited', () {
+    expect(_tag('Takeover Payments'), const Color(0xFF7C3AED));
+    expect(_tag('Takeover Payments', isVisited: true), const Color(0xFFC4B5FD));
+  });
   test('a listing for sale is green, dimmed once visited', () {
     expect(_tag('Sale'), PropertyMarkers.green);
     expect(_tag('Sale', isVisited: true), const Color(0xFF6AE0B1));

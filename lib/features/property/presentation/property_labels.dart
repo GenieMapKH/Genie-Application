@@ -1,5 +1,6 @@
 import 'package:tilomnov/features/property/presentation/view_models/saved_properties_provider.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'takeover_labels.dart';
 
 /// How a value a listing stores in English is shown: property and listing
 /// types, statuses and the options of the listing form. What is stored and
@@ -19,6 +20,7 @@ String propertyValueLabel(AppLocalizations l10n, String value) {
     'Sale' => l10n.listingTypeSale,
     'Rent' => l10n.listingTypeRent,
     'To Let' => l10n.listingTypeToLet,
+    'Takeover Payments' => l10n.listingTypeTakeover,
     // Statuses.
     'Active' => l10n.propertyStatusActive,
     'Pending' => l10n.propertyStatusPending,
@@ -54,7 +56,7 @@ String propertyValueLabel(AppLocalizations l10n, String value) {
     '80% Completed' => l10n.propertyOptionCompleted80,
     'Months' => l10n.propertyOptionMonths,
     'Years' => l10n.propertyOptionYears,
-    _ => value,
+    _ => takeoverValueLabel(l10n, value),
   };
 }
 

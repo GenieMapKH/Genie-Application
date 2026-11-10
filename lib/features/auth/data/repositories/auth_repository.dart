@@ -48,6 +48,8 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref.watch(apiClientProvider));
 });
 
+class AdminEmailRequired implements Exception {}
+
 class AuthService {
   final Dio dio;
 
@@ -110,6 +112,7 @@ class AuthService {
     String? email,
     String? name,
     required String password,
+    String? emailProof,
   }) async {
     try {
       await dio.post(
@@ -119,8 +122,32 @@ class AuthService {
           'email': ?email,
           'name': ?name,
           'password': password,
+          'emailProof': ?emailProof,
         },
       );
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> requestEmailVerification(String email) async {
+    try {
+      await dio.post(
+        '/auth/verification/email/request',
+        data: {'email': email},
+      );
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<String> confirmEmailVerification(String email, String otp) async {
+    try {
+      final response = await dio.post(
+        '/auth/verification/email/confirm',
+        data: {'email': email, 'otp': otp},
+      );
+      return response.data['proofToken'] as String;
     } catch (e) {
       throw _handleError(e);
     }
@@ -135,6 +162,26 @@ class AuthService {
         data: {isEmail ? 'email' : 'phone': identifier, 'password': password},
       );
 
+      if (response.data['status'] == 'admin_email_required') {
+        throw AdminEmailRequired();
+      }
+
+      await AuthStorage.saveTokens(
+        access: response.data['accessToken'],
+        refresh: response.data['refreshToken'],
+      );
+    } catch (e) {
+      if (e is AdminEmailRequired) rethrow;
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> completeAdminLogin(String token) async {
+    try {
+      final response = await dio.post(
+        '/auth/admin-login/complete',
+        data: {'token': token},
+      );
       await AuthStorage.saveTokens(
         access: response.data['accessToken'],
         refresh: response.data['refreshToken'],
@@ -196,22 +243,6 @@ class AuthService {
         data: {'email': email, 'otp': otp},
       );
       return response.data['verified'] == true;
-    } catch (e) {
-      throw _handleError(e);
-    }
-  }
-
-  /// Sets a new password for the account with the phone number that
-  /// [idToken] proves (a Firebase ID token from an SMS code just typed).
-  Future<void> resetPasswordWithPhone(
-    String idToken,
-    String newPassword,
-  ) async {
-    try {
-      await dio.post(
-        '/auth/reset-password/phone',
-        data: {'idToken': idToken, 'newPassword': newPassword},
-      );
     } catch (e) {
       throw _handleError(e);
     }

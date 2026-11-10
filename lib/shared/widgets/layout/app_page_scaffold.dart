@@ -9,6 +9,7 @@ import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
 class AppPageScaffold extends StatelessWidget {
   final String title;
   final Widget child;
+  final bool showBackButton;
 
   /// What the back arrow does. Defaults to leaving the screen.
   final VoidCallback? onBackPressed;
@@ -22,6 +23,7 @@ class AppPageScaffold extends StatelessWidget {
     super.key,
     required this.title,
     required this.child,
+    this.showBackButton = true,
     this.onBackPressed,
     this.extendsToBottom = false,
   });
@@ -35,7 +37,11 @@ class AppPageScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppHeaderBar(title: title, onBackPressed: onBackPressed),
+            AppHeaderBar(
+              title: title,
+              onBackPressed: onBackPressed,
+              showBackButton: showBackButton,
+            ),
             Expanded(child: child),
           ],
         ),

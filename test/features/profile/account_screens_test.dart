@@ -8,6 +8,7 @@ import 'package:tilomnov/features/profile/data/repositories/user_repository.dart
 import 'package:tilomnov/features/profile/presentation/screens/personal_info_page.dart';
 import 'package:tilomnov/features/profile/presentation/screens/user_profile_page.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../support/test_app.dart';
@@ -25,6 +26,7 @@ final _profile = UserProfile(
 
 List<Override> _signedIn({StubServer? server}) => [
   userProfileProvider.overrideWith((ref) async => _profile),
+  accountSubscriptionProvider.overrideWith((ref) async => null),
   if (server != null)
     userRepositoryProvider.overrideWithValue(UserRepository(server.dio)),
 ];

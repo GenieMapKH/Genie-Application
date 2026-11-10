@@ -11,7 +11,7 @@ import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
-/// The 6-digit code of a password reset, sent by email or by SMS.
+/// The 6-digit code of a password reset, sent by email.
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final PasswordResetTarget target;
 
@@ -37,18 +37,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
 
   bool _isLoading = false;
 
-  /// Replaced when the code is sent again (an SMS resend has a new session).
+  /// Updated when a new email code is requested.
   late PasswordResetTarget _target = widget.target;
 
-  bool get _byPhone => _target is PhoneResetTarget;
-
-  String _errorText(Object error) => _byPhone
-      ? phoneResetErrorMessage(context.l10n, error)
-      : authErrorMessage(
-          context.l10n,
-          error,
-          badRequest: context.l10n.authErrorInvalidCode,
-        );
+  String _errorText(Object error) => authErrorMessage(
+    context.l10n,
+    error,
+    badRequest: context.l10n.authErrorInvalidCode,
+  );
 
   /// The server sends at most one code per address a minute.
   static const _resendWaitSeconds = 60;
@@ -179,12 +175,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
     try {
       final outcome = await ref.read(passwordResetFlowProvider).resend(_target);
       if (!mounted) return;
-      // Android may read the new SMS by itself: nothing left to type.
-      if (outcome.proof case final proof?) {
-        context.push('/reset-password', extra: proof);
-        return;
-      }
-      _target = outcome.target!;
+      _target = outcome;
       AppPopup.showSuccess(context, context.l10n.authNewVerificationCodeSent);
       _startResendTimer();
       // Clear existing OTP
@@ -232,9 +223,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _byPhone
-                            ? context.l10n.authEnterTheVerificationCodeWeTexted
-                            : context.l10n.authEnterTheVerificationCodeWeJust,
+                        context.l10n.authEnterTheVerificationCodeWeJust,
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           color: context.colors.textMuted,

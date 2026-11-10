@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/core/network/connection_restored_provider.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings_tab.dart';
@@ -108,19 +109,30 @@ class PropertiesNotifier extends AsyncNotifier<OwnListings> {
     }
   }
 
-  /// Moves listing [id], now of [status], to [target] at once, then asks
-  /// the server. Throws when the server refuses (see [visibilityChange]).
+  /// Moves listing [id] and its counts only after the server confirms.
   Future<void> changeVisibility(
     String id,
     String status,
     PropertyVisibility target,
-  ) {
+  ) async {
     final change = _allowedChange(status, target);
-    return _changeOptimistically(
-      id,
-      target.status,
-      (repo) => _sendVisibilityChange(repo, id, change),
-    );
+    try {
+      final property = await _sendVisibilityChange(
+        ref.read(propertyRepositoryProvider),
+        id,
+        change,
+      );
+      // A page requested before the write must not undo the confirmed change.
+      _generation++;
+      final current = state.valueOrNull;
+      if (current != null) {
+        state = AsyncData(
+          current.withStatus(id, property.status, listed: _tab.lists),
+        );
+      }
+    } finally {
+      ownListingsChanged(ref);
+    }
   }
 
   Future<void> removeProperty(String id) =>
@@ -218,7 +230,7 @@ VisibilityChange _allowedChange(String status, PropertyVisibility target) {
   return change;
 }
 
-Future<Object?> _sendVisibilityChange(
+Future<PropertyModel> _sendVisibilityChange(
   PropertyRepository repo,
   String id,
   VisibilityChange change,

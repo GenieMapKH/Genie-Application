@@ -13,9 +13,6 @@ class AbaPaymentCheckoutService implements PaymentCheckoutService {
   AbaPaymentCheckoutService({required this.repository, required this.flow});
 
   @override
-  bool get isSimulation => false;
-
-  @override
   Future<PaymentOutcome> payForListing(
     String propertyId,
     PaymentMethod method,
@@ -25,13 +22,48 @@ class AbaPaymentCheckoutService implements PaymentCheckoutService {
   @override
   Future<PaymentOutcome> payForSubscription(
     String tier,
-    PaymentMethod method,
-  ) async =>
-      _complete(await repository.startSubscriptionCheckout(tier, method));
+    PaymentMethod method, {
+    String? quote,
+  }) async => _complete(
+    await repository.startSubscriptionCheckout(tier, method, quote: quote),
+  );
 
-  Future<PaymentOutcome> _complete(PaymentCheckout checkout) async =>
-      PaymentOutcome(
-        await flow.complete(checkout),
+  Future<PaymentOutcome> _complete(PaymentCheckout checkout) async {
+    if (checkout.state == PaymentState.refundRequired) {
+      return PaymentOutcome(
+        PaymentResult.refundRequired,
         transactionId: checkout.transactionId,
       );
+    }
+    if (checkout.state == PaymentState.failed) {
+      return PaymentOutcome(
+        PaymentResult.failed,
+        transactionId: checkout.transactionId,
+      );
+    }
+    var confirmed = checkout;
+    if (checkout.state != PaymentState.paid) {
+      final result = await flow.complete(checkout);
+      if (result != PaymentResult.paid) {
+        return PaymentOutcome(result, transactionId: checkout.transactionId);
+      }
+      confirmed = await repository.fetchTransaction(checkout.transactionId);
+      if (confirmed.state != PaymentState.paid) {
+        return PaymentOutcome(
+          confirmed.state == PaymentState.refundRequired
+              ? PaymentResult.refundRequired
+              : confirmed.state == PaymentState.failed
+              ? PaymentResult.failed
+              : PaymentResult.awaitingConfirmation,
+          transactionId: checkout.transactionId,
+        );
+      }
+    }
+    return PaymentOutcome(
+      PaymentResult.paid,
+      transactionId: confirmed.transactionId,
+      amountUsd: confirmed.amountUsd,
+      paidAt: confirmed.paidAt,
+    );
+  }
 }

@@ -12,6 +12,7 @@ const _sameInEveryLanguage = {
   'homeCrsWgs84UtmZone48p',
   'paymentAbaPay',
   'paymentAbaKhqr',
+  'takeoverPaymentValue',
 };
 
 Map<String, dynamic> _strings(String locale) {

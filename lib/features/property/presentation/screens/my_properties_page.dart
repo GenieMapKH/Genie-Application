@@ -60,7 +60,6 @@ class MyPropertiesPage extends ConsumerWidget {
           children: [
             AppHeaderBar(
               title: context.l10n.navMyProperties,
-              height: listings != null && !hasListings ? 60 : null,
               onBackPressed: onBackPressed,
             ),
             Expanded(

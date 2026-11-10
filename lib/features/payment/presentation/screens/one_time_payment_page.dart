@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tilomnov/features/payment/application/payment_config.dart';
+import 'package:intl/intl.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/payment/domain/payment_method.dart';
@@ -18,12 +18,16 @@ class OneTimePaymentPage extends StatefulWidget {
   final List<(String, String)> listingRows;
   final double fee;
   final Future<bool> Function(PaymentMethod method) onPublish;
+  final bool isRenewal;
+  final Future<bool> Function()? onChooseSubscription;
 
   const OneTimePaymentPage({
     super.key,
     required this.listingRows,
     required this.fee,
     required this.onPublish,
+    this.isRenewal = false,
+    this.onChooseSubscription,
   });
 
   /// A one-time publish is paid by KHQR, with any banking app.
@@ -54,7 +58,9 @@ class _OneTimePaymentPageState extends State<OneTimePaymentPage> {
     final fee = formatUsd(widget.fee);
 
     return AppPageScaffold(
-      title: l10n.paymentOneTimeTitle,
+      title: widget.isRenewal
+          ? l10n.publishingRenewListingTitle
+          : l10n.paymentOneTimeTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -63,7 +69,9 @@ class _OneTimePaymentPageState extends State<OneTimePaymentPage> {
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
               children: [
                 Text(
-                  l10n.paymentOneTimeIntro,
+                  widget.isRenewal
+                      ? l10n.publishingRenewListingMessage
+                      : l10n.paymentOneTimeIntro,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -71,7 +79,26 @@ class _OneTimePaymentPageState extends State<OneTimePaymentPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                if (!PaymentConfig.enabled) Text(l10n.paymentSimulationNotice),
+                if (widget.onChooseSubscription != null) ...[
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.workspace_premium_outlined),
+                    label: Text(l10n.publishPlanSubscription),
+                    onPressed: _publishing
+                        ? null
+                        : () async {
+                            setState(() => _publishing = true);
+                            try {
+                              final done = await widget.onChooseSubscription!();
+                              if (done && context.mounted) {
+                                Navigator.of(context).pop(true);
+                              }
+                            } finally {
+                              if (mounted) setState(() => _publishing = false);
+                            }
+                          },
+                  ),
+                  const SizedBox(height: 20),
+                ],
                 SummaryTable(
                   title: l10n.paymentPropertyInformation,
                   rows: widget.listingRows,
@@ -82,7 +109,14 @@ class _OneTimePaymentPageState extends State<OneTimePaymentPage> {
                   emphasizeLast: true,
                   rows: [
                     (l10n.paymentPrice, fee),
-                    (l10n.paymentBillingCycle, l10n.paymentOneTime),
+                    (l10n.paymentBillingCycle, l10n.paymentOneTimeDuration),
+                    (
+                      l10n.paymentEstimatedExpiry,
+                      DateFormat.yMMMd(
+                        l10n.localeName,
+                      ).format(DateTime.now().add(const Duration(days: 30))),
+                    ),
+                    (l10n.paymentRenewalPrice, fee),
                     (l10n.paymentTotal, fee),
                   ],
                 ),

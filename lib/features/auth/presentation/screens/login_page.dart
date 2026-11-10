@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tilomnov/features/auth/presentation/view_models/login_controller.dart';
@@ -159,7 +160,11 @@ class _LoginPageState extends ConsumerState<LoginPage>
       // share this controller: only the page in front answers, once.
       if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? true)) return;
 
-      if (next.hasError) {
+      if (next.error is AdminEmailRequired) {
+        _passwordController.clear();
+        formNotifier.setPassword('');
+        context.go('/admin-login');
+      } else if (next.hasError) {
         if (!mounted) return;
         AppPopup.showError(
           context,
@@ -228,11 +233,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                         if (widget.onForgotPasswordPressed != null) {
                           widget.onForgotPasswordPressed!();
                         } else {
-                          context.push(
-                            formState.selectedMethod == AuthMethod.phone
-                                ? '/forgot-password?method=phone'
-                                : '/forgot-password',
-                          );
+                          context.push('/forgot-password');
                         }
                       },
                     ),
@@ -249,7 +250,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           // The listener in build reacts to the outcome.
                           ref
                               .read(loginControllerProvider.notifier)
-                              .googleLogin();
+                              .googleLogin(forceAccountSelection: true);
                         }
                       },
                       onCreateAccount: () {

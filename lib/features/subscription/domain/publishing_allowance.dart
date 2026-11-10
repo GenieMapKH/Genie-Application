@@ -5,15 +5,17 @@ import 'subscription_plan.dart';
 class PublishingAllowance {
   final PlanTier tier;
 
-  /// Listings that are live or waiting for their payment.
+  /// Active listings using the plan, excluding separately paid listings.
   final int used;
+  final int? purchasedLimit;
 
-  const PublishingAllowance({required this.tier, required this.used});
+  const PublishingAllowance({
+    required this.tier,
+    required this.used,
+    this.purchasedLimit,
+  });
 
-  /// Listing statuses that take up a place in the plan.
-  static const countedStatuses = ['Active', 'Pending'];
-
-  int get limit => PlanCatalog.of(tier).listingLimit;
+  int get limit => purchasedLimit ?? PlanCatalog.of(tier).listingLimit;
 
   /// True when one more listing still fits in the plan, so publishing it
   /// costs nothing more.

@@ -30,5 +30,8 @@ void main() {
 
   test('a call uses the tag the server names it by', () {
     expect(CallNotifications.tagOf('c1'), 'call:c1');
+    expect(CallNotifications.idOf('c1'), 3118);
+    expect(CallNotifications.idOf('c2'), isNot(CallNotifications.idOf('c1')));
+    expect(CallNotifications.idOf('c1'), isNot(0));
   });
 }

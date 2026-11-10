@@ -129,7 +129,8 @@ class MapStateNotifier extends StateNotifier<MapState> {
       isDrawing: true,
       isEditingPolygon: initialPoints != null,
       drawnPoints: initialPoints ?? [],
-      backupPoints: initialPoints != null ? List.from(initialPoints) : null,
+      // Imported coordinates are a new preview, with no saved polygon to restore.
+      clearBackupPoints: true,
       clearSelectedVertex: true,
       clearHighlightedLocalPolygon: true,
       clearDrag: true,

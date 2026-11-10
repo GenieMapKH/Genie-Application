@@ -64,6 +64,13 @@ class MyApp extends ConsumerWidget {
               call,
               title: callContext.l10n.callInProgress,
               returnLabel: callContext.l10n.callReturn,
+              incomingTitle: callContext.l10n.callIncomingFrom(
+                call.peerName ?? '',
+              ),
+              acceptLabel: callContext.l10n.callAccept,
+              declineLabel: callContext.l10n.callDecline,
+              isScreenVisible: () =>
+                  ref.read(callScreenPresenterProvider).isVisible,
             );
       }
     });

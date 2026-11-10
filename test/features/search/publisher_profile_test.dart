@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/shared/widgets/media/admin_identity.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -172,13 +173,24 @@ void main() {
     expect(find.text('open'), findsOneWidget);
   });
 
+  testWidgets('public admin profile displays its server-issued identity', (
+    tester,
+  ) async {
+    await _openProfile(
+      tester,
+      _api(
+        person: _profilePerson.replaceFirst('"id":', '"isAdmin": true, "id":'),
+      ),
+    );
+    expect(find.byType(AdminAvatarFrame), findsOneWidget);
+    expect(find.byType(AdminIdentityBadge), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('says so when they have nothing published', (tester) async {
     await _openProfile(tester, _api(listings: ''));
 
-    expect(
-      find.text('This person has no published listings right now.'),
-      findsOneWidget,
-    );
+    expect(find.text('No published listings yet.'), findsOneWidget);
     expect(find.text('View on map'), findsNothing);
   });
 

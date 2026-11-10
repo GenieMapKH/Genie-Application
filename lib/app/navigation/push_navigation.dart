@@ -14,6 +14,8 @@ import 'package:tilomnov/features/notifications/models/push_message.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
 import 'package:tilomnov/features/security/presentation/screens/devices_page.dart';
+import 'package:tilomnov/features/property/presentation/screens/my_properties_page.dart';
+import 'package:tilomnov/features/subscription/presentation/screens/subscription_plans_page.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 
 /// Opens what a tapped notification is about. It lives in `app/` because it
@@ -39,6 +41,12 @@ PushOpener pushOpener(Ref ref) {
         );
       case SignInAlertPush():
         await context.pushPage(const DevicesPage());
+      case PublishingExpiryPush(:final propertyId):
+        await context.pushPage(
+          propertyId == null
+              ? const SubscriptionPlansPage()
+              : const MyPropertiesPage(),
+        );
       case PromotionPush(:final propertyId, :final url):
         await _openPromotion(ref, context, propertyId: propertyId, url: url);
       case ListingAlertPush(:final propertyId):

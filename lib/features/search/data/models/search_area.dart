@@ -13,10 +13,18 @@ class SearchArea {
 
   const SearchArea({required this.properties, this.bounds});
 
-  /// What the camera should frame: where the listings are when there are
-  /// any, since a whole district is mostly empty land and too wide to read;
-  /// else the place's own region.
-  LatLngBounds? get framing => SearchArea.around(properties).bounds ?? bounds;
+  /// Places frame their whole search region, even when listings cluster in a corner.
+  LatLngBounds? get framing => bounds ?? SearchArea.around(properties).bounds;
+
+  /// Google supplies a search viewport, rather than an administrative boundary.
+  List<LatLng> get outline => bounds == null
+      ? const []
+      : [
+          bounds!.southwest,
+          LatLng(bounds!.northeast.latitude, bounds!.southwest.longitude),
+          bounds!.northeast,
+          LatLng(bounds!.southwest.latitude, bounds!.northeast.longitude),
+        ];
 
   /// The smallest region holding every located listing in [properties].
   factory SearchArea.around(List<PropertyModel> properties) {

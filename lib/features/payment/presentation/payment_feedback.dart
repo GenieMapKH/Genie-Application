@@ -17,7 +17,11 @@ String formatUsdShort(double amount) => amount == amount.roundToDouble()
     : amount.toStringAsFixed(2);
 
 /// Tells the user why a payment that did not go through is not done.
-void showUnfinishedPayment(BuildContext context, PaymentResult result) {
+void showUnfinishedPayment(
+  BuildContext context,
+  PaymentResult result, {
+  String? transactionId,
+}) {
   if (!context.mounted) return;
   final l10n = context.l10n;
   switch (result) {
@@ -27,6 +31,11 @@ void showUnfinishedPayment(BuildContext context, PaymentResult result) {
       AppPopup.showInfo(context, l10n.paymentAwaitingConfirmation);
     case PaymentResult.failed:
       AppPopup.showError(context, l10n.paymentFailed);
+    case PaymentResult.refundRequired:
+      AppPopup.showError(
+        context,
+        '${l10n.paymentRefundRequired}\n${transactionId ?? ''}',
+      );
     case PaymentResult.notOpened:
       AppPopup.showError(context, l10n.paymentAppNotOpened);
   }

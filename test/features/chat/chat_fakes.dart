@@ -74,9 +74,7 @@ class FakeCipher extends Fake implements MessageCodec {
   int decrypts = 0;
 
   @override
-  Future<OpenedMessage?> decode(
-    EncryptedMessage message,
-  ) async {
+  Future<OpenedMessage?> decode(EncryptedMessage message) async {
     decrypts++;
     return message.ciphertext.startsWith('sealed:')
         ? (

@@ -10,6 +10,31 @@ String _jwt(Map<String, Object?> payload) {
 }
 
 void main() {
+  test('password-only admin tokens require a new email login', () {
+    final token = _jwt({'sub': 'owner', 'role': 'admin'});
+    expect(AuthStorage.isAdminAccessToken(token), isFalse);
+    expect(AuthStorage.needsAdminEmailVerification(token), isTrue);
+  });
+
+  test('only the server-issued admin role selects the admin dashboard', () {
+    expect(
+      AuthStorage.isAdminAccessToken(
+        _jwt({'sub': 'owner', 'role': 'admin', 'adminMfa': true}),
+      ),
+      isTrue,
+    );
+    expect(
+      AuthStorage.isAdminAccessToken(_jwt({'sub': 'ordinary', 'role': 'user'})),
+      isFalse,
+    );
+    expect(
+      AuthStorage.isAdminAccessToken(
+        _jwt({'sub': 'ordinary', 'email': 'owner@example.com'}),
+      ),
+      isFalse,
+    );
+    expect(AuthStorage.isAdminAccessToken(null), isFalse);
+  });
   test('reads the account id from the token subject', () {
     expect(AuthStorage.userIdOfToken(_jwt({'sub': 'user-42'})), 'user-42');
   });

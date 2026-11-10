@@ -437,7 +437,7 @@ abstract class AppLocalizations {
   /// No description provided for @glassNavigationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Glass navigation'**
+  /// **'Navigation theme'**
   String get glassNavigationTitle;
 
   /// No description provided for @glassNavigationSubtitle.
@@ -962,6 +962,36 @@ abstract class AppLocalizations {
   /// **'Phone Number'**
   String get authPhoneNumber;
 
+  /// No description provided for @authGetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Get code'**
+  String get authGetCode;
+
+  /// No description provided for @authPhoneVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number verified'**
+  String get authPhoneVerified;
+
+  /// No description provided for @authPhoneVerificationExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone verification expired. Get a new code.'**
+  String get authPhoneVerificationExpired;
+
+  /// No description provided for @authPhoneVerificationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send the SMS code. Please try again later.'**
+  String get authPhoneVerificationUnavailable;
+
+  /// No description provided for @authVerifyPhoneFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your phone number before signing up.'**
+  String get authVerifyPhoneFirst;
+
   /// No description provided for @authLoginFailedPleaseCheckYourCredentials.
   ///
   /// In en, this message translates to:
@@ -1328,6 +1358,12 @@ abstract class AppLocalizations {
   /// **'Draw'**
   String get homeDraw;
 
+  /// No description provided for @homeAddPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add point'**
+  String get homeAddPoint;
+
   /// No description provided for @homeSearchByAreaRoadVillage.
   ///
   /// In en, this message translates to:
@@ -1609,6 +1645,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call Now'**
   String get propertyCallNow;
+
+  /// No description provided for @propertyCallInApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Call in Tilomnov'**
+  String get propertyCallInApp;
+
+  /// No description provided for @propertyCallPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Use phone dialer'**
+  String get propertyCallPhone;
+
+  /// No description provided for @callFullScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full-screen incoming calls'**
+  String get callFullScreenTitle;
+
+  /// No description provided for @callFullScreenHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow incoming calls to appear over the lock screen. Android may show a call banner while your phone is unlocked.'**
+  String get callFullScreenHelp;
+
+  /// No description provided for @callFullScreenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open full-screen call settings.'**
+  String get callFullScreenFailed;
 
   /// No description provided for @propertyNoPhoneNumber.
   ///
@@ -2629,6 +2695,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Feed'**
   String get feedTitle;
+
+  /// No description provided for @feedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fresh finds from people you follow'**
+  String get feedSubtitle;
+
+  /// No description provided for @feedNewestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get feedNewestFirst;
+
+  /// No description provided for @feedSortTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Top (most saved)'**
+  String get feedSortTop;
+
+  /// No description provided for @feedListingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing date'**
+  String get feedListingDate;
+
+  /// No description provided for @feedAnyTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Any time'**
+  String get feedAnyTime;
+
+  /// No description provided for @feedLast7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get feedLast7Days;
+
+  /// No description provided for @feedLast30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get feedLast30Days;
+
+  /// No description provided for @feedChooseDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose dates'**
+  String get feedChooseDates;
+
+  /// No description provided for @feedPriceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a price between \$0 and \$9,999,999,999.99.'**
+  String get feedPriceInvalid;
+
+  /// No description provided for @feedNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching listings'**
+  String get feedNoMatches;
+
+  /// No description provided for @feedTryOtherFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different date, price or property type.'**
+  String get feedTryOtherFilters;
 
   /// No description provided for @feedEmptyTitle.
   ///
@@ -5393,7 +5525,7 @@ abstract class AppLocalizations {
   /// No description provided for @planUpgradeIntro.
   ///
   /// In en, this message translates to:
-  /// **'Your plan lasts one month from purchase. Upgrades replace your plan at the full price shown.'**
+  /// **'New plans last one month. Upgrades charge only the price difference for your remaining time and keep your expiry date.'**
   String get planUpgradeIntro;
 
   /// No description provided for @planSubscribe.
@@ -5449,6 +5581,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The payment was not completed. Please try again.'**
   String get paymentFailed;
+
+  /// No description provided for @paymentRefundRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment arrived after the upgrade expired. Please contact support with your transaction reference for a refund.'**
+  String get paymentRefundRequired;
 
   /// No description provided for @paymentAppNotOpened.
   ///
@@ -5516,6 +5654,30 @@ abstract class AppLocalizations {
   /// **'Your property is ready to be published.'**
   String get paymentOneTimeIntro;
 
+  /// No description provided for @publishingRenewListingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew property post'**
+  String get publishingRenewListingTitle;
+
+  /// No description provided for @publishingRenewListingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this property public for one month. Pay for this post, or use an active subscription with space available.'**
+  String get publishingRenewListingMessage;
+
+  /// No description provided for @publishingRenewSubscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew your subscription'**
+  String get publishingRenewSubscriptionTitle;
+
+  /// No description provided for @publishingRenewSubscriptionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription has expired. Renew your plan to publish your properties again. Your original free listing stays available.'**
+  String get publishingRenewSubscriptionMessage;
+
   /// No description provided for @paymentPropertyInformation.
   ///
   /// In en, this message translates to:
@@ -5525,7 +5687,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentOneTime.
   ///
   /// In en, this message translates to:
-  /// **'One-time payment'**
+  /// **'One month · one-time payment'**
   String get paymentOneTime;
 
   /// No description provided for @paymentPublishProperty.
@@ -5561,7 +5723,7 @@ abstract class AppLocalizations {
   /// No description provided for @publishPlanOneTimeHint.
   ///
   /// In en, this message translates to:
-  /// **'Pay {price} to publish just this property.'**
+  /// **'Pay {price} to publish this property for one month.'**
   String publishPlanOneTimeHint(String price);
 
   /// No description provided for @publishPlanSubscription.
@@ -5813,7 +5975,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentSuccessEmailed.
   ///
   /// In en, this message translates to:
-  /// **'Order confirmation details sent to your email:'**
+  /// **'Order confirmation email:'**
   String get paymentSuccessEmailed;
 
   /// No description provided for @paymentSuccessNoEmail.
@@ -5909,14 +6071,8 @@ abstract class AppLocalizations {
   /// No description provided for @paymentItemOneTimePublish.
   ///
   /// In en, this message translates to:
-  /// **'One-time listing publish'**
+  /// **'Property post · one month'**
   String get paymentItemOneTimePublish;
-
-  /// No description provided for @paymentSimulationNotice.
-  ///
-  /// In en, this message translates to:
-  /// **'Test purchase only. No money will be charged.'**
-  String get paymentSimulationNotice;
 
   /// No description provided for @planCancelAction.
   ///
@@ -5927,13 +6083,13 @@ abstract class AppLocalizations {
   /// No description provided for @planCancelTitle.
   ///
   /// In en, this message translates to:
-  /// **'Turn off automatic renewal?'**
+  /// **'Cancel your plan?'**
   String get planCancelTitle;
 
   /// No description provided for @planCancelExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Your plan stays active until {date}. No automatic renewal or charge.'**
+  /// **'Your plan stays active until {date}. You keep your paid benefits until then.'**
   String planCancelExplanation(String date);
 
   /// No description provided for @planActiveUntil.
@@ -5945,7 +6101,7 @@ abstract class AppLocalizations {
   /// No description provided for @planCancelledUntil.
   ///
   /// In en, this message translates to:
-  /// **'Automatic renewal is off. Your plan stays active until {date}.'**
+  /// **'Plan cancelled. Your access stays active until {date}.'**
   String planCancelledUntil(String date);
 
   /// No description provided for @planCancelFailed.
@@ -5959,6 +6115,480 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load your plan. Tap to retry.'**
   String get planStatusRetry;
+
+  /// No description provided for @listingTypeTakeover.
+  ///
+  /// In en, this message translates to:
+  /// **'Takeover Payments'**
+  String get listingTypeTakeover;
+
+  /// No description provided for @takeoverIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the existing payment plan. Buyers pay you the seller amount, then take responsibility for the remaining balance, subject to provider approval.'**
+  String get takeoverIntro;
+
+  /// No description provided for @takeoverProviderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment provider type'**
+  String get takeoverProviderType;
+
+  /// No description provided for @takeoverProviderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer or bank name'**
+  String get takeoverProviderName;
+
+  /// No description provided for @takeoverProjectName.
+  ///
+  /// In en, this message translates to:
+  /// **'Project name'**
+  String get takeoverProjectName;
+
+  /// No description provided for @takeoverSellerAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount payable to seller (USD)'**
+  String get takeoverSellerAmount;
+
+  /// No description provided for @takeoverBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining balance (USD)'**
+  String get takeoverBalance;
+
+  /// No description provided for @takeoverBalanceHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding contract balance or loan principal, excluding future financing interest. Include any larger scheduled payments in this balance.'**
+  String get takeoverBalanceHelp;
+
+  /// No description provided for @takeoverBalanceDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance as of'**
+  String get takeoverBalanceDate;
+
+  /// No description provided for @takeoverPaymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular instalment (USD)'**
+  String get takeoverPaymentAmount;
+
+  /// No description provided for @takeoverFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment frequency'**
+  String get takeoverFrequency;
+
+  /// No description provided for @takeoverRemainingMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Months remaining'**
+  String get takeoverRemainingMonths;
+
+  /// No description provided for @takeoverNextPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Next payment due'**
+  String get takeoverNextPayment;
+
+  /// No description provided for @takeoverInterestType.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest terms'**
+  String get takeoverInterestType;
+
+  /// No description provided for @takeoverAnnualRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Current annual interest rate (%)'**
+  String get takeoverAnnualRate;
+
+  /// No description provided for @takeoverTransferStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer permission (seller-reported)'**
+  String get takeoverTransferStatus;
+
+  /// No description provided for @takeoverTransferFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer fee (USD, leave blank if unknown)'**
+  String get takeoverTransferFee;
+
+  /// No description provided for @takeoverFeePayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Who pays the transfer fee?'**
+  String get takeoverFeePayer;
+
+  /// No description provided for @takeoverArrears.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue amount (USD, enter 0 if none)'**
+  String get takeoverArrears;
+
+  /// No description provided for @takeoverArrearsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Disclose unpaid instalments and penalties. Explain in the notes whether overdue principal is already included in the balance.'**
+  String get takeoverArrearsHelp;
+
+  /// No description provided for @takeoverArrearsPayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Who settles the overdue amount?'**
+  String get takeoverArrearsPayer;
+
+  /// No description provided for @takeoverHasAdditional.
+  ///
+  /// In en, this message translates to:
+  /// **'Any additional large scheduled payments?'**
+  String get takeoverHasAdditional;
+
+  /// No description provided for @takeoverAdditionalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled payment amount (USD)'**
+  String get takeoverAdditionalAmount;
+
+  /// No description provided for @takeoverAdditionalDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled payment due'**
+  String get takeoverAdditionalDate;
+
+  /// No description provided for @takeoverAddPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add scheduled payment'**
+  String get takeoverAddPayment;
+
+  /// No description provided for @takeoverRemovePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove scheduled payment'**
+  String get takeoverRemovePayment;
+
+  /// No description provided for @takeoverAdditionalHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Include handover or balloon payments here. These amounts are already part of the remaining balance.'**
+  String get takeoverAdditionalHelp;
+
+  /// No description provided for @takeoverNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment plan and transfer notes'**
+  String get takeoverNotes;
+
+  /// No description provided for @takeoverCombinedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Combined price before future interest and fees'**
+  String get takeoverCombinedPrice;
+
+  /// No description provided for @takeoverCombinedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller amount + remaining balance. Future interest, transfer fees and overdue charges may add to the buyer\'s cost.'**
+  String get takeoverCombinedHelp;
+
+  /// No description provided for @takeoverInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete or correct the highlighted takeover details before publishing.'**
+  String get takeoverInvalid;
+
+  /// No description provided for @takeoverFieldError.
+  ///
+  /// In en, this message translates to:
+  /// **'Required or invalid value'**
+  String get takeoverFieldError;
+
+  /// No description provided for @takeoverNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'This contract cannot be listed for takeover while transfers are not allowed.'**
+  String get takeoverNotAllowed;
+
+  /// No description provided for @takeoverBuyerNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and permission are reported by the seller, not verified by Tilomnov. Confirm the balance, fees and transfer process directly with the developer or bank. Listing a property does not transfer its contract or loan.'**
+  String get takeoverBuyerNotice;
+
+  /// No description provided for @takeoverDateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'YYYY-MM-DD'**
+  String get takeoverDateHint;
+
+  /// No description provided for @takeoverProviderDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer instalments'**
+  String get takeoverProviderDeveloper;
+
+  /// No description provided for @takeoverProviderBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank loan'**
+  String get takeoverProviderBank;
+
+  /// No description provided for @takeoverMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get takeoverMonthly;
+
+  /// No description provided for @takeoverQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 3 months'**
+  String get takeoverQuarterly;
+
+  /// No description provided for @takeoverYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get takeoverYearly;
+
+  /// No description provided for @takeoverInterestNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest-free'**
+  String get takeoverInterestNone;
+
+  /// No description provided for @takeoverInterestFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed rate'**
+  String get takeoverInterestFixed;
+
+  /// No description provided for @takeoverInterestVariable.
+  ///
+  /// In en, this message translates to:
+  /// **'Variable rate'**
+  String get takeoverInterestVariable;
+
+  /// No description provided for @takeoverUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown / to be confirmed'**
+  String get takeoverUnknown;
+
+  /// No description provided for @takeoverNotChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet checked with provider'**
+  String get takeoverNotChecked;
+
+  /// No description provided for @takeoverConditional.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed subject to provider conditions'**
+  String get takeoverConditional;
+
+  /// No description provided for @takeoverWrittenApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Written permission available'**
+  String get takeoverWrittenApproval;
+
+  /// No description provided for @takeoverNotPermitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer not allowed'**
+  String get takeoverNotPermitted;
+
+  /// No description provided for @takeoverBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get takeoverBuyer;
+
+  /// No description provided for @takeoverSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller'**
+  String get takeoverSeller;
+
+  /// No description provided for @takeoverShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared by buyer and seller'**
+  String get takeoverShared;
+
+  /// No description provided for @takeoverMonthsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{months} months'**
+  String takeoverMonthsValue(int months);
+
+  /// No description provided for @takeoverToSellerValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} to seller'**
+  String takeoverToSellerValue(String amount);
+
+  /// No description provided for @takeoverPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} combined'**
+  String takeoverPriceLabel(String amount);
+
+  /// No description provided for @takeoverPaymentValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} · {frequency}'**
+  String takeoverPaymentValue(String amount, String frequency);
+
+  /// No description provided for @takeoverBuyerTransferFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer fee'**
+  String get takeoverBuyerTransferFee;
+
+  /// No description provided for @takeoverBuyerArrears.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue payments and penalties'**
+  String get takeoverBuyerArrears;
+
+  /// No description provided for @adminEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your admin email'**
+  String get adminEmailTitle;
+
+  /// No description provided for @adminEmailWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password was accepted. Open Gmail and tap Open Tilomnov in the sign-in email to finish signing in. The link expires in 10 minutes.'**
+  String get adminEmailWaiting;
+
+  /// No description provided for @adminEmailVerifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying your sign-in link...'**
+  String get adminEmailVerifying;
+
+  /// No description provided for @adminEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This sign-in link could not be verified. It may be expired or already used, or the connection failed. Please sign in again to request a new email.'**
+  String get adminEmailInvalid;
+
+  /// No description provided for @adminEmailBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to login'**
+  String get adminEmailBack;
+
+  /// No description provided for @advertisementLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement'**
+  String get advertisementLabel;
+
+  /// No description provided for @themeLiquidGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'Liquid Glass'**
+  String get themeLiquidGlass;
+
+  /// No description provided for @themeMinimalistic.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimalistic'**
+  String get themeMinimalistic;
+
+  /// No description provided for @planAnnualOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual · 2 months free'**
+  String get planAnnualOffer;
+
+  /// No description provided for @paymentAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'12 months'**
+  String get paymentAnnual;
+
+  /// No description provided for @planPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'/ year'**
+  String get planPerYear;
+
+  /// No description provided for @planExpiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Access until'**
+  String get planExpiryDate;
+
+  /// No description provided for @planManualRenewal.
+  ///
+  /// In en, this message translates to:
+  /// **'One payment only. No automatic renewal. Renew manually at the displayed plan price when this period ends.'**
+  String get planManualRenewal;
+
+  /// No description provided for @paymentOneTimeDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days · manual renewal'**
+  String get paymentOneTimeDuration;
+
+  /// No description provided for @authRecoveryEmailOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Password recovery uses the email linked to your account. If you signed up with Google, sign in with Google. Add an email in Account Security so you can recover a forgotten password.'**
+  String get authRecoveryEmailOnly;
+
+  /// No description provided for @propertyAddPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Add another phone number'**
+  String get propertyAddPhone;
+
+  /// No description provided for @propertyAdditionalPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional phone number'**
+  String get propertyAdditionalPhone;
+
+  /// No description provided for @propertyRemovePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove phone number'**
+  String get propertyRemovePhone;
+
+  /// No description provided for @searchApproximateArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Approximate search area'**
+  String get searchApproximateArea;
+
+  /// No description provided for @authRecoveryEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email for password recovery. Your phone number is for contact only.'**
+  String get authRecoveryEmailHint;
+
+  /// No description provided for @paymentEstimatedExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated expiry'**
+  String get paymentEstimatedExpiry;
+
+  /// No description provided for @paymentRenewalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal for another 30 days'**
+  String get paymentRenewalPrice;
 }
 
 class _AppLocalizationsDelegate

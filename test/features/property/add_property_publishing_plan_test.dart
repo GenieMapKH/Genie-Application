@@ -1,9 +1,9 @@
+import 'package:tilomnov/features/profile/data/models/user_profile.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:tilomnov/features/payment/application/simulated_payment_checkout_service.dart';
-import 'package:tilomnov/features/payment/data/receipt_mailer.dart';
 import 'package:tilomnov/features/payment/data/payment_repository.dart';
 import 'package:tilomnov/features/payment/presentation/payment_providers.dart';
 import 'package:tilomnov/features/payment/presentation/screens/one_time_payment_page.dart';
@@ -12,6 +12,7 @@ import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/data/repositories/property_repository.dart';
 import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
+import 'package:tilomnov/features/property/presentation/widgets/publishing_plan_selector.dart';
 import 'package:tilomnov/features/subscription/domain/plan_tier.dart';
 import 'package:tilomnov/features/subscription/domain/publishing_allowance.dart';
 import 'package:tilomnov/features/subscription/presentation/view_models/subscription_providers.dart';
@@ -90,17 +91,22 @@ Future<void> _openAddPage(
       ),
     ),
     overrides: [
-      paymentCheckoutServiceProvider.overrideWithValue(
-        SimulatedPaymentCheckoutService(
-          repository: PaymentRepository(
-            StubServer.always(
-              201,
-              '{"transactionId":"tx-mock","status":"Success","isSimulation":true}',
-            ).dio,
-          ),
+      userProfileProvider.overrideWith(
+        (ref) async => UserProfile(
+          id: 'u1',
+          role: 'user',
+          createdAt: DateTime(2026),
+          phone: '+85512345678',
         ),
       ),
-      receiptMailerProvider.overrideWithValue(MockReceiptMailer()),
+      paymentRepositoryProvider.overrideWithValue(
+        PaymentRepository(
+          StubServer.always(
+            201,
+            '{"transactionId":"tx-mock","status":"Success","amount":1,"paidAt":"2026-11-08T00:00:00.000Z"}',
+          ).dio,
+        ),
+      ),
       propertyRepositoryProvider.overrideWithValue(server),
       publishingAllowanceProvider.overrideWith(
         (ref) async => PublishingAllowance(tier: PlanTier.free, used: used),
@@ -113,6 +119,7 @@ Future<void> _openAddPage(
   final form = tester.state<AddPropertyPageState>(find.byType(AddPropertyPage));
   form.titleController.text = 'Plot by the river';
   form.priceController.text = '350000';
+  form.phoneController.text = '+85512345678';
 }
 
 Future<void> _pressPublish(WidgetTester tester) async {
@@ -122,6 +129,20 @@ Future<void> _pressPublish(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('posting requires a valid primary contact phone', (tester) async {
+    final server = _Server();
+    await _openAddPage(tester, server, used: 0);
+    final form = tester.state<AddPropertyPageState>(
+      find.byType(AddPropertyPage),
+    );
+    form.phoneController.clear();
+    await _pressPublish(tester);
+    expect(server.created, isEmpty);
+    form.phoneController.text = 'not a number';
+    await _pressPublish(tester);
+    expect(server.created, isEmpty);
+  });
+
   testWidgets('the first listing needs no publishing plan', (tester) async {
     await _openAddPage(tester, _Server(), used: 0);
     expect(
@@ -149,10 +170,10 @@ void main() {
 
     await _pressPublish(tester);
     expect(
-      find.text(
-        'Please choose a publishing plan or a one-time payment to publish this property.',
-      ),
-      findsOneWidget,
+      tester
+          .widget<PublishingPlanSelector>(find.byType(PublishingPlanSelector))
+          .hasError,
+      isTrue,
     );
     expect(server.created, isEmpty);
     await tester.pumpAndSettle(const Duration(seconds: 5));
@@ -175,7 +196,7 @@ void main() {
     expect(find.byType(OneTimePaymentPage), findsOneWidget);
     expect(find.text('Land'), findsOneWidget);
     expect(find.text(r'$ 350,000'), findsOneWidget);
-    expect(find.text(r'$1.00'), findsNWidgets(2));
+    expect(find.text(r'$2.00'), findsNWidgets(3));
 
     // No method picked yet: nothing happens.
     await tester.tap(find.text('Publish Property'));

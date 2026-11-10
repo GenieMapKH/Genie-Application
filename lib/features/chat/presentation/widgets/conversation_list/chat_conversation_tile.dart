@@ -45,6 +45,7 @@ class ChatConversationTile extends StatelessWidget {
             UserAvatar(
               name: chat.participantName,
               avatarUrl: chat.participantAvatar,
+              isAdmin: chat.participantIsAdmin,
             ),
             const SizedBox(width: 12),
             Expanded(

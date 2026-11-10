@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'nearby_place.dart';
 import 'property_details.dart';
+import 'takeover_terms.dart';
 
 class PropertyModel {
   final String id;
@@ -11,8 +12,10 @@ class PropertyModel {
   final String price;
   final String propertyType;
 
-  /// 'Sale', 'Rent' or 'To Let'; null for listings saved before it was asked.
+  /// Sale, Rent, To Let or Takeover Payments; null for legacy listings.
   final String? listingType;
+  final TakeoverTerms? takeover;
+  bool get isTakeover => listingType == takeoverListingType;
 
   /// 'percent' or 'amount' (USD off [price]); null without a discount.
   final String? discountType;
@@ -78,6 +81,7 @@ class PropertyModel {
     required this.price,
     required this.propertyType,
     this.listingType,
+    this.takeover,
     this.discountType,
     this.discountValue,
     required this.status,
@@ -261,6 +265,9 @@ class PropertyModel {
       price: json['price']?.toString() ?? '0',
       propertyType: json['propertyType'] ?? 'Land',
       listingType: json['listingType'] as String?,
+      takeover: json['takeover'] is Map<String, dynamic>
+          ? TakeoverTerms.fromJson(json['takeover'] as Map<String, dynamic>)
+          : null,
       discountType: json['discountType'] as String?,
       discountValue: json['discountValue'] == null
           ? null
@@ -353,6 +360,7 @@ class PropertyModel {
     String? price,
     String? propertyType,
     String? listingType,
+    TakeoverTerms? takeover,
     String? discountType,
     double? discountValue,
     String? status,
@@ -393,6 +401,7 @@ class PropertyModel {
       price: price ?? this.price,
       propertyType: propertyType ?? this.propertyType,
       listingType: listingType ?? this.listingType,
+      takeover: takeover ?? this.takeover,
       discountType: discountType ?? this.discountType,
       discountValue: discountValue ?? this.discountValue,
       status: status ?? this.status,

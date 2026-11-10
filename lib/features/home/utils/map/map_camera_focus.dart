@@ -55,6 +55,7 @@ class MapCameraFocus {
     double width,
     double height, {
     double padding = 56,
+    double minZoom = _minZoom,
   }) {
     if (points.length < 2) return pinZoom;
 
@@ -76,7 +77,7 @@ class MapCameraFocus {
     final zoomX = math.log(usableWidth / (_tileSize * spanX)) / math.ln2;
     final zoomY = math.log(usableHeight / (_tileSize * spanY)) / math.ln2;
 
-    return math.min(zoomX, zoomY).clamp(_minZoom, _maxZoom);
+    return math.min(zoomX, zoomY).clamp(minZoom, _maxZoom);
   }
 
   /// The camera that shows all of [bounds] inside the part of a [mapSize] map
@@ -99,6 +100,7 @@ class MapCameraFocus {
             mapSize.width - covered.horizontal,
             mapSize.height - covered.vertical,
             padding: 32,
+            minZoom: minZoom,
           ),
           maxZoom,
         )

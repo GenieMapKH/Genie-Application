@@ -30,6 +30,10 @@ CallPushHandler callPushHandler(Ref ref) {
             callerName: message.callerName,
             sentAt: message.sentAt,
           );
+    } else if (message is CallEndedPush) {
+      ref
+          .read(callControllerProvider.notifier)
+          .endFromPush(message.callId, missed: message.missed);
     }
   };
 }
@@ -51,6 +55,8 @@ Future<void> openCallFromPush(Ref ref, IncomingCallPush push) async {
 /// takes it away when the call is over.
 class CallScreenPresenter {
   Route<void>? _route;
+
+  bool get isVisible => _route?.isCurrent ?? false;
 
   void update(GoRouter router, CallState call, {bool minimized = false}) {
     final navigator = router.routerDelegate.navigatorKey.currentState;

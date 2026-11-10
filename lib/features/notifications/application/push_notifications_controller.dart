@@ -78,6 +78,10 @@ class PushNotificationsController {
         'chat:$senderId',
       ),
       SignInAlertPush() => (NotificationChannel.security, null),
+      PublishingExpiryPush(:final propertyId) => (
+        NotificationChannel.listingAlerts,
+        'expiry:${propertyId ?? 'subscription'}',
+      ),
       PromotionPush(:final promotionId) => (
         NotificationChannel.promotions,
         'promotion:$promotionId',

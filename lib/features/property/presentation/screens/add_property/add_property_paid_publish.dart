@@ -112,13 +112,12 @@ extension AddPropertyPaidPublish on AddPropertyPageState {
           }
           await showPaymentSuccess(
             context,
-            ref,
             receipt: PaymentReceipt(
               transactionId: outcome.transactionId ?? '',
-              amountUsd: PlanCatalog.oneTimePublishFeeUsd,
+              amountUsd: outcome.amountUsd ?? PlanCatalog.oneTimePublishFeeUsd,
               item: context.l10n.paymentItemOneTimePublish,
               method: method,
-              paidAt: DateTime.now(),
+              paidAt: outcome.paidAt ?? DateTime.now(),
               email: ref.read(userProfileProvider).valueOrNull?.email,
             ),
             // Back to where the listing was started, with it.
@@ -166,7 +165,9 @@ extension AddPropertyPaidPublish on AddPropertyPageState {
         case PaymentResult.awaitingConfirmation:
           showUnfinishedPayment(context, outcome.result);
           return (draft, outcome);
-        case PaymentResult.failed || PaymentResult.notOpened:
+        case PaymentResult.failed ||
+            PaymentResult.notOpened ||
+            PaymentResult.refundRequired:
           showUnfinishedPayment(context, outcome.result);
           return (null, outcome);
       }

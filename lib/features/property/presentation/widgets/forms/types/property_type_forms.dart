@@ -266,6 +266,18 @@ class BoreyPropertyForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        PropertyDropdown(
+          label: context.l10n.propertyListingSettings,
+          required: true,
+          value: state.selectedListingSetting,
+          items: const ['Sale', 'Rent', 'To Let', 'Takeover Payments'],
+          onChanged: (value) {
+            if (value != null) {
+              updateState(() => state.selectedListingSetting = value);
+            }
+          },
+        ),
+        _buildSpacing(),
         PropertyTextField(
           label: context.l10n.propertyDeveloperName,
           required: false,
@@ -308,13 +320,14 @@ class BoreyPropertyForm extends StatelessWidget {
               updateState(() => state.selectedCompletionStatus = val),
         ),
         _buildSpacing(),
-        PropertyTextField(
-          label: context.l10n.propertyStartingPrice,
-          required: false,
-          controller: state.startingPriceController,
-          hintText: context.l10n.propertyStartingPriceInUsd,
-          infoText: context.l10n.propertyStartingPriceInfo,
-        ),
+        if (!state.isTakeover)
+          PropertyTextField(
+            label: context.l10n.propertyStartingPrice,
+            required: false,
+            controller: state.startingPriceController,
+            hintText: context.l10n.propertyStartingPriceInUsd,
+            infoText: context.l10n.propertyStartingPriceInfo,
+          ),
         _buildSpacing(),
         TitleTypeFieldWidget(
           value: state.selectedTitleType,

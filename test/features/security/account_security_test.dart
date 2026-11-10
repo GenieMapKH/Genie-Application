@@ -118,6 +118,7 @@ void main() {
       final result = await controller.addEmail(
         email: ' Dara@Gmail.com ',
         password: 'secret',
+        emailProof: 'email-proof',
       );
 
       expect(result, AccountActionResult.done);
@@ -125,6 +126,7 @@ void main() {
       expect(server.requests.single.body, {
         'email': 'dara@gmail.com',
         'password': 'secret',
+        'emailProof': 'email-proof',
       });
     });
 
@@ -132,13 +134,13 @@ void main() {
       expect(
         await controllerAnswering(
           409,
-        ).addEmail(email: 'a@b.com', password: 'x'),
+        ).addEmail(email: 'a@b.com', password: 'x', emailProof: 'email-proof'),
         AccountActionResult.emailTaken,
       );
       expect(
         await controllerAnswering(
           403,
-        ).addEmail(email: 'a@b.com', password: 'x'),
+        ).addEmail(email: 'a@b.com', password: 'x', emailProof: 'email-proof'),
         AccountActionResult.identityRejected,
       );
     });

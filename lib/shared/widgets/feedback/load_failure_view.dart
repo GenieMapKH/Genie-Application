@@ -191,9 +191,11 @@ class _WaitingForConnection extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        Text(
-          context.l10n.connectionWaiting,
-          style: GoogleFonts.inter(fontSize: 13, color: colors.textHint),
+        Flexible(
+          child: Text(
+            context.l10n.connectionWaiting,
+            style: GoogleFonts.inter(fontSize: 13, color: colors.textHint),
+          ),
         ),
       ],
     );

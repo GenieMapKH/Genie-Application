@@ -45,6 +45,17 @@ Staging appears as **Tilomnov Stage** with a **TESTING** badge on its launcher i
 Production appears as **Tilomnov** with the normal icon. Their separate package IDs
 allow both apps to be installed together.
 
+### Signup
+
+SMS verification is temporarily paused as of 2026-11-09. Enter your name,
+phone number and password, then accept the terms to create an account. The
+phone number is validated but saved as unverified. An optional email still
+requires email verification. New phone-only accounts cannot recover a forgotten
+password until they verify a recovery contact while signed in.
+
+Firebase phone verification code remains available for restoring signup SMS
+later. Existing phone verification and password recovery flows are unchanged.
+
 ## Error reporting (Sentry)
 
 Errors the app does not catch (Flutter's own and uncaught async errors) go to Sentry when the env file has `SENTRY_DSN` (the

@@ -1,3 +1,4 @@
+import 'package:tilomnov/shared/utils/phone_number.dart';
 import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
@@ -39,13 +40,13 @@ extension AddPropertyPageLogic on AddPropertyPageState {
         .read(addPropertyControllerProvider.notifier)
         .validatePropertyForm(
           title: titleController.text,
-          price: effectivePrice,
+          price: isTakeover ? '0' : effectivePrice,
           propertyType: selectedPropertyType,
           listingSetting: selectedListingSetting,
           landSize: landSizeController.text,
           buildingSize: buildingSizeController.text,
           unitSize: unitSizeController.text,
-          discount: discountController.text,
+          discount: isTakeover ? '' : discountController.text,
           discountType: selectedDiscountType,
         );
 
@@ -82,11 +83,38 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       }
       return false;
     }
+    if (isTakeover &&
+        (takeoverTerms == null || takeoverTerms!.errors.isNotEmpty)) {
+      AppPopup.showError(context, context.l10n.takeoverInvalid);
+      if (takeoverKey.currentContext != null) {
+        Scrollable.ensureVisible(
+          takeoverKey.currentContext!,
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+      return false;
+    }
+    final phones = [phoneController, ...additionalPhoneControllers];
+    if (phones.any((c) => normalizePhoneNumber(c.text) == null)) {
+      AppPopup.showError(context, context.l10n.authErrEnterValidPhone);
+      if (contactPhoneKey.currentContext != null) {
+        Scrollable.ensureVisible(
+          contactPhoneKey.currentContext!,
+          duration: const Duration(milliseconds: 300),
+        );
+      }
+      return false;
+    }
     return true;
   }
 
   Future<void> _saveChanges() async {
     try {
+      if (widget.property!.status != 'Draft') {
+        await ref
+            .read(addPropertyControllerProvider.notifier)
+            .ensureAccountPhone(phoneController.text);
+      }
       final property = await ref
           .read(addPropertyControllerProvider.notifier)
           .updateProperty(
@@ -139,6 +167,9 @@ extension AddPropertyPageLogic on AddPropertyPageState {
   Future<void> _publish() async {
     setState(() => isLoading = true);
     try {
+      await ref
+          .read(addPropertyControllerProvider.notifier)
+          .ensureAccountPhone(phoneController.text);
       final allowance = await ref.read(publishingAllowanceProvider.future);
       if (!mounted) return;
       if (!allowance.hasRoom) {

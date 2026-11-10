@@ -1,5 +1,6 @@
 import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -197,15 +198,21 @@ class PropertyCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (property.isTakeover) ...[
+                  const TakeoverBadge(),
+                  const SizedBox(height: 8),
+                ],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      PropertyFormat.cardPrice(context.l10n, property),
-                      style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: context.colors.textPrimary,
+                    Flexible(
+                      child: Text(
+                        PropertyFormat.cardPrice(context.l10n, property),
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: context.colors.textPrimary,
+                        ),
                       ),
                     ),
                     Container(

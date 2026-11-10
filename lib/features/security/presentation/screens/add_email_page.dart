@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/contact_verification.dart';
 import 'package:tilomnov/features/security/presentation/view_models/account_security_controller.dart';
 import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -16,14 +17,15 @@ import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 /// Adds an email to an account made with only a phone number, so a
 /// forgotten password can be reset by email. Confirmed with the password.
 class AddEmailPage extends ConsumerStatefulWidget {
-  const AddEmailPage({super.key});
+  final String? initialEmail;
+  const AddEmailPage({super.key, this.initialEmail});
 
   @override
   ConsumerState<AddEmailPage> createState() => _AddEmailPageState();
 }
 
 class _AddEmailPageState extends ConsumerState<AddEmailPage> {
-  final _email = TextEditingController();
+  late final _email = TextEditingController(text: widget.initialEmail);
   final _password = TextEditingController();
 
   String? _emailError;
@@ -49,9 +51,33 @@ class _AddEmailPageState extends ConsumerState<AddEmailPage> {
     if (_emailError != null || _passwordError != null) return;
 
     setState(() => _isSaving = true);
+    String? emailProof;
+    try {
+      emailProof = await verifyEmailOwnership(context, ref, email);
+    } catch (e) {
+      if (mounted) {
+        AppPopup.showError(
+          context,
+          failureMessage(
+            l10n,
+            error: e,
+            fallback: l10n.commonSomethingWentWrong,
+          ),
+        );
+      }
+    }
+    if (!mounted) return;
+    if (emailProof == null) {
+      setState(() => _isSaving = false);
+      return;
+    }
     final result = await ref
         .read(accountSecurityControllerProvider)
-        .addEmail(email: email, password: _password.text);
+        .addEmail(
+          email: email,
+          password: _password.text,
+          emailProof: emailProof,
+        );
     if (!mounted) return;
 
     if (result == AccountActionResult.done) {

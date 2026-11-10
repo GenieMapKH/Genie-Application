@@ -20,6 +20,14 @@ abstract final class PropertyListLayout {
   /// Gap between cards side by side.
   static const double columnSpacing = 16;
 
+  /// Keep compact cards readable on narrow phones and with enlarged text.
+  static int compactColumns(BuildContext context, double width) => max(
+    1,
+    ((width + 12) /
+            (148 * MediaQuery.textScalerOf(context).scale(12) / 12 + 12))
+        .floor(),
+  );
+
   /// Columns of at most [maxCardWidth] that fill [width], like
   /// [SliverGridDelegateWithMaxCrossAxisExtent].
   static int columnCount(double width, double maxCardWidth) =>

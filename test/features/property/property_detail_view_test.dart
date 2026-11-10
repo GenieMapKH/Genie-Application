@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:tilomnov/features/admin/presentation/admin_property_actions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/profile/data/models/user_profile.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
@@ -11,6 +12,54 @@ import 'package:tilomnov/features/property/presentation/widgets/detail/property_
 import '../../support/test_app.dart';
 
 void main() {
+  for (final role in ['admin', 'user']) {
+    testWidgets('map listing details expose moderation only to $role', (
+      tester,
+    ) async {
+      final property = PropertyModel(
+        id: 'p-1',
+        title: 'Map listing',
+        price: '100000',
+        propertyType: 'Land',
+        status: 'Active',
+        createdAt: DateTime(2026),
+        ownerId: 'owner',
+      );
+      final server = StubServer.always(200, '[]');
+      await pumpTestApp(
+        tester,
+        PropertyDetailSheet(property: property),
+        overrides: [
+          propertyRepositoryProvider.overrideWithValue(
+            PropertyRepository(server.dio),
+          ),
+          propertyDetailProvider.overrideWith((_, id) async => property),
+          userProfileProvider.overrideWith(
+            (_) async => UserProfile(
+              id: 'viewer',
+              role: role,
+              createdAt: DateTime(2026),
+            ),
+          ),
+          signedInOverride(signedIn: false),
+        ],
+      );
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(
+        find.byType(AdminPropertyActions),
+        role == 'admin' ? findsOneWidget : findsNothing,
+      );
+      if (role == 'admin') {
+        expect(find.text('Edit post'), findsOneWidget);
+        expect(find.text('Remove post'), findsOneWidget);
+        expect(find.text('Owner actions'), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(minutes: 1));
+    });
+  }
+
   testWidgets('opening a listing counts the viewer without a build error', (
     tester,
   ) async {

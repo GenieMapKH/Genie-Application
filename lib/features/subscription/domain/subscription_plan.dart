@@ -10,6 +10,8 @@ class SubscriptionPlan {
   /// How many listings may be published at the same time.
   final int listingLimit;
 
+  double get annualPriceUsd => monthlyPriceUsd * 10;
+
   const SubscriptionPlan({
     required this.tier,
     required this.monthlyPriceUsd,
@@ -26,23 +28,23 @@ abstract final class PlanCatalog {
     SubscriptionPlan(tier: PlanTier.free, monthlyPriceUsd: 0, listingLimit: 1),
     SubscriptionPlan(
       tier: PlanTier.silver,
-      monthlyPriceUsd: 5.90,
-      listingLimit: 20,
+      monthlyPriceUsd: 7,
+      listingLimit: 10,
     ),
     SubscriptionPlan(
       tier: PlanTier.gold,
-      monthlyPriceUsd: 8.90,
-      listingLimit: 50,
+      monthlyPriceUsd: 15,
+      listingLimit: 30,
     ),
     SubscriptionPlan(
       tier: PlanTier.diamond,
-      monthlyPriceUsd: 16.90,
-      listingLimit: 120,
+      monthlyPriceUsd: 29,
+      listingLimit: 100,
     ),
   ];
 
   /// What publishing one more listing costs without a subscription.
-  static const oneTimePublishFeeUsd = 1.00;
+  static const oneTimePublishFeeUsd = 2.00;
 
   /// Share of every price that is tax (prices are shown tax included).
   static const taxRate = 0.10;

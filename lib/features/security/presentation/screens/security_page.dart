@@ -22,6 +22,7 @@ class SecurityPage extends ConsumerWidget {
     final l10n = context.l10n;
     // Keys are kept per account, so their rows wait for the profile.
     final profile = ref.watch(userProfileProvider).valueOrNull;
+    final isAdmin = profile?.role == 'admin';
 
     return AppPageScaffold(
       title: l10n.securityTitle,
@@ -50,24 +51,27 @@ class SecurityPage extends ConsumerWidget {
                 title: l10n.securityDevices,
                 onTap: () => context.pushPage(const DevicesPage()),
               ),
-              SettingsRow(
-                icon: Icons.block,
-                title: l10n.blockedAccountsTitle,
-                onTap: () => context.pushPage(const BlockedAccountsPage()),
-              ),
+              if (!isAdmin)
+                SettingsRow(
+                  icon: Icons.block,
+                  title: l10n.blockedAccountsTitle,
+                  onTap: () => context.pushPage(const BlockedAccountsPage()),
+                ),
             ],
           ),
-          const SizedBox(height: 24),
-          SettingsSectionTitle(l10n.securitySectionAccount),
-          SettingsSection(
-            children: [
-              SettingsRow(
-                icon: Icons.no_accounts_outlined,
-                title: l10n.securityRemoveAccount,
-                onTap: () => context.pushPage(const AccountRemovalPage()),
-              ),
-            ],
-          ),
+          if (!isAdmin) ...[
+            const SizedBox(height: 24),
+            SettingsSectionTitle(l10n.securitySectionAccount),
+            SettingsSection(
+              children: [
+                SettingsRow(
+                  icon: Icons.no_accounts_outlined,
+                  title: l10n.securityRemoveAccount,
+                  onTap: () => context.pushPage(const AccountRemovalPage()),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:tilomnov/features/property/presentation/widgets/forms/property_contact_fields.dart';
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:tilomnov/features/property/presentation/widgets/property_type_se
 import 'package:tilomnov/features/property/presentation/view_models/add_property_controller.dart';
 import 'package:tilomnov/features/property/presentation/widgets/existing_property_photos.dart';
 import 'package:tilomnov/features/property/presentation/widgets/forms/fields/property_discount_field.dart';
+import 'package:tilomnov/features/property/presentation/widgets/forms/takeover_terms_form.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_image_picker.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:tilomnov/features/property/presentation/widgets/publishing_plan_selector.dart';
@@ -78,20 +80,29 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                       const SizedBox(height: 16),
                       buildDynamicFields(),
                       const SizedBox(height: 16),
-                      PropertyDiscountField(
-                        controller: discountController,
-                        discountType: selectedDiscountType,
-                        onTypeChanged: (type) =>
-                            setState(() => selectedDiscountType = type),
-                        hasError:
-                            hasAttemptedSubmit &&
-                            !isValidDiscount(
-                              discount: discountController.text,
-                              discountType: selectedDiscountType,
-                              price: effectivePrice,
-                            ),
-                        focusKey: discountKey,
-                      ),
+                      if (isTakeover)
+                        TakeoverTermsForm(
+                          key: takeoverKey,
+                          initialTerms: takeoverTerms,
+                          showErrors: hasAttemptedSubmit,
+                          onChanged: (terms) =>
+                              setState(() => takeoverTerms = terms),
+                        ),
+                      if (!isTakeover)
+                        PropertyDiscountField(
+                          controller: discountController,
+                          discountType: selectedDiscountType,
+                          onTypeChanged: (type) =>
+                              setState(() => selectedDiscountType = type),
+                          hasError:
+                              hasAttemptedSubmit &&
+                              !isValidDiscount(
+                                discount: discountController.text,
+                                discountType: selectedDiscountType,
+                                price: effectivePrice,
+                              ),
+                          focusKey: discountKey,
+                        ),
                       const SizedBox(height: 24),
                       PropertySectionTitle(
                         title: context.l10n.propertyDescription,
@@ -178,11 +189,24 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                         ),
                       ],
                       const SizedBox(height: 24),
-                      PropertyTextField(
-                        label: context.l10n.propertyContactInformation,
-                        required: false,
-                        controller: phoneController,
-                        hintText: context.l10n.propertyPhoneNumber0,
+                      PropertyContactFields(
+                        key: contactPhoneKey,
+                        primary: phoneController,
+                        additional: additionalPhoneControllers,
+                        showErrors: hasAttemptedSubmit,
+                        onAdd: () => setState(
+                          () => additionalPhoneControllers.add(
+                            TextEditingController(),
+                          ),
+                        ),
+                        onRemove: (index) => setState(() {
+                          final removed = additionalPhoneControllers.removeAt(
+                            index,
+                          );
+                          WidgetsBinding.instance.addPostFrameCallback(
+                            (_) => removed.dispose(),
+                          );
+                        }),
                       ),
                       const SizedBox(
                         height: 100,
@@ -196,7 +220,10 @@ extension AddPropertyPageLayout on AddPropertyPageState {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _submitBar(context, formState.isLoading || isLoading),
+      floatingActionButton: _submitBar(
+        context,
+        formState.isLoading || isLoading,
+      ),
     );
   }
 

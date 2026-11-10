@@ -19,6 +19,9 @@ typedef OwnListingsPage = ({
 
 class PropertyRepository {
   final Dio dio;
+  final bool admin;
+  String _propertyPath(String id) =>
+      '${admin ? "/admin/properties" : "/properties"}/$id';
 
   /// For the signed upload links. They carry their own permission, so this
   /// client sends no session token to the storage host.
@@ -32,6 +35,7 @@ class PropertyRepository {
   PropertyRepository(
     this.dio, {
     Dio? storageDio,
+    this.admin = false,
     Future<String?> Function()? accountId,
   }) : storageDio = storageDio ?? Dio(),
        _kept = KeptCopyStore(account: accountId ?? AuthStorage.signedInUserId);
@@ -78,16 +82,13 @@ class PropertyRepository {
     }
   }
 
-  /// How many of the signed-in user's own listings there are in each
-  /// status, read fresh (not kept on the device).
-  Future<Map<String, int>> fetchOwnCountByStatus() async {
-    final response = await dio.get(
-      '/properties',
-      queryParameters: {'limit': 1, 'offset': 0},
-    );
+  /// Plan usage, excluding listings paid for separately; read fresh.
+  Future<({int used, int? limit})> fetchPublishingUsage() async {
+    final response = await dio.get('/properties/my/publishing-usage');
     final data = response.data as Map<String, dynamic>;
-    return (data['countByStatus'] as Map<String, dynamic>? ?? {}).map(
-      (status, count) => MapEntry(status, (count as num).toInt()),
+    return (
+      used: (data['used'] as num).toInt(),
+      limit: (data['listingLimit'] as num?)?.toInt(),
     );
   }
 
@@ -190,10 +191,11 @@ class PropertyRepository {
 
   Future<PropertyModel> fetchPropertyDetail(String id) async {
     try {
-      final response = await dio.get('/properties/$id');
+      final response = await dio.get(_propertyPath(id));
       return PropertyModel.fromJson(response.data);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401 || e.response?.statusCode == 404) {
+      if (!admin &&
+          (e.response?.statusCode == 401 || e.response?.statusCode == 404)) {
         final publicRes = await dio.get(
           '/public/properties/$id',
           options: _publicListings,
@@ -212,13 +214,13 @@ class PropertyRepository {
   /// Changes the listing's details (any field of the create body, keywords
   /// included). Returns it as saved.
   Future<PropertyModel> update(String id, Map<String, dynamic> data) async {
-    final response = await dio.patch('/properties/$id', data: data);
+    final response = await dio.patch(_propertyPath(id), data: data);
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> updatePin(String id, double lat, double lng) async {
     final response = await dio.patch(
-      '/properties/$id/pin',
+      '${_propertyPath(id)}/pin',
       data: {'lat': lat, 'lng': lng},
     );
     return PropertyModel.fromJson(response.data);
@@ -229,7 +231,7 @@ class PropertyRepository {
     List<Map<String, double>> points,
   ) async {
     final response = await dio.patch(
-      '/properties/$id/boundary',
+      '${_propertyPath(id)}/boundary',
       data: {'boundaryPoints': points},
     );
     return PropertyModel.fromJson(response.data);
@@ -239,7 +241,7 @@ class PropertyRepository {
   /// files. URLs the listing does not have are ignored.
   Future<PropertyModel> removeImages(String id, List<String> urls) async {
     final response = await dio.post(
-      '/properties/$id/images/remove',
+      '${_propertyPath(id)}/images/remove',
       data: {'urls': urls},
     );
     return PropertyModel.fromJson(response.data);
@@ -250,7 +252,7 @@ class PropertyRepository {
   /// the server is told which files arrived.
   Future<PropertyModel> uploadImages(String id, List<XFile> images) async {
     final presignedResponse = await dio.post(
-      '/properties/$id/images/presigned-url',
+      '${_propertyPath(id)}/images/presigned-url',
       data: {'fileNames': images.map((image) => image.name).toList()},
     );
     final uploads = (presignedResponse.data as List<dynamic>)
@@ -272,7 +274,7 @@ class PropertyRepository {
     }
 
     final response = await dio.post(
-      '/properties/$id/images/confirm',
+      '${_propertyPath(id)}/images/confirm',
       // The server makes a thumbnail of every photo before it answers.
       options: Options(receiveTimeout: const Duration(seconds: 90)),
       data: {
@@ -287,34 +289,34 @@ class PropertyRepository {
   }
 
   Future<PropertyModel> publish(String id) async {
-    final response = await dio.patch('/properties/$id/publish');
+    final response = await dio.patch('${_propertyPath(id)}/publish');
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> unpublish(String id) async {
-    final response = await dio.patch('/properties/$id/unpublish');
+    final response = await dio.patch('${_propertyPath(id)}/unpublish');
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> markSold(String id) async {
-    final response = await dio.patch('/properties/$id/mark-sold');
+    final response = await dio.patch('${_propertyPath(id)}/mark-sold');
     return PropertyModel.fromJson(response.data);
   }
 
   Future<PropertyModel> relist(String id) async {
-    final response = await dio.patch('/properties/$id/relist');
+    final response = await dio.patch('${_propertyPath(id)}/relist');
     return PropertyModel.fromJson(response.data);
   }
 
   Future<void> remove(String id) async {
-    await dio.delete('/properties/$id');
+    await dio.delete(_propertyPath(id));
   }
 
   /// Counts the signed-in user as one viewer of listing [id]. A failure only
   /// leaves the count one short, so it is logged rather than shown.
   Future<void> markAsViewed(String id) async {
     try {
-      await dio.post('/properties/$id/view');
+      await dio.post('${_propertyPath(id)}/view');
     } catch (e) {
       AppLogger.error('Recording a listing view failed', e);
     }
@@ -325,7 +327,10 @@ class PropertyRepository {
   /// owner; a failure only leaves the count one short, so it is logged.
   Future<void> recordLead(String id, LeadChannel channel) async {
     try {
-      await dio.post('/properties/$id/lead', data: {'channel': channel.name});
+      await dio.post(
+        '${_propertyPath(id)}/lead',
+        data: {'channel': channel.name},
+      );
     } catch (e) {
       AppLogger.error('Recording a lead failed', e);
     }
@@ -333,7 +338,7 @@ class PropertyRepository {
 
   /// How the signed-in owner's listing [id] is doing.
   Future<PropertyInsights> fetchInsights(String id) async {
-    final response = await dio.get('/properties/$id/insights');
+    final response = await dio.get('${_propertyPath(id)}/insights');
     return PropertyInsights.fromJson(response.data as Map<String, dynamic>);
   }
 }

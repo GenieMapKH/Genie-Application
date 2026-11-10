@@ -137,8 +137,10 @@ class _PersonalInfoList extends ConsumerWidget {
               value: profile.email ?? l10n.personalInfoAddEmail,
               // An email can be added once; it is then how a forgotten
               // password is reset, so it is not changed from here.
-              onTap: profile.email == null
-                  ? () => context.pushPage(const AddEmailPage())
+              onTap: !profile.emailVerified
+                  ? () => context.pushPage(
+                      AddEmailPage(initialEmail: profile.email),
+                    )
                   : null,
             ),
           ],

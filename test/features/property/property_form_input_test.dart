@@ -51,7 +51,8 @@ void main() {
         'furnishing': 'Fully Furnished',
         'viewType': 'River View',
         'maintenanceFee': 80.0,
-        'contactPhone': '012 345 678',
+        'contactPhone': '+85512345678',
+        'additionalContactPhones': [],
         'description': null,
         'keywords': ['near_market', 'water_supply'],
       });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/payment/presentation/renewal_checkout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -70,30 +71,17 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
   }
 
   Future<void> _changeVisibility() async {
-    final target = await PropertyVisibilitySheet.show(context, _status);
-    if (target == null || !mounted) return;
-    if (visibilityChange(_status, target) == null) return;
-
-    setState(() => _busy = true);
-    try {
-      await ref
+    final target = await PropertyVisibilitySheet.show(
+      context,
+      _status,
+      onPaymentRequired: () => renewProperty(context, ref, widget.property),
+      onChanged: (target) => ref
           .read(ownListingActionsProvider)
-          .changeVisibility(widget.property.id, _status, target);
-      if (!mounted) return;
-      setState(() => _status = target.status);
-      AppPopup.showSuccess(context, context.l10n.propertyVisibilityChanged);
-    } catch (e, stack) {
-      AppLogger.error('Changing listing visibility failed', e, stack);
-      if (mounted) {
-        showFailure(
-          context,
-          error: e,
-          fallback: context.l10n.propertyCouldNotChangeVisibility,
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
+          .changeVisibility(widget.property.id, _status, target),
+    );
+    if (target == null || !mounted) return;
+    setState(() => _status = target.status);
+    AppPopup.showSuccess(context, context.l10n.propertyVisibilityChanged);
   }
 
   String _visibilityLabel(BuildContext context) {

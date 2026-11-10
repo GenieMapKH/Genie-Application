@@ -252,6 +252,8 @@ abstract final class PropertyMarkers {
 
   static Color _priceColor(String listingType, bool isVisited) {
     switch (listingType.toLowerCase()) {
+      case 'takeover payments':
+        return isVisited ? const Color(0xFFC4B5FD) : const Color(0xFF7C3AED);
       case 'rent':
         return isVisited ? const Color(0xFFEFB6B8) : const Color(0xFFE5484D);
       case 'to let':

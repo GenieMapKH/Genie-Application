@@ -87,7 +87,8 @@ class SearchAreaHeader extends StatelessWidget {
       };
     }
     return switch (target) {
-      PlaceTarget() => l10n.searchPropertiesInArea(count),
+      PlaceTarget() =>
+        '${l10n.searchApproximateArea} · ${l10n.searchPropertiesInArea(count)}',
       PersonTarget() => l10n.searchPropertiesByPerson(count),
     };
   }

@@ -11,6 +11,29 @@ Future<void> _settle() => Future<void>.delayed(Duration.zero);
 
 void main() {
   group('reading a push', () {
+    test(
+      'expiry reminders distinguish subscriptions from individual posts',
+      () {
+        final listing = PushMessage.fromData({
+          'type': 'publishing_expiry',
+          'kind': 'listing',
+          'propertyId': 'p1',
+        });
+        final subscription = PushMessage.fromData({
+          'type': 'publishing_expiry',
+          'kind': 'subscription',
+        });
+        expect((listing as PublishingExpiryPush).propertyId, 'p1');
+        expect((subscription as PublishingExpiryPush).propertyId, isNull);
+        expect(
+          PushMessage.fromData({
+            'type': 'publishing_expiry',
+            'kind': 'listing',
+          }),
+          isA<UnknownPush>(),
+        );
+      },
+    );
     test('a chat message names who sent it', () {
       final push = PushMessage.fromData({
         'type': 'chat_message',

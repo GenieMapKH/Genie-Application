@@ -62,6 +62,7 @@ class CallActionButton extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 label,
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 13, color: colors.textMuted),
               ),
             ],

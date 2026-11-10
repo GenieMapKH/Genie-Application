@@ -265,6 +265,67 @@ void main() {
 
         expect(controller.state.phase, CallPhase.incoming);
       });
+
+      test('an ended push silences the matching incoming call', () {
+        controller.ringFromPush(
+          callId: 'c9',
+          callerId: 'alice',
+          callerName: 'Alice',
+        );
+        controller.endFromPush('other', missed: true);
+        expect(controller.state.phase, CallPhase.incoming);
+        controller.endFromPush('c9', missed: true);
+        expect(controller.state.endReason, CallEndReason.noAnswer);
+      });
+
+      test(
+        'an ended push from answering locally does not end the connection',
+        () async {
+          controller.ringFromPush(
+            callId: 'c9',
+            callerId: 'alice',
+            callerName: 'Alice',
+          );
+          await controller.accept();
+          controller.endFromPush('c9', missed: false);
+          expect(controller.state.phase, CallPhase.connecting);
+        },
+      );
+
+      testWidgets('a late push rings only for the remaining time', (
+        tester,
+      ) async {
+        controller.ringFromPush(
+          callId: 'c9',
+          callerId: 'alice',
+          callerName: 'Alice',
+          sentAt: now.subtract(const Duration(seconds: 40)),
+        );
+        await tester.pump(const Duration(seconds: 4));
+        expect(controller.state.phase, CallPhase.incoming);
+        await tester.pump(const Duration(seconds: 1));
+        expect(controller.state.endReason, CallEndReason.noAnswer);
+        await tester.pump(CallController.endedShownFor);
+      });
+
+      testWidgets(
+        'incoming socket calls also time out without a server event',
+        (tester) async {
+          // Subscribe inside the test's clock so stream callbacks use it too.
+          controller.dispose();
+          controller = CallController(
+            signaling: signaling,
+            newMedia: FakeCallMedia.new,
+            requestMicrophone: () async => MicrophoneAccess.granted,
+            newCallId: () => 'c1',
+          );
+          ring();
+          await tester.pump();
+          await tester.pump(CallController.ringTimeout);
+          expect(controller.state.endReason, CallEndReason.noAnswer);
+          await tester.pump(CallController.endedShownFor);
+        },
+      );
     });
 
     test('a lost connection to the server ends the call', () async {

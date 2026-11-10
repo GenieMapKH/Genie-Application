@@ -50,11 +50,11 @@ int _currentTab(WidgetTester tester) => ProviderScope.containerOf(
 ).read(mainNavProvider).currentIndex;
 
 void main() {
-  testWidgets('a phone without glass keeps the regular bar', (tester) async {
+  testWidgets('every device defaults to Liquid Glass', (tester) async {
     await _pump(tester, glassPhone: false);
 
-    expect(find.byType(ClassicBottomNav), findsOneWidget);
-    expect(find.byType(GlassBottomNav), findsNothing);
+    expect(find.byType(GlassBottomNav), findsOneWidget);
+    expect(find.byType(ClassicBottomNav), findsNothing);
   });
 
   testWidgets('a glass phone gets the glass capsule in the same slot', (

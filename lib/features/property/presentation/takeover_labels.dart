@@ -1,0 +1,50 @@
+import 'package:tilomnov/l10n/l10n.dart';
+
+String takeoverFieldLabel(AppLocalizations l10n, String field) =>
+    switch (field) {
+      'providerType' => l10n.takeoverProviderType,
+      'providerName' => l10n.takeoverProviderName,
+      'projectName' => l10n.takeoverProjectName,
+      'sellerAmount' => l10n.takeoverSellerAmount,
+      'remainingBalance' => l10n.takeoverBalance,
+      'balanceAsOf' => l10n.takeoverBalanceDate,
+      'paymentAmount' => l10n.takeoverPaymentAmount,
+      'paymentFrequency' => l10n.takeoverFrequency,
+      'remainingMonths' => l10n.takeoverRemainingMonths,
+      'nextPaymentDate' => l10n.takeoverNextPayment,
+      'interestType' => l10n.takeoverInterestType,
+      'annualInterestRate' => l10n.takeoverAnnualRate,
+      'transferStatus' => l10n.takeoverTransferStatus,
+      'transferFee' => l10n.takeoverTransferFee,
+      'transferFeePayer' => l10n.takeoverFeePayer,
+      'arrearsAmount' => l10n.takeoverArrears,
+      'arrearsPayer' => l10n.takeoverArrearsPayer,
+      'hasAdditionalPayments' => l10n.takeoverHasAdditional,
+      'notes' => l10n.takeoverNotes,
+      'additionalAmount' => l10n.takeoverAdditionalAmount,
+      'additionalDate' => l10n.takeoverAdditionalDate,
+      _ => field,
+    };
+
+String takeoverValueLabel(AppLocalizations l10n, String value) =>
+    switch (value) {
+      'Developer' => l10n.takeoverProviderDeveloper,
+      'Bank' => l10n.takeoverProviderBank,
+      'Monthly' => l10n.takeoverMonthly,
+      'Quarterly' => l10n.takeoverQuarterly,
+      'Yearly' => l10n.takeoverYearly,
+      'None' => l10n.takeoverInterestNone,
+      'Fixed' => l10n.takeoverInterestFixed,
+      'Variable' => l10n.takeoverInterestVariable,
+      'Unknown' => l10n.takeoverUnknown,
+      'Not checked' => l10n.takeoverNotChecked,
+      'Conditional' => l10n.takeoverConditional,
+      'Written approval' => l10n.takeoverWrittenApproval,
+      'Not allowed' => l10n.takeoverNotPermitted,
+      'Buyer' => l10n.takeoverBuyer,
+      'Seller' => l10n.takeoverSeller,
+      'Shared' => l10n.takeoverShared,
+      'Yes' => l10n.propertyOptionYes,
+      'No' => l10n.propertyOptionNo,
+      _ => value,
+    };

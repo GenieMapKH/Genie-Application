@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:tilomnov/core/storage/kept_copy_store.dart';
+import 'package:tilomnov/features/feed/data/feed_filters.dart';
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 
@@ -29,20 +30,28 @@ class FeedRepository {
   Future<FeedListingsPage> fetchPage({
     String? cursor,
     int limit = pageSize,
+    FeedFilters filters = const FeedFilters(),
   }) async {
     final response = await dio.get<Map<String, dynamic>>(
       '/feed',
-      queryParameters: {'limit': limit, 'cursor': ?cursor},
+      queryParameters: {
+        'limit': limit,
+        'cursor': ?cursor,
+        ...filters.toQuery(),
+      },
     );
     final data = response.data!;
-    if (cursor == null) await _keep(data);
+    if (cursor == null && filters.isDefault) await _keep(data);
     return _pageOf(data);
   }
 
   /// The first page as last read for this account, or null when none is
   /// kept (or it can no longer be read).
-  Future<FeedListingsPage?> savedFirstPage() =>
-      _kept.read(_keptName, parse: _pageOf);
+  Future<FeedListingsPage?> savedFirstPage({
+    FeedFilters filters = const FeedFilters(),
+  }) => filters.isDefault
+      ? _kept.read(_keptName, parse: _pageOf)
+      : Future.value(null);
 
   Future<void> _keep(Map<String, dynamic> data) => _kept.write(_keptName, data);
 

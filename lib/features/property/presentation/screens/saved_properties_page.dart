@@ -1,3 +1,5 @@
+import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
+import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -81,7 +83,6 @@ class SavedPropertiesPage extends ConsumerWidget {
             // Top App Bar Header
             AppHeaderBar(
               title: context.l10n.propertySavedProperties,
-              height: savedAsync.valueOrNull?.items.isEmpty == true ? 60 : null,
               onBackPressed: onBackPressed,
               trailing: Padding(
                 padding: const EdgeInsets.only(right: 4.0),
@@ -169,6 +170,7 @@ class SavedPropertiesPage extends ConsumerWidget {
           title: context.l10n.propertyYouHavenTSavedAnyProperties,
           hint: context.l10n.propertyTapTheHeartIconOnListings,
         ),
+        const AdvertisementSlot(),
       ],
     );
   }
@@ -187,7 +189,7 @@ class SavedPropertiesPage extends ConsumerWidget {
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid.builder(
+            sliver: AdvertisedSliverGrid(
               gridDelegate: PropertyListLayout.isTablet(context)
                   ? const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: PropertyListLayout.savedCardMaxWidth,
@@ -195,8 +197,11 @@ class SavedPropertiesPage extends ConsumerWidget {
                       crossAxisSpacing: PropertyListLayout.columnSpacing,
                       childAspectRatio: 0.68,
                     )
-                  : const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                  : SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: PropertyListLayout.compactColumns(
+                        context,
+                        MediaQuery.sizeOf(context).width - 32,
+                      ),
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 12,
                       childAspectRatio: 0.68,

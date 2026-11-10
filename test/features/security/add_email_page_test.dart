@@ -7,12 +7,23 @@ import 'package:tilomnov/features/security/data/repositories/account_repository.
 import 'package:tilomnov/features/security/presentation/screens/add_email_page.dart';
 import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
 import 'package:tilomnov/shared/widgets/buttons/app_button.dart';
-
+import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
+import 'package:dio/dio.dart';
 import '../../support/test_app.dart';
+
+class _EmailCodes extends AuthService {
+  _EmailCodes() : super(Dio());
+  @override
+  Future<void> requestEmailVerification(String email) async {}
+  @override
+  Future<String> confirmEmailVerification(String email, String otp) async =>
+      'email-proof';
+}
 
 UserProfile _profile({String? email}) => UserProfile(
   id: 'u1',
   email: email,
+  emailVerified: email != null,
   phone: '+85512345678',
   username: 'dara',
   role: 'user',
@@ -33,6 +44,7 @@ void main() {
       tester,
       const PersonalInfoPage(),
       overrides: [
+        authServiceProvider.overrideWithValue(_EmailCodes()),
         userProfileProvider.overrideWith((ref) async => _profile()),
         accountRepositoryProvider.overrideWithValue(
           AccountRepository(server.dio),
@@ -47,12 +59,18 @@ void main() {
     await tester.enterText(_input('add_email_field'), 'dara@example.com');
     await tester.enterText(_input('add_email_password_field'), 'secret');
     await tester.tap(find.byType(AppButton));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
+    expect(server.requests, isEmpty);
+    await tester.enterText(_input('contact_otp'), '123456');
+    await tester.tap(find.text('Verify'));
+    await tester.pumpAndSettle();
     expect(server.requests.single.path, '/auth/account/email');
     expect(server.requests.single.body, {
       'email': 'dara@example.com',
       'password': 'secret',
+      'emailProof': 'email-proof',
     });
     expect(find.byType(AddEmailPage), findsNothing);
     await tester.pump(const Duration(seconds: 5));
@@ -83,6 +101,7 @@ void main() {
       tester,
       const AddEmailPage(),
       overrides: [
+        authServiceProvider.overrideWithValue(_EmailCodes()),
         accountRepositoryProvider.overrideWithValue(
           AccountRepository(StubServer.always(409).dio),
         ),
@@ -92,8 +111,12 @@ void main() {
     await tester.enterText(_input('add_email_field'), 'taken@example.com');
     await tester.enterText(_input('add_email_password_field'), 'secret');
     await tester.tap(find.byType(AppButton));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
+    await tester.enterText(_input('contact_otp'), '123456');
+    await tester.tap(find.text('Verify'));
+    await tester.pumpAndSettle();
     expect(
       find.text('This email is already used by another account.'),
       findsOneWidget,

@@ -185,7 +185,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageTitle => 'Language';
 
   @override
-  String get glassNavigationTitle => 'Glass navigation';
+  String get glassNavigationTitle => 'Navigation theme';
 
   @override
   String get glassNavigationSubtitle => 'Match your phone\'s see-through bars';
@@ -496,6 +496,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPhoneNumber => 'Phone Number';
 
   @override
+  String get authGetCode => 'Get code';
+
+  @override
+  String get authPhoneVerified => 'Phone number verified';
+
+  @override
+  String get authPhoneVerificationExpired =>
+      'Phone verification expired. Get a new code.';
+
+  @override
+  String get authPhoneVerificationUnavailable =>
+      'We couldn\'t send the SMS code. Please try again later.';
+
+  @override
+  String get authVerifyPhoneFirst =>
+      'Verify your phone number before signing up.';
+
+  @override
   String get authLoginFailedPleaseCheckYourCredentials =>
       'Could not sign in. Check your details and retry.';
 
@@ -694,6 +712,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeDraw => 'Draw';
 
   @override
+  String get homeAddPoint => 'Add point';
+
+  @override
   String get homeSearchByAreaRoadVillage => 'Search by area, road, village...';
 
   @override
@@ -850,6 +871,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get propertyCallNow => 'Call Now';
+
+  @override
+  String get propertyCallInApp => 'Call in Tilomnov';
+
+  @override
+  String get propertyCallPhone => 'Use phone dialer';
+
+  @override
+  String get callFullScreenTitle => 'Full-screen incoming calls';
+
+  @override
+  String get callFullScreenHelp =>
+      'Allow incoming calls to appear over the lock screen. Android may show a call banner while your phone is unlocked.';
+
+  @override
+  String get callFullScreenFailed =>
+      'Could not open full-screen call settings.';
 
   @override
   String get propertyNoPhoneNumber =>
@@ -1459,6 +1497,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedTitle => 'Feed';
+
+  @override
+  String get feedSubtitle => 'Fresh finds from people you follow';
+
+  @override
+  String get feedNewestFirst => 'Newest first';
+
+  @override
+  String get feedSortTop => 'Top (most saved)';
+
+  @override
+  String get feedListingDate => 'Listing date';
+
+  @override
+  String get feedAnyTime => 'Any time';
+
+  @override
+  String get feedLast7Days => 'Last 7 days';
+
+  @override
+  String get feedLast30Days => 'Last 30 days';
+
+  @override
+  String get feedChooseDates => 'Choose dates';
+
+  @override
+  String get feedPriceInvalid =>
+      'Enter a price between \$0 and \$9,999,999,999.99.';
+
+  @override
+  String get feedNoMatches => 'No matching listings';
+
+  @override
+  String get feedTryOtherFilters =>
+      'Try a different date, price or property type.';
 
   @override
   String get feedEmptyTitle => 'Your feed is empty';
@@ -3080,7 +3153,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planUpgradeIntro =>
-      'Your plan lasts one month from purchase. Upgrades replace your plan at the full price shown.';
+      'New plans last one month. Upgrades charge only the price difference for your remaining time and keep your expiry date.';
 
   @override
   String get planSubscribe => 'Subscribe';
@@ -3110,6 +3183,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get paymentFailed =>
       'The payment was not completed. Please try again.';
+
+  @override
+  String get paymentRefundRequired =>
+      'Your payment arrived after the upgrade expired. Please contact support with your transaction reference for a refund.';
 
   @override
   String get paymentAppNotOpened =>
@@ -3148,10 +3225,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentOneTimeIntro => 'Your property is ready to be published.';
 
   @override
+  String get publishingRenewListingTitle => 'Renew property post';
+
+  @override
+  String get publishingRenewListingMessage =>
+      'Keep this property public for one month. Pay for this post, or use an active subscription with space available.';
+
+  @override
+  String get publishingRenewSubscriptionTitle => 'Renew your subscription';
+
+  @override
+  String get publishingRenewSubscriptionMessage =>
+      'Your subscription has expired. Renew your plan to publish your properties again. Your original free listing stays available.';
+
+  @override
   String get paymentPropertyInformation => 'Property information';
 
   @override
-  String get paymentOneTime => 'One-time payment';
+  String get paymentOneTime => 'One month · one-time payment';
 
   @override
   String get paymentPublishProperty => 'Publish Property';
@@ -3170,7 +3261,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String publishPlanOneTimeHint(String price) {
-    return 'Pay $price to publish just this property.';
+    return 'Pay $price to publish this property for one month.';
   }
 
   @override
@@ -3327,8 +3418,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get paymentSuccessEmailed =>
-      'Order confirmation details sent to your email:';
+  String get paymentSuccessEmailed => 'Order confirmation email:';
 
   @override
   String get paymentSuccessNoEmail =>
@@ -3381,21 +3471,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get paymentItemOneTimePublish => 'One-time listing publish';
-
-  @override
-  String get paymentSimulationNotice =>
-      'Test purchase only. No money will be charged.';
+  String get paymentItemOneTimePublish => 'Property post · one month';
 
   @override
   String get planCancelAction => 'Cancel plan';
 
   @override
-  String get planCancelTitle => 'Turn off automatic renewal?';
+  String get planCancelTitle => 'Cancel your plan?';
 
   @override
   String planCancelExplanation(String date) {
-    return 'Your plan stays active until $date. No automatic renewal or charge.';
+    return 'Your plan stays active until $date. You keep your paid benefits until then.';
   }
 
   @override
@@ -3405,7 +3491,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String planCancelledUntil(String date) {
-    return 'Automatic renewal is off. Your plan stays active until $date.';
+    return 'Plan cancelled. Your access stays active until $date.';
   }
 
   @override
@@ -3414,4 +3500,265 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planStatusRetry => 'Could not load your plan. Tap to retry.';
+
+  @override
+  String get listingTypeTakeover => 'Takeover Payments';
+
+  @override
+  String get takeoverIntro =>
+      'Enter the existing payment plan. Buyers pay you the seller amount, then take responsibility for the remaining balance, subject to provider approval.';
+
+  @override
+  String get takeoverProviderType => 'Payment provider type';
+
+  @override
+  String get takeoverProviderName => 'Developer or bank name';
+
+  @override
+  String get takeoverProjectName => 'Project name';
+
+  @override
+  String get takeoverSellerAmount => 'Amount payable to seller (USD)';
+
+  @override
+  String get takeoverBalance => 'Remaining balance (USD)';
+
+  @override
+  String get takeoverBalanceHelp =>
+      'Outstanding contract balance or loan principal, excluding future financing interest. Include any larger scheduled payments in this balance.';
+
+  @override
+  String get takeoverBalanceDate => 'Balance as of';
+
+  @override
+  String get takeoverPaymentAmount => 'Regular instalment (USD)';
+
+  @override
+  String get takeoverFrequency => 'Payment frequency';
+
+  @override
+  String get takeoverRemainingMonths => 'Months remaining';
+
+  @override
+  String get takeoverNextPayment => 'Next payment due';
+
+  @override
+  String get takeoverInterestType => 'Interest terms';
+
+  @override
+  String get takeoverAnnualRate => 'Current annual interest rate (%)';
+
+  @override
+  String get takeoverTransferStatus => 'Transfer permission (seller-reported)';
+
+  @override
+  String get takeoverTransferFee =>
+      'Transfer fee (USD, leave blank if unknown)';
+
+  @override
+  String get takeoverFeePayer => 'Who pays the transfer fee?';
+
+  @override
+  String get takeoverArrears => 'Overdue amount (USD, enter 0 if none)';
+
+  @override
+  String get takeoverArrearsHelp =>
+      'Disclose unpaid instalments and penalties. Explain in the notes whether overdue principal is already included in the balance.';
+
+  @override
+  String get takeoverArrearsPayer => 'Who settles the overdue amount?';
+
+  @override
+  String get takeoverHasAdditional =>
+      'Any additional large scheduled payments?';
+
+  @override
+  String get takeoverAdditionalAmount => 'Scheduled payment amount (USD)';
+
+  @override
+  String get takeoverAdditionalDate => 'Scheduled payment due';
+
+  @override
+  String get takeoverAddPayment => 'Add scheduled payment';
+
+  @override
+  String get takeoverRemovePayment => 'Remove scheduled payment';
+
+  @override
+  String get takeoverAdditionalHelp =>
+      'Include handover or balloon payments here. These amounts are already part of the remaining balance.';
+
+  @override
+  String get takeoverNotes => 'Payment plan and transfer notes';
+
+  @override
+  String get takeoverCombinedPrice =>
+      'Combined price before future interest and fees';
+
+  @override
+  String get takeoverCombinedHelp =>
+      'Seller amount + remaining balance. Future interest, transfer fees and overdue charges may add to the buyer\'s cost.';
+
+  @override
+  String get takeoverInvalid =>
+      'Complete or correct the highlighted takeover details before publishing.';
+
+  @override
+  String get takeoverFieldError => 'Required or invalid value';
+
+  @override
+  String get takeoverNotAllowed =>
+      'This contract cannot be listed for takeover while transfers are not allowed.';
+
+  @override
+  String get takeoverBuyerNotice =>
+      'Terms and permission are reported by the seller, not verified by Tilomnov. Confirm the balance, fees and transfer process directly with the developer or bank. Listing a property does not transfer its contract or loan.';
+
+  @override
+  String get takeoverDateHint => 'YYYY-MM-DD';
+
+  @override
+  String get takeoverProviderDeveloper => 'Developer instalments';
+
+  @override
+  String get takeoverProviderBank => 'Bank loan';
+
+  @override
+  String get takeoverMonthly => 'Monthly';
+
+  @override
+  String get takeoverQuarterly => 'Every 3 months';
+
+  @override
+  String get takeoverYearly => 'Yearly';
+
+  @override
+  String get takeoverInterestNone => 'Interest-free';
+
+  @override
+  String get takeoverInterestFixed => 'Fixed rate';
+
+  @override
+  String get takeoverInterestVariable => 'Variable rate';
+
+  @override
+  String get takeoverUnknown => 'Unknown / to be confirmed';
+
+  @override
+  String get takeoverNotChecked => 'Not yet checked with provider';
+
+  @override
+  String get takeoverConditional => 'Allowed subject to provider conditions';
+
+  @override
+  String get takeoverWrittenApproval => 'Written permission available';
+
+  @override
+  String get takeoverNotPermitted => 'Transfer not allowed';
+
+  @override
+  String get takeoverBuyer => 'Buyer';
+
+  @override
+  String get takeoverSeller => 'Seller';
+
+  @override
+  String get takeoverShared => 'Shared by buyer and seller';
+
+  @override
+  String takeoverMonthsValue(int months) {
+    return '$months months';
+  }
+
+  @override
+  String takeoverToSellerValue(String amount) {
+    return '$amount to seller';
+  }
+
+  @override
+  String takeoverPriceLabel(String amount) {
+    return '$amount combined';
+  }
+
+  @override
+  String takeoverPaymentValue(String amount, String frequency) {
+    return '$amount · $frequency';
+  }
+
+  @override
+  String get takeoverBuyerTransferFee => 'Transfer fee';
+
+  @override
+  String get takeoverBuyerArrears => 'Overdue payments and penalties';
+
+  @override
+  String get adminEmailTitle => 'Check your admin email';
+
+  @override
+  String get adminEmailWaiting =>
+      'Your password was accepted. Open Gmail and tap Open Tilomnov in the sign-in email to finish signing in. The link expires in 10 minutes.';
+
+  @override
+  String get adminEmailVerifying => 'Verifying your sign-in link...';
+
+  @override
+  String get adminEmailInvalid =>
+      'This sign-in link could not be verified. It may be expired or already used, or the connection failed. Please sign in again to request a new email.';
+
+  @override
+  String get adminEmailBack => 'Back to login';
+
+  @override
+  String get advertisementLabel => 'Advertisement';
+
+  @override
+  String get themeLiquidGlass => 'Liquid Glass';
+
+  @override
+  String get themeMinimalistic => 'Minimalistic';
+
+  @override
+  String get planAnnualOffer => 'Annual · 2 months free';
+
+  @override
+  String get paymentAnnual => '12 months';
+
+  @override
+  String get planPerYear => '/ year';
+
+  @override
+  String get planExpiryDate => 'Access until';
+
+  @override
+  String get planManualRenewal =>
+      'One payment only. No automatic renewal. Renew manually at the displayed plan price when this period ends.';
+
+  @override
+  String get paymentOneTimeDuration => '30 days · manual renewal';
+
+  @override
+  String get authRecoveryEmailOnly =>
+      'Password recovery uses the email linked to your account. If you signed up with Google, sign in with Google. Add an email in Account Security so you can recover a forgotten password.';
+
+  @override
+  String get propertyAddPhone => 'Add another phone number';
+
+  @override
+  String get propertyAdditionalPhone => 'Additional phone number';
+
+  @override
+  String get propertyRemovePhone => 'Remove phone number';
+
+  @override
+  String get searchApproximateArea => 'Approximate search area';
+
+  @override
+  String get authRecoveryEmailHint =>
+      'Add an email for password recovery. Your phone number is for contact only.';
+
+  @override
+  String get paymentEstimatedExpiry => 'Estimated expiry';
+
+  @override
+  String get paymentRenewalPrice => 'Renewal for another 30 days';
 }

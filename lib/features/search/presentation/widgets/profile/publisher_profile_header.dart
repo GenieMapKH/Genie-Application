@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/shared/widgets/media/admin_identity.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -58,6 +59,7 @@ class PublisherProfileHeader extends StatelessWidget {
             name: person.displayName,
             avatarUrl: person.avatarUrl,
             radius: 44,
+            isAdmin: person.isAdmin,
           ),
           trailing: onFollow == null && menu == null
               ? null
@@ -79,6 +81,14 @@ class PublisherProfileHeader extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
           child: _PublisherIdentity(person: person, follow: follow),
         ),
+        if (person.isAdmin)
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: AdminIdentityBadge(),
+            ),
+          ),
         if (onChat != null || onViewOnMap != null)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),

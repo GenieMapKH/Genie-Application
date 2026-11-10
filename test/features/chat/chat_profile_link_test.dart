@@ -104,6 +104,27 @@ void main() {
     await tester.tap(find.text('Sokha Realty'));
     await tester.pumpAndSettle();
 
+    final sheet = find.byType(BottomSheet);
+    final center = tester.getCenter(sheet).dx;
+    for (final text in [
+      'Sokha Realty',
+      '@sokha_realty',
+      'Member since March 2025',
+    ]) {
+      expect(
+        tester
+            .getCenter(find.descendant(of: sheet, matching: find.text(text)))
+            .dx,
+        closeTo(center, .01),
+      );
+    }
+    expect(
+      tester
+          .getCenter(find.widgetWithText(FilledButton, 'View full profile'))
+          .dx,
+      closeTo(center, .01),
+    );
+
     await tester.tap(find.text('View full profile'));
     await tester.pumpAndSettle();
 

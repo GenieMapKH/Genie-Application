@@ -40,7 +40,7 @@ void main() {
     expect(find.text('Transaction ID  #GP0001245'), findsOneWidget);
     expect(
       find.text(
-        'Order confirmation details sent to your email:\n'
+        'Order confirmation email:\n'
         'hengheng168@gmail.com',
       ),
       findsOneWidget,

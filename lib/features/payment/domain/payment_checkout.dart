@@ -2,6 +2,9 @@
 /// user to pay it, and the id to ask about it afterwards.
 class PaymentCheckout {
   final String transactionId;
+  final PaymentState state;
+  final double? amountUsd;
+  final DateTime? paidAt;
 
   /// Opens ABA Mobile straight on the payment. Null when the provider gave
   /// none; [checkoutUrl] is then the way to pay.
@@ -12,6 +15,9 @@ class PaymentCheckout {
 
   const PaymentCheckout({
     required this.transactionId,
+    this.state = PaymentState.pending,
+    this.amountUsd,
+    this.paidAt,
     this.appDeeplink,
     this.checkoutUrl,
   });
@@ -21,6 +27,11 @@ class PaymentCheckout {
         value is String && value.isNotEmpty ? Uri.tryParse(value) : null;
     return PaymentCheckout(
       transactionId: json['transactionId'] as String,
+      state: PaymentState.fromApi(json['status']),
+      amountUsd: (json['amount'] as num?)?.toDouble(),
+      paidAt: json['paidAt'] == null
+          ? null
+          : DateTime.parse(json['paidAt'] as String),
       appDeeplink: uri(json['abapayDeeplink']),
       checkoutUrl: uri(json['checkoutUrl']),
     );
@@ -33,10 +44,12 @@ class PaymentCheckout {
 enum PaymentState {
   pending,
   paid,
+  refundRequired,
   failed;
 
   static PaymentState fromApi(Object? value) => switch (value) {
     'Success' => paid,
+    'RefundRequired' => refundRequired,
     'Failed' => failed,
     _ => pending,
   };

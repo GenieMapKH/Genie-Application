@@ -28,12 +28,11 @@ class ChatConversationHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chat = this.chat;
-    final avatarUrl = chat == null
+    final profile = chat == null
         ? null
         : ref
               .watch(chatParticipantProfileProvider(chat.participantId))
-              .valueOrNull
-              ?.avatarUrl;
+              .valueOrNull;
 
     return InkWell(
       borderRadius: BorderRadius.circular(8),
@@ -49,7 +48,12 @@ class ChatConversationHeader extends ConsumerWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            UserAvatar(name: participantName, avatarUrl: avatarUrl, radius: 18),
+            UserAvatar(
+              name: participantName,
+              avatarUrl: profile?.avatarUrl,
+              radius: 18,
+              isAdmin: profile?.isAdmin ?? false,
+            ),
             const SizedBox(width: 10),
             Flexible(
               child: Column(

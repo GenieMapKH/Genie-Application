@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/shared/widgets/media/admin_identity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -97,7 +98,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     final profile = profileAsync.valueOrNull;
 
     return AppPageScaffold(
-      title: context.l10n.accountTitle,
+      title: profile?.role == 'admin' ? 'Profile' : context.l10n.accountTitle,
       onBackPressed: widget.onBackPressed,
       // The menu carries on behind a floating navigation bar.
       extendsToBottom: true,
@@ -137,7 +138,8 @@ class _AccountMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final tier = ref.watch(currentPlanTierProvider);
+    final isAdmin = profile.role == 'admin';
+    final tier = isAdmin ? null : ref.watch(currentPlanTierProvider);
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -150,9 +152,14 @@ class _AccountMenu extends ConsumerWidget {
       children: [
         ProfileHeader(
           profile: profile,
-          frameAvatar: (avatar) =>
-              TierAvatarFrame(tier: tier, diameter: 100, child: avatar),
-          badge: tier.isPaid ? PlanTierChip(tier: tier) : null,
+          frameAvatar: (avatar) => isAdmin
+              ? AdminAvatarFrame(child: avatar)
+              : TierAvatarFrame(tier: tier!, diameter: 100, child: avatar),
+          badge: isAdmin
+              ? const AdminIdentityBadge()
+              : tier!.isPaid
+              ? PlanTierChip(tier: tier)
+              : null,
         ),
         const SizedBox(height: 28),
         SettingsSectionTitle(l10n.accountSectionAccount),
@@ -176,34 +183,38 @@ class _AccountMenu extends ConsumerWidget {
           children: [
             const AppearanceRow(),
             const LanguageRow(),
-            SettingsRow(
-              icon: Icons.notifications_none_outlined,
-              title: l10n.notificationsTitle,
-              onTap: () => context.pushPage(const NotificationSettingsPage()),
-            ),
-            SettingsRow(
-              icon: Icons.travel_explore,
-              title: l10n.savedSearchesTitle,
-              onTap: () => context.pushPage(const SavedSearchesPage()),
-            ),
+            if (!isAdmin)
+              SettingsRow(
+                icon: Icons.notifications_none_outlined,
+                title: l10n.notificationsTitle,
+                onTap: () => context.pushPage(const NotificationSettingsPage()),
+              ),
+            if (!isAdmin)
+              SettingsRow(
+                icon: Icons.travel_explore,
+                title: l10n.savedSearchesTitle,
+                onTap: () => context.pushPage(const SavedSearchesPage()),
+              ),
           ],
         ),
         const SizedBox(height: 24),
         SettingsSectionTitle(l10n.accountSectionMore),
         SettingsSection(
           children: [
-            SettingsRow(
-              icon: Icons.workspace_premium_outlined,
-              title: l10n.accountSubscription,
-              value: tier.label(l10n),
-              onTap: () =>
-                  context.pushPage<bool>(const SubscriptionPlansPage()),
-            ),
-            SettingsRow(
-              icon: Icons.privacy_tip_outlined,
-              title: l10n.accountPrivacy,
-              onTap: () => context.pushPage(const PrivacyCookiesPage()),
-            ),
+            if (!isAdmin)
+              SettingsRow(
+                icon: Icons.workspace_premium_outlined,
+                title: l10n.accountSubscription,
+                value: tier!.label(l10n),
+                onTap: () =>
+                    context.pushPage<bool>(const SubscriptionPlansPage()),
+              ),
+            if (!isAdmin)
+              SettingsRow(
+                icon: Icons.privacy_tip_outlined,
+                title: l10n.accountPrivacy,
+                onTap: () => context.pushPage(const PrivacyCookiesPage()),
+              ),
             SettingsRow(
               icon: Icons.logout_outlined,
               title: l10n.accountSignOut,

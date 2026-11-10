@@ -5,6 +5,29 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 
 void main() {
+  test(
+    'place searches frame a whole province instead of stopping at street zoom',
+    () {
+      final camera = MapCameraFocus.frame(
+        LatLngBounds(
+          southwest: const LatLng(10, 103),
+          northeast: const LatLng(14, 107),
+        ),
+        const Size(390, 844),
+        const EdgeInsets.only(top: 150, bottom: 300),
+      );
+      expect(camera.zoom, lessThan(11));
+      final west = MapCameraFocus.worldPixel(
+        const LatLng(12, 103),
+        camera.zoom,
+      ).x;
+      final east = MapCameraFocus.worldPixel(
+        const LatLng(12, 107),
+        camera.zoom,
+      ).x;
+      expect(east - west, lessThan(390 - 64));
+    },
+  );
   group('zoomToFit', () {
     test('falls back to the pin zoom for a single point', () {
       expect(

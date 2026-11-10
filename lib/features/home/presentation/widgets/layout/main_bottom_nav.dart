@@ -8,12 +8,13 @@ import 'package:tilomnov/features/home/presentation/widgets/layout/glass_bottom_
 /// The bottom navigation: a floating glass capsule on phones whose own
 /// interface is glass, the regular bar everywhere else.
 class MainBottomNav extends ConsumerWidget {
-  const MainBottomNav({super.key});
+  final bool isAdmin;
+  const MainBottomNav({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return watchGlassNavigation(ref, context)
-        ? const GlassBottomNav()
-        : const ClassicBottomNav();
+        ? GlassBottomNav(isAdmin: isAdmin)
+        : ClassicBottomNav(isAdmin: isAdmin);
   }
 }

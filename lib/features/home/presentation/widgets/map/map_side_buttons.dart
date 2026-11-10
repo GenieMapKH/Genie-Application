@@ -16,6 +16,7 @@ class MapSideButtons extends StatelessWidget {
   final VoidCallback onDrawPressed;
   final void Function(List<LatLng>) onCoordinatesScanned;
   final VoidCallback onGoToCurrentPosition;
+  final VoidCallback? onMessengerPressed;
 
   /// Distance from the bottom of the screen. Raised while the property card
   /// or a results sheet is on screen so the buttons clear it.
@@ -31,6 +32,7 @@ class MapSideButtons extends StatelessWidget {
     required this.onGoToCurrentPosition,
     required this.bottom,
     required this.buttonSize,
+    this.onMessengerPressed,
   });
 
   Future<void> _enterCoordinates(BuildContext context) async {
@@ -59,6 +61,15 @@ class MapSideButtons extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (onMessengerPressed != null) ...[
+              _MapDiscButton(
+                asset: 'assets/icons/messenger.svg',
+                tooltip: context.l10n.navChat,
+                width: buttonSize,
+                onPressed: onMessengerPressed!,
+              ),
+              const SizedBox(height: _MapDiscButton.gap),
+            ],
             _MapDiscButton(
               asset: 'assets/icons/icons8-utm-marking-48.png',
               tooltip: context.l10n.homeCoordinates,

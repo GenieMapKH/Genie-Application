@@ -13,7 +13,6 @@ import 'package:tilomnov/features/home/presentation/widgets/glass/selection_drop
 import 'package:tilomnov/features/home/presentation/widgets/layout/nav_tabs.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
-import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// The bottom navigation as a floating glass capsule, for phones whose own
 /// interface is glass. A drop of tinted glass marks the open tab and slides
@@ -23,7 +22,8 @@ import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 /// It fills the same slot as the regular bar, so nothing above it moves; the
 /// map shows around the capsule.
 class GlassBottomNav extends ConsumerStatefulWidget {
-  const GlassBottomNav({super.key});
+  final bool isAdmin;
+  const GlassBottomNav({super.key, this.isAdmin = false});
 
   /// The height of the regular bar (`PropertyCarousel.bottomNavHeight`).
   static const slotHeight = 98.0;
@@ -117,13 +117,13 @@ class _GlassBottomNavState extends ConsumerState<GlassBottomNav>
                 child: CustomPaint(
                   painter: SelectionDropletPainter(
                     position: _droplet,
-                    count: mainNavTabs.length,
+                    count: navTabsFor(isAdmin: widget.isAdmin).length,
                     color: colors.primary.withValues(alpha: dark ? 0.26 : 0.13),
                     rim: Colors.white.withValues(alpha: dark ? 0.18 : 0.6),
                   ),
                   child: Row(
                     children: [
-                      for (final tab in mainNavTabs)
+                      for (final tab in navTabsFor(isAdmin: widget.isAdmin))
                         Expanded(
                           child: _GlassNavItem(
                             tab: tab,
@@ -208,13 +208,8 @@ class _GlassNavItemState extends State<_GlassNavItem>
               ScaleTransition(
                 scale: _scale,
                 child: NavUnreadBadge(
-                  tabIndex: widget.tab.index,
-                  icon: TintedSvg(
-                    widget.tab.iconAsset,
-                    width: 24,
-                    height: 24,
-                    color: color ?? colors.textMuted,
-                  ),
+                  tabIndex: widget.tab.showUnread ? MainTab.chat : -1,
+                  icon: widget.tab.buildIcon(color ?? colors.textMuted),
                 ),
               ),
               const SizedBox(height: 3),

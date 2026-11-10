@@ -90,7 +90,7 @@ void main() {
       expect(find.text('Sign out of all devices'), findsNothing);
       // It is told why, and from when it can.
       expect(
-        find.textContaining('only after it has been signed in for a day'),
+        find.textContaining('Until then, use a device signed in earlier.'),
         findsOneWidget,
       );
     });
@@ -142,7 +142,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.textContaining('signed in less than a day ago'),
+        find.text(
+          'Wait 24 hours after signing in, or use a device signed in earlier.',
+        ),
         findsOneWidget,
       );
       // Not blamed on the password, which was right.

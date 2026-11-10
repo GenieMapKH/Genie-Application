@@ -10,6 +10,7 @@ import 'package:tilomnov/features/auth/presentation/view_models/login_controller
 import 'package:tilomnov/features/auth/presentation/view_models/sign_up_form.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_providers.dart';
 import '../widgets/create_account_form.dart';
+import '../widgets/contact_verification.dart';
 import '../widgets/create_account_actions.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
@@ -85,6 +86,11 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
 
     setState(() => _isLoading = true);
     try {
+      final email = form.normalizedEmail;
+      final emailProof = email == null
+          ? null
+          : await verifyEmailOwnership(context, ref, email);
+      if (!mounted || (email != null && emailProof == null)) return;
       await ref
           .read(authServiceProvider)
           .register(
@@ -92,6 +98,7 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
             email: form.normalizedEmail,
             name: form.trimmedName,
             password: form.password,
+            emailProof: emailProof,
           );
 
       if (widget.onSignUpPressed != null) {
@@ -201,6 +208,7 @@ class _CreateAccountPageState extends ConsumerState<CreateAccountPage> {
                       termsError: _message(form.termsProblem),
                       obscurePassword: _obscurePassword,
                       agreeToTerms: _agreeToTerms,
+                      enabled: !_isLoading,
                       onChanged: () {
                         if (_showProblems) setState(() {});
                       },

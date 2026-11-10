@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -43,6 +44,12 @@ class PropertySectionTitle extends StatelessWidget {
 }
 
 class PropertyTextField extends StatelessWidget {
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final int? maxLength;
+  final int maxLines;
   final String label;
   final bool required;
   final TextEditingController controller;
@@ -60,6 +67,12 @@ class PropertyTextField extends StatelessWidget {
     this.infoText,
     this.hasError = false,
     this.focusKey,
+    this.keyboardType,
+    this.inputFormatters,
+    this.readOnly = false,
+    this.onTap,
+    this.maxLength,
+    this.maxLines = 1,
   });
 
   @override
@@ -68,8 +81,10 @@ class PropertyTextField extends StatelessWidget {
       key: focusKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             PropertySectionTitle(
               title: label,
@@ -78,6 +93,7 @@ class PropertyTextField extends StatelessWidget {
             ),
             if (infoText != null)
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.info_outline,
@@ -85,11 +101,13 @@ class PropertyTextField extends StatelessWidget {
                     color: context.colors.textMuted,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    infoText!,
-                    style: GoogleFonts.inter(
-                      color: context.colors.textMuted,
-                      fontSize: 11,
+                  Flexible(
+                    child: Text(
+                      infoText!,
+                      style: GoogleFonts.inter(
+                        color: context.colors.textMuted,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ],
@@ -99,6 +117,12 @@ class PropertyTextField extends StatelessWidget {
         const SizedBox(height: 8),
         TextField(
           controller: controller,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          readOnly: readOnly,
+          onTap: onTap,
+          maxLength: maxLength,
+          maxLines: maxLines,
           decoration: defaultPropertyInputDecoration(
             context,
             hintText,
@@ -140,8 +164,10 @@ class PropertyDropdown extends StatelessWidget {
       key: focusKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             PropertySectionTitle(
               title: label,
@@ -150,6 +176,7 @@ class PropertyDropdown extends StatelessWidget {
             ),
             if (infoText != null)
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.info_outline,
@@ -157,11 +184,13 @@ class PropertyDropdown extends StatelessWidget {
                     color: context.colors.textMuted,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    infoText!,
-                    style: GoogleFonts.inter(
-                      color: context.colors.textMuted,
-                      fontSize: 11,
+                  Flexible(
+                    child: Text(
+                      infoText!,
+                      style: GoogleFonts.inter(
+                        color: context.colors.textMuted,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ],

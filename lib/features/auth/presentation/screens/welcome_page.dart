@@ -177,127 +177,140 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              const WelcomePreferenceBar(),
-              const Spacer(flex: 2),
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      const WelcomePreferenceBar(),
+                      const Spacer(flex: 2),
 
-              // Hardware-isolated Logo & Headline Section
-              RepaintBoundary(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SlideTransition(
-                      position: _logoSlideAnimation,
-                      child: ScaleTransition(
-                        scale: _logoScaleAnimation,
-                        child: const AppLogo(width: 220.0, height: 150.0),
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    SlideTransition(
-                      position: _headerSlideAnimation,
-                      child: FadeTransition(
-                        opacity: _headerFadeAnimation,
+                      // Hardware-isolated Logo & Headline Section
+                      RepaintBoundary(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              context.l10n.authWelcomeToTheApp,
-                              style: _headlineStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 12),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
+                            SlideTransition(
+                              position: _logoSlideAnimation,
+                              child: ScaleTransition(
+                                scale: _logoScaleAnimation,
+                                child: const AppLogo(
+                                  width: 220.0,
+                                  height: 150.0,
+                                ),
                               ),
-                              child: Text(
-                                context
-                                    .l10n
-                                    .authFindAndSharePropertiesWithExact,
-                                style: _subtitleStyle,
-                                textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 28),
+                            SlideTransition(
+                              position: _headerSlideAnimation,
+                              child: FadeTransition(
+                                opacity: _headerFadeAnimation,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      context.l10n.authWelcomeToTheApp,
+                                      style: _headlineStyle,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                      ),
+                                      child: Text(
+                                        context
+                                            .l10n
+                                            .authFindAndSharePropertiesWithExact,
+                                        style: _subtitleStyle,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
 
-              const Spacer(flex: 3),
+                      const Spacer(flex: 3),
 
-              // Hardware-isolated Buttons Section
-              RepaintBoundary(
-                child: SlideTransition(
-                  position: _buttonsSlideAnimation,
-                  child: FadeTransition(
-                    opacity: _buttonsFadeAnimation,
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Login Primary Button (#4F5BD5)
-                          AppButton.primary(
-                            text: context.l10n.authLogin,
-                            onPressed:
-                                widget.onLoginPressed ??
-                                () {
-                                  context.push('/login');
-                                },
-                          ),
-                          const SizedBox(height: 10),
+                      // Hardware-isolated Buttons Section
+                      RepaintBoundary(
+                        child: SlideTransition(
+                          position: _buttonsSlideAnimation,
+                          child: FadeTransition(
+                            opacity: _buttonsFadeAnimation,
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Login Primary Button (#4F5BD5)
+                                  AppButton.primary(
+                                    text: context.l10n.authLogin,
+                                    onPressed:
+                                        widget.onLoginPressed ??
+                                        () {
+                                          context.push('/login');
+                                        },
+                                  ),
+                                  const SizedBox(height: 10),
 
-                          // Explore without account Secondary Button (#E5E7EB)
-                          AppButton.secondary(
-                            text: context.l10n.authExploreWithoutAccount,
-                            onPressed:
-                                widget.onExplorePressed ??
-                                () async {
-                                  await ref
-                                      .read(authServiceProvider)
-                                      .ensureGuestSession();
+                                  // Explore without account Secondary Button (#E5E7EB)
+                                  AppButton.secondary(
+                                    text:
+                                        context.l10n.authExploreWithoutAccount,
+                                    onPressed:
+                                        widget.onExplorePressed ??
+                                        () async {
+                                          await ref
+                                              .read(authServiceProvider)
+                                              .ensureGuestSession();
 
-                                  ref
-                                      .read(mainNavProvider.notifier)
-                                      .resetToHome();
+                                          ref
+                                              .read(mainNavProvider.notifier)
+                                              .resetToHome();
 
-                                  if (context.mounted) {
-                                    context.go('/home');
-                                  }
-                                },
-                          ),
-                          const SizedBox(height: 24),
+                                          if (context.mounted) {
+                                            context.go('/home');
+                                          }
+                                        },
+                                  ),
+                                  const SizedBox(height: 24),
 
-                          // Create a Account text link (#4F5BD5)
-                          FadeTransition(
-                            opacity: _createAccountFadeAnimation,
-                            child: GestureDetector(
-                              onTap:
-                                  widget.onCreateAccountPressed ??
-                                  () {
-                                    context.push('/register');
-                                  },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  context.l10n.authCreateAAccount,
-                                  style: _createAccountStyle,
-                                ),
+                                  // Create a Account text link (#4F5BD5)
+                                  FadeTransition(
+                                    opacity: _createAccountFadeAnimation,
+                                    child: GestureDetector(
+                                      onTap:
+                                          widget.onCreateAccountPressed ??
+                                          () {
+                                            context.push('/register');
+                                          },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          context.l10n.authCreateAAccount,
+                                          style: _createAccountStyle,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

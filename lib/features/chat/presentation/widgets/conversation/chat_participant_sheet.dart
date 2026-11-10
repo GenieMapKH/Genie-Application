@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tilomnov/shared/widgets/media/admin_identity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -59,6 +60,7 @@ class _ChatParticipantSheet extends ConsumerWidget {
       child: SizedBox(
         width: double.infinity,
         child: Stack(
+          alignment: Alignment.topCenter,
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
@@ -69,6 +71,7 @@ class _ChatParticipantSheet extends ConsumerWidget {
                     name: name,
                     avatarUrl: profile?.avatarUrl,
                     radius: 40,
+                    isAdmin: profile?.isAdmin ?? false,
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -80,6 +83,7 @@ class _ChatParticipantSheet extends ConsumerWidget {
                       color: colors.textPrimary,
                     ),
                   ),
+                  if (profile?.isAdmin ?? false) const AdminIdentityBadge(),
                   const SizedBox(height: 4),
                   ChatPresenceLabel(userId: chat.participantId),
                   const SizedBox(height: 16),

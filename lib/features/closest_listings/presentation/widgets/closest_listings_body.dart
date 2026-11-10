@@ -1,3 +1,5 @@
+import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
+import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -58,12 +60,17 @@ class ClosestListingsBody extends ConsumerWidget {
       ),
       data: (state) => state.listings.items.isEmpty
           ? _message(
-              FeedMessageView(
-                icon: Icons.travel_explore_rounded,
-                title: l10n.closestEmptyTitle,
-                hint: l10n.closestEmptyHint,
-                actionLabel: l10n.commonRetry,
-                onAction: retry,
+              Column(
+                children: [
+                  FeedMessageView(
+                    icon: Icons.travel_explore_rounded,
+                    title: l10n.closestEmptyTitle,
+                    hint: l10n.closestEmptyHint,
+                    actionLabel: l10n.commonRetry,
+                    onAction: retry,
+                  ),
+                  const AdvertisementSlot(rotationOffset: 1),
+                ],
               ),
             )
           : _grid(context, ref, state.listings),
@@ -92,7 +99,8 @@ class ClosestListingsBody extends ConsumerWidget {
       slivers: [
         SliverPadding(
           padding: EdgeInsets.fromLTRB(gutter, 4, gutter, 0),
-          sliver: SliverGrid.builder(
+          sliver: AdvertisedSliverGrid(
+            rotationOffset: 1,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: ClosestSheetLayout.columns(width),
               mainAxisExtent: tileHeight,

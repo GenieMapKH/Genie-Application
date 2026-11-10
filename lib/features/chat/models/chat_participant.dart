@@ -33,6 +33,7 @@ class ChatParticipantProfile {
   final String? name;
   final String? avatarUrl;
   final DateTime memberSince;
+  final bool isAdmin;
 
   const ChatParticipantProfile({
     required this.id,
@@ -40,11 +41,13 @@ class ChatParticipantProfile {
     this.name,
     this.avatarUrl,
     required this.memberSince,
+    this.isAdmin = false,
   });
 
   factory ChatParticipantProfile.fromJson(Map<String, dynamic> json) {
     return ChatParticipantProfile(
       id: json['id'] as String,
+      isAdmin: json['role'] == 'admin',
       username: json['username'] as String?,
       name: json['name'] as String?,
       avatarUrl: json['avatarUrl'] as String?,

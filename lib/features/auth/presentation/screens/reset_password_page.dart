@@ -11,7 +11,7 @@ import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
 class ResetPasswordPage extends ConsumerStatefulWidget {
-  /// The code the user received, by email or by SMS.
+  /// The code the user received, by email.
   final PasswordResetProof proof;
 
   const ResetPasswordPage({super.key, required this.proof});
@@ -106,12 +106,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
       context.go('/login');
     } catch (e) {
       if (!mounted) return;
-      AppPopup.showError(
-        context,
-        widget.proof is PhoneCodeProof
-            ? phoneResetErrorMessage(context.l10n, e)
-            : authErrorMessage(context.l10n, e),
-      );
+      AppPopup.showError(context, authErrorMessage(context.l10n, e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

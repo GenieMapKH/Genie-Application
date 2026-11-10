@@ -1,3 +1,6 @@
+import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:tilomnov/shared/utils/phone_number.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -56,6 +59,19 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
   @override
   AddPropertyFormState build() {
     return const AddPropertyFormState();
+  }
+
+  Future<void> ensureAccountPhone(String number) async {
+    final profile = await ref.read(userProfileProvider.future);
+    if (profile == null) throw StateError('Sign in before publishing');
+    if (profile.phone == null || profile.phone!.isEmpty) {
+      final phone = normalizePhoneNumber(number);
+      if (phone == null) throw ArgumentError('Enter a valid phone number');
+      await ref
+          .read(userRepositoryProvider)
+          .updateField(ProfileField.phone, phone);
+      ref.invalidate(userProfileProvider);
+    }
   }
 
   /// Fields that must be filled, in the order errors are reported, per

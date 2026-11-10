@@ -2,10 +2,27 @@ import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/features/property/presentation/property_labels.dart';
 import 'package:tilomnov/l10n/l10n.dart';
+import 'package:tilomnov/features/property/presentation/takeover_labels.dart';
 
 /// Shared display formatting for property price, size and spec lines so the
 /// map card, detail sheet and similar-property tiles stay consistent.
 class PropertyFormat {
+  static String takeoverSummary(AppLocalizations l10n, PropertyModel property) {
+    final terms = property.takeover;
+    return [
+      if (terms?.sellerAmount != null)
+        l10n.takeoverToSellerValue(takeoverMoney(terms!.sellerAmount!)),
+      if (terms?.paymentAmount != null && terms?.paymentFrequency != null)
+        l10n.takeoverPaymentValue(
+          takeoverMoney(terms!.paymentAmount!),
+          takeoverValueLabel(l10n, terms.paymentFrequency!),
+        ),
+    ].join(' · ');
+  }
+
+  static String takeoverMoney(double value) => value == value.truncateToDouble()
+      ? money(value)
+      : NumberFormat.currency(symbol: '\$ ', decimalDigits: 2).format(value);
   static final NumberFormat _price = NumberFormat.currency(
     symbol: '\$ ',
     decimalDigits: 0,
@@ -40,6 +57,9 @@ class PropertyFormat {
   /// `From $ 45,000` for a Borey, whose price is its cheapest unit.
   static String cardPrice(AppLocalizations l10n, PropertyModel property) {
     final amount = money(property.finalPrice);
+    if (property.isTakeover) {
+      return l10n.takeoverPriceLabel(takeoverMoney(property.finalPrice));
+    }
     if (property.propertyType == 'Borey') return l10n.propertyPriceFrom(amount);
     if (property.isRental) return l10n.propertyFactPerMonth(amount);
     return amount;
@@ -61,6 +81,7 @@ class PropertyFormat {
   /// `House for sale` or `House for rent`, in the user's language.
   static String typeAndListing(AppLocalizations l10n, PropertyModel property) {
     final type = propertyValueLabel(l10n, property.propertyType);
+    if (property.isTakeover) return '$type · ${l10n.listingTypeTakeover}';
     return property.isRental
         ? l10n.propertyTypeForRent(type)
         : l10n.propertyTypeForSale(type);

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/settings/data/app_settings_storage.dart';
@@ -125,4 +127,37 @@ void main() {
 
     expect(find.text('Chat messages'), findsOneWidget);
   });
+
+  testWidgets(
+    'opens Android full-screen call access from notification settings',
+    (tester) async {
+      AndroidFlutterLocalNotificationsPlugin.registerWith();
+      var requested = false;
+      const channel = MethodChannel(
+        'dexterous.com/flutter/local_notifications',
+      );
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+        call,
+      ) async {
+        if (call.method == 'requestFullScreenIntentPermission') {
+          requested = true;
+        }
+        return true;
+      });
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          channel,
+          null,
+        ),
+      );
+      await openPage(tester);
+      await tester.scrollUntilVisible(
+        find.text('Full-screen incoming calls'),
+        250,
+      );
+      await tester.tap(find.text('Full-screen incoming calls'));
+      await tester.pump();
+      expect(requested, isTrue);
+    },
+  );
 }

@@ -58,7 +58,9 @@ Dio createApiClient({
   dio.interceptors.add(SlowConnectionInterceptor(status));
   // Not on the web: a browser would need the server to allow these headers.
   if (!kIsWeb) {
-    dio.interceptors.add(DeviceHeadersInterceptor(DeviceDescriptionReader(), SignInDeviceKey()));
+    dio.interceptors.add(
+      DeviceHeadersInterceptor(DeviceDescriptionReader(), SignInDeviceKey()),
+    );
   }
   if (kDebugMode) {
     dio.interceptors.add(SafeLogInterceptor());

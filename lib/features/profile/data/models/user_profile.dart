@@ -13,6 +13,8 @@ class UserProfile {
   final String id;
   final String? email;
   final String? phone;
+  final bool emailVerified;
+  final bool phoneVerified;
 
   /// The unique handle. Null only for an account the server has not given
   /// one yet.
@@ -45,6 +47,8 @@ class UserProfile {
     required this.id,
     this.email,
     this.phone,
+    this.emailVerified = false,
+    this.phoneVerified = false,
     this.username,
     this.name,
     this.firstName,
@@ -64,6 +68,8 @@ class UserProfile {
       id: json['id'] as String,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
+      emailVerified: json['emailVerified'] == true,
+      phoneVerified: json['phoneVerified'] == true,
       username: json['username'] as String?,
       name: json['name'] as String?,
       firstName: json['firstName'] as String?,

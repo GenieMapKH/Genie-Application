@@ -23,6 +23,7 @@ class MainMapControls extends ConsumerWidget {
   final VoidCallback onAddPinToCenter;
   final VoidCallback onSavePropertySuccess;
   final ValueChanged<PropertyModel> onOpenProperty;
+  final VoidCallback? onMessengerPressed;
 
   /// Lifts the floating buttons above a results sheet: how much of the
   /// screen's bottom the sheet covers, or 0 when there is none.
@@ -36,6 +37,7 @@ class MainMapControls extends ConsumerWidget {
     required this.onSavePropertySuccess,
     required this.onOpenProperty,
     this.searchSheetHeight = 0,
+    this.onMessengerPressed,
   });
 
   /// Resting offset above the bottom nav bar.
@@ -76,6 +78,7 @@ class MainMapControls extends ConsumerWidget {
         // Coordinates, Draw and Current Position (Bottom Right)
         if (!mapState.isDrawing)
           MapSideButtons(
+            onMessengerPressed: onMessengerPressed,
             bottom: sideButtonBottom,
             buttonSize: buttonSize,
             // Drawing is how a listing is posted: a guest is asked to sign

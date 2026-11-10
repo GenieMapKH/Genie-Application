@@ -1,13 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+import 'package:tilomnov/features/payment/presentation/payment_feedback.dart';
 import 'package:tilomnov/features/payment/application/payment_app_launcher.dart';
 import 'package:tilomnov/features/payment/application/aba_payment_checkout_service.dart';
-import 'package:tilomnov/features/payment/application/simulated_payment_checkout_service.dart';
 import 'package:tilomnov/features/payment/application/payment_flow.dart';
 import 'package:tilomnov/features/payment/data/payment_repository.dart';
-import 'package:tilomnov/features/payment/data/receipt_mailer.dart';
 import 'package:tilomnov/features/payment/domain/payment_checkout.dart';
 import 'package:tilomnov/features/payment/domain/payment_method.dart';
-import 'package:tilomnov/features/payment/domain/payment_receipt.dart';
 
 import '../../support/test_app.dart';
 
@@ -46,7 +45,43 @@ PaymentFlow _flow(
 }
 
 void main() {
+  testWidgets(
+    'a refund message includes the transaction reference for support',
+    (tester) async {
+      await pumpTestApp(
+        tester,
+        Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showUnfinishedPayment(
+                context,
+                PaymentResult.refundRequired,
+                transactionId: 'late-upgrade-123',
+              ),
+              child: const Text('show'),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('show'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Please contact support'), findsOneWidget);
+      expect(find.textContaining('late-upgrade-123'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+    },
+  );
   group('PaymentFlow', () {
+    test('a late upgrade stops polling and requires a refund', () async {
+      expect(
+        PaymentState.fromApi('RefundRequired'),
+        PaymentState.refundRequired,
+      );
+      final result = await _flow([
+        PaymentState.refundRequired,
+      ]).complete(_checkout);
+      expect(result, PaymentResult.refundRequired);
+    });
     test('is paid only once the server says so', () async {
       final result = await _flow([
         PaymentState.pending,
@@ -84,26 +119,45 @@ void main() {
   });
 
   group('checkout services', () {
+    test('a late upgrade never opens the bank or reports success', () async {
+      final server = StubServer.always(
+        201,
+        '{"transactionId":"late","status":"RefundRequired"}',
+      );
+      final launcher = _Launcher();
+      final service = AbaPaymentCheckoutService(
+        repository: PaymentRepository(server.dio),
+        flow: _flow([PaymentState.paid], launcher: launcher),
+      );
+      final outcome = await service.payForSubscription(
+        'diamond',
+        PaymentMethod.abaPay,
+      );
+      expect(outcome.isPaid, isFalse);
+      expect(outcome.result, PaymentResult.refundRequired);
+      expect(outcome.transactionId, 'late');
+      expect(launcher.opened, isEmpty);
+    });
     test(
-      'the simulation succeeds only after the server records the purchase',
+      'a completed server checkout needs no banking app, regardless of provider',
       () async {
         final server = StubServer.always(
           201,
-          '{"transactionId":"tx-mock","status":"Success","isSimulation":true}',
+          '{"transactionId":"tx-mock","status":"Success","amount":8.9,"paidAt":"2026-11-08T00:00:00.000Z"}',
         );
-        final service = SimulatedPaymentCheckoutService(
+        final service = AbaPaymentCheckoutService(
           repository: PaymentRepository(server.dio),
+          flow: _flow([PaymentState.paid]),
         );
         final outcome = await service.payForSubscription(
           'gold',
           PaymentMethod.abaPay,
         );
-        expect(service.isSimulation, isTrue);
         expect(outcome.isPaid, isTrue);
         expect(outcome.transactionId, 'tx-mock');
         expect(server.requests.single.path, '/payments/subscriptions/checkout');
         expect(
-          server.requests.single.body,
+          server.requests.first.body,
           isA<Map>().having(
             (body) => body['requestId'],
             'requestId',
@@ -115,11 +169,16 @@ void main() {
 
     test('ABA starts the checkout on the server, then opens it', () async {
       final server = StubServer(
-        (_) => (
-          201,
-          '{"transactionId":"t9","abapayDeeplink":"abamobilebank://pay?x=1",'
-              '"checkoutUrl":"https://checkout.test/t9"}',
-        ),
+        (request) => request.method == 'GET'
+            ? (
+                200,
+                '{"transactionId":"t9","status":"Success","amount":1,"paidAt":"2026-11-08T00:00:00.000Z"}',
+              )
+            : (
+                201,
+                '{"transactionId":"t9","abapayDeeplink":"abamobilebank://pay?x=1",'
+                    '"checkoutUrl":"https://checkout.test/t9"}',
+              ),
       );
       final launcher = _Launcher();
       final service = AbaPaymentCheckoutService(
@@ -129,39 +188,19 @@ void main() {
 
       final outcome = await service.payForListing('p1', PaymentMethod.abaKhqr);
 
-      expect(service.isSimulation, isFalse);
       expect(outcome.result, PaymentResult.paid);
       expect(outcome.transactionId, 't9');
-      expect(server.requests.single.path, '/payments/checkout');
-      expect(server.requests.single.body, containsPair('propertyId', 'p1'));
-      expect(server.requests.single.body, containsPair('method', 'aba_khqr'));
+      expect(server.requests.first.path, '/payments/checkout');
+      expect(server.requests.first.body, containsPair('propertyId', 'p1'));
+      expect(server.requests.first.body, containsPair('method', 'aba_khqr'));
       expect(
-        server.requests.single.body,
+        server.requests.first.body,
         containsPair('requestId', isA<String>()),
       );
       final opened = launcher.opened.single;
       expect(opened.appDeeplink.toString(), 'abamobilebank://pay?x=1');
       expect(opened.checkoutUrl.toString(), 'https://checkout.test/t9');
     });
-  });
-
-  test('the mock mailer writes the receipt email for the payer', () async {
-    final mailer = MockReceiptMailer();
-    await mailer.send(
-      PaymentReceipt(
-        transactionId: 'GP0001245',
-        amountUsd: 1,
-        item: 'One-time listing publish',
-        method: PaymentMethod.abaKhqr,
-        paidAt: DateTime(2026, 11, 4, 9, 30),
-        email: 'hengheng168@gmail.com',
-      ),
-    );
-    final email = mailer.sent.single;
-    expect(email.to, 'hengheng168@gmail.com');
-    expect(email.subject, 'Tilomnov receipt #GP0001245');
-    expect(email.body, contains(r'Amount paid: $1.00'));
-    expect(email.body, contains('Payment method: ABA KHQR'));
   });
 
   group('PaymentRepository', () {
@@ -172,16 +211,19 @@ void main() {
             ? (503, '{}')
             : (
                 201,
-                '{"transactionId":"tx-mock","status":"Success","isSimulation":true}',
+                '{"transactionId":"tx-mock","status":"Success","amount":8.9,"paidAt":"2026-11-08T00:00:00.000Z"}',
               ),
       );
       final repository = PaymentRepository(server.dio);
       await expectLater(
-        repository.simulateSubscription('gold', PaymentMethod.abaPay),
+        repository.startSubscriptionCheckout('gold', PaymentMethod.abaPay),
         throwsA(isA<Exception>()),
       );
       expect(
-        await repository.simulateSubscription('gold', PaymentMethod.abaPay),
+        (await repository.startSubscriptionCheckout(
+          'gold',
+          PaymentMethod.abaPay,
+        )).transactionId,
         'tx-mock',
       );
       expect(
@@ -190,20 +232,18 @@ void main() {
       );
     });
 
-    test(
-      'a local simulation cannot succeed when the server disables it',
-      () async {
-        final service = SimulatedPaymentCheckoutService(
-          repository: PaymentRepository(
-            StubServer.always(501, '{"code":"PAYMENTS_DISABLED"}').dio,
-          ),
-        );
-        await expectLater(
-          service.payForSubscription('gold', PaymentMethod.abaPay),
-          throwsA(isA<PaymentsUnavailableException>()),
-        );
-      },
-    );
+    test('checkout cannot succeed when the server disables it', () async {
+      final service = AbaPaymentCheckoutService(
+        repository: PaymentRepository(
+          StubServer.always(501, '{"code":"PAYMENTS_DISABLED"}').dio,
+        ),
+        flow: _flow([PaymentState.paid]),
+      );
+      await expectLater(
+        service.payForSubscription('gold', PaymentMethod.abaPay),
+        throwsA(isA<PaymentsUnavailableException>()),
+      );
+    });
     test('a server without the endpoint cannot take payments', () async {
       final server = StubServer.always(
         404,
@@ -227,8 +267,34 @@ void main() {
       );
     });
 
+    test(
+      'a pending checkout retains its reference until it is settled',
+      () async {
+        final server = StubServer.always(
+          201,
+          '{"transactionId":"pending-1","status":"Pending","checkoutUrl":"https://bank.test/pay"}',
+        );
+        final repository = PaymentRepository(server.dio);
+        await repository.startSubscriptionCheckout(
+          'gold',
+          PaymentMethod.abaPay,
+        );
+        await repository.startSubscriptionCheckout(
+          'gold',
+          PaymentMethod.abaPay,
+        );
+        expect(
+          (server.requests[0].body as Map)['requestId'],
+          (server.requests[1].body as Map)['requestId'],
+        );
+      },
+    );
+
     test('reads where a transaction stands', () async {
-      final server = StubServer.always(200, '{"status":"Success"}');
+      final server = StubServer.always(
+        200,
+        '{"transactionId":"t1","status":"Success"}',
+      );
       expect(
         await PaymentRepository(server.dio).fetchState('t1'),
         PaymentState.paid,

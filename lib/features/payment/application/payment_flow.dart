@@ -10,6 +10,9 @@ enum PaymentResult {
   /// The server has the provider's confirmation.
   paid,
 
+  /// Money arrived after the quoted upgrade period; support must refund it.
+  refundRequired,
+
   /// The user came back but the provider has not confirmed yet. The server
   /// finishes it when the confirmation arrives.
   awaitingConfirmation,
@@ -56,6 +59,9 @@ class PaymentFlow {
     while (true) {
       final state = await fetchState(transactionId);
       if (state == PaymentState.paid) return PaymentResult.paid;
+      if (state == PaymentState.refundRequired) {
+        return PaymentResult.refundRequired;
+      }
       if (state == PaymentState.failed) return PaymentResult.failed;
       if (DateTime.now().isAfter(deadline)) {
         return PaymentResult.awaitingConfirmation;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
+import 'package:tilomnov/features/call/data/native_call_integration.dart';
 import 'package:tilomnov/features/call/models/call_state.dart';
 import 'package:tilomnov/features/call/presentation/widgets/call_action_button.dart';
 import 'package:tilomnov/features/call/providers/call_providers.dart';
@@ -19,11 +20,19 @@ class CallScreen extends ConsumerWidget {
     final call = ref.watch(callControllerProvider);
     final controller = ref.read(callControllerProvider.notifier);
     final name = call.peerName ?? '';
+    Future<void> minimize() async {
+      if (await NativeCallIntegration.unlockForNavigation() &&
+          context.mounted) {
+        ref.read(callMinimizedProvider.notifier).state = true;
+      }
+    }
 
     return PopScope(
       canPop: !call.isLive,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) ref.read(callMinimizedProvider.notifier).state = true;
+        if (!didPop) {
+          unawaited(minimize());
+        }
       },
       child: Scaffold(
         backgroundColor: context.colors.background,
@@ -35,8 +44,7 @@ class CallScreen extends ConsumerWidget {
               IconButton(
                 tooltip: context.l10n.callMinimize,
                 icon: const Icon(Icons.close_fullscreen_rounded),
-                onPressed: () =>
-                    ref.read(callMinimizedProvider.notifier).state = true,
+                onPressed: minimize,
               ),
           ],
         ),
@@ -45,44 +53,53 @@ class CallScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             // Full width, so the centred name and status stay centred once
             // the action buttons are gone.
-            child: SizedBox(
-              width: double.infinity,
-              child: Column(
-                children: [
-                  const Spacer(),
-                  UserAvatar(name: name, avatarUrl: null, radius: 56),
-                  const SizedBox(height: 24),
-                  Text(
-                    name,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.textPrimary,
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                    minWidth: constraints.maxWidth,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        const Spacer(),
+                        UserAvatar(name: name, avatarUrl: null, radius: 56),
+                        const SizedBox(height: 24),
+                        Text(
+                          name,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _CallStatus(call: call),
+                        const Spacer(flex: 2),
+                        switch (call.phase) {
+                          CallPhase.incoming => _IncomingActions(
+                            onAccept: controller.accept,
+                            onDecline: controller.decline,
+                          ),
+                          CallPhase.outgoing ||
+                          CallPhase.connecting ||
+                          CallPhase.active => _LiveActions(
+                            call: call,
+                            onMute: controller.toggleMute,
+                            onSpeaker: controller.toggleSpeaker,
+                            onHangUp: controller.hangUp,
+                          ),
+                          CallPhase.idle ||
+                          CallPhase.ended => const SizedBox(height: 88),
+                        },
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  _CallStatus(call: call),
-                  const Spacer(flex: 2),
-                  switch (call.phase) {
-                    CallPhase.incoming => _IncomingActions(
-                      onAccept: controller.accept,
-                      onDecline: controller.decline,
-                    ),
-                    CallPhase.outgoing ||
-                    CallPhase.connecting ||
-                    CallPhase.active => _LiveActions(
-                      call: call,
-                      onMute: controller.toggleMute,
-                      onSpeaker: controller.toggleSpeaker,
-                      onHangUp: controller.hangUp,
-                    ),
-                    CallPhase.idle ||
-                    CallPhase.ended => const SizedBox(height: 88),
-                  },
-                ],
+                ),
               ),
             ),
           ),
@@ -177,17 +194,21 @@ class _IncomingActions extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        CallActionButton(
-          icon: Icons.call_end,
-          label: context.l10n.callDecline,
-          background: context.colors.danger,
-          onPressed: onDecline,
+        Expanded(
+          child: CallActionButton(
+            icon: Icons.call_end,
+            label: context.l10n.callDecline,
+            background: context.colors.danger,
+            onPressed: onDecline,
+          ),
         ),
-        CallActionButton(
-          icon: Icons.call,
-          label: context.l10n.callAccept,
-          background: context.colors.success,
-          onPressed: onAccept,
+        Expanded(
+          child: CallActionButton(
+            icon: Icons.call,
+            label: context.l10n.callAccept,
+            background: context.colors.success,
+            onPressed: onAccept,
+          ),
         ),
       ],
     );
@@ -213,23 +234,29 @@ class _LiveActions extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        CallActionButton(
-          icon: call.muted ? Icons.mic_off : Icons.mic_none,
-          label: call.muted ? l10n.callUnmute : l10n.callMute,
-          selected: call.muted,
-          onPressed: onMute,
+        Expanded(
+          child: CallActionButton(
+            icon: call.muted ? Icons.mic_off : Icons.mic_none,
+            label: call.muted ? l10n.callUnmute : l10n.callMute,
+            selected: call.muted,
+            onPressed: onMute,
+          ),
         ),
-        CallActionButton(
-          icon: Icons.call_end,
-          label: l10n.callHangUp,
-          background: context.colors.danger,
-          onPressed: onHangUp,
+        Expanded(
+          child: CallActionButton(
+            icon: Icons.call_end,
+            label: l10n.callHangUp,
+            background: context.colors.danger,
+            onPressed: onHangUp,
+          ),
         ),
-        CallActionButton(
-          icon: call.speakerOn ? Icons.volume_up : Icons.volume_down_outlined,
-          label: l10n.callSpeaker,
-          selected: call.speakerOn,
-          onPressed: onSpeaker,
+        Expanded(
+          child: CallActionButton(
+            icon: call.speakerOn ? Icons.volume_up : Icons.volume_down_outlined,
+            label: l10n.callSpeaker,
+            selected: call.speakerOn,
+            onPressed: onSpeaker,
+          ),
         ),
       ],
     );

@@ -28,7 +28,7 @@ void main() {
     ('km', 'dark'),
   ]) {
     testWidgets(
-      'empty main tabs have identical card bounds: $language $theme',
+      'empty main tabs have consistent card sizes and horizontal bounds: $language $theme',
       (tester) async {
         tester.view.physicalSize = const Size(390, 844);
         tester.view.devicePixelRatio = 1;
@@ -68,7 +68,8 @@ void main() {
               .first;
           final bounds = tester.getRect(card);
           expected ??= bounds;
-          expect(bounds, expected, reason: '${page.runtimeType}');
+          expect(bounds.size, expected.size, reason: '${page.runtimeType}');
+          expect(bounds.left, expected.left, reason: '${page.runtimeType}');
           expect(bounds.height, 320);
           expect(tester.takeException(), isNull);
           await tester.pumpWidget(const SizedBox());

@@ -23,12 +23,14 @@ class MockAuthService extends AuthService {
 /// Google sign-in that succeeds after a moment, as the real one does.
 class _GoogleSignsIn extends LoginController {
   int signIns = 0;
+  bool? accountSelectionRequested;
 
   _GoogleSignsIn() : super(MockAuthService(), GoogleSignInService());
 
   @override
   Future<bool> googleLogin({bool forceAccountSelection = false}) async {
     signIns++;
+    accountSelectionRequested = forceAccountSelection;
     state = const AsyncLoading();
     await Future<void>.delayed(const Duration(milliseconds: 10));
     state = const AsyncData(true);
@@ -323,12 +325,15 @@ void main() {
       return router;
     }
 
-    testWidgets('says so once and goes to the map', (tester) async {
+    testWidgets('requests account selection and goes to the map', (
+      tester,
+    ) async {
       await pump(tester, '/login');
 
       await _tapGoogle(tester);
 
       expect(login.signIns, 1);
+      expect(login.accountSelectionRequested, isTrue);
       expect(find.text('Successfully logged in!'), findsOneWidget);
       expect(find.text('map'), findsOneWidget);
       expect(find.byType(LoginPage), findsNothing);

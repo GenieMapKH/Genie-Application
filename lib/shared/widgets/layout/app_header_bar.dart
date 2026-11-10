@@ -33,7 +33,7 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     final colors = context.colors;
 
     return Container(
-      height: height,
+      height: preferredSize.height,
       color: backgroundColor ?? colors.background,
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       child: Stack(

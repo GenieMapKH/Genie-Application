@@ -24,7 +24,8 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
         ),
         const SizedBox(height: 8),
         Container(
-          height: 160,
+          height: widget.boundaryPoints.isNotEmpty ? 160 : null,
+          constraints: const BoxConstraints(minHeight: 160),
           width: double.infinity,
           decoration: BoxDecoration(
             color: context.colors.divider,
@@ -71,12 +72,14 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   ),
                 )
               : Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.map, size: 48, color: context.colors.textHint),
                     const SizedBox(height: 8),
                     Text(
                       context.l10n.propertySetPropertyLocation,
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         color: context.colors.textHint,
                         fontSize: 16,
@@ -199,14 +202,18 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                       : context.colors.textMuted,
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  propertyKeywordLabel(context.l10n, kw.code),
-                  style: GoogleFonts.inter(
-                    color: isSelected
-                        ? context.colors.accent
-                        : context.colors.textSecondary,
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                Flexible(
+                  child: Text(
+                    propertyKeywordLabel(context.l10n, kw.code),
+                    style: GoogleFonts.inter(
+                      color: isSelected
+                          ? context.colors.accent
+                          : context.colors.textSecondary,
+                      fontSize: 12,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
                   ),
                 ),
               ],

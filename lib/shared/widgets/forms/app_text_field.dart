@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 
@@ -13,6 +14,8 @@ class AppTextField extends StatefulWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
+  final Iterable<String>? autofillHints;
+  final List<TextInputFormatter>? inputFormatters;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final Widget? topTrailingWidget;
@@ -33,6 +36,8 @@ class AppTextField extends StatefulWidget {
     this.obscureText = false,
     this.keyboardType,
     this.textInputAction,
+    this.autofillHints,
+    this.inputFormatters,
     this.suffixIcon,
     this.prefixIcon,
     this.topTrailingWidget,
@@ -135,6 +140,8 @@ class _AppTextFieldState extends State<AppTextField> {
         obscureText: widget.obscureText,
         keyboardType: widget.keyboardType,
         textInputAction: widget.textInputAction,
+        autofillHints: widget.autofillHints,
+        inputFormatters: widget.inputFormatters,
         validator: widget.validator,
         onChanged: widget.onChanged,
         onFieldSubmitted: widget.onSubmitted,

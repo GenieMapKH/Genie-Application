@@ -167,7 +167,7 @@ void main() {
       );
 
       expect(
-        find.textContaining('Publish it to share its link'),
+        find.textContaining('Publish this listing to share its link'),
         findsOneWidget,
       );
       expect(find.byType(QrImageView), findsNothing);
@@ -195,7 +195,7 @@ void main() {
 
       expect(find.byType(PropertyShareCard), findsNothing);
       expect(
-        find.textContaining('goes public once its payment is complete'),
+        find.textContaining('Complete payment before sharing this listing'),
         findsOneWidget,
       );
       await tester.pumpAndSettle(const Duration(seconds: 5));

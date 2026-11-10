@@ -152,7 +152,7 @@ class _AppButtonState extends State<AppButton> {
             child: Text(
               widget.text,
               style: resolvedTextStyle,
-              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
           ),
         ],
@@ -162,7 +162,6 @@ class _AppButtonState extends State<AppButton> {
         widget.text,
         style: resolvedTextStyle,
         textAlign: TextAlign.center,
-        overflow: TextOverflow.ellipsis,
       );
     }
 
@@ -171,7 +170,7 @@ class _AppButtonState extends State<AppButton> {
           ? BoxConstraints(maxWidth: widget.maxWidth!)
           : null,
       width: double.infinity,
-      height: widget.height,
+      // Let wrapped and enlarged labels increase the button's height.
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(widget.borderRadius),
@@ -185,9 +184,12 @@ class _AppButtonState extends State<AppButton> {
           onTapUp: _handleTapUp,
           onTapCancel: _handleTapCancel,
           borderRadius: BorderRadius.circular(widget.borderRadius),
-          child: Padding(
-            padding: widget.padding,
-            child: Center(child: content),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: widget.height),
+            child: Padding(
+              padding: widget.padding,
+              child: Center(heightFactor: 1, child: content),
+            ),
           ),
         ),
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
-import 'package:tilomnov/features/payment/application/payment_config.dart';
 import 'package:tilomnov/features/payment/presentation/payment_feedback.dart';
 import 'package:tilomnov/features/subscription/domain/plan_tier.dart';
 import 'package:tilomnov/features/subscription/domain/subscription_plan.dart';
@@ -12,8 +11,7 @@ import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
 /// One subscription plan: its name, monthly price and what it allows.
 ///
 /// The user's [isCurrent] plan is set in the tier's deep metal with how many
-/// listings are [used]. [onUpgrade] adds a checkout button, including on the
-/// current plan when simulated purchases are available.
+/// listings are [used]. [onUpgrade] adds a checkout button for another plan.
 class PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
   final bool isCurrent;
@@ -21,6 +19,9 @@ class PlanCard extends StatelessWidget {
   /// Listings live now, shown on the current plan; null while unknown.
   final int? used;
   final VoidCallback? onUpgrade;
+  final Widget? status;
+  final bool annual;
+  final int? purchasedLimit;
 
   const PlanCard({
     super.key,
@@ -28,6 +29,9 @@ class PlanCard extends StatelessWidget {
     this.isCurrent = false,
     this.used,
     this.onUpgrade,
+    this.status,
+    this.annual = false,
+    this.purchasedLimit,
   });
 
   @override
@@ -71,19 +75,31 @@ class PlanCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if (isCurrent && used != null)
-                _UsagePill(used: used, limit: plan.listingLimit),
             ],
           ),
+          if (isCurrent && used != null) ...[
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: _UsagePill(
+                used: used,
+                limit: purchasedLimit ?? plan.listingLimit,
+              ),
+            ),
+          ],
           const SizedBox(height: 10),
-          _Price(plan: plan, ink: ink),
+          _Price(plan: plan, ink: ink, annual: annual),
           if (isCurrent) ...[const SizedBox(height: 14), _CurrentPlanLabel()],
-          if (onUpgrade != null) ...[
+          if (!isCurrent && onUpgrade != null) ...[
             const SizedBox(height: 14),
             _UpgradeButton(tier: plan.tier, onPressed: onUpgrade!),
           ],
           const SizedBox(height: 14),
           _Features(plan: plan, ink: ink),
+          if (isCurrent && status != null) ...[
+            const SizedBox(height: 14),
+            status!,
+          ],
         ],
       ),
     );
@@ -117,13 +133,15 @@ class _Price extends StatelessWidget {
   final SubscriptionPlan plan;
   final Color ink;
 
-  const _Price({required this.plan, required this.ink});
+  final bool annual;
+
+  const _Price({required this.plan, required this.ink, required this.annual});
 
   @override
   Widget build(BuildContext context) {
     final price = plan.monthlyPriceUsd == 0
         ? r'$0'
-        : formatUsd(plan.monthlyPriceUsd);
+        : formatUsd(annual ? plan.annualPriceUsd : plan.monthlyPriceUsd);
     return Text.rich(
       TextSpan(
         children: [
@@ -132,7 +150,8 @@ class _Price extends StatelessWidget {
             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
           ),
           TextSpan(
-            text: '  ${context.l10n.planPerMonth}',
+            text:
+                '  ${annual ? context.l10n.planPerYear : context.l10n.planPerMonth}',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -178,7 +197,8 @@ class _CurrentPlanLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 46,
+      constraints: const BoxConstraints(minHeight: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -186,6 +206,7 @@ class _CurrentPlanLabel extends StatelessWidget {
       ),
       child: Text(
         context.l10n.planCurrent,
+        textAlign: TextAlign.center,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w700,
@@ -209,16 +230,16 @@ class _UpgradeButton extends StatelessWidget {
     return TactileButton(
       onPressed: onPressed,
       child: Container(
-        height: 46,
+        constraints: const BoxConstraints(minHeight: 48),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: fill,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          PaymentConfig.enabled
-              ? context.l10n.planUpgradeTo(tier.label(context.l10n))
-              : context.l10n.planSubscribe,
+          context.l10n.planUpgradeTo(tier.label(context.l10n)),
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w700,

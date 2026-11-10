@@ -138,7 +138,7 @@ void main() {
 
       expect(find.text('Could not load properties'), findsNothing);
       expect(
-        find.textContaining('This page will load by itself'),
+        find.textContaining('This page will reload when you reconnect'),
         findsOneWidget,
       );
       expect(find.text('Waiting for network…'), findsOneWidget);

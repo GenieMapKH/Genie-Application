@@ -182,7 +182,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get languageTitle => 'ភាសា';
 
   @override
-  String get glassNavigationTitle => 'របាររុករកកញ្ចក់';
+  String get glassNavigationTitle => 'រចនាប័ទ្មរបាររុករក';
 
   @override
   String get glassNavigationSubtitle =>
@@ -492,6 +492,24 @@ class AppLocalizationsKm extends AppLocalizations {
   String get authPhoneNumber => 'លេខទូរសព្ទ';
 
   @override
+  String get authGetCode => 'យកលេខកូដ';
+
+  @override
+  String get authPhoneVerified => 'លេខទូរសព្ទបានផ្ទៀងផ្ទាត់';
+
+  @override
+  String get authPhoneVerificationExpired =>
+      'ការផ្ទៀងផ្ទាត់លេខទូរសព្ទបានផុតកំណត់។ សូមយកលេខកូដថ្មី។';
+
+  @override
+  String get authPhoneVerificationUnavailable =>
+      'មិនអាចផ្ញើលេខកូដតាម SMS បានទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។';
+
+  @override
+  String get authVerifyPhoneFirst =>
+      'សូមផ្ទៀងផ្ទាត់លេខទូរសព្ទរបស់អ្នកមុនពេលចុះឈ្មោះ។';
+
+  @override
   String get authLoginFailedPleaseCheckYourCredentials =>
       'មិនអាចចូលបាន។ សូមពិនិត្យព័ត៌មាន ហើយព្យាយាមម្តងទៀត។';
 
@@ -689,6 +707,9 @@ class AppLocalizationsKm extends AppLocalizations {
   String get homeDraw => 'គូរ';
 
   @override
+  String get homeAddPoint => 'បន្ថែមចំណុច';
+
+  @override
   String get homeSearchByAreaRoadVillage => 'ស្វែងរកតាមតំបន់ ផ្លូវ ភូមិ...';
 
   @override
@@ -844,6 +865,22 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get propertyCallNow => 'ហៅទូរសព្ទឥឡូវនេះ';
+
+  @override
+  String get propertyCallInApp => 'ហៅតាម Tilomnov';
+
+  @override
+  String get propertyCallPhone => 'ប្រើកម្មវិធីទូរសព្ទ';
+
+  @override
+  String get callFullScreenTitle => 'ការហៅចូលពេញអេក្រង់';
+
+  @override
+  String get callFullScreenHelp =>
+      'អនុញ្ញាតឱ្យការហៅចូលបង្ហាញលើអេក្រង់ចាក់សោ។ Android អាចបង្ហាញផ្ទាំងការហៅ នៅពេលទូរសព្ទរបស់អ្នកមិនជាប់សោ។';
+
+  @override
+  String get callFullScreenFailed => 'មិនអាចបើកការកំណត់ការហៅពេញអេក្រង់បានទេ។';
 
   @override
   String get propertyNoPhoneNumber => 'គ្មានលេខទូរសព្ទ។ សូមផ្ញើសារទៅម្ចាស់។';
@@ -1446,6 +1483,41 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get feedTitle => 'ថ្មីៗ';
+
+  @override
+  String get feedSubtitle => 'អចលនទ្រព្យថ្មីៗពីអ្នកដែលអ្នកតាមដាន';
+
+  @override
+  String get feedNewestFirst => 'ថ្មីបំផុតមុន';
+
+  @override
+  String get feedSortTop => 'ពេញនិយម (រក្សាទុកច្រើនបំផុត)';
+
+  @override
+  String get feedListingDate => 'កាលបរិច្ឆេទចុះផ្សាយ';
+
+  @override
+  String get feedAnyTime => 'គ្រប់ពេល';
+
+  @override
+  String get feedLast7Days => '៧ ថ្ងៃចុងក្រោយ';
+
+  @override
+  String get feedLast30Days => '៣០ ថ្ងៃចុងក្រោយ';
+
+  @override
+  String get feedChooseDates => 'ជ្រើសរើសកាលបរិច្ឆេទ';
+
+  @override
+  String get feedPriceInvalid =>
+      'បញ្ចូលតម្លៃចន្លោះ \$0 និង \$9,999,999,999.99។';
+
+  @override
+  String get feedNoMatches => 'គ្មានអចលនទ្រព្យត្រូវនឹងការចម្រាញ់';
+
+  @override
+  String get feedTryOtherFilters =>
+      'សាកល្បងកាលបរិច្ឆេទ តម្លៃ ឬប្រភេទអចលនទ្រព្យផ្សេង។';
 
   @override
   String get feedEmptyTitle => 'មិនទាន់មានអ្វីនៅទីនេះទេ';
@@ -3052,7 +3124,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get planUpgradeIntro =>
-      'គម្រោងមានសុពលភាពមួយខែចាប់ពីទិញ។ ការដំឡើងជំនួសគម្រោងចាស់តាមតម្លៃពេញដែលបង្ហាញ។';
+      'គម្រោងថ្មីមានសុពលភាពមួយខែ។ ការដំឡើងគិតតែតម្លៃខុសគ្នាសម្រាប់ពេលនៅសល់ និងរក្សាថ្ងៃផុតកំណត់ដដែល។';
 
   @override
   String get planSubscribe => 'ជាវ';
@@ -3081,6 +3153,10 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get paymentFailed => 'ការបង់ប្រាក់មិនបានបញ្ចប់ទេ។ សូមព្យាយាមម្តងទៀត។';
+
+  @override
+  String get paymentRefundRequired =>
+      'ការបង់ប្រាក់របស់អ្នកបានមកដល់បន្ទាប់ពីការដំឡើងគម្រោងផុតកំណត់។ សូមទាក់ទងផ្នែកជំនួយជាមួយលេខយោងប្រតិបត្តិការរបស់អ្នក ដើម្បីស្នើសុំការបង្វិលប្រាក់។';
 
   @override
   String get paymentAppNotOpened =>
@@ -3119,10 +3195,24 @@ class AppLocalizationsKm extends AppLocalizations {
   String get paymentOneTimeIntro => 'អចលនទ្រព្យរបស់អ្នករួចរាល់សម្រាប់ផ្សាយហើយ។';
 
   @override
+  String get publishingRenewListingTitle => 'បន្តការផ្សាយអចលនទ្រព្យ';
+
+  @override
+  String get publishingRenewListingMessage =>
+      'បន្តការផ្សាយអចលនទ្រព្យនេះរយៈពេលមួយខែ។ បង់ប្រាក់សម្រាប់ការផ្សាយនេះ ឬប្រើគម្រោងដែលនៅមានសុពលភាព និងមានកន្លែងទំនេរ។';
+
+  @override
+  String get publishingRenewSubscriptionTitle => 'បន្តគម្រោងរបស់អ្នក';
+
+  @override
+  String get publishingRenewSubscriptionMessage =>
+      'គម្រោងរបស់អ្នកបានផុតកំណត់ហើយ។ បន្តគម្រោង ដើម្បីផ្សាយអចលនទ្រព្យរបស់អ្នកម្តងទៀត។ ការផ្សាយឥតគិតថ្លៃដើមរបស់អ្នកនៅតែអាចប្រើបាន។';
+
+  @override
   String get paymentPropertyInformation => 'ព័ត៌មានអចលនទ្រព្យ';
 
   @override
-  String get paymentOneTime => 'បង់តែម្តង';
+  String get paymentOneTime => 'មួយខែ · បង់តែម្តង';
 
   @override
   String get paymentPublishProperty => 'ផ្សាយអចលនទ្រព្យ';
@@ -3141,7 +3231,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String publishPlanOneTimeHint(String price) {
-    return 'បង់ $price ដើម្បីផ្សាយតែអចលនទ្រព្យនេះ។';
+    return 'បង់ $price ដើម្បីផ្សាយអចលនទ្រព្យនេះរយៈពេលមួយខែ។';
   }
 
   @override
@@ -3297,8 +3387,7 @@ class AppLocalizationsKm extends AppLocalizations {
   }
 
   @override
-  String get paymentSuccessEmailed =>
-      'ព័ត៌មានបញ្ជាក់ការបញ្ជាទិញត្រូវបានផ្ញើទៅអ៊ីមែលរបស់អ្នក៖';
+  String get paymentSuccessEmailed => 'អ៊ីមែលបញ្ជាក់ការទិញ:';
 
   @override
   String get paymentSuccessNoEmail =>
@@ -3351,21 +3440,17 @@ class AppLocalizationsKm extends AppLocalizations {
   }
 
   @override
-  String get paymentItemOneTimePublish => 'ការផ្សាយមួយដង';
-
-  @override
-  String get paymentSimulationNotice =>
-      'ការទិញសាកល្បងប៉ុណ្ណោះ។ មិនមានការកាត់ប្រាក់ទេ។';
+  String get paymentItemOneTimePublish => 'ការផ្សាយអចលនទ្រព្យ · មួយខែ';
 
   @override
   String get planCancelAction => 'បោះបង់គម្រោង';
 
   @override
-  String get planCancelTitle => 'បិទការបន្តគម្រោងដោយស្វ័យប្រវត្តិ?';
+  String get planCancelTitle => 'បោះបង់គម្រោងរបស់អ្នក?';
 
   @override
   String planCancelExplanation(String date) {
-    return 'គម្រោងមានសុពលភាពរហូតដល់ $date។ មិនបន្ត ឬគិតប្រាក់ដោយស្វ័យប្រវត្តិទេ។';
+    return 'គម្រោងមានសុពលភាពរហូតដល់ $date។ អ្នករក្សាអត្ថប្រយោជន៍ដែលបានបង់ប្រាក់រហូតដល់ពេលនោះ។';
   }
 
   @override
@@ -3375,7 +3460,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String planCancelledUntil(String date) {
-    return 'ការបន្តដោយស្វ័យប្រវត្តិត្រូវបានបិទ។ គម្រោងរបស់អ្នកនៅតែមានសុពលភាពរហូតដល់ $date។';
+    return 'គម្រោងត្រូវបានបោះបង់។ គម្រោងរបស់អ្នកនៅតែមានសុពលភាពរហូតដល់ $date។';
   }
 
   @override
@@ -3384,4 +3469,263 @@ class AppLocalizationsKm extends AppLocalizations {
   @override
   String get planStatusRetry =>
       'មិនអាចផ្ទុកគម្រោងបានទេ។ ចុចដើម្បីព្យាយាមម្តងទៀត។';
+
+  @override
+  String get listingTypeTakeover => 'លក់បន្តការបង់រំលស់';
+
+  @override
+  String get takeoverIntro =>
+      'បញ្ចូលផែនការបង់ប្រាក់បច្ចុប្បន្ន។ អ្នកទិញបង់ប្រាក់ឱ្យអ្នកលក់ រួចទទួលខុសត្រូវលើសមតុល្យនៅសល់ ដោយអាស្រ័យលើការយល់ព្រមពីអ្នកផ្តល់ហិរញ្ញប្បទាន។';
+
+  @override
+  String get takeoverProviderType => 'ប្រភេទអ្នកផ្តល់ហិរញ្ញប្បទាន';
+
+  @override
+  String get takeoverProviderName => 'ឈ្មោះក្រុមហ៊ុនអភិវឌ្ឍន៍ ឬធនាគារ';
+
+  @override
+  String get takeoverProjectName => 'ឈ្មោះគម្រោង';
+
+  @override
+  String get takeoverSellerAmount => 'ប្រាក់ដែលត្រូវបង់ឱ្យអ្នកលក់ (ដុល្លារ)';
+
+  @override
+  String get takeoverBalance => 'សមតុល្យនៅសល់ (ដុល្លារ)';
+
+  @override
+  String get takeoverBalanceHelp =>
+      'សមតុល្យកិច្ចសន្យា ឬប្រាក់ដើមកម្ចីនៅសល់ ដោយមិនរាប់ការប្រាក់នាពេលអនាគត។ រួមបញ្ចូលការបង់ប្រាក់ធំៗតាមកាលវិភាគក្នុងសមតុល្យនេះ។';
+
+  @override
+  String get takeoverBalanceDate => 'សមតុល្យគិតត្រឹមថ្ងៃទី';
+
+  @override
+  String get takeoverPaymentAmount => 'ប្រាក់រំលស់ប្រចាំគ្រា (ដុល្លារ)';
+
+  @override
+  String get takeoverFrequency => 'ភាពញឹកញាប់នៃការបង់ប្រាក់';
+
+  @override
+  String get takeoverRemainingMonths => 'ចំនួនខែនៅសល់';
+
+  @override
+  String get takeoverNextPayment => 'កាលបរិច្ឆេទបង់ប្រាក់បន្ទាប់';
+
+  @override
+  String get takeoverInterestType => 'លក្ខខណ្ឌការប្រាក់';
+
+  @override
+  String get takeoverAnnualRate => 'អត្រាការប្រាក់ប្រចាំឆ្នាំបច្ចុប្បន្ន (%)';
+
+  @override
+  String get takeoverTransferStatus => 'ការអនុញ្ញាតឱ្យផ្ទេរ (តាមអ្នកលក់)';
+
+  @override
+  String get takeoverTransferFee => 'ថ្លៃផ្ទេរ (ដុល្លារ ទុកទទេបើមិនដឹង)';
+
+  @override
+  String get takeoverFeePayer => 'អ្នកណាបង់ថ្លៃផ្ទេរ?';
+
+  @override
+  String get takeoverArrears => 'ប្រាក់ហួសកំណត់ (ដុល្លារ បញ្ចូល 0 បើគ្មាន)';
+
+  @override
+  String get takeoverArrearsHelp =>
+      'បញ្ជាក់ប្រាក់រំលស់មិនទាន់បង់ និងប្រាក់ពិន័យ។ ពន្យល់ក្នុងកំណត់សម្គាល់ថា តើប្រាក់ដើមហួសកំណត់បានរាប់ក្នុងសមតុល្យហើយឬនៅ។';
+
+  @override
+  String get takeoverArrearsPayer => 'អ្នកណាទូទាត់ប្រាក់ហួសកំណត់?';
+
+  @override
+  String get takeoverHasAdditional =>
+      'មានការបង់ប្រាក់ធំៗបន្ថែមតាមកាលវិភាគដែរឬទេ?';
+
+  @override
+  String get takeoverAdditionalAmount => 'ប្រាក់ត្រូវបង់តាមកាលវិភាគ (ដុល្លារ)';
+
+  @override
+  String get takeoverAdditionalDate => 'ថ្ងៃផុតកំណត់បង់ប្រាក់តាមកាលវិភាគ';
+
+  @override
+  String get takeoverAddPayment => 'បន្ថែមការបង់ប្រាក់តាមកាលវិភាគ';
+
+  @override
+  String get takeoverRemovePayment => 'លុបការបង់ប្រាក់តាមកាលវិភាគ';
+
+  @override
+  String get takeoverAdditionalHelp =>
+      'បញ្ចូលប្រាក់ត្រូវបង់ពេលប្រគល់អចលនទ្រព្យ ឬប្រាក់បង់ដុំចុងក្រោយ។ ប្រាក់ទាំងនេះជាផ្នែកនៃសមតុល្យនៅសល់រួចហើយ។';
+
+  @override
+  String get takeoverNotes => 'កំណត់សម្គាល់អំពីផែនការបង់ប្រាក់ និងការផ្ទេរ';
+
+  @override
+  String get takeoverCombinedPrice => 'តម្លៃសរុបមុនការប្រាក់ និងថ្លៃសេវា';
+
+  @override
+  String get takeoverCombinedHelp =>
+      'ប្រាក់បង់ឱ្យអ្នកលក់ + សមតុល្យនៅសល់។ ការប្រាក់នាពេលអនាគត ថ្លៃផ្ទេរ និងប្រាក់ហួសកំណត់អាចបន្ថែមចំណាយរបស់អ្នកទិញ។';
+
+  @override
+  String get takeoverInvalid =>
+      'សូមបំពេញ ឬកែតម្រូវព័ត៌មានបង់រំលស់ដែលបានបន្លិច មុនផ្សព្វផ្សាយ។';
+
+  @override
+  String get takeoverFieldError => 'តម្លៃចាំបាច់ ឬមិនត្រឹមត្រូវ';
+
+  @override
+  String get takeoverNotAllowed =>
+      'មិនអាចផ្សព្វផ្សាយកិច្ចសន្យានេះជាការលក់បន្តការបង់រំលស់ ខណៈដែលមិនអនុញ្ញាតឱ្យផ្ទេរ។';
+
+  @override
+  String get takeoverBuyerNotice =>
+      'លក្ខខណ្ឌ និងការអនុញ្ញាតរាយការណ៍ដោយអ្នកលក់ មិនទាន់បានផ្ទៀងផ្ទាត់ដោយ Tilomnov ទេ។ សូមបញ្ជាក់សមតុល្យ ថ្លៃសេវា និងដំណើរការផ្ទេរដោយផ្ទាល់ជាមួយក្រុមហ៊ុនអភិវឌ្ឍន៍ ឬធនាគារ។ ការផ្សព្វផ្សាយមិនមានន័យថាបានផ្ទេរកិច្ចសន្យា ឬកម្ចីទេ។';
+
+  @override
+  String get takeoverDateHint => 'ឆ្នាំ-ខែ-ថ្ងៃ (YYYY-MM-DD)';
+
+  @override
+  String get takeoverProviderDeveloper => 'បង់រំលស់ជាមួយក្រុមហ៊ុនអភិវឌ្ឍន៍';
+
+  @override
+  String get takeoverProviderBank => 'កម្ចីធនាគារ';
+
+  @override
+  String get takeoverMonthly => 'ប្រចាំខែ';
+
+  @override
+  String get takeoverQuarterly => 'រៀងរាល់ 3 ខែ';
+
+  @override
+  String get takeoverYearly => 'ប្រចាំឆ្នាំ';
+
+  @override
+  String get takeoverInterestNone => 'គ្មានការប្រាក់';
+
+  @override
+  String get takeoverInterestFixed => 'អត្រាថេរ';
+
+  @override
+  String get takeoverInterestVariable => 'អត្រាប្រែប្រួល';
+
+  @override
+  String get takeoverUnknown => 'មិនដឹង / ត្រូវបញ្ជាក់';
+
+  @override
+  String get takeoverNotChecked => 'មិនទាន់បានសួរអ្នកផ្តល់ហិរញ្ញប្បទាន';
+
+  @override
+  String get takeoverConditional => 'អនុញ្ញាតតាមលក្ខខណ្ឌអ្នកផ្តល់ហិរញ្ញប្បទាន';
+
+  @override
+  String get takeoverWrittenApproval => 'មានការអនុញ្ញាតជាលាយលក្ខណ៍អក្សរ';
+
+  @override
+  String get takeoverNotPermitted => 'មិនអនុញ្ញាតឱ្យផ្ទេរ';
+
+  @override
+  String get takeoverBuyer => 'អ្នកទិញ';
+
+  @override
+  String get takeoverSeller => 'អ្នកលក់';
+
+  @override
+  String get takeoverShared => 'អ្នកទិញ និងអ្នកលក់រួមគ្នា';
+
+  @override
+  String takeoverMonthsValue(int months) {
+    return '$months ខែ';
+  }
+
+  @override
+  String takeoverToSellerValue(String amount) {
+    return '$amount បង់ឱ្យអ្នកលក់';
+  }
+
+  @override
+  String takeoverPriceLabel(String amount) {
+    return '$amount សរុប';
+  }
+
+  @override
+  String takeoverPaymentValue(String amount, String frequency) {
+    return '$amount · $frequency';
+  }
+
+  @override
+  String get takeoverBuyerTransferFee => 'ថ្លៃផ្ទេរ';
+
+  @override
+  String get takeoverBuyerArrears => 'ប្រាក់ហួសកំណត់ និងប្រាក់ពិន័យ';
+
+  @override
+  String get adminEmailTitle => 'ពិនិត្យអ៊ីមែលអ្នកគ្រប់គ្រងរបស់អ្នក';
+
+  @override
+  String get adminEmailWaiting =>
+      'ពាក្យសម្ងាត់របស់អ្នកត្រឹមត្រូវ។ បើក Gmail ហើយចុច Open Tilomnov ក្នុងអ៊ីមែលចូលគណនី។ តំណនេះនឹងផុតកំណត់ក្នុងរយៈពេល ១០ នាទី។';
+
+  @override
+  String get adminEmailVerifying => 'កំពុងផ្ទៀងផ្ទាត់តំណចូលគណនី...';
+
+  @override
+  String get adminEmailInvalid =>
+      'មិនអាចផ្ទៀងផ្ទាត់តំណនេះបានទេ។ តំណអាចផុតកំណត់ ត្រូវបានប្រើរួច ឬការតភ្ជាប់បរាជ័យ។ សូមចូលម្តងទៀតដើម្បីស្នើអ៊ីមែលថ្មី។';
+
+  @override
+  String get adminEmailBack => 'ត្រឡប់ទៅចូលគណនី';
+
+  @override
+  String get advertisementLabel => 'ពាណិជ្ជកម្ម';
+
+  @override
+  String get themeLiquidGlass => 'កញ្ចក់រាវ (Liquid Glass)';
+
+  @override
+  String get themeMinimalistic => 'សាមញ្ញ (Minimalistic)';
+
+  @override
+  String get planAnnualOffer => 'ប្រចាំឆ្នាំ · ឥតគិតថ្លៃ ២ ខែ';
+
+  @override
+  String get paymentAnnual => '១២ ខែ';
+
+  @override
+  String get planPerYear => '/ ឆ្នាំ';
+
+  @override
+  String get planExpiryDate => 'ប្រើបានរហូតដល់';
+
+  @override
+  String get planManualRenewal =>
+      'បង់ប្រាក់តែម្តង។ មិនបន្តដោយស្វ័យប្រវត្តិទេ។ បន្តដោយខ្លួនឯងតាមតម្លៃគម្រោងដែលបានបង្ហាញនៅពេលផុតកំណត់។';
+
+  @override
+  String get paymentOneTimeDuration => '៣០ ថ្ងៃ · បន្តដោយខ្លួនឯង';
+
+  @override
+  String get authRecoveryEmailOnly =>
+      'ការស្ដារពាក្យសម្ងាត់ប្រើអ៊ីមែលដែលភ្ជាប់នឹងគណនី។ បើអ្នកចុះឈ្មោះតាម Google សូមចូលតាម Google។ បន្ថែមអ៊ីមែលក្នុងសុវត្ថិភាពគណនី ដើម្បីស្ដារពាក្យសម្ងាត់ដែលភ្លេច។';
+
+  @override
+  String get propertyAddPhone => 'បន្ថែមលេខទូរសព្ទមួយទៀត';
+
+  @override
+  String get propertyAdditionalPhone => 'លេខទូរសព្ទបន្ថែម';
+
+  @override
+  String get propertyRemovePhone => 'ដកលេខទូរសព្ទចេញ';
+
+  @override
+  String get searchApproximateArea => 'តំបន់ប្រហាក់ប្រហែល';
+
+  @override
+  String get authRecoveryEmailHint =>
+      'បន្ថែមអ៊ីមែលសម្រាប់ស្ដារពាក្យសម្ងាត់។ លេខទូរសព្ទប្រើសម្រាប់ទំនាក់ទំនងប៉ុណ្ណោះ។';
+
+  @override
+  String get paymentEstimatedExpiry => 'កាលបរិច្ឆេទផុតកំណត់ប៉ាន់ស្មាន';
+
+  @override
+  String get paymentRenewalPrice => 'តម្លៃបន្តសម្រាប់ ៣០ ថ្ងៃទៀត';
 }
