@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
@@ -80,10 +81,14 @@ class ChatConversationAppBar extends StatelessWidget
         shape: BoxShape.circle,
         border: Border.all(color: context.colors.border),
       ),
-      child: Icon(
-        Icons.phone_outlined,
-        color: context.colors.textMuted,
-        size: 18,
+      child: SvgPicture.asset(
+        'assets/icons/listing_calls.svg',
+        width: 18,
+        height: 18,
+        colorFilter: ColorFilter.mode(
+          context.colors.textMuted,
+          BlendMode.srcIn,
+        ),
       ),
     ),
     onPressed: onCall,

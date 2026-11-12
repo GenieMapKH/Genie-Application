@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/call/data/native_call_integration.dart';
@@ -252,7 +253,14 @@ class _LiveActions extends StatelessWidget {
         ),
         Expanded(
           child: CallActionButton(
-            icon: call.speakerOn ? Icons.volume_up : Icons.volume_down_outlined,
+            icon: Icons.volume_up,
+            iconWidget: SvgPicture.asset(
+              call.speakerOn
+                  ? 'assets/icons/call_speaker_on.svg'
+                  : 'assets/icons/call_speaker_off.svg',
+              width: 24,
+              height: 24,
+            ),
             label: l10n.callSpeaker,
             selected: call.speakerOn,
             onPressed: onSpeaker,

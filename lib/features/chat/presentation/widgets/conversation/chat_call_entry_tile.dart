@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -41,7 +42,12 @@ class ChatCallEntryTile extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(_icon(outcome), size: 16, color: color),
+              SvgPicture.asset(
+                _icon(outcome),
+                width: 16,
+                height: 16,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              ),
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
@@ -74,15 +80,17 @@ class ChatCallEntryTile extends StatelessWidget {
     };
   }
 
-  IconData _icon(ChatCallOutcome outcome) {
+  String _icon(ChatCallOutcome outcome) {
     return switch (outcome) {
-      ChatCallOutcome.missed => Icons.call_missed,
-      ChatCallOutcome.declinedByMe => Icons.call_received,
+      ChatCallOutcome.missed => 'assets/icons/chat_call_missed.svg',
+      ChatCallOutcome.declinedByMe => 'assets/icons/chat_call_in.svg',
       ChatCallOutcome.completed || ChatCallOutcome.lost =>
-        call.callerId == userId ? Icons.call_made : Icons.call_received,
+        call.callerId == userId
+            ? 'assets/icons/chat_call_out.svg'
+            : 'assets/icons/chat_call_in.svg',
       ChatCallOutcome.noAnswer ||
       ChatCallOutcome.cancelled ||
-      ChatCallOutcome.declinedByPeer => Icons.call_made,
+      ChatCallOutcome.declinedByPeer => 'assets/icons/chat_call_out.svg',
     };
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_visibility.dart';
@@ -32,7 +33,7 @@ class PropertyCardActions extends StatelessWidget {
       children: [
         Expanded(
           child: _CardActionButton(
-            icon: Icons.swap_horiz_rounded,
+            icon: SvgPicture.asset('assets/icons/listing_visibility.svg'),
             label: context.l10n.propertyVisibility,
             onPressed: canChangeStatus ? onStatusTapped : null,
           ),
@@ -40,7 +41,7 @@ class PropertyCardActions extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _CardActionButton(
-            icon: Icons.insights_outlined,
+            icon: SvgPicture.asset('assets/icons/listing_insights.svg'),
             label: context.l10n.insightsTitle,
             onPressed: onInsightsTapped,
           ),
@@ -50,7 +51,7 @@ class PropertyCardActions extends StatelessWidget {
           Tooltip(
             message: context.l10n.propertyViewOnMap,
             child: _CardActionButton(
-              icon: Icons.map_outlined,
+              icon: const Icon(Icons.map_outlined, size: 18),
               onPressed: onViewOnMap,
             ),
           ),
@@ -61,7 +62,7 @@ class PropertyCardActions extends StatelessWidget {
 }
 
 class _CardActionButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
 
   /// Null draws a square, icon-only button.
   final String? label;
@@ -83,12 +84,12 @@ class _CardActionButton extends StatelessWidget {
           minimumSize: const WidgetStatePropertyAll(Size.square(36)),
           padding: const WidgetStatePropertyAll(EdgeInsets.zero),
         ),
-        child: Icon(icon, size: 18),
+        child: icon,
       );
     }
     return OutlinedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon, size: 16),
+      icon: SizedBox.square(dimension: 16, child: icon),
       label: Text(
         label,
         maxLines: 1,

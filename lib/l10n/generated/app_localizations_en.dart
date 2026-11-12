@@ -188,7 +188,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get glassNavigationTitle => 'Navigation theme';
 
   @override
-  String get glassNavigationSubtitle => 'Match your phone\'s see-through bars';
+  String get glassNavigationSubtitle => 'Matches your device\'s system bars.';
 
   @override
   String get personalInfoTitle => 'Personal information';
@@ -207,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personalInfoUsernameHelp =>
-      'People can find you by username. Use 3–30 lowercase letters, numbers, \"_\" or \".\".';
+      '3 to 30 lowercase letters, numbers, periods or underscores.';
 
   @override
   String get personalInfoUsernameInvalid =>
@@ -220,7 +220,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personalInfoName => 'Name';
 
   @override
-  String get personalInfoNameHelp => 'The name people see. Change it anytime.';
+  String get personalInfoNameHelp => 'Visible to other users.';
 
   @override
   String get personalInfoFirstName => 'First name';
@@ -244,7 +244,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personalInfoPhone => 'Phone number';
 
   @override
-  String get personalInfoPhoneHelp => 'For signing in and calls from buyers.';
+  String get personalInfoPhoneHelp => 'Used for sign-in and buyer calls.';
 
   @override
   String get personalInfoPhoneTaken =>
@@ -318,7 +318,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get devicesIntro =>
-      'Don’t recognise a device? Sign it out and change your password.';
+      'Review signed-in devices and sign out any you do not recognize.';
 
   @override
   String get devicesLoadFailed => 'Could not load your devices';
@@ -883,7 +883,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get callFullScreenHelp =>
-      'Allow incoming calls to appear over the lock screen. Android may show a call banner while your phone is unlocked.';
+      'Allow incoming calls to appear over the lock screen.';
 
   @override
   String get callFullScreenFailed =>
@@ -1499,7 +1499,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedTitle => 'Feed';
 
   @override
-  String get feedSubtitle => 'Fresh finds from people you follow';
+  String get feedSubtitle => 'Listings from people you follow.';
 
   @override
   String get feedNewestFirst => 'Newest first';
@@ -2701,34 +2701,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsChatTitle => 'Chat messages';
 
   @override
-  String get notificationsChatHelp => 'When someone sends you a message.';
+  String get notificationsChatHelp => 'Message alerts.';
 
   @override
   String get notificationsPromotionsTitle => 'Offers and news';
 
   @override
-  String get notificationsPromotionsHelp => 'Deals and updates from our team.';
+  String get notificationsPromotionsHelp => 'Promotions and product updates.';
 
   @override
   String get notificationsSavedSearchTitle => 'Saved search alerts';
 
   @override
   String get notificationsSavedSearchHelp =>
-      'New listings that match a search you saved.';
+      'New listings matching saved searches.';
 
   @override
   String get notificationsFollowedTitle => 'People you follow';
 
   @override
-  String get notificationsFollowedHelp =>
-      'When someone you follow posts a new listing.';
+  String get notificationsFollowedHelp => 'New listings from followed users.';
 
   @override
   String get notificationsSavedUpdatesTitle => 'Saved listings';
 
   @override
   String get notificationsSavedUpdatesHelp =>
-      'Price drops, and when a listing you saved is sold.';
+      'Price changes and sale updates for saved listings.';
 
   @override
   String get feedPriceDropped => 'Price dropped';
@@ -2748,7 +2747,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedSearchSaveHelp =>
-      'We\'ll tell you when a new listing in this map area matches your filter.';
+      'Alerts for new listings matching this search.';
 
   @override
   String get savedSearchName => 'Name';
@@ -2804,7 +2803,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsBlockedHelp =>
-      'Enable notifications in your phone’s settings.';
+      'Enable notifications in device settings.';
 
   @override
   String get chatPreviewNewMessage => 'New message';
@@ -2814,7 +2813,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsShowTextHelp =>
-      'Show message text in notifications, including on your lock screen.';
+      'Display message previews in notifications.';
 
   @override
   String get notificationsLoadFailed =>
@@ -3025,7 +3024,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addEmailIntro =>
-      'Add an email for password resets. Confirm with your password.';
+      'Confirm your password to add an email for password recovery.';
 
   @override
   String get addEmailDone => 'Email added';
@@ -3146,14 +3145,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planFeatureDiamond => 'Highest listing capacity';
 
   @override
-  String get planChooseIntro => 'Choose a plan to publish more properties.';
+  String get planChooseIntro => 'Choose a plan to publish more listings.';
 
   @override
   String get planUpgradeTitle => 'Upgrade Subscription';
 
   @override
   String get planUpgradeIntro =>
-      'New plans last one month. Upgrades charge only the price difference for your remaining time and keep your expiry date.';
+      'Plans last one month. Upgrades charge the price difference and keep your current expiry date.';
 
   @override
   String get planSubscribe => 'Subscribe';
@@ -3222,7 +3221,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentOneTimeTitle => 'One-Time Payment';
 
   @override
-  String get paymentOneTimeIntro => 'Your property is ready to be published.';
+  String get paymentOneTimeIntro => 'Your property is ready to publish.';
 
   @override
   String get publishingRenewListingTitle => 'Renew property post';
@@ -3738,7 +3737,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authRecoveryEmailOnly =>
-      'Password recovery uses the email linked to your account. If you signed up with Google, sign in with Google. Add an email in Account Security so you can recover a forgotten password.';
+      'Use the email linked to your account for recovery. For Google accounts, continue with Google.';
 
   @override
   String get propertyAddPhone => 'Add another phone number';
@@ -3751,10 +3750,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchApproximateArea => 'Approximate search area';
-
-  @override
-  String get authRecoveryEmailHint =>
-      'Add an email for password recovery. Your phone number is for contact only.';
 
   @override
   String get paymentEstimatedExpiry => 'Estimated expiry';

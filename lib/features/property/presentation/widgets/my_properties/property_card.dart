@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -152,10 +153,14 @@ class PropertyCard extends StatelessWidget {
                     color: context.colors.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.favorite_border,
-                    size: 18,
-                    color: context.colors.textHint,
+                  child: SvgPicture.asset(
+                    'assets/icons/listing_saved.svg',
+                    width: 18,
+                    height: 18,
+                    colorFilter: ColorFilter.mode(
+                      context.colors.textHint,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),

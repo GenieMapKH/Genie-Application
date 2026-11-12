@@ -186,7 +186,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get glassNavigationSubtitle =>
-      'ធ្វើឲ្យរបាររុករកថ្លាដូចទូរស័ព្ទរបស់អ្នក';
+      'ស្របតាមរចនាប័ទ្មរបារប្រព័ន្ធទូរសព្ទរបស់អ្នក។';
 
   @override
   String get personalInfoTitle => 'ព័ត៌មានផ្ទាល់ខ្លួន';
@@ -218,7 +218,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get personalInfoName => 'ឈ្មោះ';
 
   @override
-  String get personalInfoNameHelp => 'ឈ្មោះដែលអ្នកដទៃឃើញ។ អាចប្តូរបានគ្រប់ពេល។';
+  String get personalInfoNameHelp => 'ឈ្មោះដែលអ្នកប្រើផ្សេងទៀតអាចមើលឃើញ។';
 
   @override
   String get personalInfoFirstName => 'នាមខ្លួន';
@@ -876,8 +876,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get callFullScreenTitle => 'ការហៅចូលពេញអេក្រង់';
 
   @override
-  String get callFullScreenHelp =>
-      'អនុញ្ញាតឱ្យការហៅចូលបង្ហាញលើអេក្រង់ចាក់សោ។ Android អាចបង្ហាញផ្ទាំងការហៅ នៅពេលទូរសព្ទរបស់អ្នកមិនជាប់សោ។';
+  String get callFullScreenHelp => 'អនុញ្ញាតឱ្យការហៅចូលបង្ហាញលើអេក្រង់ចាក់សោ។';
 
   @override
   String get callFullScreenFailed => 'មិនអាចបើកការកំណត់ការហៅពេញអេក្រង់បានទេ។';
@@ -1485,7 +1484,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get feedTitle => 'ថ្មីៗ';
 
   @override
-  String get feedSubtitle => 'អចលនទ្រព្យថ្មីៗពីអ្នកដែលអ្នកតាមដាន';
+  String get feedSubtitle => 'អចលនទ្រព្យពីអ្នកដែលអ្នកតាមដាន។';
 
   @override
   String get feedNewestFirst => 'ថ្មីបំផុតមុន';
@@ -2674,14 +2673,14 @@ class AppLocalizationsKm extends AppLocalizations {
   String get notificationsChatTitle => 'សារជជែក';
 
   @override
-  String get notificationsChatHelp => 'នៅពេលមាននរណាម្នាក់ផ្ញើសារមកអ្នក។';
+  String get notificationsChatHelp => 'ការជូនដំណឹងសារ។';
 
   @override
   String get notificationsPromotionsTitle => 'ការផ្តល់ជូន និងព័ត៌មាន';
 
   @override
   String get notificationsPromotionsHelp =>
-      'ការបញ្ចុះតម្លៃ និងព័ត៌មានថ្មីៗពីក្រុមការងាររបស់យើង។';
+      'ប្រូម៉ូសិន និងព័ត៌មានថ្មីៗអំពីកម្មវិធី។';
 
   @override
   String get notificationsSavedSearchTitle =>
@@ -2689,14 +2688,14 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get notificationsSavedSearchHelp =>
-      'អចលនទ្រព្យថ្មីដែលត្រូវនឹងការស្វែងរកដែលអ្នកបានរក្សាទុក។';
+      'អចលនទ្រព្យថ្មីដែលត្រូវនឹងការស្វែងរកដែលបានរក្សាទុក។';
 
   @override
   String get notificationsFollowedTitle => 'អ្នកដែលអ្នកតាមដាន';
 
   @override
   String get notificationsFollowedHelp =>
-      'នៅពេលអ្នកដែលអ្នកតាមដាន បង្ហោះអចលនទ្រព្យថ្មី។';
+      'អចលនទ្រព្យថ្មីពីអ្នកប្រើដែលអ្នកតាមដាន។';
 
   @override
   String get notificationsSavedUpdatesTitle => 'អចលនទ្រព្យដែលបានរក្សាទុក';
@@ -2724,7 +2723,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get savedSearchSaveHelp =>
-      'យើងនឹងប្រាប់អ្នក នៅពេលមានអចលនទ្រព្យថ្មីក្នុងតំបន់ផែនទីនេះ ដែលត្រូវនឹងតម្រងរបស់អ្នក។';
+      'ជូនដំណឹងអំពីអចលនទ្រព្យថ្មីដែលត្រូវនឹងការស្វែងរកនេះ។';
 
   @override
   String get savedSearchName => 'ឈ្មោះ';
@@ -2790,7 +2789,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get notificationsShowTextHelp =>
-      'បង្ហាញអត្ថបទសារក្នុងការជូនដំណឹង រួមទាំងលើអេក្រង់ចាក់សោ។';
+      'បង្ហាញអត្ថបទសារជាមុនក្នុងការជូនដំណឹង។';
 
   @override
   String get notificationsLoadFailed =>
@@ -2995,7 +2994,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get addEmailIntro =>
-      'បន្ថែមអ៊ីមែលសម្រាប់កំណត់ពាក្យសម្ងាត់ឡើងវិញ។ បញ្ជាក់ដោយពាក្យសម្ងាត់របស់អ្នក។';
+      'បញ្ជាក់ពាក្យសម្ងាត់របស់អ្នក ដើម្បីបន្ថែមអ៊ីមែលសម្រាប់ស្ដារពាក្យសម្ងាត់។';
 
   @override
   String get addEmailDone => 'បានបន្ថែមអ៊ីមែល';
@@ -3116,15 +3115,14 @@ class AppLocalizationsKm extends AppLocalizations {
   String get planFeatureDiamond => 'សមត្ថភាពផ្សាយខ្ពស់បំផុត';
 
   @override
-  String get planChooseIntro =>
-      'ជ្រើសរើសគម្រោង ដើម្បីផ្សាយអចលនទ្រព្យបានច្រើនទៀត។';
+  String get planChooseIntro => 'ជ្រើសរើសគម្រោងដើម្បីផ្សាយអចលនទ្រព្យបន្ថែម។';
 
   @override
   String get planUpgradeTitle => 'ដំឡើងការជាវ';
 
   @override
   String get planUpgradeIntro =>
-      'គម្រោងថ្មីមានសុពលភាពមួយខែ។ ការដំឡើងគិតតែតម្លៃខុសគ្នាសម្រាប់ពេលនៅសល់ និងរក្សាថ្ងៃផុតកំណត់ដដែល។';
+      'គម្រោងមានសុពលភាពមួយខែ។ ការដំឡើងគិតតែតម្លៃខុសគ្នា និងរក្សាថ្ងៃផុតកំណត់បច្ចុប្បន្ន។';
 
   @override
   String get planSubscribe => 'ជាវ';
@@ -3192,7 +3190,7 @@ class AppLocalizationsKm extends AppLocalizations {
   String get paymentOneTimeTitle => 'ការបង់ប្រាក់តែម្តង';
 
   @override
-  String get paymentOneTimeIntro => 'អចលនទ្រព្យរបស់អ្នករួចរាល់សម្រាប់ផ្សាយហើយ។';
+  String get paymentOneTimeIntro => 'អចលនទ្រព្យរបស់អ្នករួចរាល់សម្រាប់ផ្សាយ។';
 
   @override
   String get publishingRenewListingTitle => 'បន្តការផ្សាយអចលនទ្រព្យ';
@@ -3705,7 +3703,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get authRecoveryEmailOnly =>
-      'ការស្ដារពាក្យសម្ងាត់ប្រើអ៊ីមែលដែលភ្ជាប់នឹងគណនី។ បើអ្នកចុះឈ្មោះតាម Google សូមចូលតាម Google។ បន្ថែមអ៊ីមែលក្នុងសុវត្ថិភាពគណនី ដើម្បីស្ដារពាក្យសម្ងាត់ដែលភ្លេច។';
+      'ប្រើអ៊ីមែលដែលភ្ជាប់នឹងគណនីសម្រាប់ស្ដារពាក្យសម្ងាត់។ សម្រាប់គណនី Google សូមចូលតាម Google។';
 
   @override
   String get propertyAddPhone => 'បន្ថែមលេខទូរសព្ទមួយទៀត';
@@ -3718,10 +3716,6 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get searchApproximateArea => 'តំបន់ប្រហាក់ប្រហែល';
-
-  @override
-  String get authRecoveryEmailHint =>
-      'បន្ថែមអ៊ីមែលសម្រាប់ស្ដារពាក្យសម្ងាត់។ លេខទូរសព្ទប្រើសម្រាប់ទំនាក់ទំនងប៉ុណ្ណោះ។';
 
   @override
   String get paymentEstimatedExpiry => 'កាលបរិច្ឆេទផុតកំណត់ប៉ាន់ស្មាន';

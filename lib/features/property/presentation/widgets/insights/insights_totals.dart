@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -16,10 +17,22 @@ class InsightsTotals extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final tiles = [
-      (Icons.visibility_outlined, insights.views, l10n.insightsTotalViews),
-      (Icons.favorite_border, insights.saves, l10n.insightsTotalSaves),
-      (Icons.phone_outlined, insights.calls, l10n.insightsTotalCalls),
-      (Icons.chat_bubble_outline, insights.chats, l10n.insightsTotalChats),
+      (
+        'assets/icons/listing_views.svg',
+        insights.views,
+        l10n.insightsTotalViews,
+      ),
+      (
+        'assets/icons/listing_saved.svg',
+        insights.saves,
+        l10n.insightsTotalSaves,
+      ),
+      (
+        'assets/icons/listing_calls.svg',
+        insights.calls,
+        l10n.insightsTotalCalls,
+      ),
+      ('assets/icons/chat_start.svg', insights.chats, l10n.insightsTotalChats),
     ];
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -44,7 +57,7 @@ class InsightsTotals extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final int value;
   final String label;
 
@@ -63,7 +76,12 @@ class _Tile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: colors.textMuted),
+          SvgPicture.asset(
+            icon,
+            width: 18,
+            height: 18,
+            colorFilter: ColorFilter.mode(colors.textMuted, BlendMode.srcIn),
+          ),
           const SizedBox(height: 8),
           Text(
             PropertyFormat.count(value),

@@ -443,7 +443,7 @@ abstract class AppLocalizations {
   /// No description provided for @glassNavigationSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Match your phone\'s see-through bars'**
+  /// **'Matches your device\'s system bars.'**
   String get glassNavigationSubtitle;
 
   /// No description provided for @personalInfoTitle.
@@ -479,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoUsernameHelp.
   ///
   /// In en, this message translates to:
-  /// **'People can find you by username. Use 3–30 lowercase letters, numbers, \"_\" or \".\".'**
+  /// **'3 to 30 lowercase letters, numbers, periods or underscores.'**
   String get personalInfoUsernameHelp;
 
   /// No description provided for @personalInfoUsernameInvalid.
@@ -503,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoNameHelp.
   ///
   /// In en, this message translates to:
-  /// **'The name people see. Change it anytime.'**
+  /// **'Visible to other users.'**
   String get personalInfoNameHelp;
 
   /// No description provided for @personalInfoFirstName.
@@ -551,7 +551,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalInfoPhoneHelp.
   ///
   /// In en, this message translates to:
-  /// **'For signing in and calls from buyers.'**
+  /// **'Used for sign-in and buyer calls.'**
   String get personalInfoPhoneHelp;
 
   /// No description provided for @personalInfoPhoneTaken.
@@ -683,7 +683,7 @@ abstract class AppLocalizations {
   /// No description provided for @devicesIntro.
   ///
   /// In en, this message translates to:
-  /// **'Don’t recognise a device? Sign it out and change your password.'**
+  /// **'Review signed-in devices and sign out any you do not recognize.'**
   String get devicesIntro;
 
   /// No description provided for @devicesLoadFailed.
@@ -1667,7 +1667,7 @@ abstract class AppLocalizations {
   /// No description provided for @callFullScreenHelp.
   ///
   /// In en, this message translates to:
-  /// **'Allow incoming calls to appear over the lock screen. Android may show a call banner while your phone is unlocked.'**
+  /// **'Allow incoming calls to appear over the lock screen.'**
   String get callFullScreenHelp;
 
   /// No description provided for @callFullScreenFailed.
@@ -2699,7 +2699,7 @@ abstract class AppLocalizations {
   /// No description provided for @feedSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Fresh finds from people you follow'**
+  /// **'Listings from people you follow.'**
   String get feedSubtitle;
 
   /// No description provided for @feedNewestFirst.
@@ -4751,7 +4751,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsChatHelp.
   ///
   /// In en, this message translates to:
-  /// **'When someone sends you a message.'**
+  /// **'Message alerts.'**
   String get notificationsChatHelp;
 
   /// No description provided for @notificationsPromotionsTitle.
@@ -4763,7 +4763,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsPromotionsHelp.
   ///
   /// In en, this message translates to:
-  /// **'Deals and updates from our team.'**
+  /// **'Promotions and product updates.'**
   String get notificationsPromotionsHelp;
 
   /// No description provided for @notificationsSavedSearchTitle.
@@ -4775,7 +4775,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsSavedSearchHelp.
   ///
   /// In en, this message translates to:
-  /// **'New listings that match a search you saved.'**
+  /// **'New listings matching saved searches.'**
   String get notificationsSavedSearchHelp;
 
   /// No description provided for @notificationsFollowedTitle.
@@ -4787,7 +4787,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsFollowedHelp.
   ///
   /// In en, this message translates to:
-  /// **'When someone you follow posts a new listing.'**
+  /// **'New listings from followed users.'**
   String get notificationsFollowedHelp;
 
   /// No description provided for @notificationsSavedUpdatesTitle.
@@ -4799,7 +4799,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsSavedUpdatesHelp.
   ///
   /// In en, this message translates to:
-  /// **'Price drops, and when a listing you saved is sold.'**
+  /// **'Price changes and sale updates for saved listings.'**
   String get notificationsSavedUpdatesHelp;
 
   /// No description provided for @feedPriceDropped.
@@ -4835,7 +4835,7 @@ abstract class AppLocalizations {
   /// No description provided for @savedSearchSaveHelp.
   ///
   /// In en, this message translates to:
-  /// **'We\'ll tell you when a new listing in this map area matches your filter.'**
+  /// **'Alerts for new listings matching this search.'**
   String get savedSearchSaveHelp;
 
   /// No description provided for @savedSearchName.
@@ -4919,7 +4919,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsBlockedHelp.
   ///
   /// In en, this message translates to:
-  /// **'Enable notifications in your phone’s settings.'**
+  /// **'Enable notifications in device settings.'**
   String get notificationsBlockedHelp;
 
   /// No description provided for @chatPreviewNewMessage.
@@ -4937,7 +4937,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsShowTextHelp.
   ///
   /// In en, this message translates to:
-  /// **'Show message text in notifications, including on your lock screen.'**
+  /// **'Display message previews in notifications.'**
   String get notificationsShowTextHelp;
 
   /// No description provided for @notificationsLoadFailed.
@@ -5315,7 +5315,7 @@ abstract class AppLocalizations {
   /// No description provided for @addEmailIntro.
   ///
   /// In en, this message translates to:
-  /// **'Add an email for password resets. Confirm with your password.'**
+  /// **'Confirm your password to add an email for password recovery.'**
   String get addEmailIntro;
 
   /// No description provided for @addEmailDone.
@@ -5513,7 +5513,7 @@ abstract class AppLocalizations {
   /// No description provided for @planChooseIntro.
   ///
   /// In en, this message translates to:
-  /// **'Choose a plan to publish more properties.'**
+  /// **'Choose a plan to publish more listings.'**
   String get planChooseIntro;
 
   /// No description provided for @planUpgradeTitle.
@@ -5525,7 +5525,7 @@ abstract class AppLocalizations {
   /// No description provided for @planUpgradeIntro.
   ///
   /// In en, this message translates to:
-  /// **'New plans last one month. Upgrades charge only the price difference for your remaining time and keep your expiry date.'**
+  /// **'Plans last one month. Upgrades charge the price difference and keep your current expiry date.'**
   String get planUpgradeIntro;
 
   /// No description provided for @planSubscribe.
@@ -5651,7 +5651,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentOneTimeIntro.
   ///
   /// In en, this message translates to:
-  /// **'Your property is ready to be published.'**
+  /// **'Your property is ready to publish.'**
   String get paymentOneTimeIntro;
 
   /// No description provided for @publishingRenewListingTitle.
@@ -6545,7 +6545,7 @@ abstract class AppLocalizations {
   /// No description provided for @authRecoveryEmailOnly.
   ///
   /// In en, this message translates to:
-  /// **'Password recovery uses the email linked to your account. If you signed up with Google, sign in with Google. Add an email in Account Security so you can recover a forgotten password.'**
+  /// **'Use the email linked to your account for recovery. For Google accounts, continue with Google.'**
   String get authRecoveryEmailOnly;
 
   /// No description provided for @propertyAddPhone.
@@ -6571,12 +6571,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Approximate search area'**
   String get searchApproximateArea;
-
-  /// No description provided for @authRecoveryEmailHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Add an email for password recovery. Your phone number is for contact only.'**
-  String get authRecoveryEmailHint;
 
   /// No description provided for @paymentEstimatedExpiry.
   ///

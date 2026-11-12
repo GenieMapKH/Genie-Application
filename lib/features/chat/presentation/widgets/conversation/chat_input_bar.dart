@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/features/chat/models/chat_composer_mode.dart';
@@ -150,11 +151,11 @@ class _ChatInputBarState extends State<ChatInputBar> {
         Container(
           color: context.colors.surface,
           padding: EdgeInsets.only(
-            left: 8,
-            right: 8,
-            top: 8,
+            left: 6,
+            right: 6,
+            top: 6,
             bottom:
-                8 + (_showEmojis ? 0 : MediaQuery.of(context).padding.bottom),
+                6 + (_showEmojis ? 0 : MediaQuery.of(context).padding.bottom),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -203,10 +204,10 @@ class _ChatInputBarState extends State<ChatInputBar> {
           shape: BoxShape.circle,
           border: Border.all(color: context.colors.border, width: 2),
         ),
-        child: Icon(
-          Icons.attach_file,
-          color: context.colors.textMuted,
-          size: 22,
+        child: SvgPicture.asset(
+          'assets/icons/chat_attachment.svg',
+          width: 24,
+          height: 24,
         ),
       ),
     );
@@ -249,12 +250,16 @@ class _ChatInputBarState extends State<ChatInputBar> {
                   : context.l10n.chatShowEmojis,
               onTap: _toggleEmojis,
               size: ChatComposerButton.innerSize,
-              child: Icon(
-                _showEmojis
-                    ? Icons.keyboard_outlined
-                    : Icons.sentiment_satisfied_alt,
-                color: context.colors.textMuted,
-              ),
+              child: _showEmojis
+                  ? Icon(
+                      Icons.keyboard_outlined,
+                      color: context.colors.textMuted,
+                    )
+                  : SvgPicture.asset(
+                      'assets/icons/chat_emoji.svg',
+                      width: 24,
+                      height: 24,
+                    ),
             ),
           ],
         ),

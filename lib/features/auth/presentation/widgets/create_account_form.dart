@@ -87,11 +87,6 @@ class CreateAccountForm extends StatelessWidget {
           textInputAction: TextInputAction.next,
           onChanged: (_) => onChanged(),
         ),
-        const SizedBox(height: 6),
-        Text(
-          context.l10n.authRecoveryEmailHint,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
         const SizedBox(height: 20),
         AppTextField(
           key: const Key('password_field'),
