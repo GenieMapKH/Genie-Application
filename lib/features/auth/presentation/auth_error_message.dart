@@ -1,5 +1,6 @@
 import 'package:tilomnov/core/errors/app_exceptions.dart';
 import 'package:tilomnov/l10n/generated/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 
 /// What went wrong with signing in or up, or resetting a password, in the
@@ -12,6 +13,17 @@ String authErrorMessage(
   Object error, {
   String? badRequest,
 }) {
+  if (error is FirebaseAuthException) {
+    return switch (error.code) {
+      'invalid-verification-code' ||
+      'invalid-verification-id' => l10n.authErrorInvalidCode,
+      'session-expired' || 'code-expired' => l10n.authPhoneVerificationExpired,
+      'invalid-phone-number' => l10n.authErrEnterValidPhone,
+      'too-many-requests' || 'quota-exceeded' => l10n.authErrorTooManyTries,
+      'network-request-failed' => l10n.authErrorNoConnection,
+      _ => l10n.authPhoneVerificationUnavailable,
+    };
+  }
   final code = error is AppException ? error.code : null;
   return switch (code) {
     '401' || '403' => l10n.authErrorWrongCredentials,

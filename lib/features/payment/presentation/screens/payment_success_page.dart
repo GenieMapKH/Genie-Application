@@ -169,7 +169,9 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
                     0.45,
                     0.75,
                     Text(
-                      l10n.paymentSuccessTitle,
+                      receipt.isSimulation
+                          ? l10n.paymentSimulation
+                          : l10n.paymentSuccessTitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 22,
@@ -214,7 +216,9 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32),
                       child: Text(
-                        email == null
+                        receipt.isSimulation
+                            ? l10n.paymentSimulationNotice
+                            : email == null
                             ? l10n.paymentSuccessNoEmail
                             : '${l10n.paymentSuccessEmailed}\n$email',
                         textAlign: TextAlign.center,

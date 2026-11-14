@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:tilomnov/features/property/data/models/takeover_terms.dart';
 import 'package:tilomnov/features/property/presentation/takeover_labels.dart';
@@ -235,7 +236,7 @@ class _TakeoverTermsFormState extends State<TakeoverTermsForm> {
                   removed.$2.dispose();
                   _changed();
                 },
-                icon: const Icon(Icons.remove_circle_outline),
+                icon: const Icon(LucideIcons.circleMinus),
                 label: Text(l10n.takeoverRemovePayment),
               ),
             ],
@@ -249,7 +250,7 @@ class _TakeoverTermsFormState extends State<TakeoverTermsForm> {
               ));
               _changed();
             },
-            icon: const Icon(Icons.add),
+            icon: const Icon(LucideIcons.plus),
             label: Text(l10n.takeoverAddPayment),
           ),
         if (widget.showErrors && errors.contains('additionalPayments'))

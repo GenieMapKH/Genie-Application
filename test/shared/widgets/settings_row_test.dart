@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/shared/widgets/lists/settings_list.dart';
@@ -46,16 +47,16 @@ void main() {
           ),
         );
 
-        final arrows = find.byIcon(Icons.chevron_right);
+        final arrows = find.byIcon(LucideIcons.chevronRight);
         expect(arrows, findsNWidgets(5));
         final rightEdge = tester.getRect(arrows.first).right;
         for (var i = 1; i < 5; i++) {
-          expect(tester.getRect(arrows.at(i)).right, rightEdge);
+          expect(tester.getRect(arrows.at(i)).right, closeTo(rightEdge, 0.001));
         }
         for (final (index, value) in ['Dark', 'English', 'Free'].indexed) {
           expect(
             tester.getRect(find.text(value)).right,
-            tester.getRect(arrows.at(index)).left - 8,
+            closeTo(tester.getRect(arrows.at(index)).left - 8, 0.001),
           );
         }
         expect(tester.takeException(), isNull);

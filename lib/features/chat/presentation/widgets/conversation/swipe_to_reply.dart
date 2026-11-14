@@ -1,6 +1,7 @@
-import 'dart:math';
+﻿import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -93,7 +94,7 @@ class _SwipeToReplyState extends State<SwipeToReply>
                       radius: 16,
                       backgroundColor: context.colors.border,
                       child: Icon(
-                        Icons.reply,
+                        LucideIcons.reply,
                         size: 18,
                         color: context.colors.textMuted,
                       ),

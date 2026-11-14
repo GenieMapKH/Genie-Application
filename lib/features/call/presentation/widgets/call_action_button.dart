@@ -6,7 +6,6 @@ import 'package:tilomnov/core/theme/app_colors.dart';
 /// The circle and the label are one target, so it is easy to hit.
 class CallActionButton extends StatelessWidget {
   final IconData icon;
-  final Widget? iconWidget;
   final String label;
   final VoidCallback onPressed;
 
@@ -19,7 +18,6 @@ class CallActionButton extends StatelessWidget {
   const CallActionButton({
     super.key,
     required this.icon,
-    this.iconWidget,
     required this.label,
     required this.onPressed,
     this.background,
@@ -59,7 +57,7 @@ class CallActionButton extends StatelessWidget {
                         : BorderSide.none,
                   ),
                 ),
-                child: iconWidget ?? Icon(icon, size: 30, color: foreground),
+                child: Icon(icon, size: 30, color: foreground),
               ),
               const SizedBox(height: 8),
               Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -64,10 +65,30 @@ class SearchAreaHeader extends StatelessWidget {
                 ],
               ),
             ),
+            if (state.area.valueOrNull?.boundaries.isNotEmpty == true)
+              IconButton(
+                tooltip: 'OCHA / WFP · CC BY 3.0 IGO (2018)',
+                icon: Icon(LucideIcons.info, size: 18, color: colors.textMuted),
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (context) => const AlertDialog(
+                    title: Text('OCHA / WFP'),
+                    content: SingleChildScrollView(
+                      child: SelectableText(
+                        'Cambodia COD-AB v01 · 2018-10-04\n'
+                        'Department of Geography / WFP / OCHA\n'
+                        'CC BY 3.0 IGO\n\n'
+                        'https://data.humdata.org/dataset/cod-ab-khm\n\n'
+                        'https://creativecommons.org/licenses/by/3.0/igo/',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             IconButton(
               onPressed: onClose,
               tooltip: context.l10n.searchCloseResults,
-              icon: Icon(Icons.close_rounded, color: colors.textMuted),
+              icon: Icon(LucideIcons.x, color: colors.textMuted),
             ),
           ],
         ),
@@ -88,7 +109,9 @@ class SearchAreaHeader extends StatelessWidget {
     }
     return switch (target) {
       PlaceTarget() =>
-        '${l10n.searchApproximateArea} · ${l10n.searchPropertiesInArea(count)}',
+        state.area.valueOrNull!.boundaries.isNotEmpty
+            ? l10n.searchPropertiesInArea(count)
+            : '${l10n.searchApproximateArea} · ${l10n.searchPropertiesInArea(count)}',
       PersonTarget() => l10n.searchPropertiesByPerson(count),
     };
   }
@@ -115,7 +138,7 @@ class _Leading extends StatelessWidget {
           color: colors.primarySoft,
           shape: BoxShape.circle,
         ),
-        child: Icon(Icons.place_rounded, color: colors.primary),
+        child: Icon(LucideIcons.mapPin, color: colors.primary),
       ),
     };
   }

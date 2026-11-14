@@ -1,5 +1,6 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -89,7 +90,7 @@ class PropertyImagePicker extends StatelessWidget {
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(
-                                          Icons.close,
+                                          LucideIcons.x,
                                           size: 14,
                                           color: Colors.white,
                                         ),
@@ -100,7 +101,7 @@ class PropertyImagePicker extends StatelessWidget {
                               )
                             : Center(
                                 child: Icon(
-                                  Icons.add,
+                                  LucideIcons.plus,
                                   color: context.colors.textHint,
                                 ),
                               ),
@@ -113,7 +114,7 @@ class PropertyImagePicker extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.info_outline,
+                    LucideIcons.info,
                     size: 14,
                     color: context.colors.textMuted,
                   ),

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/subscription/domain/plan_tier.dart';
@@ -54,7 +55,7 @@ class PlanTierStyle {
     deep: [Color(0xFF1E3D66), Color(0xFF0E1F36)],
     glow: Color(0xFF1E3D66),
     onMetal: Color(0xFFFFFFFF),
-    icon: Icons.home_work_rounded,
+    icon: LucideIcons.building2,
   );
 
   static const _silver = PlanTierStyle(
@@ -69,7 +70,7 @@ class PlanTierStyle {
     deep: [Color(0xFF7A8595), Color(0xFF2E3540)],
     glow: Color(0xFFAEB8C6),
     onMetal: Color(0xFF2B323C),
-    icon: Icons.military_tech_rounded,
+    icon: LucideIcons.award,
   );
 
   static const _gold = PlanTierStyle(
@@ -84,7 +85,7 @@ class PlanTierStyle {
     deep: [Color(0xFFC0912F), Color(0xFF5A3E10)],
     glow: Color(0xFFE2B455),
     onMetal: Color(0xFF3F2C0A),
-    icon: Icons.workspace_premium_rounded,
+    icon: LucideIcons.award,
   );
 
   static const _diamond = PlanTierStyle(
@@ -99,7 +100,7 @@ class PlanTierStyle {
     deep: [Color(0xFF5B5BEA), Color(0xFF0E7490)],
     glow: Color(0xFF8B9CF7),
     onMetal: Color(0xFF1E1B4B),
-    icon: Icons.diamond_rounded,
+    icon: LucideIcons.gem,
   );
 }
 

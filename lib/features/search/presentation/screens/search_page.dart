@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -68,7 +69,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         baseOffset: 0,
         extentOffset: widget.initialText.length,
       );
-      controller.onTextChanged(widget.initialText);
+      // Prefilled searches must not update Riverpod during page construction.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) controller.onTextChanged(widget.initialText);
+      });
     }
   }
 
@@ -230,7 +234,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         key: const ValueKey('idle'),
         alignment: const Alignment(0, -0.5),
         child: SearchMessageView(
-          icon: Icons.travel_explore_rounded,
+          icon: LucideIcons.compass,
           title: l10n.searchIdleTitle,
           body: l10n.searchIdleBody,
         ),
@@ -260,7 +264,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         key: const ValueKey('empty'),
         alignment: const Alignment(0, -0.5),
         child: SearchMessageView(
-          icon: Icons.search_off_rounded,
+          icon: LucideIcons.searchX,
           title: l10n.searchNoResultsTitle(state.text),
           body: l10n.searchNoResultsBody,
         ),

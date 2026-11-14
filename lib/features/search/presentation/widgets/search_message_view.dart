@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -33,23 +34,23 @@ class SearchMessageView extends StatelessWidget {
     final l10n = context.l10n;
     final (icon, message) = switch (reason) {
       SearchFailureReason.offline => (
-        Icons.wifi_off_rounded,
+        LucideIcons.wifiOff,
         l10n.searchFailureOffline,
       ),
       SearchFailureReason.tooManyRequests => (
-        Icons.hourglass_empty_rounded,
+        LucideIcons.hourglass,
         l10n.searchFailureTooManyRequests,
       ),
       SearchFailureReason.unavailable => (
-        Icons.cloud_off_rounded,
+        LucideIcons.cloudOff,
         l10n.searchFailureUnavailable,
       ),
       SearchFailureReason.notFound => (
-        Icons.wrong_location_outlined,
+        LucideIcons.mapPinX,
         l10n.searchFailureNotFound,
       ),
       SearchFailureReason.unknown => (
-        Icons.error_outline_rounded,
+        LucideIcons.circleAlert,
         failureMessage(l10n, fallback: l10n.searchFailureUnknown),
       ),
     };

@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/shared/widgets/forms/app_text_field.dart';
@@ -44,7 +45,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Enter a valid email address'), findsOneWidget);
-      expect(find.byIcon(Icons.info_outline), findsOneWidget);
+      expect(find.byIcon(LucideIcons.info), findsOneWidget);
     },
   );
 

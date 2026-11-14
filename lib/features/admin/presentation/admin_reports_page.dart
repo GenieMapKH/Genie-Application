@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
@@ -71,7 +72,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage> {
                   ? 'Search reports'
                   : 'Search reporters',
               hintText: 'Reporter, reason or details',
-              prefixIcon: const Icon(Icons.search_rounded),
+              prefixIcon: const Icon(LucideIcons.search),
               onChanged: (value) {
                 _debounce?.cancel();
                 _debounce = Timer(
@@ -148,9 +149,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage> {
                                     onPressed: _busy
                                         ? null
                                         : () => _resolve(record.id),
-                                    icon: const Icon(
-                                      Icons.check_circle_outline,
-                                    ),
+                                    icon: const Icon(LucideIcons.circleCheck),
                                     label: const Text('Resolve report'),
                                   ),
                                 ),
@@ -217,7 +216,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage> {
               .toString(),
         ),
         subtitle: Text('${values['reportCount']} reports'),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: const Icon(LucideIcons.chevronRight),
       ),
     );
   }

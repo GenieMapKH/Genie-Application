@@ -32,6 +32,7 @@ class FeedRepository {
     int limit = pageSize,
     FeedFilters filters = const FeedFilters(),
   }) async {
+    final scope = await _kept.capture();
     final response = await dio.get<Map<String, dynamic>>(
       '/feed',
       queryParameters: {
@@ -41,7 +42,9 @@ class FeedRepository {
       },
     );
     final data = response.data!;
-    if (cursor == null && filters.isDefault) await _keep(data);
+    if (cursor == null && filters.isDefault) {
+      await _kept.write(_keptName, data, scope: scope);
+    }
     return _pageOf(data);
   }
 
@@ -52,8 +55,6 @@ class FeedRepository {
   }) => filters.isDefault
       ? _kept.read(_keptName, parse: _pageOf)
       : Future.value(null);
-
-  Future<void> _keep(Map<String, dynamic> data) => _kept.write(_keptName, data);
 
   static Future<FeedListingsPage> _pageOf(Map<String, dynamic> data) async {
     return (

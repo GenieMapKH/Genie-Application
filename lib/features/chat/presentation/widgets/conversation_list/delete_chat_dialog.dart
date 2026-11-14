@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+﻿import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -33,7 +34,7 @@ class _DeleteChatDialogState extends State<DeleteChatDialog> {
     final name = widget.participantName;
 
     return AppDialog.custom(
-      icon: Icons.delete_outline,
+      icon: LucideIcons.trash2,
       tone: AppDialogTone.danger,
       title: Text(
         l10n.chatDeleteChatQuestion,

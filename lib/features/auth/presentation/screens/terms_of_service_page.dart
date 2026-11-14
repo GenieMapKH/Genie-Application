@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
 import 'package:tilomnov/shared/widgets/glass/glass_scope.dart';
@@ -55,7 +56,7 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
                   else
                     IconButton(
                       icon: Icon(
-                        Icons.arrow_back,
+                        LucideIcons.arrowLeft,
                         color: context.colors.textPrimary,
                         size: 24,
                       ),

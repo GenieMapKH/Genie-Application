@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -87,7 +88,7 @@ class _ReportSheetState extends ConsumerState<_ReportSheet> {
     final colors = context.colors;
 
     return AppDialog(
-      icon: Icons.flag_rounded,
+      icon: LucideIcons.flag,
       tone: AppDialogTone.danger,
       title: widget.target == ReportTarget.listing
           ? l10n.reportListingTitle

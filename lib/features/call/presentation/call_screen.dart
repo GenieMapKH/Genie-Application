@@ -1,8 +1,8 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/call/data/native_call_integration.dart';
@@ -44,7 +44,7 @@ class CallScreen extends ConsumerWidget {
             if (call.isLive)
               IconButton(
                 tooltip: context.l10n.callMinimize,
-                icon: const Icon(Icons.close_fullscreen_rounded),
+                icon: const Icon(LucideIcons.minimize),
                 onPressed: minimize,
               ),
           ],
@@ -197,7 +197,7 @@ class _IncomingActions extends StatelessWidget {
       children: [
         Expanded(
           child: CallActionButton(
-            icon: Icons.call_end,
+            icon: LucideIcons.phoneOff,
             label: context.l10n.callDecline,
             background: context.colors.danger,
             onPressed: onDecline,
@@ -205,7 +205,7 @@ class _IncomingActions extends StatelessWidget {
         ),
         Expanded(
           child: CallActionButton(
-            icon: Icons.call,
+            icon: LucideIcons.phone,
             label: context.l10n.callAccept,
             background: context.colors.success,
             onPressed: onAccept,
@@ -237,7 +237,7 @@ class _LiveActions extends StatelessWidget {
       children: [
         Expanded(
           child: CallActionButton(
-            icon: call.muted ? Icons.mic_off : Icons.mic_none,
+            icon: call.muted ? LucideIcons.micOff : LucideIcons.mic,
             label: call.muted ? l10n.callUnmute : l10n.callMute,
             selected: call.muted,
             onPressed: onMute,
@@ -245,7 +245,7 @@ class _LiveActions extends StatelessWidget {
         ),
         Expanded(
           child: CallActionButton(
-            icon: Icons.call_end,
+            icon: LucideIcons.phoneOff,
             label: l10n.callHangUp,
             background: context.colors.danger,
             onPressed: onHangUp,
@@ -253,14 +253,7 @@ class _LiveActions extends StatelessWidget {
         ),
         Expanded(
           child: CallActionButton(
-            icon: Icons.volume_up,
-            iconWidget: SvgPicture.asset(
-              call.speakerOn
-                  ? 'assets/icons/call_speaker_on.svg'
-                  : 'assets/icons/call_speaker_off.svg',
-              width: 24,
-              height: 24,
-            ),
+            icon: call.speakerOn ? LucideIcons.volume2 : LucideIcons.volumeX,
             label: l10n.callSpeaker,
             selected: call.speakerOn,
             onPressed: onSpeaker,

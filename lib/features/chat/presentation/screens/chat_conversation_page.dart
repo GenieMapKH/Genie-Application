@@ -1,7 +1,8 @@
-import 'package:tilomnov/shared/utils/app_popup.dart';
+﻿import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/device/microphone_permission.dart';
@@ -9,6 +10,7 @@ import 'package:tilomnov/core/media/image_upload_policy.dart';
 import 'package:tilomnov/shared/utils/image_rejection_message.dart';
 import 'package:tilomnov/core/logging/app_logger.dart';
 import 'package:tilomnov/features/chat/models/chat_composer_mode.dart';
+import 'package:tilomnov/features/chat/models/chat_call_entry.dart';
 import 'package:tilomnov/features/chat/models/chat_send_problem.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_call_entry_tile.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_composer_banner.dart';
@@ -251,6 +253,9 @@ class _ConversationState extends ConsumerState<_Conversation> {
   Widget build(BuildContext context) {
     final provider = activeChatProvider(widget.chat);
     final chatState = ref.watch(provider);
+    // Start call history alongside message history instead of after messages
+    // finish loading and the timeline is first built.
+    final calls = ref.watch(chatCallHistoryProvider(widget.chat));
     final recordingProvider = voiceRecordingProvider(widget.chat);
     // Only whether a recording is on: its level and time change many times
     // a second, and only the recording bar shows them.
@@ -296,7 +301,7 @@ class _ConversationState extends ConsumerState<_Conversation> {
       ActiveChatStatus.unavailable => _unavailableNotice(),
       ActiveChatStatus.ready => Column(
         children: [
-          Expanded(child: _buildMessages(chatState)),
+          Expanded(child: _buildMessages(chatState, calls)),
           if (blockStatus != null && !blockStatus.canMessage)
             BlockedConversationBar(
               status: blockStatus,
@@ -344,14 +349,13 @@ class _ConversationState extends ConsumerState<_Conversation> {
   Widget _unavailableNotice() {
     final l10n = context.l10n;
     return ChatNotice(
-      icon: Icons.cloud_off_outlined,
+      icon: LucideIcons.cloudOff,
       message: failureMessage(l10n, fallback: l10n.chatOpenFailed),
       onAction: _open,
     );
   }
 
-  Widget _buildMessages(ActiveChatState chatState) {
-    final calls = ref.watch(chatCallHistoryProvider(widget.chat));
+  Widget _buildMessages(ActiveChatState chatState, List<ChatCallEntry> calls) {
     final items = mergeTimeline(chatState.messages, calls);
     if (items.isEmpty) {
       return ChatNotice(message: context.l10n.chatManagedSecurity);

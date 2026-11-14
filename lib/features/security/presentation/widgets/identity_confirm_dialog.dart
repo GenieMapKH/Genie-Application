@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+﻿import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
@@ -137,7 +138,7 @@ class _IdentityConfirmDialogState
     final l10n = context.l10n;
 
     return AppDialog.custom(
-      icon: Icons.verified_user_outlined,
+      icon: LucideIcons.badgeCheck,
       tone: AppDialogTone.neutral,
       title: Text(widget.title),
       content: Column(

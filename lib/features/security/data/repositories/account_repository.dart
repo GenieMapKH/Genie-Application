@@ -98,6 +98,14 @@ class AccountRepository {
     await _post('/auth/account/phone', {'phone': phone, ...proof.toJson()});
   }
 
+  /// Saves SMS ownership proof for the account's first or current phone.
+  Future<void> verifyPhone(String phone, String phoneProof) async {
+    await _post('/auth/account/phone/verify', {
+      'phone': phone,
+      'phoneProof': phoneProof,
+    });
+  }
+
   /// A token, good for a few minutes, that proves the account password was
   /// just typed. The chat server accepts it in place of a forgotten backup
   /// PIN. [proof] must be a password: Google does not count here.

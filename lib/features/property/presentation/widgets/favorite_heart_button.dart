@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/physics.dart';
 
 import 'package:tilomnov/core/device/app_haptics.dart';
@@ -130,7 +131,7 @@ class _FavoriteHeartButtonState extends State<FavoriteHeartButton>
       transitionBuilder: (child, animation) =>
           ScaleTransition(scale: animation, child: child),
       child: Icon(
-        widget.isFavorite ? Icons.favorite : Icons.favorite_border,
+        widget.isFavorite ? LucideIcons.heart : LucideIcons.heart,
         key: ValueKey<bool>(widget.isFavorite),
         size: widget.iconSize,
         color: widget.isFavorite

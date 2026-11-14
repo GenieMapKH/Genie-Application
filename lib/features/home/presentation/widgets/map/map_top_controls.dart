@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:tilomnov/features/home/presentation/widgets/map/filter/map_filter_button.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/map_button_icon.dart';
+import 'package:tilomnov/features/home/presentation/widgets/map/map_skin_button.dart';
 import 'package:tilomnov/features/home/presentation/widgets/search/home_search_bar.dart';
 import 'package:tilomnov/features/home/presentation/widgets/utm/utm_locate_bottom_sheet.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -12,13 +13,12 @@ import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/features/home/presentation/providers/map_state_provider.dart';
 import 'package:tilomnov/features/home/presentation/widgets/map/property_type_filters.dart';
 import 'package:tilomnov/features/home/utils/scanner/document_scanner_service.dart';
-import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
 class MapTopControls extends StatelessWidget {
   /// How far the search bar and the type filters reach below the status bar.
   /// Panels on the map start under it.
-  static const double contentHeight = 140;
+  static const double contentHeight = 152;
 
   final MapSkin currentSkin;
   final VoidCallback onToggleMapType;
@@ -80,36 +80,11 @@ class MapTopControls extends StatelessWidget {
                   ],
                 ),
                 Positioned(
-                  top: 117,
+                  top: 129,
                   right: 0,
-                  child: TactileButton(
+                  child: MapSkinButton(
+                    currentSkin: currentSkin,
                     onPressed: onToggleMapType,
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: context.colors.border,
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.08),
-                            blurRadius: 4,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                        image: DecorationImage(
-                          image: AssetImage(
-                            currentSkin == MapSkin.satellite
-                                ? 'assets/images/homescreen/mapDefault.png'
-                                : 'assets/images/homescreen/mapSatellite.png',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ],

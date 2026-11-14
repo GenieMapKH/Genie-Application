@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -14,7 +15,7 @@ class UtmSheetHeader extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
-            child: Icon(Icons.arrow_back, color: context.colors.textMuted),
+            child: Icon(LucideIcons.arrowLeft, color: context.colors.textMuted),
           ),
           Expanded(
             child: Center(

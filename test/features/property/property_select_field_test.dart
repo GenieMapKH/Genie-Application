@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/core/theme/app_theme.dart';
@@ -51,7 +52,7 @@ void main() {
     expect(menu.width, field.width);
     // The picked value shows in the field and, ticked, in the list.
     expect(find.text('Rent'), findsNWidgets(2));
-    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.check), findsOneWidget);
   });
 
   testWidgets('picking an option reports it and closes the list', (

@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:tilomnov/core/errors/app_exceptions.dart';
 import 'package:tilomnov/core/network/api_client.dart';
-import 'package:tilomnov/core/network/api_cache_manager.dart';
 import 'package:tilomnov/core/network/api_version_interceptor.dart';
 
 /// Goes up by one each time the server ends this device's session: it was
@@ -105,24 +104,25 @@ class AuthService {
     }
   }
 
-  // 1. Standard Registration. The phone number is required; [email] and
-  // [name] are optional (null leaves them out).
+  // 1. Registration requires a verified phone, or a verified email without a phone.
   Future<void> register({
-    required String phone,
+    String? phone,
     String? email,
     String? name,
     required String password,
     String? emailProof,
+    String? phoneProof,
   }) async {
     try {
       await dio.post(
         '/auth/register',
         data: {
-          'phone': phone,
+          'phone': ?phone,
           'email': ?email,
           'name': ?name,
           'password': password,
           'emailProof': ?emailProof,
+          'phoneProof': ?phoneProof,
         },
       );
     } catch (e) {
@@ -212,18 +212,21 @@ class AuthService {
 
   // 4. Logout
   Future<void> logout() async {
+    final generation = AuthStorage.generation;
     final refreshToken = await AuthStorage.getRefreshToken();
-    if (refreshToken != null) {
-      try {
-        await dio.post('/auth/logout', data: {'refreshToken': refreshToken});
-      } catch (e) {
-        // Signed out on this phone anyway; the server ends the session
-        // when its refresh token expires.
-        AppLogger.error('Ending the session on the server failed', e);
+    if (generation != AuthStorage.generation) return;
+    try {
+      await AuthStorage.clearTokens();
+    } finally {
+      // Durable sign-out must still run when local secure-storage cleanup fails.
+      if (refreshToken != null) {
+        try {
+          await dio.post('/auth/logout', data: {'refreshToken': refreshToken});
+        } catch (e) {
+          AppLogger.error('Ending the session on the server failed', e);
+        }
       }
     }
-    await AuthStorage.clearTokens();
-    ApiCacheManager().clearAll();
   }
 
   // 5. Forgot Password — Request OTP

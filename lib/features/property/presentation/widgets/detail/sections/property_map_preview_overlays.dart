@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/features/home/utils/map/map_measurements.dart';
@@ -55,7 +56,7 @@ class PropertyMapViewButton extends StatelessWidget {
         onPressed: onPressed,
         tooltip: context.l10n.propertyViewOnMap,
         icon: Icon(
-          Icons.open_in_full_rounded,
+          LucideIcons.minimize2,
           size: 18,
           color: context.colors.textSecondary,
         ),

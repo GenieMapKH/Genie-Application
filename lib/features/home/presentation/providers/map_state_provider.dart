@@ -3,7 +3,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 
-enum MapSkin { defaultMap, satellite }
+enum MapSkin {
+  defaultMap,
+  satellite;
+
+  MapSkin get next => switch (this) {
+    defaultMap => satellite,
+    satellite => defaultMap,
+  };
+}
 
 class MapState {
   // View State (the live camera lives in `mapCameraProvider`)
@@ -109,11 +117,7 @@ class MapStateNotifier extends StateNotifier<MapState> {
   }
 
   void toggleSkin() {
-    state = state.copyWith(
-      currentSkin: state.currentSkin == MapSkin.defaultMap
-          ? MapSkin.satellite
-          : MapSkin.defaultMap,
-    );
+    setSkin(state.currentSkin.next);
   }
 
   void highlightLocalPolygon(int? index) {

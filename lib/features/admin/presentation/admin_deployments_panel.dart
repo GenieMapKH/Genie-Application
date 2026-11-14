@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
@@ -55,14 +56,14 @@ class _AdminDeploymentsPanelState extends ConsumerState<AdminDeploymentsPanel> {
   }
 
   String _describe(AdminDeployment deployment) =>
-      '${deployment.commit ?? deployment.id} · ${deployment.status}\n${DateFormat.yMMMd().add_jm().format(deployment.createdAt.toLocal())}';
+      '${deployment.commit ?? deployment.id} Â· ${deployment.status}\n${DateFormat.yMMMd().add_jm().format(deployment.createdAt.toLocal())}';
 
   @override
   Widget build(BuildContext context) {
     final deployments = ref.watch(adminDeploymentsProvider);
     final colors = context.colors;
     return AdminServiceCard(
-      icon: Icons.cloud_done_rounded,
+      icon: LucideIcons.cloudCheck,
       title: 'Railway',
       onRefresh: () => ref.invalidate(adminDeploymentsProvider),
       refreshing: deployments.isLoading && deployments.hasValue,
@@ -110,8 +111,8 @@ class _AdminDeploymentsPanelState extends ConsumerState<AdminDeploymentsPanel> {
                         ),
                         Icon(
                           service.latest?.status == 'SUCCESS'
-                              ? Icons.check_circle_rounded
-                              : Icons.info_outline_rounded,
+                              ? LucideIcons.circleCheck
+                              : LucideIcons.info,
                           color: service.latest?.status == 'SUCCESS'
                               ? colors.success
                               : colors.textMuted,
@@ -154,7 +155,7 @@ class _AdminDeploymentsPanelState extends ConsumerState<AdminDeploymentsPanel> {
                                 ].contains(service.latest!.status)
                             ? null
                             : () => _rollback(service),
-                        icon: const Icon(Icons.restore_rounded, size: 18),
+                        icon: const Icon(LucideIcons.undo2, size: 18),
                         label: Text('Roll back ${service.name}'),
                       ),
                     ),

@@ -1,6 +1,7 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -194,7 +195,7 @@ class _ThemeGlyph extends StatelessWidget {
         ),
       ),
       child: Icon(
-        isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+        isDark ? LucideIcons.moon : LucideIcons.sun,
         key: ValueKey(isDark),
         size: 22,
         color: isDark ? _moon : _sun,

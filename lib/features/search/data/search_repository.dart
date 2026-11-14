@@ -8,6 +8,7 @@ import 'package:tilomnov/features/search/data/models/place_suggestion.dart';
 import 'package:tilomnov/features/search/data/models/publisher_profile.dart';
 import 'package:tilomnov/features/search/data/models/publisher_summary.dart';
 import 'package:tilomnov/features/search/data/models/search_area.dart';
+import 'package:tilomnov/features/search/data/models/search_boundary.dart';
 import 'package:tilomnov/features/search/data/models/search_results.dart';
 import 'package:tilomnov/features/search/data/search_failure.dart';
 import 'package:tilomnov/features/search/data/search_results_cache.dart';
@@ -64,12 +65,12 @@ class SearchRepository {
       '/public/search/places/${Uri.encodeComponent(place.placeId)}',
       {'lang': language, 'session': ?sessionToken},
     );
-    final viewport =
-        (data['place'] as Map<String, dynamic>)['viewport']
-            as Map<String, dynamic>;
+    final area = data['place'] as Map<String, dynamic>;
+    final viewport = area['viewport'] as Map<String, dynamic>;
 
     return SearchArea(
       properties: await _parseProperties(data['properties']),
+      boundaries: SearchBoundary.fromJson(area['boundary']),
       bounds: LatLngBounds(
         southwest: LatLng(
           (viewport['minLat'] as num).toDouble(),

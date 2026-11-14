@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -51,7 +52,7 @@ class PropertyCardActions extends StatelessWidget {
           Tooltip(
             message: context.l10n.propertyViewOnMap,
             child: _CardActionButton(
-              icon: const Icon(Icons.map_outlined, size: 18),
+              icon: const Icon(LucideIcons.map, size: 18),
               onPressed: onViewOnMap,
             ),
           ),

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -53,7 +54,7 @@ class DeviceSessionTile extends StatelessWidget {
     final details = [
       ?session.platform,
       session.location ?? l10n.devicesUnknownLocation,
-    ].join(' · ');
+    ].join(' \u00b7 ');
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -68,7 +69,7 @@ class DeviceSessionTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            _isPhone ? Icons.smartphone : Icons.computer,
+            _isPhone ? LucideIcons.smartphone : LucideIcons.monitor,
             size: 28,
             color: colors.textMuted,
           ),

@@ -1,4 +1,11 @@
 {
+  "mapSkinDefault": "Default map",
+  "mapSkinSatellite": "Satellite map",
+  "mapSkinSwitch": "Switch to {skin}",
+  "@mapSkinSwitch": {
+    "description": "Tooltip for the map skin button; skin is the next map's name.",
+    "placeholders": { "skin": { "type": "String" } }
+  },
   "callInProgress": "Call in progress",
   "chatManagedSecurity": "Messages are encrypted when sent and stored.",
   "callMinimize": "Minimize call",
@@ -1688,5 +1695,15 @@
   "propertyRemovePhone": "Remove phone number",
   "searchApproximateArea": "Approximate search area",
   "paymentEstimatedExpiry": "Estimated expiry",
-  "paymentRenewalPrice": "Renewal for another 30 days"
+  "paymentRenewalPrice": "Renewal for another 30 days",
+"paymentSimulation": "Simulation",
+"paymentSimulationNotice": "Simulation - no money was charged.",
+  "authContactRequired": "Enter a phone number or email.",
+  "authPhoneOptional": "Phone number (optional)",
+  "authVerifyEmail": "Verify email",
+  "authPhoneChangeInSettings": "To use a different account phone, change it in Account Settings first.",
+  "propertyVerifyPhone": "Verify phone by SMS",
+  "propertyAccountPhoneVerified": "Account phone verified",
+  "contactVerified": "Verified",
+  "contactNotVerified": "Not verified"
 }

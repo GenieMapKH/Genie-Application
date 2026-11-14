@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -66,7 +67,7 @@ class SortOrderPage extends ConsumerWidget {
                           ),
                           if (isSelected)
                             Icon(
-                              Icons.check,
+                              LucideIcons.check,
                               color: context.colors.accent,
                               size: 22,
                             ),

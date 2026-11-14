@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
@@ -50,10 +50,7 @@ class SearchInputBar extends StatelessWidget {
                 IconButton(
                   onPressed: onBack,
                   tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                  icon: Icon(
-                    Icons.arrow_back_rounded,
-                    color: colors.textPrimary,
-                  ),
+                  icon: Icon(LucideIcons.arrowLeft, color: colors.textPrimary),
                 ),
               Expanded(
                 child: Container(
@@ -66,10 +63,10 @@ class SearchInputBar extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      SvgPicture.asset(
-                        'assets/icons/search.svg',
-                        width: 22,
-                        height: 22,
+                      Icon(
+                        LucideIcons.search,
+                        size: 22,
+                        color: colors.textMuted,
                       ),
                       const SizedBox(width: 10),
                       Expanded(child: _field(context)),
@@ -148,11 +145,7 @@ class _ClearButton extends StatelessWidget {
         return IconButton(
           onPressed: onCleared,
           tooltip: context.l10n.searchClear,
-          icon: Icon(
-            Icons.close_rounded,
-            size: 20,
-            color: context.colors.textMuted,
-          ),
+          icon: Icon(LucideIcons.x, size: 20, color: context.colors.textMuted),
         );
       },
     );

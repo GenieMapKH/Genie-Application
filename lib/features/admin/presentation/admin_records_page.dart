@@ -1,9 +1,10 @@
-import 'admin_property_card.dart';
+﻿import 'admin_property_card.dart';
 import 'admin_reports_page.dart';
 import 'package:tilomnov/features/property/presentation/property_list_layout.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/admin/presentation/admin_records_provider.dart';
@@ -112,14 +113,14 @@ class _AdminRecordsPageState extends ConsumerState<AdminRecordsPage> {
                   : section == 'reports'
                   ? 'Reason, details, account or ID'
                   : 'Title, description, phone or ID',
-              prefixIcon: const Icon(Icons.search_rounded),
+              prefixIcon: const Icon(LucideIcons.search),
               suffixIcon: ValueListenableBuilder<TextEditingValue>(
                 valueListenable: _search,
                 builder: (context, value, _) => value.text.isEmpty
                     ? const SizedBox.shrink()
                     : IconButton(
                         tooltip: 'Clear search',
-                        icon: const Icon(Icons.close_rounded),
+                        icon: const Icon(LucideIcons.x),
                         onPressed: () {
                           _search.clear();
                           _debounce?.cancel();
@@ -222,7 +223,7 @@ class _AdminRecordsPageState extends ConsumerState<AdminRecordsPage> {
                             child: Column(
                               children: [
                                 Icon(
-                                  Icons.search_off_rounded,
+                                  LucideIcons.searchX,
                                   size: 44,
                                   color: colors.onSurfaceVariant,
                                 ),

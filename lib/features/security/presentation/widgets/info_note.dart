@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 
@@ -20,7 +21,7 @@ class InfoNote extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline, size: 18, color: colors.accent),
+          Icon(LucideIcons.info, size: 18, color: colors.accent),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

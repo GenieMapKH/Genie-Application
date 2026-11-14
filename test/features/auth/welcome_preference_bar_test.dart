@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,11 +44,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(container.read(localeProvider), AppLanguages.english);
 
-      await tester.tap(find.byIcon(Icons.light_mode_rounded));
+      await tester.tap(find.byIcon(LucideIcons.sun));
       await tester.pumpAndSettle();
       expect(container.read(themeModeProvider), ThemeMode.dark);
 
-      await tester.tap(find.byIcon(Icons.dark_mode_rounded));
+      await tester.tap(find.byIcon(LucideIcons.moon));
       await tester.pumpAndSettle();
       expect(container.read(themeModeProvider), ThemeMode.light);
     },

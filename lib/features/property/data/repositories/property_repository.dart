@@ -58,6 +58,7 @@ class PropertyRepository {
     int limit = ownPageSize,
     List<String> statuses = const [],
   }) async {
+    final scope = await _kept.capture();
     try {
       final response = await dio.get(
         '/properties',
@@ -68,7 +69,9 @@ class PropertyRepository {
         },
       );
       final data = response.data as Map<String, dynamic>;
-      if (offset == 0) await _kept.write(_keptOwnNameOf(statuses), data);
+      if (offset == 0) {
+        await _kept.write(_keptOwnNameOf(statuses), data, scope: scope);
+      }
       return await _ownPageOf(data);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {

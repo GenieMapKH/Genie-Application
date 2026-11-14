@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -29,7 +30,7 @@ class PersonResultTile extends StatelessWidget {
     final handle = person.username;
     final subtitle = handle == null || handle == person.displayName
         ? count
-        : '@$handle · $count';
+        : '@$handle Â· $count';
 
     return InkWell(
       onTap: onTap,
@@ -72,7 +73,7 @@ class PersonResultTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Icon(Icons.chevron_right_rounded, color: colors.iconSubtle),
+            Icon(LucideIcons.chevronRight, color: colors.iconSubtle),
           ],
         ),
       ),

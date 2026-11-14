@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -33,7 +34,7 @@ class ChatListingPreview extends StatelessWidget {
                 ? ColoredBox(
                     color: colors.surfaceMuted,
                     child: Icon(
-                      Icons.home_work_outlined,
+                      LucideIcons.building2,
                       color: colors.iconSubtle,
                     ),
                   )

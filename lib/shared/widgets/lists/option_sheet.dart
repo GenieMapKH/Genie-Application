@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 
@@ -54,7 +55,7 @@ Future<SheetOption<T>?> showOptionSheet<T>(
                   style: TextStyle(fontSize: 15, color: colors.textPrimary),
                 ),
                 trailing: option.value == selected
-                    ? Icon(Icons.check, color: colors.accent)
+                    ? Icon(LucideIcons.check, color: colors.accent)
                     : null,
                 onTap: () => Navigator.pop(sheetContext, option),
               ),

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
@@ -60,7 +61,7 @@ class SearchAreaListings extends ConsumerWidget {
         if (area.properties.isEmpty) {
           return SliverToBoxAdapter(
             child: SearchMessageView(
-              icon: Icons.holiday_village_outlined,
+              icon: LucideIcons.house,
               title: switch (state.target) {
                 PlaceTarget() => context.l10n.searchAreaEmpty,
                 PersonTarget() => context.l10n.searchPersonEmpty,

@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+﻿import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -117,7 +118,7 @@ class _DeviceListState extends ConsumerState<_DeviceList> {
     final confirmed = await AppDialog.show<bool>(
       context,
       builder: (dialogContext) => AppDialog.custom(
-        icon: Icons.logout,
+        icon: LucideIcons.logOut,
         tone: AppDialogTone.neutral,
         title: Text(title),
         content: Text(message),
@@ -175,7 +176,7 @@ class _DeviceListState extends ConsumerState<_DeviceList> {
         if (devices.canSignOutOthers) ...[
           OutlinedButton.icon(
             onPressed: _isBusy ? null : _signOutAll,
-            icon: const Icon(Icons.logout, size: 18),
+            icon: const Icon(LucideIcons.logOut, size: 18),
             label: Text(l10n.devicesSignOutAll),
             style: OutlinedButton.styleFrom(
               foregroundColor: colors.danger,

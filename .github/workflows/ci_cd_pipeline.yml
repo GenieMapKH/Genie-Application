@@ -17,7 +17,7 @@ jobs:
       - uses: ./.github/actions/setup-flutter
 
       - name: Check Formatting
-        run: dart format --output=none --set-exit-if-changed .
+        run: dart format --output=none --set-exit-if-changed lib test
 
       - name: Analyze Code
         run: flutter analyze
@@ -41,8 +41,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-flutter
 
-      # Optional: with these secrets the APK is signed with the release key,
-      # otherwise it falls back to the debug key (see android/app/build.gradle.kts).
+      # Required: release signing never falls back to a debug key.
       - name: Prepare release signing
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}

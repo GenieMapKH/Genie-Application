@@ -98,6 +98,24 @@ abstract class AppLocalizations {
     Locale('km'),
   ];
 
+  /// No description provided for @mapSkinDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default map'**
+  String get mapSkinDefault;
+
+  /// No description provided for @mapSkinSatellite.
+  ///
+  /// In en, this message translates to:
+  /// **'Satellite map'**
+  String get mapSkinSatellite;
+
+  /// Tooltip for the map skin button; skin is the next map's name.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to {skin}'**
+  String mapSkinSwitch(String skin);
+
   /// No description provided for @callInProgress.
   ///
   /// In en, this message translates to:
@@ -6583,6 +6601,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Renewal for another 30 days'**
   String get paymentRenewalPrice;
+
+  /// No description provided for @paymentSimulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulation'**
+  String get paymentSimulation;
+
+  /// No description provided for @paymentSimulationNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Simulation - no money was charged.'**
+  String get paymentSimulationNotice;
+
+  /// No description provided for @authContactRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a phone number or email.'**
+  String get authContactRequired;
+
+  /// No description provided for @authPhoneOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (optional)'**
+  String get authPhoneOptional;
+
+  /// No description provided for @authVerifyEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify email'**
+  String get authVerifyEmail;
+
+  /// No description provided for @authPhoneChangeInSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'To use a different account phone, change it in Account Settings first.'**
+  String get authPhoneChangeInSettings;
+
+  /// No description provided for @propertyVerifyPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify phone by SMS'**
+  String get propertyVerifyPhone;
+
+  /// No description provided for @propertyAccountPhoneVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Account phone verified'**
+  String get propertyAccountPhoneVerified;
+
+  /// No description provided for @contactVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get contactVerified;
+
+  /// No description provided for @contactNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified'**
+  String get contactNotVerified;
 }
 
 class _AppLocalizationsDelegate

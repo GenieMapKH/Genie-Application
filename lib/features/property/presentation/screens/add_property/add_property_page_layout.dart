@@ -2,6 +2,8 @@ import 'package:tilomnov/features/property/presentation/widgets/forms/property_c
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -194,6 +196,16 @@ extension AddPropertyPageLayout on AddPropertyPageState {
                         primary: phoneController,
                         additional: additionalPhoneControllers,
                         showErrors: hasAttemptedSubmit,
+                        accountPhoneVerified:
+                            ref
+                                .watch(userProfileProvider)
+                                .valueOrNull
+                                ?.phoneVerified ==
+                            true,
+                        verifying: isVerifyingPhone,
+                        onVerify: () {
+                          verifyContactPhone();
+                        },
                         onAdd: () => setState(
                           () => additionalPhoneControllers.add(
                             TextEditingController(),
@@ -238,7 +250,7 @@ extension AddPropertyPageLayout on AddPropertyPageState {
             label: isLoading
                 ? l10n.propertySavingChanges
                 : l10n.propertySaveChanges,
-            icon: Icons.check_rounded,
+            icon: LucideIcons.check,
             isLoading: isLoading,
             onPressed: isLoading ? null : validateAndSubmit,
           ),
@@ -249,14 +261,14 @@ extension AddPropertyPageLayout on AddPropertyPageState {
       children: [
         AddPropertySubmitButton(
           label: l10n.propertyArchive,
-          icon: Icons.lock_outline_rounded,
+          icon: LucideIcons.lockKeyhole,
           filled: false,
           isLoading: isLoading && isArchiving,
           onPressed: isLoading ? null : archive,
         ),
         AddPropertySubmitButton(
           label: l10n.propertyPublish,
-          icon: Icons.upload_outlined,
+          icon: LucideIcons.upload,
           isLoading: isLoading && !isArchiving,
           onPressed: isLoading ? null : validateAndSubmit,
         ),

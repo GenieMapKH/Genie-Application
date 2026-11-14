@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dialog.dart';
@@ -22,7 +23,7 @@ Future<void> setBlocked(
   final confirmed = await AppDialog.show<bool>(
     context,
     builder: (_) => AppDialog(
-      icon: blocked ? Icons.block_rounded : Icons.lock_open_rounded,
+      icon: blocked ? LucideIcons.ban : LucideIcons.lockKeyholeOpen,
       tone: blocked ? AppDialogTone.danger : AppDialogTone.neutral,
       title: blocked
           ? l10n.blockConfirmTitle(name)

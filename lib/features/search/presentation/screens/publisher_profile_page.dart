@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -217,7 +218,7 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
         if (!ref.watch(isSignedInProvider)) {
           return SliverToBoxAdapter(
             child: SearchMessageView(
-              icon: Icons.lock_outline_rounded,
+              icon: LucideIcons.lockKeyhole,
               title: context.l10n.profileSignInForContact,
               actionLabel: context.l10n.loginRequiredAction,
               onAction: () => showSignInRequiredDialog(context),
@@ -227,7 +228,7 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
         if (person.phone == null && person.email == null) {
           return SliverToBoxAdapter(
             child: SearchMessageView(
-              icon: Icons.contact_phone_outlined,
+              icon: LucideIcons.contact,
               title: context.l10n.profileNoContact,
             ),
           );
@@ -256,7 +257,7 @@ class _PublisherProfilePageState extends ConsumerState<PublisherProfilePage> {
         if (loaded.properties.isEmpty) {
           return SliverToBoxAdapter(
             child: SearchMessageView(
-              icon: Icons.holiday_village_outlined,
+              icon: LucideIcons.house,
               title: context.l10n.searchPersonEmpty,
             ),
           );

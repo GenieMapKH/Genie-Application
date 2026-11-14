@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_conversation_app_bar.dart';
@@ -51,10 +52,10 @@ void main() {
           expect((avatar.left + label.right) / 2, closeTo(width / 2, 0.01));
           expect(avatar.right, lessThan(label.left));
           expect(
-            tester.getCenter(find.byIcon(Icons.phone_outlined)).dx,
+            tester.getCenter(find.byIcon(LucideIcons.phone)).dx,
             greaterThan(nameCenter.dx),
           );
-          expect(find.byIcon(Icons.more_vert), findsNothing);
+          expect(find.byIcon(LucideIcons.ellipsisVertical), findsNothing);
           expect(tester.takeException(), isNull);
         }
       }
@@ -70,7 +71,7 @@ void main() {
     expect(find.byType(GlassIconButton), findsNWidgets(2));
     expect(find.text('Dara'), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.phone_outlined));
+    await tester.tap(find.byIcon(LucideIcons.phone));
     await tester.pumpAndSettle();
     expect(calls, 1);
   });
@@ -79,7 +80,7 @@ void main() {
     await _pump(tester, glass: false, onCall: () {});
 
     expect(find.byType(GlassIconButton), findsNothing);
-    expect(find.byIcon(Icons.arrow_back), findsOneWidget);
-    expect(find.byIcon(Icons.phone_outlined), findsOneWidget);
+    expect(find.byIcon(LucideIcons.arrowLeft), findsOneWidget);
+    expect(find.byIcon(LucideIcons.phone), findsOneWidget);
   });
 }

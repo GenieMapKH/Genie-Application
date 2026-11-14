@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
@@ -30,7 +31,7 @@ class GlassIconButton extends StatelessWidget {
 
   /// The back button: a chevron, as iOS draws it, named for screen readers.
   const GlassIconButton.back({super.key, required this.onPressed})
-    : icon = Icons.arrow_back_ios_new_rounded,
+    : icon = LucideIcons.arrowLeft,
       tooltip = null,
       color = null,
       size = 40,

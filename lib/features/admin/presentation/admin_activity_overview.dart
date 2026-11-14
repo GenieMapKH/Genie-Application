@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:intl/intl.dart';
 import '../data/admin_dashboard_repository.dart';
 import 'admin_metric_card.dart';
@@ -52,7 +53,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'active-users',
                   value: _number(data.activeUsers),
                   hint: 'Accounts not deactivated',
-                  icon: Icons.people_alt_outlined,
+                  icon: LucideIcons.usersRound,
                   color: const Color(0xFF2563EB),
                 ),
                 AdminMetricCard(
@@ -61,7 +62,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'all-users',
                   value: _number(data.totalUsers),
                   hint: '${_number(data.activeUsers)} active',
-                  icon: Icons.groups_outlined,
+                  icon: LucideIcons.usersRound,
                   color: const Color(0xFF0F766E),
                 ),
                 AdminMetricCard(
@@ -70,7 +71,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'new-users',
                   value: _number(data.newUsers7d),
                   hint: 'Last 7 days',
-                  icon: Icons.person_add_outlined,
+                  icon: LucideIcons.userRoundPlus,
                   color: const Color(0xFF2563EB),
                 ),
                 AdminMetricCard(
@@ -79,7 +80,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'subscriptions',
                   value: _number(data.activeSubscriptions),
                   hint: 'Currently active',
-                  icon: Icons.workspace_premium_outlined,
+                  icon: LucideIcons.award,
                   color: const Color(0xFF9333EA),
                 ),
               ],
@@ -109,7 +110,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'active-listings',
                   value: _number(data.activeListings),
                   hint: '${_number(data.newListings7d)} new this week',
-                  icon: Icons.home_work_outlined,
+                  icon: LucideIcons.building2,
                   color: const Color(0xFF059669),
                 ),
                 AdminMetricCard(
@@ -118,7 +119,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'all-listings',
                   value: _number(data.totalListings),
                   hint: 'Including drafts',
-                  icon: Icons.inventory_2_outlined,
+                  icon: LucideIcons.package,
                   color: const Color(0xFFB45309),
                 ),
                 AdminMetricCard(
@@ -127,7 +128,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'new-listings',
                   value: _number(data.newListings7d),
                   hint: 'Last 7 days',
-                  icon: Icons.add_home_outlined,
+                  icon: LucideIcons.housePlus,
                   color: const Color(0xFF059669),
                 ),
                 AdminMetricCard(
@@ -136,7 +137,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'leads',
                   value: _number(data.leads7d),
                   hint: 'Last 7 days',
-                  icon: Icons.trending_up,
+                  icon: LucideIcons.trendingUp,
                   color: const Color(0xFF7C3AED),
                 ),
                 AdminMetricCard(
@@ -145,7 +146,7 @@ class AdminActivityOverview extends StatelessWidget {
                   section: 'reports',
                   value: _number(data.openReports),
                   hint: 'Needs review',
-                  icon: Icons.flag_outlined,
+                  icon: LucideIcons.flag,
                   color: const Color(0xFFDC2626),
                 ),
               ],

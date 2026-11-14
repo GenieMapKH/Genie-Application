@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -96,7 +97,7 @@ class PropertyTextField extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.info_outline,
+                    LucideIcons.info,
                     size: 14,
                     color: context.colors.textMuted,
                   ),
@@ -179,7 +180,7 @@ class PropertyDropdown extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.info_outline,
+                    LucideIcons.info,
                     size: 14,
                     color: context.colors.textMuted,
                   ),

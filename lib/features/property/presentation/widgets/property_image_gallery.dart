@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
+﻿import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// Swipeable image gallery with a dot indicator, shared by the map card and the
@@ -152,7 +153,7 @@ class PropertyImagePlaceholder extends StatelessWidget {
       color: context.colors.divider,
       child: Center(
         child: Icon(
-          Icons.landscape_rounded,
+          LucideIcons.mountain,
           size: 44,
           color: context.colors.iconSubtle,
         ),

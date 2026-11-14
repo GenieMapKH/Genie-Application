@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/features/property/presentation/widgets/property_form_inputs.dart';
 import 'package:tilomnov/features/property/presentation/screens/add_property/add_property_page.dart';
@@ -27,7 +28,7 @@ class MaintenanceFeeFieldWidget extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.info_outline,
+                  LucideIcons.info,
                   size: 14,
                   color: context.colors.textMuted,
                 ),
@@ -81,7 +82,7 @@ class LeaseRemainingFieldWidget extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.info_outline,
+                  LucideIcons.info,
                   size: 14,
                   color: context.colors.textMuted,
                 ),

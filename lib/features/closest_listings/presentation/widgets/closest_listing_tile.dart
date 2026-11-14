@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -45,7 +46,7 @@ class ClosestListingTile extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.near_me_rounded, size: 14, color: colors.accent),
+            Icon(LucideIcons.navigation, size: 14, color: colors.accent),
             const SizedBox(width: 4),
             Flexible(
               child: Text(

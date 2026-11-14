@@ -49,6 +49,29 @@ void main() {
     expect(find.text('Back to Home'), findsOneWidget);
   });
 
+  testWidgets('simulation never claims a real payment or confirmation email', (
+    tester,
+  ) async {
+    final receipt = PaymentReceipt(
+      transactionId: 'fixture',
+      amountUsd: 1,
+      item: 'Test listing',
+      method: PaymentMethod.abaKhqr,
+      paidAt: DateTime(2026, 11, 13),
+      email: 'owner@example.invalid',
+      isSimulation: true,
+    );
+    await pumpTestApp(
+      tester,
+      PaymentSuccessPage(receipt: receipt, onDone: () {}),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Simulation'), findsWidgets);
+    expect(find.textContaining('no money'), findsWidgets);
+    expect(find.text('Success'), findsNothing);
+    expect(find.textContaining('Order confirmation email'), findsNothing);
+  });
+
   testWidgets('Download Receipt keeps the receipt picture', (tester) async {
     final saver = _Saver();
     await pumpTestApp(

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -107,25 +108,25 @@ class _SpecRow extends StatelessWidget {
     if (property.hasRooms && bedrooms != null) {
       if (bedrooms > 0) {
         specs.add((
-          Icons.bed_outlined,
+          LucideIcons.bedDouble,
           context.l10n.propertyBedroomCount(bedrooms),
         ));
       } else if (property.propertyType == 'Condo') {
-        specs.add((Icons.bed_outlined, context.l10n.propertyOptionStudio));
+        specs.add((LucideIcons.bedDouble, context.l10n.propertyOptionStudio));
       }
     }
     if (property.hasRooms &&
         property.bathrooms != null &&
         property.bathrooms! > 0) {
       specs.add((
-        Icons.bathtub_outlined,
+        LucideIcons.bath,
         context.l10n.propertyBathroomCount(property.bathrooms!),
       ));
     }
 
     final size = property.displaySize;
     if (size != null) {
-      specs.add((Icons.straighten, '${PropertyFormat.size(size)} m²'));
+      specs.add((LucideIcons.ruler, '${PropertyFormat.size(size)} m²'));
     }
 
     if (specs.isEmpty) {

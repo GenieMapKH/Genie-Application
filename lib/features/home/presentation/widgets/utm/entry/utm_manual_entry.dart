@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -187,7 +188,7 @@ class UtmManualEntry extends StatelessWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        Icons.add,
+                        LucideIcons.plus,
                         color: context.colors.textMuted,
                         size: 20,
                       ),

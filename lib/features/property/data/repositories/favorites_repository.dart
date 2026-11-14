@@ -49,12 +49,13 @@ class FavoritesRepository {
     required FavoriteSort sort,
     int limit = pageSize,
   }) async {
+    final scope = await _kept.capture();
     final response = await dio.get(
       '/properties/my/favorites',
       queryParameters: {'limit': limit, 'offset': offset, 'sort': sort.name},
     );
     final data = response.data as Map<String, dynamic>;
-    if (offset == 0) await _kept.write(_keptName(sort), data);
+    if (offset == 0) await _kept.write(_keptName(sort), data, scope: scope);
     return _pageOf(data);
   }
 

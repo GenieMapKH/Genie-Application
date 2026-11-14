@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 /// Reserved for accounts whose server-provided role is admin.
 class AdminAvatarFrame extends StatelessWidget {
@@ -39,7 +40,7 @@ class AdminAvatarFrame extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.all(3),
                 child: Icon(
-                  Icons.verified_user,
+                  LucideIcons.badgeCheck,
                   size: 14,
                   color: Color(0xFFF9DF93),
                 ),
@@ -57,7 +58,7 @@ class AdminIdentityBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Chip(
-    avatar: Icon(Icons.verified_user, size: 16, color: Color(0xFFF9DF93)),
+    avatar: Icon(LucideIcons.badgeCheck, size: 16, color: Color(0xFFF9DF93)),
     label: Text('Tilomnov Admin'),
     labelStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
     backgroundColor: Color(0xFF183B62),

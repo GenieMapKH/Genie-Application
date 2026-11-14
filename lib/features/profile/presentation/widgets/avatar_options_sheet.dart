@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -128,13 +129,13 @@ class _AvatarOptionsSheetState extends ConsumerState<AvatarOptionsSheet> {
           ),
           ListTile(
             enabled: !_isBusy,
-            leading: const Icon(Icons.camera_alt_outlined),
+            leading: const Icon(LucideIcons.camera),
             title: Text(l10n.avatarTakePhoto),
             onTap: () => _pick(ImageSource.camera),
           ),
           ListTile(
             enabled: !_isBusy,
-            leading: const Icon(Icons.photo_library_outlined),
+            leading: const Icon(LucideIcons.images),
             title: Text(l10n.avatarChooseFromStorage),
             onTap: () => _pick(ImageSource.gallery),
           ),
@@ -142,7 +143,7 @@ class _AvatarOptionsSheetState extends ConsumerState<AvatarOptionsSheet> {
             CheckboxListTile(
               enabled: !_isBusy,
               value: profile.avatarFromGoogle,
-              secondary: const Icon(Icons.sync),
+              secondary: const Icon(LucideIcons.refreshCw),
               title: Text(l10n.avatarSyncFromGoogle),
               subtitle: Text(
                 l10n.avatarSyncHelp,
@@ -154,7 +155,7 @@ class _AvatarOptionsSheetState extends ConsumerState<AvatarOptionsSheet> {
           if (hasOwnPicture)
             ListTile(
               enabled: !_isBusy,
-              leading: Icon(Icons.delete_outline, color: colors.danger),
+              leading: Icon(LucideIcons.trash2, color: colors.danger),
               title: Text(
                 l10n.avatarRemove,
                 style: TextStyle(color: colors.danger),

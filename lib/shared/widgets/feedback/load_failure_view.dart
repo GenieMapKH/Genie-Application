@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/network/load_failure.dart';
@@ -65,21 +66,21 @@ class _LoadFailureViewState extends State<LoadFailureView> {
     final failure = _failure;
     final (icon, title, body) = switch (failure) {
       LoadFailure.offline => (
-        Icons.wifi_off_rounded,
+        LucideIcons.wifiOff,
         l10n.loadFailureOfflineTitle,
         l10n.loadFailureOfflineBody,
       ),
       LoadFailure.slow => (
-        Icons.network_check_rounded,
+        LucideIcons.activity,
         l10n.loadFailureSlowTitle,
         l10n.loadFailureSlowBody,
       ),
       LoadFailure.server => (
-        Icons.cloud_off_rounded,
+        LucideIcons.cloudOff,
         widget.message,
         l10n.loadFailureServerBody,
       ),
-      LoadFailure.other => (Icons.error_outline_rounded, widget.message, null),
+      LoadFailure.other => (LucideIcons.circleAlert, widget.message, null),
     };
     final waiting =
         failure == LoadFailure.offline &&

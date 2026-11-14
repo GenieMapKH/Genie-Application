@@ -48,6 +48,7 @@ List<Override> _api(String body) => [
 Future<SearchSelection? Function()> _openSearch(
   WidgetTester tester, {
   String body = _results,
+  String initialText = '',
 }) async {
   SearchSelection? picked;
   await pumpTestApp(
@@ -55,8 +56,9 @@ Future<SearchSelection? Function()> _openSearch(
     Builder(
       builder: (context) => Scaffold(
         body: TextButton(
-          onPressed: () async =>
-              picked = await Navigator.of(context).push(SearchPage.route()),
+          onPressed: () async => picked = await Navigator.of(
+            context,
+          ).push(SearchPage.route(initialText: initialText)),
           child: const Text('open'),
         ),
       ),
@@ -75,6 +77,39 @@ Future<void> _type(WidgetTester tester, String text) async {
 }
 
 void main() {
+  testWidgets(
+    'reopening search with a place loads results without lifecycle errors',
+    (tester) async {
+      _useScreen(tester, _phone);
+      await _openSearch(tester, initialText: 'Veng Sreng');
+      expect(tester.takeException(), isNull);
+      final input = tester.widget<TextField>(find.byType(TextField));
+      expect(input.controller!.text, 'Veng Sreng');
+      expect(
+        input.controller!.selection,
+        const TextSelection(baseOffset: 0, extentOffset: 10),
+      );
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Veng Sreng Blvd'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.tap(find.byTooltip('Back'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Veng Sreng Blvd'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await _type(tester, 'another random place');
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        'another random place',
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   for (final (name, size) in [
     ('small phone', _smallPhone),
     ('phone', _phone),

@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -58,7 +59,7 @@ void main() {
         expect(opacity.opacity, lessThan(1));
         await tester.tap(find.text('Near Ring Road 3'));
         expect(opened, isFalse);
-        await tester.tap(find.byIcon(Icons.favorite));
+        await tester.tap(find.byIcon(LucideIcons.heart));
         expect(unsaved, isTrue);
       },
     );

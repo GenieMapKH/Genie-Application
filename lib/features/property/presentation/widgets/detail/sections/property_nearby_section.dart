@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -206,7 +207,7 @@ class _NearbyPlaceRow extends StatelessWidget {
             if (onTap != null) ...[
               const SizedBox(width: 4),
               Icon(
-                Icons.chevron_right,
+                LucideIcons.chevronRight,
                 size: 18,
                 color: context.colors.textMuted,
               ),

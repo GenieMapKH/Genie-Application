@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -13,7 +14,7 @@ class AdminSystemHealthPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final health = ref.watch(adminSystemHealthProvider);
     return AdminServiceCard(
-      icon: Icons.dns_rounded,
+      icon: LucideIcons.server,
       title: 'Backend services',
       onRefresh: () => ref.invalidate(adminSystemHealthProvider),
       refreshing: health.isLoading && health.hasValue,
@@ -33,8 +34,8 @@ class AdminSystemHealthPanel extends ConsumerWidget {
                           data.services.every(
                             (service) => service.status == 'up',
                           )
-                      ? Icons.check_circle_rounded
-                      : Icons.info_outline_rounded,
+                      ? LucideIcons.circleCheck
+                      : LucideIcons.info,
                   color:
                       data.services.isNotEmpty &&
                           data.services.every(
@@ -123,9 +124,9 @@ class _ServiceCard extends StatelessWidget {
               const Spacer(),
               Icon(
                 switch (service.status) {
-                  'up' => Icons.check_circle_outline,
-                  'down' => Icons.error_outline,
-                  _ => Icons.help_outline,
+                  'up' => LucideIcons.circleCheck,
+                  'down' => LucideIcons.circleAlert,
+                  _ => LucideIcons.circleHelp,
                 },
                 color: color,
                 size: 20,

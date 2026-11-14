@@ -146,6 +146,12 @@ the add-property drop-downs (their text is also the value sent to the server), t
 name or number in them, and messages composed in state classes (login form validation, chat send
 errors, last-seen labels).
 
+## Map skins
+
+The map button switches between Google's Default and Satellite views. Both
+use the native Google Maps renderer and share listing markers, boundary
+editing, and camera controls. The other map previews use satellite imagery.
+
 ## Security notes
 
 - Tokens are kept in the platform keystore (`flutter_secure_storage`).

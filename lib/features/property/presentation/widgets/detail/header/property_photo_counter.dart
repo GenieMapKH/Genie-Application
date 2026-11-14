@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// "3 / 12" in a dark pill: which photo is showing, of how many.
@@ -23,11 +24,7 @@ class PropertyPhotoCounter extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.photo_library_outlined,
-            size: 14,
-            color: Colors.white,
-          ),
+          const Icon(LucideIcons.images, size: 14, color: Colors.white),
           const SizedBox(width: 5),
           Text(
             '${index + 1} / $count',

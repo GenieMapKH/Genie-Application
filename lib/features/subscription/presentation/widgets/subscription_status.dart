@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -25,7 +26,7 @@ class _SubscriptionStatusState extends ConsumerState<SubscriptionStatus> {
     final confirmed = await AppDialog.show<bool>(
       context,
       builder: (_) => AppDialog(
-        icon: Icons.event_available_outlined,
+        icon: LucideIcons.calendarCheck,
         title: l10n.planCancelTitle,
         message: l10n.planCancelExplanation(expiresAt),
         primaryLabel: l10n.planCancelAction,
@@ -54,7 +55,7 @@ class _SubscriptionStatusState extends ConsumerState<SubscriptionStatus> {
       return TextButton.icon(
         style: TextButton.styleFrom(foregroundColor: ink),
         onPressed: () => ref.invalidate(accountSubscriptionProvider),
-        icon: const Icon(Icons.refresh),
+        icon: const Icon(LucideIcons.refreshCw),
         label: Text(context.l10n.planStatusRetry),
       );
     }

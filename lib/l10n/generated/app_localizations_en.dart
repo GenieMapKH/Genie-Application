@@ -9,6 +9,17 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get mapSkinDefault => 'Default map';
+
+  @override
+  String get mapSkinSatellite => 'Satellite map';
+
+  @override
+  String mapSkinSwitch(String skin) {
+    return 'Switch to $skin';
+  }
+
+  @override
   String get callInProgress => 'Call in progress';
 
   @override
@@ -3756,4 +3767,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentRenewalPrice => 'Renewal for another 30 days';
+
+  @override
+  String get paymentSimulation => 'Simulation';
+
+  @override
+  String get paymentSimulationNotice => 'Simulation - no money was charged.';
+
+  @override
+  String get authContactRequired => 'Enter a phone number or email.';
+
+  @override
+  String get authPhoneOptional => 'Phone number (optional)';
+
+  @override
+  String get authVerifyEmail => 'Verify email';
+
+  @override
+  String get authPhoneChangeInSettings =>
+      'To use a different account phone, change it in Account Settings first.';
+
+  @override
+  String get propertyVerifyPhone => 'Verify phone by SMS';
+
+  @override
+  String get propertyAccountPhoneVerified => 'Account phone verified';
+
+  @override
+  String get contactVerified => 'Verified';
+
+  @override
+  String get contactNotVerified => 'Not verified';
 }

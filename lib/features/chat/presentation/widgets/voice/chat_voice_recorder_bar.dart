@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/voice/voice_recording_progress.dart';
@@ -34,7 +35,7 @@ class ChatVoiceRecorderBar extends StatelessWidget {
         children: [
           IconButton(
             tooltip: context.l10n.chatDiscardVoice,
-            icon: Icon(Icons.delete_outline, color: context.colors.danger),
+            icon: Icon(LucideIcons.trash2, color: context.colors.danger),
             onPressed: recordingNow ? onDiscard : null,
           ),
           const SizedBox(width: 4),
@@ -50,7 +51,7 @@ class ChatVoiceRecorderBar extends StatelessWidget {
                 foregroundColor: context.colors.onPrimary,
               ),
               icon: recordingNow
-                  ? const Icon(Icons.send_rounded, size: 20)
+                  ? const Icon(LucideIcons.send, size: 20)
                   : SizedBox(
                       width: 18,
                       height: 18,

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 
@@ -94,7 +95,7 @@ class SettingsRow extends StatelessWidget {
         : (isAction ? colors.accent : null);
     final showChevron = onTap != null && !isAction;
     final chevron = Icon(
-      Icons.chevron_right,
+      LucideIcons.chevronRight,
       size: 20,
       color: colors.iconSubtle,
     );

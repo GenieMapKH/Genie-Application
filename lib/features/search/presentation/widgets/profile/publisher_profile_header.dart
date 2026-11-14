@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/shared/widgets/media/admin_identity.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -151,7 +152,7 @@ class _PublisherIdentity extends StatelessWidget {
         ],
         const SizedBox(height: 12),
         _Fact(
-          icon: Icons.holiday_village_outlined,
+          icon: LucideIcons.house,
           child: Row(
             children: [
               Text(
@@ -175,7 +176,7 @@ class _PublisherIdentity extends StatelessWidget {
         if (follow != null) ...[
           const SizedBox(height: 8),
           _Fact(
-            icon: Icons.people_outline_rounded,
+            icon: LucideIcons.usersRound,
             child: Row(
               children: [
                 _Count(follow.followerCount, l10n.profileFollowersStat),
@@ -188,7 +189,7 @@ class _PublisherIdentity extends StatelessWidget {
         if (since != null) ...[
           const SizedBox(height: 8),
           _Fact(
-            icon: Icons.calendar_today_outlined,
+            icon: LucideIcons.calendarDays,
             child: Text(
               l10n.profileMemberSince(
                 DateFormat.yMMMM(
@@ -281,7 +282,7 @@ class _PublisherActions extends StatelessWidget {
           Expanded(
             child: FilledButton.icon(
               onPressed: onChat,
-              icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
+              icon: const Icon(LucideIcons.messageCircle, size: 18),
               label: _ButtonLabel(l10n.profileChat),
               style: FilledButton.styleFrom(
                 backgroundColor: colors.accent,
@@ -296,7 +297,7 @@ class _PublisherActions extends StatelessWidget {
           Expanded(
             child: OutlinedButton.icon(
               onPressed: onViewOnMap,
-              icon: Icon(Icons.map_outlined, size: 18, color: colors.accent),
+              icon: Icon(LucideIcons.map, size: 18, color: colors.accent),
               label: _ButtonLabel(l10n.profileViewOnMap, color: colors.accent),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(0, 44),

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/shared/widgets/media/admin_identity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -177,7 +178,7 @@ class _ProfileTab extends StatelessWidget {
           const SizedBox(height: 16),
           FilledButton.icon(
             onPressed: onViewProfile,
-            icon: const Icon(Icons.account_circle_outlined, size: 18),
+            icon: const Icon(LucideIcons.circleUserRound, size: 18),
             label: Text(
               context.l10n.chatViewFullProfile,
               style: GoogleFonts.inter(fontWeight: FontWeight.w600),

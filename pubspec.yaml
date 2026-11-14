@@ -81,6 +81,7 @@ dependencies:
   sentry: ^10.2.0
   share_plus: ^13.3.1
   gal: ^2.3.3
+  lucide_flutter: ^1.66.0
 dev_dependencies:
   integration_test:
     sdk: flutter
@@ -131,8 +132,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-    # Only the pictures the app shows: the folder also holds an unused 1 MB
-    # mapLeaflet.jpg that would otherwise ship in every build.
     - assets/images/homescreen/mapDefault.png
     - assets/images/homescreen/mapSatellite.png
     - assets/images/brand/

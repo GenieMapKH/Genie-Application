@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -96,7 +97,7 @@ class _HistoryTile extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.history_rounded,
+                LucideIcons.history,
                 size: 20,
                 color: colors.textMuted,
               ),
@@ -119,20 +120,12 @@ class _HistoryTile extends StatelessWidget {
             IconButton(
               onPressed: onEdit,
               tooltip: l10n.searchHistoryEdit,
-              icon: Icon(
-                Icons.edit_outlined,
-                size: 20,
-                color: colors.textMuted,
-              ),
+              icon: Icon(LucideIcons.pencil, size: 20, color: colors.textMuted),
             ),
             IconButton(
               onPressed: onRemove,
               tooltip: l10n.searchHistoryRemove,
-              icon: Icon(
-                Icons.close_rounded,
-                size: 20,
-                color: colors.textMuted,
-              ),
+              icon: Icon(LucideIcons.x, size: 20, color: colors.textMuted),
             ),
           ],
         ),

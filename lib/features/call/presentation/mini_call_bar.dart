@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/call/providers/call_providers.dart';
@@ -35,7 +36,10 @@ class MiniCallBar extends ConsumerWidget {
                         onPressed: () =>
                             ref.read(callMinimizedProvider.notifier).state =
                                 false,
-                        icon: const Icon(Icons.call, color: Colors.white),
+                        icon: const Icon(
+                          LucideIcons.phone,
+                          color: Colors.white,
+                        ),
                         label: Text(
                           call.peerName ?? context.l10n.callReturn,
                           maxLines: 1,
@@ -46,7 +50,10 @@ class MiniCallBar extends ConsumerWidget {
                     ),
                     IconButton(
                       tooltip: context.l10n.callHangUp,
-                      icon: const Icon(Icons.call_end, color: Colors.redAccent),
+                      icon: const Icon(
+                        LucideIcons.phoneOff,
+                        color: Colors.redAccent,
+                      ),
                       onPressed: ref
                           .read(callControllerProvider.notifier)
                           .hangUp,

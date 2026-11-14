@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,7 +33,7 @@ class AccountRemovalPage extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
           _RemovalOption(
-            icon: Icons.pause_circle_outline,
+            icon: LucideIcons.circlePause,
             title: l10n.removeAccountDeactivateTitle,
             body: l10n.removeAccountDeactivateBody,
             actionLabel: l10n.removeAccountDeactivateAction,
@@ -48,7 +49,7 @@ class AccountRemovalPage extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           _RemovalOption(
-            icon: Icons.delete_forever_outlined,
+            icon: LucideIcons.trash2,
             title: l10n.removeAccountDeleteTitle,
             body: l10n.removeAccountDeleteBody,
             actionLabel: l10n.removeAccountDeleteAction,

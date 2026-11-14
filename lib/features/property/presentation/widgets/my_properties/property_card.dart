@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -125,8 +126,8 @@ class PropertyCard extends StatelessWidget {
                     children: [
                       Icon(
                         property.propertyType == 'Land'
-                            ? Icons.landscape
-                            : Icons.home_outlined,
+                            ? LucideIcons.mountain
+                            : LucideIcons.house,
                         size: 14,
                         color: context.colors.textSecondary,
                       ),

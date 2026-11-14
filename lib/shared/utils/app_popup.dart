@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -30,7 +31,7 @@ class AppPopup {
       Overlay.of(context, rootOverlay: true),
       message,
       tone: AppPopupTone.error,
-      icon: Icons.wifi_off_rounded,
+      icon: LucideIcons.wifiOff,
       onRetry: onRetry,
     );
   }
@@ -83,19 +84,19 @@ class AppPopup {
   static (IconData, Color, Color, Color) _style(AppPopupTone tone) =>
       switch (tone) {
         AppPopupTone.success => (
-          Icons.check_circle_rounded,
+          LucideIcons.circleCheck,
           const Color(0xFF10B981), // Emerald Green
           const Color(0xFF064E3B), // Very dark emerald
           const Color(0xFF059669).withValues(alpha: 0.3),
         ),
         AppPopupTone.error => (
-          Icons.error_rounded,
+          LucideIcons.circleAlert,
           const Color(0xFFEF4444), // Rose Red
           const Color(0xFF4C0519), // Very dark rose
           const Color(0xFFE11D48).withValues(alpha: 0.3),
         ),
         AppPopupTone.info => (
-          Icons.info_rounded,
+          LucideIcons.info,
           AppColors.light.highlight, // Brand gold
           AppColors.light.primary, // Brand navy
           AppColors.light.highlight.withValues(alpha: 0.3),
@@ -242,7 +243,7 @@ class _TopToastWidgetState extends State<_TopToastWidget>
                     IconButton(
                       tooltip: context.l10n.commonRetry,
                       icon: Icon(
-                        Icons.refresh_rounded,
+                        LucideIcons.refreshCw,
                         color: widget.iconColor,
                       ),
                       onPressed: () {

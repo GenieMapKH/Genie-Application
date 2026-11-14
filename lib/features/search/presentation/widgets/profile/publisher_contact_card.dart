@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,13 +21,13 @@ class PublisherContactCard extends StatelessWidget {
     final rows = [
       if (person.phone case final phone?)
         _ContactRow(
-          icon: Icons.phone_outlined,
+          icon: LucideIcons.phone,
           label: l10n.profilePhone,
           value: phone,
         ),
       if (person.email case final email?)
         _ContactRow(
-          icon: Icons.mail_outline_rounded,
+          icon: LucideIcons.mail,
           label: l10n.profileEmail,
           value: email,
         ),
@@ -131,7 +132,7 @@ class _ContactRow extends StatelessWidget {
             IconButton(
               onPressed: () => _copy(context),
               tooltip: '${context.l10n.profileCopy} $label',
-              icon: Icon(Icons.copy_rounded, size: 18, color: colors.textMuted),
+              icon: Icon(LucideIcons.copy, size: 18, color: colors.textMuted),
             ),
           ],
         ),

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -132,7 +133,7 @@ class _PropertyVisibilitySheetState extends State<PropertyVisibilitySheet> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : isCurrent
-            ? Icon(Icons.check_circle, color: context.colors.accent)
+            ? Icon(LucideIcons.circleCheck, color: context.colors.accent)
             : null,
         onTap: () => _save(value),
       );
@@ -160,7 +161,7 @@ class _PropertyVisibilitySheetState extends State<PropertyVisibilitySheet> {
               ),
               option(
                 PropertyVisibility.public,
-                const Icon(Icons.public),
+                const Icon(LucideIcons.globe2),
                 l10n.propertyVisibilityPublic,
                 l10n.propertyVisibilityPublicHint,
               ),

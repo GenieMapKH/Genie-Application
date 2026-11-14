@@ -1,8 +1,8 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -15,8 +15,7 @@ import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.
 import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_selection.dart';
-import 'package:tilomnov/features/search/presentation/widgets/area/search_area_highlight.dart';
-import 'package:tilomnov/core/logging/app_logger.dart';
+import 'package:tilomnov/features/search/data/models/search_boundary.dart';
 import 'package:tilomnov/features/home/utils/map/map_camera_focus.dart';
 import 'package:tilomnov/features/home/utils/map/map_overlay_builder.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -44,54 +43,13 @@ class MainMapView extends ConsumerStatefulWidget {
 }
 
 class MainMapViewState extends ConsumerState<MainMapView> {
-  final _searchScreenPoints = ValueNotifier<List<Offset>>(const []);
-  Timer? _searchProjectionTimer;
-  int _searchProjectionGeneration = 0;
-
-  List<LatLng> get _searchOutline {
+  List<SearchBoundary> get _searchBoundaries {
     final search = ref.read(searchAreaControllerProvider);
     if (search?.target is! PlaceTarget ||
         ref.read(mapStateProvider).isDrawing) {
       return const [];
     }
-    return search?.area.valueOrNull?.outline ?? const [];
-  }
-
-  void _scheduleSearchProjection() {
-    if (_searchProjectionTimer?.isActive == true) return;
-    _searchProjectionTimer = Timer(
-      const Duration(milliseconds: 50),
-      _projectSearchOutline,
-    );
-  }
-
-  Future<void> _projectSearchOutline() async {
-    if (!mounted || !widget.mapControllerCompleter.isCompleted) return;
-    final generation = ++_searchProjectionGeneration;
-    final outline = _searchOutline;
-    if (outline.isEmpty) {
-      _searchScreenPoints.value = const [];
-      return;
-    }
-    try {
-      final controller = await widget.mapControllerCompleter.future;
-      final pixels = await Future.wait(
-        outline.map(controller.getScreenCoordinate),
-      );
-      if (!mounted || generation != _searchProjectionGeneration) return;
-      // Android returns physical pixels; iOS and web return logical pixels.
-      final scale = !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-          ? MediaQuery.devicePixelRatioOf(context)
-          : 1.0;
-      _searchScreenPoints.value = [
-        for (final p in pixels) Offset(p.x / scale, p.y / scale),
-      ];
-    } catch (error) {
-      if (mounted && generation == _searchProjectionGeneration) {
-        _searchScreenPoints.value = const [];
-      }
-      AppLogger.error('Could not project the search area', error);
-    }
+    return search?.area.valueOrNull?.boundaries ?? const [];
   }
 
   late final _overlays = MainMapOverlays(
@@ -130,7 +88,6 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _scheduleSearchProjection();
     _overlays.animateClusters = !AppMotion.reduceMotionOf(context);
     final l10n = context.l10n;
     if (_iconsLanguage == l10n.localeName) return;
@@ -140,9 +97,6 @@ class MainMapViewState extends ConsumerState<MainMapView> {
 
   @override
   void dispose() {
-    _searchProjectionTimer?.cancel();
-    _searchProjectionGeneration++;
-    _searchScreenPoints.dispose();
     _overlays.dispose();
     super.dispose();
   }
@@ -228,7 +182,6 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   }
 
   Future<void> _handleCameraIdle() async {
-    _projectSearchOutline();
     final state = ref.read(mapStateProvider);
     final camera = ref.read(mapCameraProvider);
     MapStorage.saveLastPosition(
@@ -283,7 +236,6 @@ class MainMapViewState extends ConsumerState<MainMapView> {
   /// Runs on every frame of a pan or zoom, so it must stay trivial: record the
   /// camera and only touch the overlays when a zoom band is crossed.
   void _handleCameraMove(CameraPosition position) {
-    _scheduleSearchProjection();
     final cameraNotifier = ref.read(mapCameraProvider.notifier);
     final previousZoom = cameraNotifier.state.zoom;
     cameraNotifier.state = MapCamera(
@@ -326,13 +278,6 @@ class MainMapViewState extends ConsumerState<MainMapView> {
       },
     );
     ref.listen(mapStateProvider, _overlays.onMapStateChanged);
-    ref.listen(searchAreaControllerProvider, (previous, next) {
-      if (previous?.area != next?.area || previous?.target != next?.target) {
-        _searchProjectionGeneration++;
-        _searchScreenPoints.value = const [];
-        _scheduleSearchProjection();
-      }
-    });
     ref.listen(
       searchAreaControllerProvider.select((state) => state?.focused?.id),
       (_, _) => _overlays.rebuildListings(),
@@ -361,9 +306,10 @@ class MainMapViewState extends ConsumerState<MainMapView> {
             right: 0,
             bottom: -40,
             child: GoogleMap(
-              mapType: skin == MapSkin.satellite
-                  ? MapType.hybrid
-                  : MapType.normal,
+              mapType: switch (skin) {
+                MapSkin.defaultMap => MapType.normal,
+                MapSkin.satellite => MapType.hybrid,
+              },
               initialCameraPosition: _initialPosition,
               onMapCreated: (GoogleMapController controller) {
                 if (!widget.mapControllerCompleter.isCompleted) {
@@ -386,10 +332,11 @@ class MainMapViewState extends ConsumerState<MainMapView> {
               markers: _overlays.current.markers,
               polygons: {
                 ..._overlays.current.polygons,
-                if (_searchOutline.length >= 3)
+                for (final (index, boundary) in _searchBoundaries.indexed)
                   Polygon(
-                    polygonId: const PolygonId('searched-area'),
-                    points: _searchOutline,
+                    polygonId: PolygonId('searched-area-$index'),
+                    points: boundary.points,
+                    holes: boundary.holes,
                     strokeColor: const Color(0xFFE5484D),
                     strokeWidth: 3,
                     fillColor: const Color(0xFFE5484D).withValues(alpha: 0.04),
@@ -405,15 +352,6 @@ class MainMapViewState extends ConsumerState<MainMapView> {
               myLocationEnabled: true,
             ),
           ),
-
-          if (_searchOutline.isNotEmpty)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: -_mapFrameOverflow,
-              child: SearchAreaHighlight(points: _searchScreenPoints),
-            ),
 
           // Dots merging or splitting after a zoom, over the map's frame.
           if (_overlays.transition case final transition?)
@@ -451,7 +389,7 @@ class MainMapViewState extends ConsumerState<MainMapView> {
                     ),
                     child: const Center(
                       child: Icon(
-                        Icons.add,
+                        LucideIcons.plus,
                         size: 28,
                         color: Color(0xFFE5484D),
                       ),

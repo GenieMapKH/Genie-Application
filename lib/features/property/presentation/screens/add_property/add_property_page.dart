@@ -122,6 +122,8 @@ class AddPropertyPageState extends ConsumerState<AddPropertyPage> {
   /// Whether the Archive button, not Publish, started the running save.
   bool isArchiving = false;
 
+  bool isVerifyingPhone = false;
+
   /// How the listing is published when it does not fit in the user's plan;
   /// null until chosen.
   PublishingPlan? selectedPublishingPlan;

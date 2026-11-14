@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
@@ -36,24 +37,24 @@ class SecurityPage extends ConsumerWidget {
               // change until it creates one.
               if (profile?.hasPassword ?? true)
                 SettingsRow(
-                  icon: Icons.password_outlined,
+                  icon: LucideIcons.keyRound,
                   title: l10n.securityChangePassword,
                   onTap: () => context.pushPage(const ChangePasswordPage()),
                 )
               else
                 SettingsRow(
-                  icon: Icons.password_outlined,
+                  icon: LucideIcons.keyRound,
                   title: l10n.securityCreatePassword,
                   onTap: () => context.pushPage(const CreatePasswordPage()),
                 ),
               SettingsRow(
-                icon: Icons.devices_outlined,
+                icon: LucideIcons.laptop,
                 title: l10n.securityDevices,
                 onTap: () => context.pushPage(const DevicesPage()),
               ),
               if (!isAdmin)
                 SettingsRow(
-                  icon: Icons.block,
+                  icon: LucideIcons.ban,
                   title: l10n.blockedAccountsTitle,
                   onTap: () => context.pushPage(const BlockedAccountsPage()),
                 ),
@@ -65,7 +66,7 @@ class SecurityPage extends ConsumerWidget {
             SettingsSection(
               children: [
                 SettingsRow(
-                  icon: Icons.no_accounts_outlined,
+                  icon: LucideIcons.userRoundX,
                   title: l10n.securityRemoveAccount,
                   onTap: () => context.pushPage(const AccountRemovalPage()),
                 ),

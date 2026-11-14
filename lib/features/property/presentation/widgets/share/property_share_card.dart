@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -191,7 +192,7 @@ class _NoPhoto extends StatelessWidget {
       color: PropertyShareCard._colors.divider,
       child: Center(
         child: Icon(
-          Icons.landscape_rounded,
+          LucideIcons.mountain,
           size: 44,
           color: PropertyShareCard._colors.iconSubtle,
         ),

@@ -29,6 +29,11 @@ class _Server extends PropertyRepository {
       super(Dio());
 
   @override
+  Future<OwnListingsPage?> keptOwnFirstPage({
+    List<String> statuses = const [],
+  }) async => null;
+
+  @override
   Future<OwnListingsPage> fetchOwnPage({
     required int offset,
     int limit = PropertyRepository.ownPageSize,

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -156,7 +157,7 @@ class _PlayButton extends StatelessWidget {
                   ? context.l10n.chatPauseVoice
                   : context.l10n.chatPlayVoice,
               icon: Icon(
-                playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                playing ? LucideIcons.pause : LucideIcons.play,
                 color: color,
                 size: 30,
               ),
@@ -180,8 +181,8 @@ class _SpeedChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = speed == speed.roundToDouble()
-        ? '${speed.toInt()}×'
-        : '$speed×';
+        ? '${speed.toInt()}\u00d7'
+        : '$speed\u00d7';
     return Semantics(
       button: true,
       label: '${context.l10n.chatVoiceSpeed} $label',

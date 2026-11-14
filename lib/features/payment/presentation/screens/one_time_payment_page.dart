@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -81,7 +82,7 @@ class _OneTimePaymentPageState extends State<OneTimePaymentPage> {
                 const SizedBox(height: 20),
                 if (widget.onChooseSubscription != null) ...[
                   OutlinedButton.icon(
-                    icon: const Icon(Icons.workspace_premium_outlined),
+                    icon: const Icon(LucideIcons.award),
                     label: Text(l10n.publishPlanSubscription),
                     onPressed: _publishing
                         ? null

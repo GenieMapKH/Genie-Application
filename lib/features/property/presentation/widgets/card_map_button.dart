@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -20,7 +21,7 @@ class CardMapButton extends StatelessWidget {
         dimension: 44,
         child: Center(
           child: GlassIconButton(
-            icon: Icons.map_outlined,
+            icon: LucideIcons.map,
             tooltip: tooltip,
             onPressed: onPressed,
             size: 32,
@@ -51,7 +52,7 @@ class CardMapButton extends StatelessWidget {
                 ],
               ),
               child: Icon(
-                Icons.map_outlined,
+                LucideIcons.map,
                 size: 18,
                 color: context.colors.textPrimary,
               ),

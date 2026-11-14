@@ -1,6 +1,7 @@
-import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
+﻿import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
 import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -63,7 +64,7 @@ class ClosestListingsBody extends ConsumerWidget {
               Column(
                 children: [
                   FeedMessageView(
-                    icon: Icons.travel_explore_rounded,
+                    icon: LucideIcons.compass,
                     title: l10n.closestEmptyTitle,
                     hint: l10n.closestEmptyHint,
                     actionLabel: l10n.commonRetry,

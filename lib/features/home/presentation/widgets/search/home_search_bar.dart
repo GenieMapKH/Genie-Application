@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -64,7 +64,7 @@ class HomeSearchBar extends ConsumerWidget {
         ],
         child: Row(
           children: [
-            SvgPicture.asset('assets/icons/search.svg', width: 24, height: 24),
+            Icon(LucideIcons.search, size: 24, color: context.colors.textMuted),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -91,11 +91,7 @@ class HomeSearchBar extends ConsumerWidget {
                     ref.read(searchAreaControllerProvider.notifier).clear(),
                 tooltip: context.l10n.searchClear,
                 visualDensity: VisualDensity.compact,
-                icon: Icon(
-                  Icons.close_rounded,
-                  size: 20,
-                  color: colors.textMuted,
-                ),
+                icon: Icon(LucideIcons.x, size: 20, color: colors.textMuted),
               ),
           ],
         ),

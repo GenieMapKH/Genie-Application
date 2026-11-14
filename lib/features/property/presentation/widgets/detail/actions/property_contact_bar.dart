@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -39,7 +40,7 @@ class PropertyContactBar extends StatelessWidget {
                   ),
                 ),
                 icon: Icon(
-                  Icons.chat_bubble_outline,
+                  LucideIcons.messageCircle,
                   size: 18,
                   color: context.colors.textPrimary,
                 ),
@@ -68,7 +69,7 @@ class PropertyContactBar extends StatelessWidget {
                   ),
                 ),
                 icon: Icon(
-                  Icons.phone,
+                  LucideIcons.phone,
                   size: 18,
                   color: context.colors.onPrimary,
                 ),

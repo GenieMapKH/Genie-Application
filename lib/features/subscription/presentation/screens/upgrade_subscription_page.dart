@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
@@ -84,6 +85,7 @@ class _UpgradeSubscriptionPageState
         context,
         receipt: PaymentReceipt(
           transactionId: outcome.transactionId ?? '',
+          isSimulation: outcome.isSimulation,
           amountUsd: outcome.amountUsd ?? quote.amount,
           item: context.l10n.paymentItemSubscription(
             plan.tier.label(context.l10n),
@@ -163,7 +165,7 @@ class _UpgradeSubscriptionPageState
                   ),
                   TextButton.icon(
                     onPressed: () => ref.invalidate(quoteProvider),
-                    icon: const Icon(Icons.refresh),
+                    icon: const Icon(LucideIcons.refreshCw),
                     label: Text(l10n.planStatusRetry),
                   ),
                 ],

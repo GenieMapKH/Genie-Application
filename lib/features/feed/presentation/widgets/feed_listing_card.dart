@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/features/property/presentation/widgets/takeover_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -89,7 +90,7 @@ class FeedListingCard extends StatelessWidget {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Icon(
-                          Icons.trending_down_rounded,
+                          LucideIcons.trendingDown,
                           size: 16,
                           color: colors.success,
                         ),
@@ -162,9 +163,7 @@ class FeedListingCard extends StatelessWidget {
                   child: TextButton.icon(
                     onPressed: onFavoriteToggled,
                     icon: Icon(
-                      isFavorite
-                          ? Icons.bookmark_rounded
-                          : Icons.bookmark_border_rounded,
+                      isFavorite ? LucideIcons.bookmark : LucideIcons.bookmark,
                       size: 21,
                     ),
                     label: Text(
@@ -182,7 +181,7 @@ class FeedListingCard extends StatelessWidget {
                   onPressed: property.isPublic
                       ? () => PropertyShareSheet.show(context, property)
                       : null,
-                  icon: const Icon(Icons.ios_share_rounded, size: 20),
+                  icon: const Icon(LucideIcons.share, size: 20),
                   label: Text(l10n.propertyShare),
                   style: TextButton.styleFrom(
                     foregroundColor: colors.textSecondary,
@@ -192,7 +191,7 @@ class FeedListingCard extends StatelessWidget {
                 if (property.isPublic && onViewOnMap != null)
                   TextButton.icon(
                     onPressed: onViewOnMap,
-                    icon: const Icon(Icons.map_outlined, size: 21),
+                    icon: const Icon(LucideIcons.map, size: 21),
                     label: Text(l10n.propertyViewOnMap),
                     style: TextButton.styleFrom(
                       foregroundColor: colors.textSecondary,

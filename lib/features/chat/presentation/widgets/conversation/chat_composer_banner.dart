@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -26,8 +27,8 @@ class ChatComposerBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final (icon, title) = switch (mode) {
-      ReplyingTo() => (Icons.reply, l10n.chatReplyingTo(authorName)),
-      EditingMessage() => (Icons.edit_outlined, l10n.chatEditingMessage),
+      ReplyingTo() => (LucideIcons.reply, l10n.chatReplyingTo(authorName)),
+      EditingMessage() => (LucideIcons.pencil, l10n.chatEditingMessage),
     };
 
     return Container(
@@ -68,7 +69,7 @@ class ChatComposerBanner extends StatelessWidget {
           ),
           IconButton(
             tooltip: l10n.commonCancel,
-            icon: Icon(Icons.close, color: context.colors.textMuted),
+            icon: Icon(LucideIcons.x, color: context.colors.textMuted),
             onPressed: onCancel,
           ),
         ],

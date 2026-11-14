@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -59,7 +60,7 @@ class ChatListingOfferBar extends StatelessWidget {
               IconButton(
                 tooltip: l10n.chatDismissListing,
                 visualDensity: VisualDensity.compact,
-                icon: Icon(Icons.close, size: 18, color: colors.textMuted),
+                icon: Icon(LucideIcons.x, size: 18, color: colors.textMuted),
                 onPressed: onDismiss,
               ),
             ],
@@ -81,7 +82,7 @@ class ChatListingOfferBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  icon: const Icon(Icons.send_outlined, size: 16),
+                  icon: const Icon(LucideIcons.send, size: 16),
                   label: Text(l10n.chatSendListing),
                 ),
               ),

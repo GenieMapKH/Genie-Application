@@ -9,6 +9,17 @@ class AppLocalizationsKm extends AppLocalizations {
   AppLocalizationsKm([String locale = 'km']) : super(locale);
 
   @override
+  String get mapSkinDefault => 'ផែនទីធម្មតា';
+
+  @override
+  String get mapSkinSatellite => 'ផែនទីផ្កាយរណប';
+
+  @override
+  String mapSkinSwitch(String skin) {
+    return 'ប្តូរទៅ$skin';
+  }
+
+  @override
   String get callInProgress => 'កំពុងហៅ';
 
   @override
@@ -3722,4 +3733,35 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get paymentRenewalPrice => 'តម្លៃបន្តសម្រាប់ ៣០ ថ្ងៃទៀត';
+
+  @override
+  String get paymentSimulation => '??????????';
+
+  @override
+  String get paymentSimulationNotice => '?????????? - ?????????????????????';
+
+  @override
+  String get authContactRequired => 'បញ្ចូលលេខទូរសព្ទ ឬអ៊ីមែល។';
+
+  @override
+  String get authPhoneOptional => 'លេខទូរសព្ទ (មិនចាំបាច់)';
+
+  @override
+  String get authVerifyEmail => 'ផ្ទៀងផ្ទាត់អ៊ីមែល';
+
+  @override
+  String get authPhoneChangeInSettings =>
+      'ដើម្បីប្រើលេខទូរសព្ទគណនីផ្សេង សូមប្ដូរវានៅក្នុងការកំណត់គណនីជាមុនសិន។';
+
+  @override
+  String get propertyVerifyPhone => 'ផ្ទៀងផ្ទាត់លេខទូរសព្ទតាម SMS';
+
+  @override
+  String get propertyAccountPhoneVerified => 'លេខទូរសព្ទគណនីបានផ្ទៀងផ្ទាត់';
+
+  @override
+  String get contactVerified => 'បានផ្ទៀងផ្ទាត់';
+
+  @override
+  String get contactNotVerified => 'មិនទាន់បានផ្ទៀងផ្ទាត់';
 }

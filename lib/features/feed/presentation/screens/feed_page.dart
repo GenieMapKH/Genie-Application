@@ -1,7 +1,8 @@
-import 'package:tilomnov/features/advertisements/data/advertisement.dart';
+﻿import 'package:tilomnov/features/advertisements/data/advertisement.dart';
 import 'package:tilomnov/features/advertisements/presentation/advertisements_provider.dart';
 import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -153,7 +154,7 @@ class FeedPage extends ConsumerWidget {
                       ? _message(
                           context,
                           FeedMessageView(
-                            icon: Icons.dynamic_feed_rounded,
+                            icon: LucideIcons.rss,
                             title: filters.isDefault
                                 ? l10n.feedEmptyTitle
                                 : l10n.feedNoMatches,

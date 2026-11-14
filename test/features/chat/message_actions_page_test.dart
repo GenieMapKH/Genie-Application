@@ -88,10 +88,14 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> send(WidgetTester tester, String text, {IconData? icon}) async {
+  Future<void> send(
+    WidgetTester tester,
+    String text, {
+    bool editing = false,
+  }) async {
     await tester.enterText(find.byType(TextField), text);
     await tester.pump(); // The send button takes the microphone's place.
-    await tester.tap(find.byIcon(icon ?? Icons.send_rounded));
+    await tester.tap(find.bySemanticsLabel(editing ? 'Save' : 'Send message'));
     await tester.pump();
     await tester.pump();
   }
@@ -139,7 +143,7 @@ void main() {
       await openChat(tester);
       await swipe(tester, 'Hi', 100);
 
-      await tester.tap(find.byIcon(Icons.close));
+      await tester.tap(find.byTooltip('Cancel'));
       await tester.pump();
       await send(tester, 'New topic');
 
@@ -195,7 +199,7 @@ void main() {
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.controller!.text, 'See you at 5');
 
-      await send(tester, 'See you at 6', icon: Icons.check);
+      await send(tester, 'See you at 6', editing: true);
 
       expect(repository.messageChanges, ['edit m1 sealed:See you at 6']);
       expect(find.text('See you at 6'), findsOneWidget);

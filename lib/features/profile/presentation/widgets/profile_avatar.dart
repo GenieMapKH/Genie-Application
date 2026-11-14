@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/profile/data/models/user_profile.dart';
@@ -112,7 +113,11 @@ class ProfileAvatar extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: colors.background, width: 2),
               ),
-              child: Icon(Icons.camera_alt, size: 18, color: colors.onPrimary),
+              child: const Icon(
+                LucideIcons.camera,
+                size: 18,
+                color: Colors.white,
+              ),
             ),
           ),
         ),

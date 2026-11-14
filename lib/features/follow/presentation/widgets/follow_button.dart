@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -28,7 +29,7 @@ class PublisherFollowButton extends StatelessWidget {
     // quiet: the page's colours, with a check.
     return FilledButton.icon(
       onPressed: onPressed,
-      icon: Icon(following ? Icons.check_rounded : Icons.add_rounded, size: 20),
+      icon: Icon(following ? LucideIcons.check : LucideIcons.plus, size: 20),
       label: Text(
         following ? context.l10n.profileFollowing : context.l10n.profileFollow,
         style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700),

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tilomnov/core/network/auth_interceptor.dart';
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
 
@@ -18,6 +20,8 @@ class _Api implements HttpClientAdapter {
   /// What `/users/me` answers once the token is accepted.
   int profileStatus = 200;
   final List<String> calls = [];
+  Completer<void>? profileGate;
+  Completer<void>? profileEntered;
 
   @override
   Future<ResponseBody> fetch(
@@ -40,6 +44,8 @@ class _Api implements HttpClientAdapter {
         'refreshToken': 'new-refresh',
       });
     }
+    profileEntered?.complete();
+    await profileGate?.future;
     final signedIn =
         options.headers['Authorization'] == 'Bearer $acceptedToken';
     return _json(signedIn ? profileStatus : 401, {'id': 'me'});
@@ -67,6 +73,7 @@ void main() {
   late int sessionsEnded;
 
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     FlutterSecureStorage.setMockInitialValues({
       'access_token': 'expired-access',
       'refresh_token': 'old-refresh',
@@ -157,6 +164,26 @@ void main() {
     expect((await late).statusCode, 200);
     expect(api.calls, isNot(contains('/auth/refresh')));
   });
+
+  test(
+    'a previous account 401 is never replayed as the newly signed-in account',
+    () async {
+      api.profileGate = Completer<void>();
+      api.profileEntered = Completer<void>();
+      final request = dio.get('/users/me');
+      await api.profileEntered!.future;
+      await AuthStorage.saveTokens(
+        access: 'bob-access',
+        refresh: 'bob-refresh',
+      );
+      api.profileGate!.complete();
+      await expectLater(request, throwsA(isA<DioException>()));
+      expect(api.calls, ['/users/me']);
+      expect(await AuthStorage.getAccessToken(), 'bob-access');
+      expect(await AuthStorage.getRefreshToken(), 'bob-refresh');
+      expect(sessionsEnded, 0);
+    },
+  );
 
   test('a repeated request refused again is not renewed again', () async {
     api.acceptedToken = 'never';

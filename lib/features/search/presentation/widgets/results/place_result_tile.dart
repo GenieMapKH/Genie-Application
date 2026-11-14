@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -38,7 +39,7 @@ class PlaceResultTile extends StatelessWidget {
                 color: colors.primarySoft,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.place_rounded, size: 22, color: colors.primary),
+              child: Icon(LucideIcons.mapPin, size: 22, color: colors.primary),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -72,7 +73,7 @@ class PlaceResultTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Icon(Icons.north_west_rounded, size: 18, color: colors.iconSubtle),
+            Icon(LucideIcons.moveUpLeft, size: 18, color: colors.iconSubtle),
           ],
         ),
       ),

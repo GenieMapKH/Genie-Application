@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
@@ -68,7 +69,7 @@ class _SavePhotoButtonState extends ConsumerState<SavePhotoButton> {
     return IconButton(
       onPressed: _save,
       tooltip: context.l10n.propertySavePhoto,
-      icon: const Icon(Icons.download_rounded),
+      icon: const Icon(LucideIcons.download),
       color: Colors.white,
     );
   }

@@ -96,6 +96,57 @@ void main() {
     expect(find.byType(AddEmailPage), findsNothing);
   });
 
+  testWidgets('verifies the email deferred during phone-first signup', (
+    tester,
+  ) async {
+    final server = StubServer.always(200);
+    await pumpTestApp(
+      tester,
+      const PersonalInfoPage(),
+      overrides: [
+        authServiceProvider.overrideWithValue(_EmailCodes()),
+        userProfileProvider.overrideWith(
+          (ref) async => UserProfile(
+            id: 'u1',
+            email: 'dara@example.com',
+            emailVerified: false,
+            phone: '+85512345678',
+            phoneVerified: true,
+            role: 'user',
+            createdAt: DateTime(2026),
+          ),
+        ),
+        accountRepositoryProvider.overrideWithValue(
+          AccountRepository(server.dio),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Verify email'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AddEmailPage), findsOneWidget);
+    expect(
+      tester.widget<TextFormField>(_input('add_email_field')).enabled,
+      isFalse,
+    );
+    await tester.enterText(_input('add_email_password_field'), 'secret');
+    await tester.tap(find.byType(AppButton));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(server.requests, isEmpty);
+    await tester.enterText(_input('contact_otp'), '123456');
+    await tester.tap(find.text('Verify'));
+    await tester.pumpAndSettle();
+    expect(server.requests.single.body, {
+      'email': 'dara@example.com',
+      'password': 'secret',
+      'emailProof': 'email-proof',
+    });
+    expect(find.byType(AddEmailPage), findsNothing);
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('says when another account has the email', (tester) async {
     await pumpTestApp(
       tester,

@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,27 +47,27 @@ void main() {
       await tester.tap(find.text('Personal information'));
       await tester.pumpAndSettle();
       expect(find.byType(PersonalInfoPage), findsOneWidget);
-      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.tap(find.byIcon(LucideIcons.arrowLeft));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Security'));
       await tester.pumpAndSettle();
       expect(find.byType(SecurityPage), findsOneWidget);
       expect(find.text('Change password'), findsOneWidget);
-      expect(find.byIcon(Icons.devices_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.no_accounts_outlined), findsNothing);
-      expect(find.byIcon(Icons.block), findsNothing);
-      await tester.tap(find.byIcon(Icons.arrow_back));
+      expect(find.byIcon(LucideIcons.laptop), findsOneWidget);
+      expect(find.byIcon(LucideIcons.userRoundX), findsNothing);
+      expect(find.byIcon(LucideIcons.ban), findsNothing);
+      await tester.tap(find.byIcon(LucideIcons.arrowLeft));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.byIcon(Icons.logout_outlined),
+        find.byIcon(LucideIcons.logOut),
         150,
         scrollable: find.byType(Scrollable).first,
       );
       for (final icon in [
-        Icons.workspace_premium_outlined,
-        Icons.privacy_tip_outlined,
-        Icons.travel_explore,
-        Icons.notifications_none_outlined,
+        LucideIcons.award,
+        LucideIcons.shieldCheck,
+        LucideIcons.compass,
+        LucideIcons.bell,
       ]) {
         expect(find.byIcon(icon), findsNothing);
       }

@@ -1,6 +1,7 @@
-import 'dart:math';
+﻿import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -197,7 +198,7 @@ class _BannerBackButton extends StatelessWidget {
         child: SizedBox.square(
           dimension: 40,
           child: Icon(
-            Icons.arrow_back,
+            LucideIcons.arrowLeft,
             size: 22,
             color: Colors.white,
             semanticLabel: MaterialLocalizations.of(context).backButtonTooltip,

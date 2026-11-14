@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tilomnov/core/media/image_compressor.dart';
@@ -117,7 +118,7 @@ class _AdminAdvertisementsPageState
                 const SizedBox(width: 12),
                 FilledButton.icon(
                   onPressed: _busy ? null : _upload,
-                  icon: const Icon(Icons.add_photo_alternate_outlined),
+                  icon: const Icon(LucideIcons.imagePlus),
                   label: const Text('Add photos'),
                 ),
               ],
@@ -150,7 +151,7 @@ class _AdminAdvertisementsPageState
                         padding: EdgeInsets.all(40),
                         child: Column(
                           children: [
-                            Icon(Icons.photo_library_outlined, size: 48),
+                            Icon(LucideIcons.images, size: 48),
                             SizedBox(height: 16),
                             Text('No ads yet'),
                             SizedBox(height: 8),
@@ -170,7 +171,7 @@ class _AdminAdvertisementsPageState
                             AdvertisementBanner(advertisement: ad),
                             TextButton.icon(
                               onPressed: _busy ? null : () => _remove(ad.id),
-                              icon: const Icon(Icons.delete_outline),
+                              icon: const Icon(LucideIcons.trash2),
                               label: const Text('Remove photo'),
                             ),
                           ],

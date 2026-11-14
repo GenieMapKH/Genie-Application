@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
+﻿import 'package:tilomnov/shared/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -121,7 +122,7 @@ class _SavedPhoto extends StatelessWidget {
                   color: Colors.black54,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.close, size: 14, color: Colors.white),
+                child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
               ),
             ),
           ),

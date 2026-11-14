@@ -1,4 +1,7 @@
 {
+  "mapSkinDefault": "ផែនទីធម្មតា",
+  "mapSkinSatellite": "ផែនទីផ្កាយរណប",
+  "mapSkinSwitch": "ប្តូរទៅ{skin}",
   "callInProgress": "កំពុងហៅ",
   "chatManagedSecurity": "សារត្រូវបានអ៊ិនគ្រីបពេលផ្ញើ និងរក្សាទុក។",
   "callMinimize": "បង្រួមការហៅ",
@@ -1080,5 +1083,15 @@
   "propertyRemovePhone": "ដកលេខទូរសព្ទចេញ",
   "searchApproximateArea": "តំបន់ប្រហាក់ប្រហែល",
   "paymentEstimatedExpiry": "កាលបរិច្ឆេទផុតកំណត់ប៉ាន់ស្មាន",
-  "paymentRenewalPrice": "តម្លៃបន្តសម្រាប់ ៣០ ថ្ងៃទៀត"
+  "paymentRenewalPrice": "តម្លៃបន្តសម្រាប់ ៣០ ថ្ងៃទៀត",
+"paymentSimulation": "??????????",
+"paymentSimulationNotice": "?????????? - ?????????????????????",
+  "authContactRequired": "បញ្ចូលលេខទូរសព្ទ ឬអ៊ីមែល។",
+  "authPhoneOptional": "លេខទូរសព្ទ (មិនចាំបាច់)",
+  "authVerifyEmail": "ផ្ទៀងផ្ទាត់អ៊ីមែល",
+  "authPhoneChangeInSettings": "ដើម្បីប្រើលេខទូរសព្ទគណនីផ្សេង សូមប្ដូរវានៅក្នុងការកំណត់គណនីជាមុនសិន។",
+  "propertyVerifyPhone": "ផ្ទៀងផ្ទាត់លេខទូរសព្ទតាម SMS",
+  "propertyAccountPhoneVerified": "លេខទូរសព្ទគណនីបានផ្ទៀងផ្ទាត់",
+  "contactVerified": "បានផ្ទៀងផ្ទាត់",
+  "contactNotVerified": "មិនទាន់បានផ្ទៀងផ្ទាត់"
 }
