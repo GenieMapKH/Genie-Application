@@ -13,6 +13,7 @@ curl() {
     if [[ "$arg" == */sendMessage ]]; then method=sendMessage; fi
   done
   echo "$method" >> calls
+  if [ "$SCENARIO" = transport ]; then return 7; fi
   if [ "$SCENARIO" = oversized ] && [ "$method" = sendDocument ]; then
     echo '{"ok":false}' > response.json
     printf 413
@@ -38,4 +39,8 @@ test "$(cat calls)" = $'sendDocument\nsendMessage'
 export SCENARIO=rejected
 if bash "$script"; then echo 'Provider refusal incorrectly passed'; exit 1; fi
 test "$(wc -l < calls | tr -d ' ')" = 3
-echo 'Release notification: direct upload, oversized fallback and refusal checks passed.'
+> calls
+export SCENARIO=transport
+if bash "$script"; then echo 'Transport failure incorrectly passed'; exit 1; fi
+test "$(wc -l < calls | tr -d ' ')" = 3
+echo 'Release notification: upload, oversized fallback, refusal and transport checks passed.'
