@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
@@ -51,9 +52,7 @@ class _AdminEmailPageState extends ConsumerState<AdminEmailPage> {
                   const CircularProgressIndicator()
                 else
                   Icon(
-                    _failed
-                        ? Icons.error_outline
-                        : Icons.mark_email_unread_outlined,
+                    _failed ? LucideIcons.circleAlert : LucideIcons.mail,
                     size: 64,
                   ),
                 const SizedBox(height: 24),

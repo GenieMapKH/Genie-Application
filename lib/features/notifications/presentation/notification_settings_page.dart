@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/device/system_settings.dart';
@@ -55,7 +56,7 @@ class NotificationSettingsPage extends ConsumerWidget {
             ),
             if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
               ListTile(
-                leading: const Icon(Icons.fullscreen),
+                leading: const Icon(LucideIcons.maximize),
                 title: Text(l10n.callFullScreenTitle),
                 subtitle: Text(l10n.callFullScreenHelp),
                 onTap: () async {
@@ -114,7 +115,7 @@ class _Switches extends ConsumerWidget {
     return SettingsSection(
       children: [
         SettingsSwitchRow(
-          icon: Icons.chat_bubble_outline,
+          icon: LucideIcons.messageCircle,
           title: l10n.notificationsChatTitle,
           subtitle: l10n.notificationsChatHelp,
           value: preferences.chatMessages,
@@ -124,7 +125,7 @@ class _Switches extends ConsumerWidget {
         // the generic notification.
         if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
           SettingsSwitchRow(
-            icon: Icons.text_snippet_outlined,
+            icon: LucideIcons.fileText,
             title: l10n.notificationsShowTextTitle,
             subtitle: l10n.notificationsShowTextHelp,
             value: ref.watch(showNotificationTextProvider),
@@ -132,28 +133,28 @@ class _Switches extends ConsumerWidget {
                 ref.read(showNotificationTextProvider.notifier).select(on),
           ),
         SettingsSwitchRow(
-          icon: Icons.travel_explore,
+          icon: LucideIcons.compass,
           title: l10n.notificationsSavedSearchTitle,
           subtitle: l10n.notificationsSavedSearchHelp,
           value: preferences.savedSearchAlerts,
           onChanged: (on) => _change(context, ref, savedSearchAlerts: on),
         ),
         SettingsSwitchRow(
-          icon: Icons.person_add_alt,
+          icon: LucideIcons.userRoundPlus,
           title: l10n.notificationsFollowedTitle,
           subtitle: l10n.notificationsFollowedHelp,
           value: preferences.followedListings,
           onChanged: (on) => _change(context, ref, followedListings: on),
         ),
         SettingsSwitchRow(
-          icon: Icons.trending_down,
+          icon: LucideIcons.trendingDown,
           title: l10n.notificationsSavedUpdatesTitle,
           subtitle: l10n.notificationsSavedUpdatesHelp,
           value: preferences.savedListingUpdates,
           onChanged: (on) => _change(context, ref, savedListingUpdates: on),
         ),
         SettingsSwitchRow(
-          icon: Icons.local_offer_outlined,
+          icon: LucideIcons.tag,
           title: l10n.notificationsPromotionsTitle,
           subtitle: l10n.notificationsPromotionsHelp,
           value: preferences.promotions,
@@ -184,7 +185,7 @@ class _BlockedNotice extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.notifications_off_outlined, color: colors.danger),
+              Icon(LucideIcons.bellOff, color: colors.danger),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(

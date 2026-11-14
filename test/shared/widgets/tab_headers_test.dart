@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -51,7 +52,7 @@ void main() {
 
           final arrow = glass
               ? find.byType(GlassIconButton)
-              : find.byIcon(Icons.arrow_back);
+              : find.byIcon(LucideIcons.arrowLeft);
           backCenter ??= tester.getCenter(arrow);
           expect(tester.getCenter(arrow), backCenter);
           await tester.tap(arrow);

@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/features/admin/presentation/admin_reports_page.dart';
 import 'dart:convert';
 
@@ -221,7 +222,7 @@ void main() {
           expect(find.text('No records found'), findsOneWidget);
         }
         expect(find.byType(ListView), findsOneWidget);
-        await tester.tap(find.byIcon(Icons.arrow_back));
+        await tester.tap(find.byIcon(LucideIcons.arrowLeft));
         await tester.pumpAndSettle();
       }
       expect(find.textContaining('simulation mode'), findsNothing);

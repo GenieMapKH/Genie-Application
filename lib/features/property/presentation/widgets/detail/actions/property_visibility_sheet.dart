@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -94,7 +96,7 @@ class _PropertyVisibilitySheetState extends State<PropertyVisibilitySheet> {
 
     Widget option(
       PropertyVisibility value,
-      IconData icon,
+      Widget icon,
       String title,
       String hint,
     ) {
@@ -109,7 +111,7 @@ class _PropertyVisibilitySheetState extends State<PropertyVisibilitySheet> {
 
       return ListTile(
         enabled: allowed && _saving == null,
-        leading: Icon(icon, color: isCurrent ? context.colors.accent : color),
+        leading: icon,
         title: Text(
           title,
           style: GoogleFonts.inter(
@@ -131,7 +133,7 @@ class _PropertyVisibilitySheetState extends State<PropertyVisibilitySheet> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : isCurrent
-            ? Icon(Icons.check_circle, color: context.colors.accent)
+            ? Icon(LucideIcons.circleCheck, color: context.colors.accent)
             : null,
         onTap: () => _save(value),
       );
@@ -159,19 +161,27 @@ class _PropertyVisibilitySheetState extends State<PropertyVisibilitySheet> {
               ),
               option(
                 PropertyVisibility.public,
-                Icons.public,
+                const Icon(LucideIcons.globe2),
                 l10n.propertyVisibilityPublic,
                 l10n.propertyVisibilityPublicHint,
               ),
               option(
                 PropertyVisibility.draft,
-                Icons.lock_outline,
+                SvgPicture.asset(
+                  'assets/icons/listing_draft.svg',
+                  width: 24,
+                  height: 24,
+                ),
                 l10n.propertyVisibilityDraft,
                 l10n.propertyVisibilityDraftHint,
               ),
               option(
                 PropertyVisibility.sold,
-                Icons.sell_outlined,
+                SvgPicture.asset(
+                  'assets/icons/listing_sold.svg',
+                  width: 24,
+                  height: 24,
+                ),
                 l10n.propertyVisibilitySold,
                 l10n.propertyVisibilitySoldHint,
               ),

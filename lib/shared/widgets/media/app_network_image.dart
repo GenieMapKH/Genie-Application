@@ -1,5 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/media/app_image_cache.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -95,7 +96,7 @@ class _BrokenImage extends StatelessWidget {
       height: height,
       color: context.colors.surfaceMuted,
       alignment: Alignment.center,
-      child: Icon(Icons.broken_image_outlined, color: context.colors.textHint),
+      child: Icon(LucideIcons.imageOff, color: context.colors.textHint),
     );
   }
 }

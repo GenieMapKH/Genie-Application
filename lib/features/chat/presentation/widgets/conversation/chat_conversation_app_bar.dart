@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/chat/presentation/widgets/conversation/chat_conversation_header.dart';
@@ -50,7 +51,7 @@ class ChatConversationAppBar extends StatelessWidget
           child: Center(
             child: glass
                 ? GlassIconButton(
-                    icon: Icons.phone_outlined,
+                    icon: LucideIcons.phone,
                     iconSize: 20,
                     tooltip: context.l10n.callVoice,
                     onPressed: onCall,
@@ -66,7 +67,7 @@ class ChatConversationAppBar extends StatelessWidget
       GlassIconButton.back(onPressed: () => Navigator.of(context).pop());
 
   Widget _back(BuildContext context) => IconButton(
-    icon: Icon(Icons.arrow_back, color: context.colors.textMuted),
+    icon: Icon(LucideIcons.arrowLeft, color: context.colors.textMuted),
     onPressed: () => Navigator.of(context).pop(),
   );
 
@@ -80,11 +81,7 @@ class ChatConversationAppBar extends StatelessWidget
         shape: BoxShape.circle,
         border: Border.all(color: context.colors.border),
       ),
-      child: Icon(
-        Icons.phone_outlined,
-        color: context.colors.textMuted,
-        size: 18,
-      ),
+      child: Icon(LucideIcons.phone, size: 18, color: context.colors.textMuted),
     ),
     onPressed: onCall,
   );

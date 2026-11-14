@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/property/presentation/widgets/existing_property_photos.dart';
@@ -20,7 +21,7 @@ void main() {
     );
 
     expect(find.bySemanticsLabel('Remove photo'), findsNWidgets(2));
-    await tester.tap(find.byIcon(Icons.close).last);
+    await tester.tap(find.byIcon(LucideIcons.x).last);
 
     expect(removed, ['https://cdn.test/b.jpg']);
     expect(find.textContaining('Undo remove'), findsNothing);

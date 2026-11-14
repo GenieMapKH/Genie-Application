@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tilomnov/features/payment/presentation/renewal_checkout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -127,7 +129,7 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
                   ),
                 ),
                 icon: Icon(
-                  Icons.edit_outlined,
+                  LucideIcons.pencil,
                   size: 18,
                   color: context.colors.textPrimary,
                 ),
@@ -149,10 +151,14 @@ class _PropertyOwnerActionsState extends ConsumerState<PropertyOwnerActions> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                icon: Icon(
-                  Icons.visibility_outlined,
-                  size: 18,
-                  color: context.colors.onPrimary,
+                icon: SvgPicture.asset(
+                  'assets/icons/listing_visibility.svg',
+                  width: 18,
+                  height: 18,
+                  colorFilter: ColorFilter.mode(
+                    context.colors.onPrimary,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 label: Text(
                   _visibilityLabel(context),

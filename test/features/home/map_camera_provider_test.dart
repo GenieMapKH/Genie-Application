@@ -34,4 +34,22 @@ void main() {
     expect(container.read(mapStateProvider).currentSkin, MapSkin.satellite);
     expect(identical(container.read(mapCameraProvider), before), isTrue);
   });
+
+  test('Google map skins cycle without changing the drawing or camera', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final notifier = container.read(mapStateProvider.notifier);
+    notifier.startDrawing(initialPoints: const [LatLng(11.5, 104.9)]);
+    final points = container.read(mapStateProvider).drawnPoints;
+    final camera = container.read(mapCameraProvider);
+
+    for (final skin in [MapSkin.satellite, MapSkin.defaultMap]) {
+      notifier.toggleSkin();
+      final state = container.read(mapStateProvider);
+      expect(state.currentSkin, skin);
+      expect(state.isDrawing, isTrue);
+      expect(identical(state.drawnPoints, points), isTrue);
+      expect(identical(container.read(mapCameraProvider), camera), isTrue);
+    }
+  });
 }

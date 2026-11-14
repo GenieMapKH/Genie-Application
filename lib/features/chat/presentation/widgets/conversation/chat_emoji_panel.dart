@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 
@@ -16,25 +17,25 @@ class _ChatEmojiPanelState extends State<ChatEmojiPanel> {
   /// Each category's emojis, separated by spaces.
   static final _categories = [
     _EmojiCategory(
-      Icons.sentiment_satisfied_alt,
+      LucideIcons.smile,
       (l10n) => l10n.chatEmojiSmileys,
       '😀 😃 😄 😁 😆 😅 😂 🤣 🙂 😉 😊 😇 🥰 😍 😘 😋 😜 🤪 🤗 🤔 🤫 😐 '
       '😏 🙄 😴 😌 😔 😢 😭 😤 😠 😡 🤯 😳 🥺 😱 😎 🤓 🥳 😷 🤒 🤝 🙏 👀',
     ),
     _EmojiCategory(
-      Icons.back_hand_outlined,
+      LucideIcons.hand,
       (l10n) => l10n.chatEmojiGestures,
       '👍 👎 👌 ✌️ 🤞 🤟 🤙 👈 👉 👆 👇 ☝️ ✋ 🖐️ 👋 '
       '👏 🙌 🤲 💪 🫶 🫡 🤷 🙋 🙅 🙆 💁 🚶 🏃 💃 🕺',
     ),
     _EmojiCategory(
-      Icons.favorite_border,
+      LucideIcons.heart,
       (l10n) => l10n.chatEmojiHearts,
       '❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💞 💓 💗 '
       '💖 💘 💝 💯 ✨ ⭐ 🌟 🔥 🎉 🎊 🎁 🎈 🌹 🌸 🌺',
     ),
     _EmojiCategory(
-      Icons.home_outlined,
+      LucideIcons.house,
       (l10n) => l10n.chatEmojiPlaces,
       '🏠 🏡 🏢 🏬 🏗️ 🏘️ 🏙️ 🏞️ 🌳 🌴 🛏️ 🛋️ 🚪 🪟 🚿 🛁 🔑 🗝️ '
       '📍 🗺️ 🚗 🛵 🚌 ✈️ 💰 💵 💳 📄 📝 📅 ⏰ 📞 📷 ✅ ❌ ❓',

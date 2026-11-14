@@ -64,6 +64,7 @@ class AbaPaymentCheckoutService implements PaymentCheckoutService {
       transactionId: confirmed.transactionId,
       amountUsd: confirmed.amountUsd,
       paidAt: confirmed.paidAt,
+      isSimulation: confirmed.isSimulation,
     );
   }
 }

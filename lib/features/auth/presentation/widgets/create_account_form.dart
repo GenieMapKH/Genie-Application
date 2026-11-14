@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/widgets/forms/app_text_field.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -87,11 +88,6 @@ class CreateAccountForm extends StatelessWidget {
           textInputAction: TextInputAction.next,
           onChanged: (_) => onChanged(),
         ),
-        const SizedBox(height: 6),
-        Text(
-          context.l10n.authRecoveryEmailHint,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
         const SizedBox(height: 20),
         AppTextField(
           key: const Key('password_field'),
@@ -108,9 +104,7 @@ class CreateAccountForm extends StatelessWidget {
               transitionBuilder: (child, animation) =>
                   ScaleTransition(scale: animation, child: child),
               child: Icon(
-                obscurePassword
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
+                obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
                 key: ValueKey<bool>(obscurePassword),
                 color: context.colors.textMuted,
                 size: 20,
@@ -135,7 +129,7 @@ class CreateAccountForm extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.only(top: 1.0),
                   child: Icon(
-                    Icons.info_outline,
+                    LucideIcons.info,
                     size: 14.0,
                     color: Color(0xFFDC2626),
                   ),

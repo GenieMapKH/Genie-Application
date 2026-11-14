@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -41,7 +42,11 @@ class FocusedListingCard extends StatelessWidget {
               foregroundColor: colors.onPrimary,
               visualDensity: VisualDensity.compact,
             ),
-            icon: const Icon(Icons.open_in_full_rounded, size: 18),
+            icon: Icon(
+              LucideIcons.minimize2,
+              size: 18,
+              color: colors.onPrimary,
+            ),
             label: Text(context.l10n.searchViewProperty),
           ),
         ),

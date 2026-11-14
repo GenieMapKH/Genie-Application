@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+﻿import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
@@ -80,7 +81,7 @@ class _NewSignInAlertState extends ConsumerState<NewSignInAlert>
         final l10n = dialogContext.l10n;
         final colors = dialogContext.colors;
         return AppDialog.custom(
-          icon: Icons.gpp_maybe_outlined,
+          icon: LucideIcons.shieldQuestion,
           tone: AppDialogTone.danger,
           title: Text(l10n.newSignInTitle),
           content: SingleChildScrollView(

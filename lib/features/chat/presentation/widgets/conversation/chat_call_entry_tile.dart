@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -76,13 +77,15 @@ class ChatCallEntryTile extends StatelessWidget {
 
   IconData _icon(ChatCallOutcome outcome) {
     return switch (outcome) {
-      ChatCallOutcome.missed => Icons.call_missed,
-      ChatCallOutcome.declinedByMe => Icons.call_received,
+      ChatCallOutcome.missed => LucideIcons.phoneMissed,
+      ChatCallOutcome.declinedByMe => LucideIcons.phoneIncoming,
       ChatCallOutcome.completed || ChatCallOutcome.lost =>
-        call.callerId == userId ? Icons.call_made : Icons.call_received,
+        call.callerId == userId
+            ? LucideIcons.phoneOutgoing
+            : LucideIcons.phoneIncoming,
       ChatCallOutcome.noAnswer ||
       ChatCallOutcome.cancelled ||
-      ChatCallOutcome.declinedByPeer => Icons.call_made,
+      ChatCallOutcome.declinedByPeer => LucideIcons.phoneOutgoing,
     };
   }
 }

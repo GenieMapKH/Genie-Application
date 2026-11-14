@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -128,7 +129,7 @@ class _PropertyPhotoViewerState extends State<PropertyPhotoViewer> {
                           tooltip: MaterialLocalizations.of(
                             context,
                           ).closeButtonTooltip,
-                          icon: const Icon(Icons.close_rounded),
+                          icon: const Icon(LucideIcons.x),
                           color: Colors.white,
                         ),
                         Expanded(

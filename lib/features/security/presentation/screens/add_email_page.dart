@@ -104,9 +104,12 @@ class _AddEmailPageState extends ConsumerState<AddEmailPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final title = widget.initialEmail == null
+        ? l10n.addEmailTitle
+        : l10n.authVerifyEmail;
 
     return AppPageScaffold(
-      title: l10n.addEmailTitle,
+      title: title,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
         children: [
@@ -124,6 +127,7 @@ class _AddEmailPageState extends ConsumerState<AddEmailPage> {
             label: l10n.personalInfoEmail,
             hintText: l10n.authExampleGmailCom,
             controller: _email,
+            enabled: widget.initialEmail == null,
             keyboardType: TextInputType.emailAddress,
             maxWidth: null,
             textInputAction: TextInputAction.next,
@@ -142,7 +146,7 @@ class _AddEmailPageState extends ConsumerState<AddEmailPage> {
           ),
           const SizedBox(height: 28),
           AppButton(
-            text: l10n.addEmailTitle,
+            text: title,
             onPressed: _submit,
             isLoading: _isSaving,
             maxWidth: null,

@@ -1,6 +1,7 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -208,7 +209,7 @@ class DrawingControlsPanel extends StatelessWidget {
                           ],
                         ),
                         child: const Icon(
-                          Icons.add_location_alt,
+                          LucideIcons.mapPinPlusInside,
                           color: Colors.white,
                           size: 34,
                         ),

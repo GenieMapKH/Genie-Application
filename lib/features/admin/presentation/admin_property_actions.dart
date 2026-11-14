@@ -1,10 +1,11 @@
-import 'admin_account_actions.dart';
+﻿import 'admin_account_actions.dart';
 import 'package:tilomnov/features/home/presentation/providers/property_carousel_provider.dart';
 import 'package:tilomnov/features/closest_listings/presentation/view_models/closest_listings_provider.dart';
 import 'package:tilomnov/features/search/presentation/view_models/search_area_controller.dart';
 import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
 import 'package:tilomnov/features/property/presentation/view_models/property_nearby.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -123,14 +124,14 @@ class _AdminPropertyActionsState extends ConsumerState<AdminPropertyActions> {
               onPressed: _busy || widget.property.status == 'Deleted'
                   ? null
                   : _edit,
-              icon: const Icon(Icons.edit_outlined),
+              icon: const Icon(LucideIcons.pencil),
               label: const Text('Edit post'),
             ),
             OutlinedButton.icon(
               onPressed: _busy || widget.property.status == 'Deleted'
                   ? null
                   : _remove,
-              icon: const Icon(Icons.hide_source_rounded),
+              icon: const Icon(LucideIcons.imageOff),
               label: const Text('Remove post'),
             ),
             if (widget.property.ownerId != null)

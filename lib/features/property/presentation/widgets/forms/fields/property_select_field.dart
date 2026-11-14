@@ -1,6 +1,7 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 
@@ -127,7 +128,7 @@ class _PropertySelectFieldState extends State<PropertySelectField>
             suffixIcon: AnimatedRotation(
               turns: _isOpen ? 0.5 : 0,
               duration: const Duration(milliseconds: 180),
-              child: Icon(Icons.keyboard_arrow_down, color: colors.textHint),
+              child: Icon(LucideIcons.chevronDown, color: colors.textHint),
             ),
           ),
           isFocused: _isOpen,
@@ -217,7 +218,7 @@ class _PropertySelectFieldState extends State<PropertySelectField>
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_rounded, size: 18, color: colors.accent),
+              Icon(LucideIcons.check, size: 18, color: colors.accent),
           ],
         ),
       ),

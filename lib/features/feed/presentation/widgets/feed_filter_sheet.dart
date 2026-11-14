@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/feed/data/feed_filters.dart';
@@ -114,7 +115,7 @@ class _FeedFilterSheetState extends State<FeedFilterSheet> {
                   IconButton(
                     tooltip: dateLabels.closeButtonTooltip,
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const Icon(LucideIcons.x),
                   ),
                 ],
               ),
@@ -166,7 +167,7 @@ class _FeedFilterSheetState extends State<FeedFilterSheet> {
                         ),
                         TextButton.icon(
                           onPressed: _pickDates,
-                          icon: const Icon(Icons.date_range_outlined),
+                          icon: const Icon(LucideIcons.calendarRange),
                           label: Text(
                             dates == null
                                 ? l10n.feedChooseDates

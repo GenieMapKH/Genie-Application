@@ -1,6 +1,7 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:tilomnov/features/property/data/models/property_model.dart';
+import 'package:tilomnov/features/search/data/models/search_boundary.dart';
 
 /// What the map shows after a place or a person was chosen: the region to
 /// look at and the listings that belong to it.
@@ -10,21 +11,16 @@ class SearchArea {
   /// The region the camera should frame; null when there is nothing to show
   /// on the map (a person whose listings have no location).
   final LatLngBounds? bounds;
+  final List<SearchBoundary> boundaries;
 
-  const SearchArea({required this.properties, this.bounds});
+  const SearchArea({
+    required this.properties,
+    this.bounds,
+    this.boundaries = const [],
+  });
 
   /// Places frame their whole search region, even when listings cluster in a corner.
   LatLngBounds? get framing => bounds ?? SearchArea.around(properties).bounds;
-
-  /// Google supplies a search viewport, rather than an administrative boundary.
-  List<LatLng> get outline => bounds == null
-      ? const []
-      : [
-          bounds!.southwest,
-          LatLng(bounds!.northeast.latitude, bounds!.southwest.longitude),
-          bounds!.northeast,
-          LatLng(bounds!.southwest.latitude, bounds!.northeast.longitude),
-        ];
 
   /// The smallest region holding every located listing in [properties].
   factory SearchArea.around(List<PropertyModel> properties) {

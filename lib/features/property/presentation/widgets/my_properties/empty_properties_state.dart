@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/widgets/feedback/empty_state_card.dart';
@@ -9,7 +10,7 @@ class EmptyPropertiesState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateCard(
-      icon: Icons.home_outlined,
+      icon: LucideIcons.house,
       title: context.l10n.propertyNoListingsYet,
     );
   }

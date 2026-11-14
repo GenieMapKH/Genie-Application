@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 
 class AdminServiceCard extends StatelessWidget {
@@ -65,7 +66,7 @@ class AdminServiceCard extends StatelessWidget {
                   backgroundColor: colors.primarySoft,
                   foregroundColor: colors.highlight,
                 ),
-                icon: const Icon(Icons.refresh_rounded),
+                icon: const Icon(LucideIcons.refreshCw),
               ),
             ],
           ),
@@ -91,16 +92,14 @@ class AdminServiceCard extends StatelessWidget {
 }
 
 IconData adminServiceIcon(String name) => switch (name.toLowerCase()) {
-  'api-gateway' || 'api gateway' => Icons.hub_rounded,
-  'authentication' || 'authentication database' => Icons.lock_rounded,
-  'user' || 'users' || 'users database' => Icons.people_alt_rounded,
-  'property' || 'listings' || 'listings database' => Icons.home_work_rounded,
-  'chat' || 'chat database' => Icons.forum_rounded,
-  'payment' ||
-  'payments' ||
-  'payments database' => Icons.account_balance_wallet_rounded,
+  'api-gateway' || 'api gateway' => LucideIcons.network,
+  'authentication' || 'authentication database' => LucideIcons.lockKeyhole,
+  'user' || 'users' || 'users database' => LucideIcons.usersRound,
+  'property' || 'listings' || 'listings database' => LucideIcons.building2,
+  'chat' || 'chat database' => LucideIcons.messagesSquare,
+  'payment' || 'payments' || 'payments database' => LucideIcons.wallet,
   'notification' ||
   'notifications' ||
-  'notifications database' => Icons.notifications_active_rounded,
-  _ => Icons.shield_rounded,
+  'notifications database' => LucideIcons.bellRing,
+  _ => LucideIcons.shield,
 };

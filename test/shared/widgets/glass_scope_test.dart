@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/core/theme/app_theme.dart';
@@ -55,7 +56,7 @@ void main() {
       await _open(tester);
 
       expect(find.byType(GlassSurface), findsNothing);
-      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+      expect(find.byIcon(LucideIcons.arrowLeft), findsOneWidget);
     });
   });
 
@@ -75,7 +76,7 @@ void main() {
       tester,
       Column(
         children: [
-          const GlassIconButton(icon: Icons.phone_outlined, onPressed: null),
+          const GlassIconButton(icon: LucideIcons.phone, onPressed: null),
           GlassIconButton(icon: Icons.share, onPressed: () => taps++),
         ],
       ),
@@ -83,7 +84,7 @@ void main() {
     );
     await _open(tester);
 
-    await tester.tap(find.byIcon(Icons.phone_outlined));
+    await tester.tap(find.byIcon(LucideIcons.phone));
     await tester.tap(find.byIcon(Icons.share));
     await tester.pumpAndSettle();
     expect(taps, 1);

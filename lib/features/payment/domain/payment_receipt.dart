@@ -12,6 +12,7 @@ class PaymentReceipt {
   /// What was bought, in the user's language ("Gold plan · Monthly").
   final String item;
   final PaymentMethod method;
+  final bool isSimulation;
   final DateTime paidAt;
 
   /// Where the receipt is emailed; null for an account without an email.
@@ -23,6 +24,7 @@ class PaymentReceipt {
     required this.item,
     required this.method,
     required this.paidAt,
+    this.isSimulation = false,
     this.email,
   });
 }

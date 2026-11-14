@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -21,7 +22,7 @@ class VoiceHoldPanel extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.chevron_left, size: 18, color: hintColor),
+          Icon(LucideIcons.chevronLeft, size: 18, color: hintColor),
           Text(
             context.l10n.chatSlideToCancel,
             style: GoogleFonts.inter(fontSize: 13, color: hintColor),

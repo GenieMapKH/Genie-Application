@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/core/device/app_haptics.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/shared/widgets/buttons/tactile_button.dart';
@@ -35,10 +36,10 @@ class PropertyDetailActions extends StatelessWidget {
       child: BackdropGroup(
         child: Row(
           children: [
-            _CircleButton(icon: Icons.close, onPressed: onClose),
+            _CircleButton(icon: LucideIcons.x, onPressed: onClose),
             const Spacer(),
             _CircleButton(
-              icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+              icon: isFavorite ? LucideIcons.heart : LucideIcons.heart,
               iconColor: isFavorite ? context.colors.accent : null,
               onPressed: () {
                 if (!isFavorite) AppHaptics.lightTap();
@@ -46,7 +47,7 @@ class PropertyDetailActions extends StatelessWidget {
               },
             ),
             const SizedBox(width: 10),
-            _CircleButton(icon: Icons.ios_share, onPressed: onShare),
+            _CircleButton(icon: LucideIcons.share, onPressed: onShare),
             if (menu case final menu?) ...[
               const SizedBox(width: 10),
               _Circle(child: menu),

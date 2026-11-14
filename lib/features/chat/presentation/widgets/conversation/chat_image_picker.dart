@@ -1,6 +1,7 @@
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tilomnov/core/media/image_compressor.dart';
 import 'package:tilomnov/core/media/image_upload_policy.dart';
@@ -25,12 +26,12 @@ Future<PickedChatImage?> pickChatImage(BuildContext context) async {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: const Icon(Icons.photo_library_outlined),
+            leading: const Icon(LucideIcons.images),
             title: Text(context.l10n.chatPhotoLibrary),
             onTap: () => Navigator.pop(sheetContext, ImageSource.gallery),
           ),
           ListTile(
-            leading: const Icon(Icons.photo_camera_outlined),
+            leading: const Icon(LucideIcons.camera),
             title: Text(context.l10n.chatCamera),
             onTap: () => Navigator.pop(sheetContext, ImageSource.camera),
           ),

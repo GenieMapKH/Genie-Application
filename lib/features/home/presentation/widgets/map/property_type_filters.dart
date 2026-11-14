@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -119,17 +120,17 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
           _isListingTypeOpen = !_isListingTypeOpen;
         });
       },
-      child: MapCapsule(
-        shadowed: false,
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      child: _FilterCapsule(
         outline: isListingTypeSelected ? context.colors.primaryStrong : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              _isListingTypeOpen ? Icons.cancel : Icons.maps_home_work_outlined,
+              _isListingTypeOpen
+                  ? LucideIcons.circleX
+                  : LucideIcons.mapPinHouse,
               color: ink,
-              size: 18,
+              size: 16,
             ),
             const SizedBox(width: 6),
             Text(
@@ -139,10 +140,10 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
             const SizedBox(width: 4),
             Icon(
               _isListingTypeOpen
-                  ? Icons.keyboard_arrow_up
-                  : Icons.keyboard_arrow_down,
+                  ? LucideIcons.chevronUp
+                  : LucideIcons.chevronDown,
               color: ink,
-              size: 18,
+              size: 16,
             ),
           ],
         ),
@@ -159,9 +160,7 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
         _update((filter) => filter.toggleListing(text));
         setState(() => _isListingTypeOpen = false); // Auto close on select
       },
-      child: MapCapsule(
-        shadowed: false,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: _FilterCapsule(
         outline: isSelected ? context.colors.primaryStrong : null,
         child: Text(
           propertyValueLabel(context.l10n, text),
@@ -175,17 +174,15 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
     final isSelected = _filter.propertyType == value;
     return TactileButton(
       onPressed: () => _update((filter) => filter.toggleType(value)),
-      child: MapCapsule(
-        shadowed: false,
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      child: _FilterCapsule(
         outline: isSelected ? context.colors.primaryStrong : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             TintedSvg(
               iconPath,
-              width: 16,
-              height: 16,
+              width: 14,
+              height: 14,
               color: _ink(isSelected, solid: context.colors.textMuted),
             ),
             const SizedBox(width: 6),
@@ -199,6 +196,29 @@ class _PropertyTypeFiltersState extends ConsumerState<PropertyTypeFilters> {
   TextStyle _labelStyle(bool selected) => GoogleFonts.inter(
     color: _ink(selected, solid: context.colors.textSecondary),
     fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-    fontSize: 14,
+    fontSize: 13,
+  );
+}
+
+/// A smaller visible pill with a full-height touch target.
+class _FilterCapsule extends StatelessWidget {
+  final Color? outline;
+  final Widget child;
+
+  const _FilterCapsule({required this.outline, required this.child});
+
+  @override
+  Widget build(BuildContext context) => ConstrainedBox(
+    constraints: const BoxConstraints(minHeight: 48),
+    child: Align(
+      widthFactor: 1,
+      heightFactor: 1,
+      child: MapCapsule(
+        shadowed: false,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        outline: outline,
+        child: child,
+      ),
+    ),
   );
 }

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/shared/widgets/media/admin_identity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -166,12 +167,12 @@ class _AccountMenu extends ConsumerWidget {
         SettingsSection(
           children: [
             SettingsRow(
-              icon: Icons.person_outline,
+              icon: LucideIcons.userRound,
               title: l10n.accountPersonalInfo,
               onTap: () => context.pushPage(const PersonalInfoPage()),
             ),
             SettingsRow(
-              icon: Icons.shield_outlined,
+              icon: LucideIcons.shield,
               title: l10n.accountSecurity,
               onTap: () => context.pushPage(const SecurityPage()),
             ),
@@ -185,13 +186,13 @@ class _AccountMenu extends ConsumerWidget {
             const LanguageRow(),
             if (!isAdmin)
               SettingsRow(
-                icon: Icons.notifications_none_outlined,
+                icon: LucideIcons.bell,
                 title: l10n.notificationsTitle,
                 onTap: () => context.pushPage(const NotificationSettingsPage()),
               ),
             if (!isAdmin)
               SettingsRow(
-                icon: Icons.travel_explore,
+                icon: LucideIcons.compass,
                 title: l10n.savedSearchesTitle,
                 onTap: () => context.pushPage(const SavedSearchesPage()),
               ),
@@ -203,7 +204,7 @@ class _AccountMenu extends ConsumerWidget {
           children: [
             if (!isAdmin)
               SettingsRow(
-                icon: Icons.workspace_premium_outlined,
+                icon: LucideIcons.award,
                 title: l10n.accountSubscription,
                 value: tier!.label(l10n),
                 onTap: () =>
@@ -211,12 +212,12 @@ class _AccountMenu extends ConsumerWidget {
               ),
             if (!isAdmin)
               SettingsRow(
-                icon: Icons.privacy_tip_outlined,
+                icon: LucideIcons.shieldCheck,
                 title: l10n.accountPrivacy,
                 onTap: () => context.pushPage(const PrivacyCookiesPage()),
               ),
             SettingsRow(
-              icon: Icons.logout_outlined,
+              icon: LucideIcons.logOut,
               title: l10n.accountSignOut,
               isAction: true,
               onTap: () async {

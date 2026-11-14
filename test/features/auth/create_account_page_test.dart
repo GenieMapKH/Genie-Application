@@ -1,3 +1,5 @@
+import 'package:tilomnov/features/auth/data/phone_verification_service.dart';
+import 'phone_verification_fakes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,14 +14,16 @@ class MockAuthService extends AuthService {
   MockAuthService() : super(Dio());
 
   final calls = <Map<String, String?>>[];
+  final emailRequests = <String>[];
 
   @override
   Future<void> register({
-    required String phone,
+    String? phone,
     String? email,
     String? name,
     required String password,
     String? emailProof,
+    String? phoneProof,
   }) async {
     calls.add({
       'phone': phone,
@@ -27,11 +31,15 @@ class MockAuthService extends AuthService {
       'name': name,
       'password': password,
       'emailProof': emailProof,
+      'phoneProof': phoneProof,
     });
   }
 
   @override
-  Future<void> requestEmailVerification(String email) async {}
+  Future<void> requestEmailVerification(String email) async {
+    emailRequests.add(email);
+  }
+
   @override
   Future<String> confirmEmailVerification(String email, String otp) async =>
       'email-proof';
@@ -44,8 +52,12 @@ Finder _input(String key) => find.descendant(
 
 void main() {
   late MockAuthService authService;
+  late FakePhoneVerification sms;
 
-  setUp(() => authService = MockAuthService());
+  setUp(() {
+    authService = MockAuthService();
+    sms = FakePhoneVerification();
+  });
 
   Future<void> pumpPage(
     WidgetTester tester, {
@@ -59,7 +71,10 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [authServiceProvider.overrideWithValue(authService)],
+        overrides: [
+          authServiceProvider.overrideWithValue(authService),
+          phoneVerificationServiceProvider.overrideWithValue(sms),
+        ],
         child: MaterialApp(
           home: CreateAccountPage(
             onSignUpPressed: onSignUp,
@@ -96,6 +111,8 @@ void main() {
     expect(find.byKey(const Key('phone_otp')), findsNothing);
     expect(find.byKey(const Key('email_field')), findsOneWidget);
     expect(find.text('Email (optional)'), findsOneWidget);
+    expect(find.text('Phone Number'), findsOneWidget);
+    expect(find.text('Phone number (optional)'), findsNothing);
     expect(find.byKey(const Key('password_field')), findsOneWidget);
     expect(find.text('terms of service'), findsOneWidget);
     expect(find.byKey(const Key('sign_up_button')), findsOneWidget);
@@ -103,7 +120,7 @@ void main() {
     expect(find.text('Sign in here'), findsOneWidget);
   });
 
-  testWidgets('requires name, phone, password and the terms; not an email', (
+  testWidgets('requires name, a contact, password and the terms', (
     tester,
   ) async {
     await pumpPage(tester);
@@ -157,71 +174,31 @@ void main() {
     expect(find.byType(TermsOfServicePage), findsOneWidget);
   });
 
-  testWidgets('signs up without SMS, sending the normalized phone number', (
-    tester,
-  ) async {
-    var signedUp = false;
-    var googleCalled = false;
-    var signInHereCalled = false;
-    await pumpPage(
-      tester,
-      onSignUp: () => signedUp = true,
-      onGoogle: () => googleCalled = true,
-      onSignInHere: () => signInHereCalled = true,
-    );
+  testWidgets(
+    'signup succeeds without invoking SMS and leaves contacts unverified',
+    (tester) async {
+      var signedUp = false;
+      await pumpPage(tester, onSignUp: () => signedUp = true);
+      await tester.enterText(_input('name_field'), '  Sok Dara ');
+      await tester.enterText(_input('phone_field'), '012 345 678');
+      await tester.enterText(_input('email_field'), ' Dara@Gmail.com ');
+      await tester.enterText(_input('password_field'), 'password123');
+      await tester.tap(find.byType(Checkbox));
+      await tapSignUp(tester);
+      expect(signedUp, isTrue);
+      expect(sms.challenges, isEmpty);
+      expect(authService.calls.single, {
+        'phone': '+85512345678',
+        'email': 'dara@gmail.com',
+        'name': 'Sok Dara',
+        'password': 'password123',
+        'emailProof': null,
+        'phoneProof': null,
+      });
+    },
+  );
 
-    await tester.enterText(_input('name_field'), '  Sok Dara ');
-    await tester.enterText(_input('phone_field'), '012 345 678');
-    await tester.enterText(_input('password_field'), 'password123');
-    await tester.tap(find.byType(Checkbox));
-    await tester.pumpAndSettle();
-    await tapSignUp(tester);
-
-    expect(signedUp, isTrue);
-    expect(authService.calls.single, {
-      'phone': '+85512345678',
-      'email': null,
-      'name': 'Sok Dara',
-      'password': 'password123',
-      'emailProof': null,
-    });
-
-    final googleButton = find.byKey(const Key('google_button'));
-    await tester.ensureVisible(googleButton);
-    await tester.tap(googleButton);
-    await tester.pumpAndSettle();
-    expect(googleCalled, isTrue);
-
-    final signInHere = find.byKey(const Key('sign_in_here_link'));
-    await tester.ensureVisible(signInHere);
-    await tester.tap(signInHere);
-    await tester.pumpAndSettle();
-    expect(signInHereCalled, isTrue);
-  });
-
-  testWidgets('sends the email too when one is typed', (tester) async {
-    await pumpPage(tester, onSignUp: () {});
-
-    await tester.enterText(_input('name_field'), 'Dara');
-    await tester.enterText(_input('phone_field'), '+855 97 123 4567');
-    await tester.enterText(_input('email_field'), ' Dara@Gmail.com ');
-    await tester.enterText(_input('password_field'), 'password123');
-    await tester.tap(find.byType(Checkbox));
-    await tester.pumpAndSettle();
-    await tapSignUp(tester);
-
-    expect(authService.calls, isEmpty);
-    await tester.enterText(_input('contact_otp'), '123456');
-    await tester.tap(find.text('Verify'));
-    await tester.pumpAndSettle();
-    expect(authService.calls.single['phone'], '+855971234567');
-    expect(authService.calls.single['email'], 'dara@gmail.com');
-    expect(authService.calls.single['emailProof'], 'email-proof');
-  });
-
-  testWidgets('validates an edited phone number without requiring SMS', (
-    tester,
-  ) async {
+  testWidgets('invalid phone still blocks signup', (tester) async {
     await pumpPage(tester, onSignUp: () {});
     await tester.enterText(_input('name_field'), 'Dara');
     await tester.enterText(_input('phone_field'), '123');
@@ -229,11 +206,7 @@ void main() {
     await tester.tap(find.byType(Checkbox));
     await tapSignUp(tester);
     expect(authService.calls, isEmpty);
-    expect(find.text('Enter a valid phone number'), findsOneWidget);
-    await tester.enterText(_input('phone_field'), '098765432');
-    await tapSignUp(tester);
-    expect(authService.calls.single['phone'], '+85598765432');
-    expect(find.byKey(const Key('phone_otp')), findsNothing);
+    expect(sms.challenges, isEmpty);
   });
 
   group('SignUpForm', () {
@@ -245,6 +218,11 @@ void main() {
           password: 'password123',
           agreedToTerms: true,
         );
+
+    test('a valid email does not make the phone optional', () {
+      expect(form(phone: '', email: 'dara@gmail.com').isValid, isFalse);
+      expect(form(phone: '', email: 'dara@gmail.com').normalizedPhone, isNull);
+    });
 
     test('an empty email is fine and is not sent', () {
       expect(form().isValid, isTrue);

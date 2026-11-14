@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -132,7 +133,7 @@ void main() {
         ),
       );
 
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(2));
+      expect(find.byIcon(LucideIcons.chevronRight), findsNWidgets(2));
       await tester.tap(find.text('Bak Touk High School'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));

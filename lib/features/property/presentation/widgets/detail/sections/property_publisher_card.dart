@@ -14,6 +14,7 @@ import 'package:tilomnov/features/property/utils/property_format.dart';
 import 'package:tilomnov/l10n/l10n.dart';
 import 'package:tilomnov/shared/utils/owner_display_name.dart';
 import 'package:tilomnov/shared/widgets/media/user_avatar.dart';
+import 'property_contact_identity.dart';
 
 /// "Listed by": who posted the listing, with "View Profile" and "Follow".
 /// Nothing for a listing whose owner is unknown.
@@ -87,6 +88,7 @@ class PropertyPublisherCard extends ConsumerWidget {
                   ),
                 ],
               ),
+              PropertyContactIdentity(property: property),
               if (openProfile != null || !isOwner) ...[
                 const SizedBox(height: 14),
                 Row(

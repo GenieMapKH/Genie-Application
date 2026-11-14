@@ -167,6 +167,30 @@ void main() {
       },
     );
 
+    test('server simulation marker survives checkout and confirmation', () async {
+      final server = StubServer.always(
+        201,
+        '{"transactionId":"simulation","status":"Success","amount":1,"isSimulation":true}',
+      );
+      final service = AbaPaymentCheckoutService(
+        repository: PaymentRepository(server.dio),
+        flow: _flow([PaymentState.paid]),
+      );
+      final outcome = await service.payForListing(
+        'fixture',
+        PaymentMethod.abaKhqr,
+      );
+      expect(outcome.isPaid, isTrue);
+      expect(outcome.isSimulation, isTrue);
+      expect(
+        PaymentCheckout.fromJson({
+          'transactionId': 'real',
+          'status': 'Success',
+        }).isSimulation,
+        isFalse,
+      );
+    });
+
     test('ABA starts the checkout on the server, then opens it', () async {
       final server = StubServer(
         (request) => request.method == 'GET'

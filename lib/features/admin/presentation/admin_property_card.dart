@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/widgets/detail/property_detail_sheet.dart';
 import 'package:tilomnov/features/property/presentation/widgets/saved_property_card.dart';
@@ -66,7 +67,7 @@ class AdminPropertyCard extends StatelessWidget {
                     right: 10,
                     child: IgnorePointer(
                       child: Chip(
-                        avatar: const Icon(Icons.flag_outlined, size: 18),
+                        avatar: const Icon(LucideIcons.flag, size: 18),
                         label: Text('$reportCount reports'),
                       ),
                     ),

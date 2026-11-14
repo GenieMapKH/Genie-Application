@@ -12,12 +12,15 @@ plugins {
 }
 
 // Release signing: android/key.properties (never committed) points at the keystore.
-// Without it a local release build falls back to the debug key, so
-// `flutter run --release` keeps working. CI refuses to release without the
-// real key (see .github/workflows). Play Store uploads need the real key.
+// Missing signing material must never silently produce a debug-signed release.
 val keystoreProperties = Properties().apply {
     val file = rootProject.file("key.properties")
     if (file.exists()) file.inputStream().use { load(it) }
+}
+val hasReleaseSigning = listOf("keyAlias", "keyPassword", "storeFile", "storePassword")
+    .all { !keystoreProperties.getProperty(it).isNullOrBlank() }
+if (gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) } && !hasReleaseSigning) {
+    throw GradleException("Release signing is required. Use a debug build for local testing.")
 }
 
 // Google Maps key for Android: the MAPS_API_KEY environment variable (CI's
@@ -84,7 +87,7 @@ android {
     }
 
     signingConfigs {
-        if (keystoreProperties.isNotEmpty()) {
+        if (hasReleaseSigning) {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
@@ -96,10 +99,10 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (keystoreProperties.isNotEmpty()) {
+            signingConfig = if (hasReleaseSigning) {
                 signingConfigs.getByName("release")
             } else {
-                signingConfigs.getByName("debug")
+                null
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }

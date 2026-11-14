@@ -1,8 +1,12 @@
 import 'package:tilomnov/shared/utils/phone_number.dart';
 import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+import 'package:tilomnov/features/auth/presentation/widgets/contact_verification.dart';
+import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
+import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
@@ -21,7 +25,11 @@ extension AddPropertyPageLogic on AddPropertyPageState {
   /// Publishes a new listing, or saves the edits to an existing one. A
   /// draft being edited may stay incomplete; anything else must be complete.
   void validateAndSubmit() async {
-    if (isLoading || ref.read(addPropertyControllerProvider).isLoading) return;
+    if (isLoading ||
+        isVerifyingPhone ||
+        ref.read(addPropertyControllerProvider).isLoading) {
+      return;
+    }
     final editedDraft = isEditing && widget.property!.status == 'Draft';
     if (!editedDraft && !_isComplete()) return;
 
@@ -110,11 +118,6 @@ extension AddPropertyPageLogic on AddPropertyPageState {
 
   Future<void> _saveChanges() async {
     try {
-      if (widget.property!.status != 'Draft') {
-        await ref
-            .read(addPropertyControllerProvider.notifier)
-            .ensureAccountPhone(phoneController.text);
-      }
       final property = await ref
           .read(addPropertyControllerProvider.notifier)
           .updateProperty(
@@ -167,9 +170,6 @@ extension AddPropertyPageLogic on AddPropertyPageState {
   Future<void> _publish() async {
     setState(() => isLoading = true);
     try {
-      await ref
-          .read(addPropertyControllerProvider.notifier)
-          .ensureAccountPhone(phoneController.text);
       final allowance = await ref.read(publishingAllowanceProvider.future);
       if (!mounted) return;
       if (!allowance.hasRoom) {
@@ -181,6 +181,40 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       _showSaveFailed(error);
     } finally {
       if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  /// Optional contact verification; publishing never depends on SMS delivery.
+  Future<bool> verifyContactPhone() async {
+    if (isVerifyingPhone) return false;
+    setState(() => isVerifyingPhone = true);
+    try {
+      final profile = await ref.read(userProfileProvider.future);
+      if (!mounted || profile == null) return false;
+      if (profile.phoneVerified) return true;
+      final phone = normalizePhoneNumber(phoneController.text);
+      if (phone == null) {
+        AppPopup.showError(context, context.l10n.authErrEnterValidPhone);
+        return false;
+      }
+      if (profile.phone != null &&
+          normalizePhoneNumber(profile.phone!) != phone) {
+        AppPopup.showError(context, context.l10n.authPhoneChangeInSettings);
+        return false;
+      }
+      final proof = await verifyPhoneOwnership(context, ref, phone);
+      if (!mounted || proof == null) return false;
+      await ref
+          .read(addPropertyControllerProvider.notifier)
+          .ensureAccountPhone(phone, phoneProof: proof);
+      return true;
+    } catch (error) {
+      if (mounted) {
+        AppPopup.showError(context, authErrorMessage(context.l10n, error));
+      }
+      return false;
+    } finally {
+      if (mounted) setState(() => isVerifyingPhone = false);
     }
   }
 
@@ -225,7 +259,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       context,
       builder: (context) {
         return AppDialog.custom(
-          icon: Icons.home_outlined,
+          icon: LucideIcons.house,
           tone: AppDialogTone.neutral,
 
           title: Text(
@@ -278,7 +312,7 @@ extension AddPropertyPageLogic on AddPropertyPageState {
       context,
       builder: (context) {
         return AppDialog.custom(
-          icon: Icons.home_outlined,
+          icon: LucideIcons.house,
           tone: AppDialogTone.neutral,
 
           title: Text(

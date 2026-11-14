@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/features/settings/providers/app_settings_providers.dart';
@@ -22,7 +23,7 @@ class AppearanceRow extends ConsumerWidget {
     ];
 
     return SettingsRow(
-      icon: Icons.dark_mode_outlined,
+      icon: LucideIcons.palette,
       title: l10n.accountAppearance,
       value: options.firstWhere((option) => option.value == current).label,
       onTap: () async {
@@ -52,7 +53,7 @@ class LanguageRow extends ConsumerWidget {
     final current = Locale(Localizations.localeOf(context).languageCode);
 
     return SettingsRow(
-      icon: Icons.language_outlined,
+      icon: LucideIcons.languages,
       title: l10n.accountLanguage,
       value: AppLanguages.nativeName(current),
       onTap: () async {
@@ -82,7 +83,7 @@ class GlassNavigationRow extends ConsumerWidget {
     final l10n = context.l10n;
     final glass = ref.watch(glassNavigationProvider);
     return SettingsRow(
-      icon: Icons.blur_on_outlined,
+      icon: LucideIcons.scanEye,
       title: l10n.glassNavigationTitle,
       value: glass ? l10n.themeLiquidGlass : l10n.themeMinimalistic,
       onTap: () async {

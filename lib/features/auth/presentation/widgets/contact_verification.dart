@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:tilomnov/features/auth/data/phone_verification_service.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/auth/data/repositories/auth_repository.dart';
 import 'package:tilomnov/features/auth/presentation/auth_error_message.dart';
@@ -19,12 +21,32 @@ Future<String?> verifyEmailOwnership(
   }, (code) => auth.confirmEmailVerification(email, code));
 }
 
+Future<String?> verifyPhoneOwnership(
+  BuildContext context,
+  WidgetRef ref,
+  String phone,
+) async {
+  final challenge = ref.read(phoneVerificationServiceProvider).challenge(phone);
+  try {
+    return await _verify(
+      context,
+      phone,
+      challenge.send,
+      challenge.confirm,
+      automaticProof: challenge.automaticProof,
+    );
+  } finally {
+    challenge.close();
+  }
+}
+
 Future<String?> _verify(
   BuildContext context,
   String destination,
   Future<String?> Function() send,
-  Future<String> Function(String) confirm,
-) async {
+  Future<String> Function(String) confirm, {
+  Future<String?>? automaticProof,
+}) async {
   final proof = await send();
   if (proof != null || !context.mounted) return proof;
   return AppDialog.show<String>(
@@ -34,6 +56,7 @@ Future<String?> _verify(
       destination: destination,
       send: send,
       confirm: confirm,
+      automaticProof: automaticProof,
     ),
   );
 }
@@ -42,10 +65,12 @@ class _ContactCodeDialog extends StatefulWidget {
   final String destination;
   final Future<String?> Function() send;
   final Future<String> Function(String) confirm;
+  final Future<String?>? automaticProof;
   const _ContactCodeDialog({
     required this.destination,
     required this.send,
     required this.confirm,
+    this.automaticProof,
   });
   @override
   State<_ContactCodeDialog> createState() => _ContactCodeDialogState();
@@ -61,6 +86,9 @@ class _ContactCodeDialogState extends State<_ContactCodeDialog> {
   @override
   void initState() {
     super.initState();
+    widget.automaticProof?.then((proof) {
+      if (mounted && proof != null && !busy) Navigator.pop(context, proof);
+    });
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted && wait > 0) setState(() => wait--);
     });
@@ -123,7 +151,7 @@ class _ContactCodeDialogState extends State<_ContactCodeDialog> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AppDialog(
-      icon: Icons.verified_user_outlined,
+      icon: LucideIcons.badgeCheck,
       title: l10n.authOtpVerification,
       message: widget.destination,
       content: Column(

@@ -1,7 +1,8 @@
-import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+﻿import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -242,7 +243,7 @@ class _ProfileFieldEditorState extends ConsumerState<_ProfileFieldEditor> {
     final isAvailable = _usernameCheck == UsernameCheck.available;
 
     return AppDialog.custom(
-      icon: Icons.edit_outlined,
+      icon: LucideIcons.pencil,
       tone: AppDialogTone.neutral,
       title: Text(
         l10n.personalInfoEdit(widget.label),

@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -102,13 +103,13 @@ void main() {
     await tester.enterText(find.byType(TextField), 'Hello there');
 
     await tester.pump(); // The send button takes the microphone's place.
-    await tester.tap(find.byIcon(Icons.send_rounded));
+    await tester.tap(find.byIcon(LucideIcons.send));
     await tester.pump();
     await tester.pump();
 
     expect(find.text('Hello there'), findsOneWidget);
     expect(sideOf(tester, 'Hello there'), Alignment.centerRight);
-    expect(find.text('SendingÃ¢â‚¬Â¦'), findsNothing);
+    expect(find.text('Sending…'), findsNothing);
   });
 
   testWidgets('an incoming message appears on the left', (tester) async {
@@ -130,7 +131,7 @@ void main() {
     await tester.enterText(find.byType(TextField), 'Hello');
 
     await tester.pump(); // The send button takes the microphone's place.
-    await tester.tap(find.byIcon(Icons.send_rounded));
+    await tester.tap(find.byIcon(LucideIcons.send));
     await tester.pump();
     await tester.pump();
 
@@ -256,7 +257,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Hello');
 
       await tester.pump(); // The send button takes the microphone's place.
-      await tester.tap(find.byIcon(Icons.send_rounded));
+      await tester.tap(find.byIcon(LucideIcons.send));
       for (var i = 0; i < 5; i++) {
         await tester.pump();
       }
@@ -332,16 +333,16 @@ void main() {
     ) async {
       await openChat(tester);
       expect(voiceButton(), findsOneWidget);
-      expect(find.byIcon(Icons.send_rounded), findsNothing);
+      expect(find.byIcon(LucideIcons.send), findsNothing);
 
       await tester.tap(find.byType(TextField));
       await tester.pump();
       expect(voiceButton(), findsNothing);
-      expect(find.byIcon(Icons.send_rounded), findsOneWidget);
+      expect(find.byIcon(LucideIcons.send), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), 'Hi');
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.send_rounded));
+      await tester.tap(find.byIcon(LucideIcons.send));
       await tester.pump();
       FocusManager.instance.primaryFocus?.unfocus();
       await tester.pump();
@@ -354,7 +355,7 @@ void main() {
       await tester.pump();
 
       // Outside the drawn circle, inside the button's touch area.
-      final circle = tester.getRect(find.byIcon(Icons.send_rounded));
+      final circle = tester.getRect(find.byIcon(LucideIcons.send));
       await tester.tapAt(circle.topLeft - const Offset(3, 3));
       for (var i = 0; i < 5; i++) {
         await tester.pump();

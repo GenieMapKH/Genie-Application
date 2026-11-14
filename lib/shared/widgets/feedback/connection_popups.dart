@@ -1,6 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/network/network_status.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -74,9 +75,9 @@ class _ConnectionPopupsState extends State<ConnectionPopups> {
         }
         final l10n = context.l10n;
         if (_show(
-          '${l10n.connectionWeak} · ${l10n.connectionWeakDetail}',
+          '${l10n.connectionWeak} Â· ${l10n.connectionWeakDetail}',
           AppPopupTone.info,
-          Icons.network_wifi_1_bar_rounded,
+          LucideIcons.wifiLow,
         )) {
           _slowShownAt = DateTime.now();
         }
@@ -89,7 +90,7 @@ class _ConnectionPopupsState extends State<ConnectionPopups> {
     _offlineShown = _show(
       context.l10n.connectionOffline,
       AppPopupTone.error,
-      Icons.wifi_off_rounded,
+      LucideIcons.wifiOff,
       onRetry: _retryConnection,
     );
   }
@@ -113,7 +114,7 @@ class _ConnectionPopupsState extends State<ConnectionPopups> {
     _show(
       context.l10n.connectionRestored,
       AppPopupTone.success,
-      Icons.wifi_rounded,
+      LucideIcons.wifi,
     );
   }
 

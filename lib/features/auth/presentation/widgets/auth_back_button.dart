@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -24,7 +25,7 @@ class AuthBackButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
-          Icons.arrow_back,
+          LucideIcons.arrowLeft,
           size: 20,
           color: context.colors.textPrimary,
         ),

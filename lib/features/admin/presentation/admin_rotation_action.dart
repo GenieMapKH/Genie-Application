@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
@@ -79,7 +80,7 @@ class _AdminRotationActionState extends ConsumerState<AdminRotationAction> {
             const Text('Force rotation is not connected.'),
           if (data.runs.isNotEmpty)
             Text(
-              'Latest workflow: ${data.runs.first.conclusion ?? data.runs.first.status} · ${DateFormat.yMMMd().add_jm().format(data.runs.first.createdAt.toLocal())}',
+              'Latest workflow: ${data.runs.first.conclusion ?? data.runs.first.status} Â· ${DateFormat.yMMMd().add_jm().format(data.runs.first.createdAt.toLocal())}',
             ),
           if (data.busy)
             const Text(
@@ -99,13 +100,13 @@ class _AdminRotationActionState extends ConsumerState<AdminRotationAction> {
                         data.status != 'ok'
                     ? null
                     : _rotate,
-                icon: const Icon(Icons.autorenew),
+                icon: const Icon(LucideIcons.refreshCw),
                 label: Text(
                   _busy ? 'Requesting rotation…' : 'Force rotate all',
                 ),
               ),
               OutlinedButton.icon(
-                icon: const Icon(Icons.sync_rounded),
+                icon: const Icon(LucideIcons.refreshCw),
                 onPressed: () {
                   ref.invalidate(adminRotationJobProvider);
                   ref.invalidate(adminRotationProvider);

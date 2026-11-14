@@ -2,6 +2,7 @@ import 'admin_advertisements_page.dart';
 import 'admin_records_page.dart';
 import 'package:tilomnov/shared/widgets/layout/app_page_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/features/admin/presentation/admin_dashboard_provider.dart';
@@ -53,7 +54,7 @@ class AdminDashboardPage extends ConsumerWidget {
                 ref.invalidate(adminDashboardProvider);
               }
             },
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(LucideIcons.refreshCw),
           ),
           const SizedBox(width: 8),
         ],
@@ -130,16 +131,14 @@ class AdminDashboardPage extends ConsumerWidget {
                                     'all-listings',
                                     'Explore properties',
                                   ),
-                                  icon: const Icon(
-                                    Icons.travel_explore_rounded,
-                                  ),
+                                  icon: const Icon(LucideIcons.compass),
                                   label: const Text('Explore properties'),
                                 ),
                                 OutlinedButton.icon(
                                   onPressed: () => context.pushPage(
                                     const AdminAdvertisementsPage(),
                                   ),
-                                  icon: const Icon(Icons.campaign_outlined),
+                                  icon: const Icon(LucideIcons.megaphone),
                                   label: const Text('Manage ads'),
                                 ),
                               ],
@@ -240,10 +239,7 @@ class _OverviewHeader extends StatelessWidget {
               color: scheme.primary.withValues(alpha: .25),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
-              Icons.admin_panel_settings_outlined,
-              color: Colors.white,
-            ),
+            child: const Icon(LucideIcons.shieldUser, color: Colors.white),
           ),
         ],
       ),
@@ -287,7 +283,7 @@ class _DashboardError extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.cloud_off_outlined, size: 42),
+          const Icon(LucideIcons.cloudOff, size: 42),
           const SizedBox(height: 12),
           const Text('Dashboard data is unavailable'),
           const SizedBox(height: 6),
@@ -299,7 +295,7 @@ class _DashboardError extends StatelessWidget {
           const SizedBox(height: 14),
           FilledButton.icon(
             onPressed: onRetry,
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(LucideIcons.refreshCw),
             label: const Text('Try again'),
           ),
         ],

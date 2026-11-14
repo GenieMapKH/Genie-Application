@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -133,7 +134,7 @@ class _Title extends ConsumerWidget {
             onPressed: _resting
                 ? null
                 : () => ref.read(closestListingsProvider.notifier).refresh(),
-            icon: Icon(Icons.my_location_rounded, color: colors.accent),
+            icon: Icon(LucideIcons.locateFixed, color: colors.accent),
           ),
       ],
     );

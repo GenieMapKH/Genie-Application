@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// not miss it.
 class ChatComposerButton extends StatelessWidget {
   /// The touch area of the buttons beside the message field.
-  static const outerSize = 52.0;
+  static const outerSize = 48.0;
 
   /// The touch area of the buttons inside the message field.
   static const innerSize = 48.0;

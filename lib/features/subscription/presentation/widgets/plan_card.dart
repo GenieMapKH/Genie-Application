@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/features/payment/presentation/payment_feedback.dart';
@@ -288,7 +289,7 @@ class _Features extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.check_circle_rounded,
+                  LucideIcons.circleCheck,
                   size: 16,
                   color: ink.withValues(alpha: 0.8),
                 ),

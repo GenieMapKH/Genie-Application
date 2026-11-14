@@ -63,6 +63,16 @@ void main() {
               savedSettings: {'settings.language': language},
             );
             await tester.pumpAndSettle();
+            if (scale == 1) {
+              expect(
+                tester.getSize(find.byType(ChatInputBar)).height,
+                lessThanOrEqualTo(64),
+              );
+            }
+            expect(
+              tester.getSize(find.byType(TextField)).width,
+              greaterThanOrEqualTo(width - 180),
+            );
             await tester.enterText(
               find.byType(TextField),
               'A long message on a narrow phone',

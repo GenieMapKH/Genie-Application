@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/features/profile/data/models/user_profile.dart';
@@ -48,7 +49,7 @@ class _PersonalInfoList extends ConsumerWidget {
         SettingsSection(
           children: [
             SettingsRow(
-              icon: Icons.alternate_email,
+              icon: LucideIcons.atSign,
               title: l10n.personalInfoUsername,
               value: username == null ? l10n.commonNotSet : '@$username',
               onTap: () => showProfileFieldEditor(
@@ -62,7 +63,7 @@ class _PersonalInfoList extends ConsumerWidget {
               ),
             ),
             SettingsRow(
-              icon: Icons.badge_outlined,
+              icon: LucideIcons.badgeCheck,
               title: l10n.personalInfoName,
               value: profile.name ?? l10n.commonNotSet,
               onTap: () => showProfileFieldEditor(
@@ -81,7 +82,7 @@ class _PersonalInfoList extends ConsumerWidget {
         SettingsSection(
           children: [
             SettingsRow(
-              icon: Icons.person_outline,
+              icon: LucideIcons.userRound,
               title: l10n.personalInfoFirstName,
               value: profile.firstName ?? l10n.commonNotSet,
               onTap: () => showProfileFieldEditor(
@@ -93,7 +94,7 @@ class _PersonalInfoList extends ConsumerWidget {
               ),
             ),
             SettingsRow(
-              icon: Icons.people_outline,
+              icon: LucideIcons.usersRound,
               title: l10n.personalInfoLastName,
               value: profile.lastName ?? l10n.commonNotSet,
               onTap: () => showProfileFieldEditor(
@@ -105,7 +106,7 @@ class _PersonalInfoList extends ConsumerWidget {
               ),
             ),
             SettingsRow(
-              icon: Icons.wc_outlined,
+              icon: LucideIcons.accessibility,
               title: l10n.personalInfoSex,
               value: _sexLabel(l10n, profile.sex),
               onTap: () => _pickSex(context, ref),
@@ -117,7 +118,7 @@ class _PersonalInfoList extends ConsumerWidget {
         SettingsSection(
           children: [
             SettingsRow(
-              icon: Icons.phone_outlined,
+              icon: LucideIcons.phone,
               title: l10n.personalInfoPhone,
               value: profile.phone ?? l10n.commonNotSet,
               onTap: () => showProfileFieldEditor(
@@ -132,8 +133,10 @@ class _PersonalInfoList extends ConsumerWidget {
               ),
             ),
             SettingsRow(
-              icon: Icons.email_outlined,
-              title: l10n.personalInfoEmail,
+              icon: LucideIcons.mail,
+              title: profile.email != null && !profile.emailVerified
+                  ? l10n.authVerifyEmail
+                  : l10n.personalInfoEmail,
               value: profile.email ?? l10n.personalInfoAddEmail,
               // An email can be added once; it is then how a forgotten
               // password is reset, so it is not changed from here.

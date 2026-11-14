@@ -56,6 +56,7 @@ class UserRepository {
   /// retried here: the API client already repeats a passing drop, and an
   /// outage should show at once rather than after every repeat.
   Future<UserProfile> getProfile() async {
+    final scope = await _kept.capture();
     var delay = const Duration(milliseconds: 1500);
 
     for (var attempt = 1; ; attempt++) {
@@ -63,7 +64,7 @@ class UserRepository {
         final response = await dio.get('/users/me');
         final data = response.data as Map<String, dynamic>;
         final profile = UserProfile.fromJson(data);
-        await _kept.write(_keptName, data);
+        await _kept.write(_keptName, data, scope: scope);
         return profile;
       } on DioException catch (e) {
         if (attempt == _maxAttempts || !_isWorthRetrying(e)) rethrow;

@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
+﻿import 'package:tilomnov/shared/widgets/dialogs/app_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -16,7 +17,7 @@ Future<bool> showSecurityConfirmDialog(
   final confirmed = await AppDialog.show<bool>(
     context,
     builder: (dialogContext) => AppDialog.custom(
-      icon: Icons.security,
+      icon: LucideIcons.shield,
       tone: AppDialogTone.neutral,
       title: Text(title),
       content: Text(message),

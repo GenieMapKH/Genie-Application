@@ -1,0 +1,51 @@
+00:00 +0: loading C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/security/release_security_test.dart
+00:00 +0: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/security/release_security_test.dart: release builds never fall back to the debug signing key
+00:00 +1: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/security/security_regression_test.dart: F03: late responses are cancelled and never repopulate the next session cache
+00:00 +2: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/security/security_regression_test.dart: F03: a delayed profile cannot be saved or returned for the next account
+00:00 +3: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/security/security_regression_test.dart: F03 negative control: stable account keeps its profile isolated
+00:00 +4: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/security/security_regression_test.dart: F04: preferences never persist message envelopes or attachment keys
+00:00 +5: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/storage/kept_copy_store_test.dart: gives back what was kept, for the same account only
+00:00 +6: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/storage/kept_copy_store_test.dart: upgrade purges API copies but preserves unrelated settings
+00:00 +7: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/storage/kept_copy_store_test.dart: same-account sign-in is still a different session
+00:00 +8: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/storage/kept_copy_store_test.dart: session changes during the async owner check reject the old write
+00:00 +9: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/storage/kept_copy_store_test.dart: keeps nothing without an account
+00:00 +10: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/storage/kept_copy_store_test.dart: a copy that can no longer be read is none, not an error
+The session copy of page could not be read: type 'int' is not a subtype of type 'String' in type cast
+00:00 +11: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/storage/kept_copy_store_test.dart: an account that cannot be found keeps and reads nothing
+The session copy owner could not be read: Bad state: locked
+The session copy owner could not be read: Bad state: locked
+00:00 +12: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: renews an expired session and repeats the request
+00:00 +13: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: a device that was signed out is told so at once
+00:00 +14: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: being offline for a moment signs nobody out
+00:00 +15: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: a request that fails after the session was renewed leaves it alone
+00:00 +16: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: requests refused together share one renewal
+00:00 +17: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: a request refused after another renewed is repeated at once
+00:00 +18: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: a previous account 401 is never replayed as the newly signed-in account
+00:00 +19: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: a repeated request refused again is not renewed again
+00:00 +20: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/core/network/auth_interceptor_test.dart: signing out while the session is renewed keeps it signed out
+00:00 +21: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_flow_test.dart: a refund message includes the transaction reference for support
+00:00 +22: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_flow_test.dart: a refund message includes the transaction reference for support
+00:00 +23: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_flow_test.dart: a refund message includes the transaction reference for support
+00:00 +24: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_flow_test.dart: a refund message includes the transaction reference for support
+00:00 +25: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_flow_test.dart: a refund message includes the transaction reference for support
+00:00 +26: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_flow_test.dart: a refund message includes the transaction reference for support
+00:01 +27: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +28: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +29: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +30: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +31: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +32: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +33: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +34: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +35: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +36: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +37: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +38: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +39: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +40: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +41: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +42: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: shows the payment like the receipt screen
+00:01 +43: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: simulation never claims a real payment or confirmation email
+00:02 +44: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: Download Receipt keeps the receipt picture
+00:02 +45: C:/Users/SengPooPoo/Desktop/Tilomnov/genie/test/features/payment/payment_success_page_test.dart: Back to Home finishes the payment
+00:02 +46: All tests passed!

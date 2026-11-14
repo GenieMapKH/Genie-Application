@@ -1,8 +1,9 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tilomnov/core/theme/app_colors.dart';
 
 /// The microphone of the message bar. A tap opens the recording bar; held
 /// down, it records until released, which sends, and sliding the finger
@@ -19,7 +20,7 @@ class VoiceRecordButton extends StatefulWidget {
 
   final String label;
 
-  /// Touched anywhere in a square this wide, larger than the 44 it draws.
+  /// The square touch area, independent of the icon size.
   final double touchSize;
 
   final VoidCallback? onTap;
@@ -122,10 +123,10 @@ class _VoiceRecordButtonState extends State<VoiceRecordButton> {
               scale: _holding ? 1.35 : 1,
               duration: const Duration(milliseconds: 150),
               curve: Curves.easeOut,
-              child: SvgPicture.asset(
-                'assets/icons/chat_voice.svg',
-                width: 44,
-                height: 44,
+              child: Icon(
+                LucideIcons.mic,
+                size: 24,
+                color: context.colors.accent,
               ),
             ),
           ),

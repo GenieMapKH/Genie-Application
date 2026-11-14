@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/features/property/data/models/property_model.dart';
 import 'package:tilomnov/features/property/presentation/view_models/own_listings_providers.dart';
@@ -39,7 +40,7 @@ class PropertyOptionsSheet {
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(
-                  Icons.delete_outline,
+                  LucideIcons.trash2,
                   color: Color(0xFFE5484D),
                 ),
                 title: Text(

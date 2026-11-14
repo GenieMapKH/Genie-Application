@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -77,7 +78,7 @@ class _MapFilterPageState extends ConsumerState<MapFilterPage> {
                 ),
               )
             : IconButton(
-                icon: Icon(Icons.arrow_back, color: colors.textPrimary),
+                icon: Icon(LucideIcons.arrowLeft, color: colors.textPrimary),
                 onPressed: () => Navigator.of(context).pop(),
               ),
         title: Text(
@@ -91,7 +92,7 @@ class _MapFilterPageState extends ConsumerState<MapFilterPage> {
         actions: [
           IconButton(
             tooltip: l10n.savedSearchSaveTitle,
-            icon: Icon(Icons.bookmark_add_outlined, color: colors.textPrimary),
+            icon: Icon(LucideIcons.bookmarkPlus, color: colors.textPrimary),
             onPressed: _saveSearch,
           ),
         ],

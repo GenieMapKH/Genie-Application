@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -80,11 +81,7 @@ class _FeedPostHeaderState extends State<FeedPostHeader> {
               ),
             ),
             if (property.ownerId != null)
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: colors.textHint,
-              ),
+              Icon(LucideIcons.chevronRight, size: 20, color: colors.textHint),
           ],
         ),
       ),

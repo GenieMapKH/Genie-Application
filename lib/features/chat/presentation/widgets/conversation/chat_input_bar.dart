@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/features/chat/models/chat_composer_mode.dart';
@@ -150,14 +151,14 @@ class _ChatInputBarState extends State<ChatInputBar> {
         Container(
           color: context.colors.surface,
           padding: EdgeInsets.only(
-            left: 8,
-            right: 8,
-            top: 8,
+            left: 6,
+            right: 6,
+            top: 6,
             bottom:
-                8 + (_showEmojis ? 0 : MediaQuery.of(context).padding.bottom),
+                6 + (_showEmojis ? 0 : MediaQuery.paddingOf(context).bottom),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (widget.recordingPanel case final panel?)
                 Expanded(child: panel)
@@ -195,69 +196,65 @@ class _ChatInputBarState extends State<ChatInputBar> {
       label: context.l10n.chatAttachPicture,
       onTap: widget.onAttach,
       size: ChatComposerButton.outerSize,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          shape: BoxShape.circle,
-          border: Border.all(color: context.colors.border, width: 2),
-        ),
-        child: Icon(
-          Icons.attach_file,
-          color: context.colors.textMuted,
-          size: 22,
-        ),
+      child: Icon(
+        LucideIcons.paperclip,
+        size: 24,
+        color: context.colors.accent,
       ),
     );
   }
 
   Widget _buildField(BuildContext context) {
-    // As tall as the buttons beside it, so a single line sits level with them.
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1),
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: context.colors.iconSubtle),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const SizedBox(width: 16),
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                focusNode: _focusNode,
-                onSubmitted: (_) => _handleSend(),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: context.l10n.chatMessage,
-                  hintStyle: GoogleFonts.inter(
-                    color: context.colors.textHint,
-                    fontSize: 15,
-                  ),
+    return Container(
+      constraints: const BoxConstraints(
+        minHeight: ChatComposerButton.outerSize,
+      ),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceMuted,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              focusNode: _focusNode,
+              style: GoogleFonts.inter(
+                color: context.colors.textPrimary,
+                fontSize: 16,
+              ),
+              onSubmitted: (_) => _handleSend(),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                hintText: context.l10n.chatMessage,
+                hintStyle: GoogleFonts.inter(
+                  color: context.colors.textHint,
+                  fontSize: 16,
                 ),
-                maxLines: 4,
-                minLines: 1,
               ),
+              maxLines: 4,
+              minLines: 1,
             ),
-            ChatComposerButton(
-              label: _showEmojis
-                  ? context.l10n.chatShowKeyboard
-                  : context.l10n.chatShowEmojis,
-              onTap: _toggleEmojis,
-              size: ChatComposerButton.innerSize,
-              child: Icon(
-                _showEmojis
-                    ? Icons.keyboard_outlined
-                    : Icons.sentiment_satisfied_alt,
-                color: context.colors.textMuted,
-              ),
-            ),
-          ],
-        ),
+          ),
+          ChatComposerButton(
+            label: _showEmojis
+                ? context.l10n.chatShowKeyboard
+                : context.l10n.chatShowEmojis,
+            onTap: _toggleEmojis,
+            size: ChatComposerButton.innerSize,
+            child: _showEmojis
+                ? Icon(LucideIcons.keyboard, color: context.colors.textMuted)
+                : Icon(
+                    LucideIcons.smile,
+                    size: 22,
+                    color: context.colors.textMuted,
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -272,14 +269,14 @@ class _ChatInputBarState extends State<ChatInputBar> {
         opacity: canSend ? 1 : 0.4,
         duration: const Duration(milliseconds: 150),
         child: Container(
-          width: 44,
-          height: 44,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             color: context.colors.accent,
             shape: BoxShape.circle,
           ),
           child: Icon(
-            _editing ? Icons.check : Icons.send_rounded,
+            _editing ? LucideIcons.check : LucideIcons.send,
             color: context.colors.onPrimary,
             size: 20,
           ),

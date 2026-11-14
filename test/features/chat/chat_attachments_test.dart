@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -414,12 +415,12 @@ void main() {
       await openChat(tester);
 
       await tester.enterText(find.byType(TextField), 'Deal');
-      await tester.tap(find.byIcon(Icons.sentiment_satisfied_alt).first);
+      await tester.tap(find.byIcon(LucideIcons.smile).first);
       await tester.pump();
       expect(find.byType(ChatEmojiPanel), findsOneWidget);
 
       await tester.tap(find.text('😀'));
-      await tester.tap(find.byIcon(Icons.send_rounded));
+      await tester.tap(find.byIcon(LucideIcons.send));
       await tester.pump();
       await tester.pump();
 
@@ -430,9 +431,9 @@ void main() {
     testWidgets('the emoji panel gives way to the keyboard', (tester) async {
       await openChat(tester);
 
-      await tester.tap(find.byIcon(Icons.sentiment_satisfied_alt).first);
+      await tester.tap(find.byIcon(LucideIcons.smile).first);
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.keyboard_outlined));
+      await tester.tap(find.byIcon(LucideIcons.keyboard));
       await tester.pump();
 
       expect(find.byType(ChatEmojiPanel), findsNothing);

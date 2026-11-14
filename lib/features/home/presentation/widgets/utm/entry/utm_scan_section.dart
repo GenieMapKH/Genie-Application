@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/l10n/l10n.dart';
@@ -86,11 +87,8 @@ class UtmScanSection extends StatelessWidget {
               child: Column(
                 children: [
                   UtmSectionTitle(
-                    icon: (color) => Icon(
-                      Icons.document_scanner_outlined,
-                      size: 20,
-                      color: color,
-                    ),
+                    icon: (color) =>
+                        Icon(LucideIcons.scanText, size: 20, color: color),
                     title: context.l10n.homeScanUtmFromDocument,
                     subtitle: context.l10n.homeUseCameraToDetectCoordinates,
                   ),

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 /// Shown instead of the app when a debug run was started without the env
 /// file, so it never quietly talks to the production server.
@@ -22,7 +23,7 @@ class MissingConfigApp extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.settings_suggest_outlined, size: 48),
+                const Icon(LucideIcons.settings2, size: 48),
                 const SizedBox(height: 16),
                 Text(
                   'No API server is set',

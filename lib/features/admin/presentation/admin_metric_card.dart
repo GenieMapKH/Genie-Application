@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'admin_records_page.dart';
 
 class AdminMetricCard extends StatelessWidget {
@@ -61,7 +62,7 @@ class AdminMetricCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     const Spacer(),
-                    Icon(Icons.arrow_outward_rounded, size: 17, color: color),
+                    Icon(LucideIcons.arrowUpRight, size: 17, color: color),
                   ],
                 ),
                 const SizedBox(height: 16),

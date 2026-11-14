@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:tilomnov/shared/widgets/feedback/failure_message.dart';
@@ -73,14 +74,14 @@ class _AdminAccountActionsState extends ConsumerState<AdminAccountActions> {
       PopupMenuItem(
         value: 'ban',
         child: ListTile(
-          leading: Icon(Icons.block_rounded),
+          leading: Icon(LucideIcons.ban),
           title: Text('Ban account'),
         ),
       ),
       PopupMenuItem(
         value: 'delete',
         child: ListTile(
-          leading: Icon(Icons.delete_forever_outlined),
+          leading: Icon(LucideIcons.trash2),
           title: Text('Delete account permanently'),
         ),
       ),
@@ -97,7 +98,7 @@ class _AdminAccountActionsState extends ConsumerState<AdminAccountActions> {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           else
-            const Icon(Icons.admin_panel_settings_outlined),
+            const Icon(LucideIcons.shieldUser),
           const SizedBox(width: 6),
           Text(widget.label),
         ],

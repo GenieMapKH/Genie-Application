@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -168,12 +169,12 @@ abstract final class VertexMarkers {
         );
 
         final icon = layoutText(
-          String.fromCharCode(Icons.edit.codePoint),
+          String.fromCharCode(LucideIcons.pencil.codePoint),
           TextStyle(
             color: Colors.white,
             fontSize: 20,
-            fontFamily: Icons.edit.fontFamily,
-            package: Icons.edit.fontPackage,
+            fontFamily: LucideIcons.pencil.fontFamily,
+            package: LucideIcons.pencil.fontPackage,
           ),
         );
         icon.paint(

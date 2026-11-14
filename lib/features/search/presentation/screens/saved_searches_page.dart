@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -108,7 +109,7 @@ class _SavedSearchTile extends ConsumerWidget {
     return ListTile(
       onTap: () => _showOnMap(context, ref),
       contentPadding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
-      leading: Icon(Icons.travel_explore, color: colors.accent),
+      leading: Icon(LucideIcons.compass, color: colors.accent),
       title: Text(
         search.name,
         maxLines: 1,
@@ -143,13 +144,13 @@ class _SavedSearchTile extends ConsumerWidget {
               appMenuItem(
                 menuContext,
                 value: _TileAction.rename,
-                icon: Icons.edit_outlined,
+                icon: LucideIcons.pencil,
                 label: l10n.savedSearchRename,
               ),
               appMenuItem(
                 menuContext,
                 value: _TileAction.delete,
-                icon: Icons.delete_outline,
+                icon: LucideIcons.trash2,
                 label: l10n.savedSearchDelete,
                 danger: true,
               ),

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -84,7 +85,7 @@ class _PropertyHighlightsState extends State<PropertyHighlights> {
               ),
             ),
             Icon(
-              _expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              _expanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
               size: 18,
               color: context.colors.textPrimary,
             ),

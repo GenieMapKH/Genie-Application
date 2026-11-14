@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/admin/data/admin_record.dart';
@@ -49,12 +50,12 @@ void main() {
       expect(find.text('Deactivated'), findsOneWidget);
       expect(find.text('Email verified'), findsOneWidget);
       expect(find.text('Phone verified'), findsNothing);
-      expect(find.byIcon(Icons.mark_email_read_outlined), findsOneWidget);
+      expect(find.byIcon(LucideIcons.mailCheck), findsOneWidget);
       await tester.tap(find.text('@sokha'));
       await tester.pumpAndSettle();
-      expect(find.byIcon(Icons.mail_outline_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.phone_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.alternate_email_rounded), findsOneWidget);
+      expect(find.byIcon(LucideIcons.mail), findsOneWidget);
+      expect(find.byIcon(LucideIcons.phone), findsOneWidget);
+      expect(find.byIcon(LucideIcons.atSign), findsOneWidget);
       expect(find.text('+85512345678'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },

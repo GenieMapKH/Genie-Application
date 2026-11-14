@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +47,7 @@ class _AdminSentryPanelState extends ConsumerState<AdminSentryPanel> {
     final feed = ref.watch(provider);
     final colors = context.colors;
     return AdminServiceCard(
-      icon: Icons.monitor_heart_rounded,
+      icon: LucideIcons.heartPulse,
       title: 'Sentry',
       refreshing: feed.isLoading && feed.hasValue,
       refreshFailed: feed.hasError && feed.hasValue,
@@ -70,12 +71,12 @@ class _AdminSentryPanelState extends ConsumerState<AdminSentryPanel> {
                   ButtonSegment(
                     value: 'errors',
                     label: Text('Errors'),
-                    icon: Icon(Icons.bug_report_outlined),
+                    icon: Icon(LucideIcons.bug),
                   ),
                   ButtonSegment(
                     value: 'logs',
                     label: Text('Logs'),
-                    icon: Icon(Icons.terminal_rounded),
+                    icon: Icon(LucideIcons.terminal),
                   ),
                 ],
                 selected: {_dataset},
@@ -84,9 +85,7 @@ class _AdminSentryPanelState extends ConsumerState<AdminSentryPanel> {
               ),
               OutlinedButton.icon(
                 onPressed: () => setState(() => _live = !_live),
-                icon: Icon(
-                  _live ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                ),
+                icon: Icon(_live ? LucideIcons.pause : LucideIcons.play),
                 label: Text(_live ? 'Pause live' : 'Resume live'),
               ),
             ],
@@ -138,7 +137,7 @@ class _AdminSentryPanelState extends ConsumerState<AdminSentryPanel> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                Icons.inbox_outlined,
+                                LucideIcons.inbox,
                                 size: 32,
                                 color: colors.iconSubtle,
                               ),
@@ -192,8 +191,8 @@ class _AdminSentryPanelState extends ConsumerState<AdminSentryPanel> {
                                     children: [
                                       Icon(
                                         isError
-                                            ? Icons.error_outline_rounded
-                                            : Icons.article_outlined,
+                                            ? LucideIcons.circleAlert
+                                            : LucideIcons.fileText,
                                         color: color,
                                         size: 20,
                                       ),
@@ -244,7 +243,7 @@ class _AdminSentryPanelState extends ConsumerState<AdminSentryPanel> {
                               setState(() => _live = false);
                               ref.read(provider.notifier).refresh(older: true);
                             },
-                      icon: const Icon(Icons.expand_more_rounded),
+                      icon: const Icon(LucideIcons.chevronDown),
                       label: const Text('Load older events'),
                     ),
                   ),

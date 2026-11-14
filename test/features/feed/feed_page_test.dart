@@ -1,4 +1,6 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'dart:io';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
 
 import 'package:tilomnov/features/advertisements/data/advertisement.dart';
 import 'package:tilomnov/features/advertisements/presentation/advertisements_provider.dart';
@@ -77,6 +79,7 @@ Future<ProviderContainer> _pumpFeed(
   _Clock? clock,
   List<Advertisement> ads = const [],
 }) async {
+  ApiCacheManager().clearAll();
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -214,7 +217,7 @@ void main() {
       });
       final container = await _pumpFeed(tester, server);
       expect(find.text('Newest first'), findsNothing);
-      await tester.tap(find.byIcon(Icons.tune_rounded));
+      await tester.tap(find.byIcon(LucideIcons.slidersHorizontal));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Top (most saved)'));
       await tester.tap(find.text('Last 7 days'));
@@ -245,11 +248,16 @@ void main() {
       for (final entry in filters.toQuery().entries) {
         expect(requests.last, containsPair(entry.key, entry.value));
       }
-      final kept = await SharedPreferences.getInstance();
-      expect(kept.getString(_keptKey), contains('Default listing'));
-      expect(kept.getString(_keptKey), isNot(contains('Filtered')));
+      final kept = await tester.runAsync(
+        () => container.read(feedRepositoryProvider).savedFirstPage(),
+      );
+      expect(kept!.items.single.title, 'Default listing');
+      expect(
+        (await SharedPreferences.getInstance()).getString(_keptKey),
+        isNull,
+      );
 
-      await tester.tap(find.byIcon(Icons.tune_rounded));
+      await tester.tap(find.byIcon(LucideIcons.slidersHorizontal));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Reset'));
       await tester.tap(find.text('See results'));
@@ -267,10 +275,10 @@ void main() {
     final server = _api((_) => _page([_listing('p-1', 'Villa')]));
     final container = await _pumpFeed(tester, server);
     final before = _feedRequests(server).length;
-    await tester.tap(find.byIcon(Icons.tune_rounded));
+    await tester.tap(find.byIcon(LucideIcons.slidersHorizontal));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Top (most saved)'));
-    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.tap(find.byIcon(LucideIcons.x));
     await tester.pumpAndSettle();
     expect(container.read(feedFiltersProvider).isDefault, isTrue);
     expect(_feedRequests(server), hasLength(before));
@@ -470,10 +478,17 @@ void main() {
       await _pumpFeed(tester, _api((_) => _page([_listing('p-1', 'Villa')])));
 
       final preferences = await SharedPreferences.getInstance();
-      expect(preferences.getString(_keptKey), contains('Villa'));
+      expect(preferences.getString(_keptKey), isNull);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(FeedPage)),
+      );
+      final page = await tester.runAsync(
+        () => container.read(feedRepositoryProvider).savedFirstPage(),
+      );
+      expect(page!.items.single.title, 'Villa');
     });
 
-    testWidgets('starting offline shows the kept page instead of an error', (
+    testWidgets('starting offline never restores legacy plaintext copies', (
       tester,
     ) async {
       await _pumpFeed(
@@ -484,8 +499,8 @@ void main() {
         },
       );
 
-      expect(find.text('Kept villa'), findsOneWidget);
-      expect(find.text('Your feed could not be loaded.'), findsNothing);
+      expect(find.text('Kept villa'), findsNothing);
+      expect(find.text('Your feed could not be loaded.'), findsOneWidget);
     });
 
     testWidgets('the kept page is replaced by the server\'s', (tester) async {

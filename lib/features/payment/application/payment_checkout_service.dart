@@ -6,6 +6,7 @@ class PaymentOutcome {
   final PaymentResult result;
   final String? transactionId;
   final double? amountUsd;
+  final bool isSimulation;
   final DateTime? paidAt;
 
   const PaymentOutcome(
@@ -13,6 +14,7 @@ class PaymentOutcome {
     this.transactionId,
     this.amountUsd,
     this.paidAt,
+    this.isSimulation = false,
   });
 
   bool get isPaid => result == PaymentResult.paid;

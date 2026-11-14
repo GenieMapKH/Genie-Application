@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/device/app_haptics.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -51,7 +52,7 @@ class PublishingPlanSelector extends StatelessWidget {
         child: Column(
           children: [
             _PlanOption(
-              icon: Icons.receipt_long_rounded,
+              icon: LucideIcons.receiptText,
               title: l10n.publishPlanOneTime,
               subtitle: l10n.publishPlanOneTimeHint(formatUsd(oneTimeFee)),
               selected: selected == PublishingPlan.oneTime,
@@ -59,7 +60,7 @@ class PublishingPlanSelector extends StatelessWidget {
             ),
             Divider(height: 1, indent: 60, color: colors.divider),
             _PlanOption(
-              icon: Icons.workspace_premium_rounded,
+              icon: LucideIcons.award,
               title: l10n.publishPlanSubscription,
               subtitle: l10n.publishPlanSubscriptionHint,
               selected: selected == PublishingPlan.subscription,
@@ -147,9 +148,7 @@ class _PlanOption extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Icon(
-                selected
-                    ? Icons.radio_button_checked_rounded
-                    : Icons.radio_button_off_rounded,
+                selected ? LucideIcons.circleDot : LucideIcons.circle,
                 color: selected ? colors.highlight : colors.iconSubtle,
               ),
             ],

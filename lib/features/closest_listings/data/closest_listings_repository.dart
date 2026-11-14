@@ -34,6 +34,7 @@ class ClosestListingsRepository {
     int offset = 0,
     int limit = pageSize,
   }) async {
+    final scope = await _kept.capture();
     final response = await dio.get<Map<String, dynamic>>(
       '/public/properties/closest',
       queryParameters: {
@@ -49,7 +50,7 @@ class ClosestListingsRepository {
       await _kept.write(_keptName, {
         'filter': _filterKey(filter),
         'page': data,
-      });
+      }, scope: scope);
     }
     return _pageOf(data);
   }

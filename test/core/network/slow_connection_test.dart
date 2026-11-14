@@ -92,11 +92,13 @@ void main() {
   group('SlowConnectionInterceptor', () {
     late Dio dio;
     late _SlowServer server;
+    Future<void>? pendingProbe;
 
     setUp(() {
       server = _SlowServer();
+      pendingProbe = null;
       status.probe = () =>
-          Future<void>.delayed(const Duration(milliseconds: 10));
+          pendingProbe = Future<void>.delayed(const Duration(milliseconds: 10));
       dio = Dio()
         ..interceptors.addAll([
           SlowConnectionInterceptor(
@@ -111,7 +113,10 @@ void main() {
 
     Future<void> reads(int count) async {
       for (var i = 0; i < count; i++) {
+        pendingProbe = null;
         await dio.get<void>('/feed');
+        // The response can arrive before its asynchronous health check finishes.
+        await pendingProbe;
       }
     }
 

@@ -66,6 +66,8 @@ class PropertyModel {
   final DateTime? ownerMemberSince;
   final String? ownerEmail;
   final String? ownerPhone;
+  final bool ownerEmailVerified;
+  final bool ownerPhoneVerified;
 
   /// People who saved the listing.
   final int saveCount;
@@ -111,6 +113,8 @@ class PropertyModel {
     this.ownerMemberSince,
     this.ownerEmail,
     this.ownerPhone,
+    this.ownerEmailVerified = false,
+    this.ownerPhoneVerified = false,
     this.saveCount = 0,
     this.viewCount = 0,
     this.contactCount = 0,
@@ -322,6 +326,8 @@ class PropertyModel {
           : null,
       ownerEmail: owner is Map ? owner['email'] as String? : null,
       ownerPhone: owner is Map ? owner['phone'] as String? : null,
+      ownerEmailVerified: owner is Map && owner['emailVerified'] == true,
+      ownerPhoneVerified: owner is Map && owner['phoneVerified'] == true,
       saveCount: counts is Map ? (counts['favorites'] as int? ?? 0) : 0,
       viewCount: counts is Map ? (counts['views'] as int? ?? 0) : 0,
       contactCount: counts is Map ? (counts['contacts'] as int? ?? 0) : 0,
@@ -390,6 +396,8 @@ class PropertyModel {
     DateTime? ownerMemberSince,
     String? ownerEmail,
     String? ownerPhone,
+    bool? ownerEmailVerified,
+    bool? ownerPhoneVerified,
     int? saveCount,
     int? viewCount,
     int? contactCount,
@@ -431,6 +439,8 @@ class PropertyModel {
       ownerMemberSince: ownerMemberSince ?? this.ownerMemberSince,
       ownerEmail: ownerEmail ?? this.ownerEmail,
       ownerPhone: ownerPhone ?? this.ownerPhone,
+      ownerEmailVerified: ownerEmailVerified ?? this.ownerEmailVerified,
+      ownerPhoneVerified: ownerPhoneVerified ?? this.ownerPhoneVerified,
       saveCount: saveCount ?? this.saveCount,
       viewCount: viewCount ?? this.viewCount,
       contactCount: contactCount ?? this.contactCount,

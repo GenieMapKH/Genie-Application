@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -187,6 +189,27 @@ void main() {
         await tester.pump();
       }
     }
+
+    testWidgets('starts call history while message history is still loading', (
+      tester,
+    ) async {
+      final messagesGate = Completer<void>();
+      repository.gate = messagesGate;
+      repository.callHistory = [call('c1', endReason: 'cancelled')];
+
+      await openChat(tester);
+
+      expect(repository.historyRequests, 1);
+      expect(repository.callHistoryRequests, 1);
+      expect(find.byType(ChatCallEntryTile), findsNothing);
+
+      messagesGate.complete();
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+
+      expect(find.text('Cancelled call'), findsOneWidget);
+    });
 
     testWidgets('shows how each call went, even with no messages', (
       tester,

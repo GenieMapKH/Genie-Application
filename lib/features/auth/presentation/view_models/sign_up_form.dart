@@ -47,8 +47,9 @@ class SignUpForm {
   SignUpProblem? get nameProblem =>
       trimmedName.isEmpty ? SignUpProblem.missingName : null;
 
-  SignUpProblem? get phoneProblem =>
-      normalizedPhone == null ? SignUpProblem.invalidPhone : null;
+  SignUpProblem? get phoneProblem {
+    return normalizedPhone == null ? SignUpProblem.invalidPhone : null;
+  }
 
   /// Only a typed email can be wrong: it is optional.
   SignUpProblem? get emailProblem {

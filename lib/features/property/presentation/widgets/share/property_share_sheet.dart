@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:gal/gal.dart';
@@ -285,7 +286,11 @@ class _PropertyShareSheetState extends State<PropertyShareSheet> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                icon: Icon(Icons.ios_share, size: 18, color: colors.onPrimary),
+                icon: Icon(
+                  LucideIcons.share,
+                  size: 18,
+                  color: colors.onPrimary,
+                ),
                 label: Text(
                   l10n.propertyShare,
                   style: GoogleFonts.inter(
@@ -301,7 +306,7 @@ class _PropertyShareSheetState extends State<PropertyShareSheet> {
               children: [
                 Expanded(
                   child: _OutlinedAction(
-                    icon: Icons.link_rounded,
+                    icon: LucideIcons.link,
                     label: l10n.propertyShareCopyLink,
                     onPressed: _busy ? null : () => _run(_copyLink),
                   ),
@@ -309,7 +314,7 @@ class _PropertyShareSheetState extends State<PropertyShareSheet> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: _OutlinedAction(
-                    icon: Icons.download_rounded,
+                    icon: LucideIcons.download,
                     label: l10n.propertyShareSaveImage,
                     onPressed: enabled ? () => _run(_save) : null,
                   ),

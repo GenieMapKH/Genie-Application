@@ -1,3 +1,4 @@
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -178,7 +179,7 @@ void main() {
     // Verify error messages and info icons
     expect(find.text('Enter a valid email address'), findsOneWidget);
     expect(find.text('Password must be at least 6 characters'), findsOneWidget);
-    expect(find.byIcon(Icons.info_outline), findsNWidgets(2));
+    expect(find.byIcon(LucideIcons.info), findsNWidgets(2));
   });
 
   testWidgets('LoginPage shows error state for invalid phone number', (
@@ -234,13 +235,13 @@ void main() {
     expect(visibilityIconButton, findsOneWidget);
 
     // Default: visibility icon shown
-    expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
+    expect(find.byIcon(LucideIcons.eye), findsOneWidget);
 
     // Tap to reveal password
     await tester.tap(visibilityIconButton);
     await tester.pumpAndSettle();
 
-    expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
+    expect(find.byIcon(LucideIcons.eyeOff), findsOneWidget);
   });
 
   testWidgets(

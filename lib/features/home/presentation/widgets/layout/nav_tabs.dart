@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -7,77 +8,43 @@ import 'package:tilomnov/features/auth/presentation/widgets/sign_in_required_dia
 import 'package:tilomnov/features/chat/providers/chat_provider.dart';
 import 'package:tilomnov/features/home/presentation/providers/main_nav_provider.dart';
 import 'package:tilomnov/l10n/l10n.dart';
-import 'package:tilomnov/shared/widgets/media/tinted_svg.dart';
 
 /// One tab of the bottom navigation.
 class NavTab {
   final int index;
-  final String iconAsset;
+  final IconData icon;
   final String Function(AppLocalizations l10n) label;
-  final IconData? icon;
   final bool showUnread;
 
-  const NavTab(
-    this.index,
-    this.iconAsset,
-    this.label, {
-    this.icon,
-    this.showUnread = false,
-  });
+  const NavTab(this.index, this.icon, this.label, {this.showUnread = false});
 
-  Widget buildIcon(Color color) => icon == null
-      ? TintedSvg(iconAsset, width: 24, height: 24, color: color)
-      : Icon(icon, size: 24, color: color);
+  Widget buildIcon(Color color) => Icon(icon, size: 24, color: color);
 }
 
 /// The tabs, in the order the bar shows them. Shared by both looks of the
 /// bar so they can never disagree.
 final List<NavTab> mainNavTabs = [
-  NavTab(MainTab.explore, 'assets/icons/explore.svg', (l) => l.navExplore),
-  NavTab(MainTab.feed, 'assets/icons/feed.svg', (l) => l.navFeed),
-  NavTab(MainTab.saved, 'assets/icons/saved.svg', (l) => l.navSaved),
+  NavTab(MainTab.explore, LucideIcons.compass, (l) => l.navExplore),
+  NavTab(MainTab.feed, LucideIcons.newspaper, (l) => l.navFeed),
+  NavTab(MainTab.saved, LucideIcons.bookmark, (l) => l.navSaved),
   NavTab(
     MainTab.chat,
-    'assets/icons/chat.svg',
+    LucideIcons.messageCircle,
     (l) => l.navChat,
     showUnread: true,
   ),
-  NavTab(
-    MainTab.myProperties,
-    'assets/icons/property.svg',
-    (l) => l.navListings,
-  ),
-  NavTab(MainTab.user, 'assets/icons/user.svg', (l) => l.navUser),
+  NavTab(MainTab.myProperties, LucideIcons.house, (l) => l.navListings),
+  NavTab(MainTab.user, LucideIcons.userRound, (l) => l.navUser),
 ];
 
 List<NavTab> navTabsFor({required bool isAdmin}) => isAdmin
     ? [
         mainNavTabs.first,
-        NavTab(
-          AdminTab.services,
-          '',
-          (_) => 'Services',
-          icon: Icons.dns_outlined,
-        ),
-        NavTab(
-          AdminTab.account,
-          '',
-          (_) => 'Account',
-          icon: Icons.manage_accounts_outlined,
-        ),
-        NavTab(
-          AdminTab.activity,
-          '',
-          (_) => 'Activity',
-          icon: Icons.monitor_heart_outlined,
-        ),
-        NavTab(
-          AdminTab.financial,
-          '',
-          (_) => 'Financial',
-          icon: Icons.account_balance_wallet_outlined,
-        ),
-        NavTab(AdminTab.profile, 'assets/icons/user.svg', (_) => 'Profile'),
+        NavTab(AdminTab.services, LucideIcons.server, (_) => 'Services'),
+        NavTab(AdminTab.account, LucideIcons.userCog, (_) => 'Account'),
+        NavTab(AdminTab.activity, LucideIcons.heartPulse, (_) => 'Activity'),
+        NavTab(AdminTab.financial, LucideIcons.wallet, (_) => 'Financial'),
+        NavTab(AdminTab.profile, LucideIcons.userRound, (_) => 'Profile'),
       ]
     : mainNavTabs;
 

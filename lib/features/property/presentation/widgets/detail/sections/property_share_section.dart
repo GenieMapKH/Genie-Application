@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -45,7 +46,7 @@ class PropertyShareSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.qr_code_scanner,
+                    LucideIcons.scanQrCode,
                     size: 16,
                     color: context.colors.textMuted,
                   ),
@@ -142,7 +143,7 @@ class _NotShareable extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.lock_outline, size: 18, color: colors.textMuted),
+              Icon(LucideIcons.lockKeyhole, size: 18, color: colors.textMuted),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(

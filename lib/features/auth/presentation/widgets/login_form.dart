@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/widgets/forms/app_text_field.dart';
 
@@ -129,9 +130,7 @@ class LoginForm extends StatelessWidget {
                     transitionBuilder: (child, animation) =>
                         ScaleTransition(scale: animation, child: child),
                     child: Icon(
-                      obscurePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
+                      obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
                       key: ValueKey<bool>(obscurePassword),
                       color: context.colors.textMuted,
                       size: 20,

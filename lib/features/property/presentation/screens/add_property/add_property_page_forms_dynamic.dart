@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 // ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tilomnov/features/property/data/models/property_keyword.dart';
@@ -75,7 +76,11 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.map, size: 48, color: context.colors.textHint),
+                    Icon(
+                      LucideIcons.map,
+                      size: 48,
+                      color: context.colors.textHint,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       context.l10n.propertySetPropertyLocation,
@@ -104,7 +109,7 @@ extension AddPropertyPageFormsDynamic on AddPropertyPageState {
               child: OutlinedButton.icon(
                 onPressed: () {},
                 icon: Icon(
-                  Icons.location_on_outlined,
+                  LucideIcons.mapPin,
                   size: 18,
                   color: context.colors.textSecondary,
                 ),

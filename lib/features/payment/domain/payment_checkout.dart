@@ -4,6 +4,7 @@ class PaymentCheckout {
   final String transactionId;
   final PaymentState state;
   final double? amountUsd;
+  final bool isSimulation;
   final DateTime? paidAt;
 
   /// Opens ABA Mobile straight on the payment. Null when the provider gave
@@ -18,6 +19,7 @@ class PaymentCheckout {
     this.state = PaymentState.pending,
     this.amountUsd,
     this.paidAt,
+    this.isSimulation = false,
     this.appDeeplink,
     this.checkoutUrl,
   });
@@ -27,6 +29,7 @@ class PaymentCheckout {
         value is String && value.isNotEmpty ? Uri.tryParse(value) : null;
     return PaymentCheckout(
       transactionId: json['transactionId'] as String,
+      isSimulation: json['isSimulation'] == true,
       state: PaymentState.fromApi(json['status']),
       amountUsd: (json['amount'] as num?)?.toDouble(),
       paidAt: json['paidAt'] == null

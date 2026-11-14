@@ -1,6 +1,7 @@
-import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
+﻿import 'package:tilomnov/features/advertisements/presentation/advertised_sliver_grid.dart';
 import 'package:tilomnov/features/advertisements/presentation/advertisement_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -113,7 +114,7 @@ class SavedPropertiesPage extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            Icons.tune,
+                            LucideIcons.slidersHorizontal,
                             size: 16,
                             color: context.colors.textSecondary,
                           ),
@@ -166,7 +167,7 @@ class SavedPropertiesPage extends ConsumerWidget {
       padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
       children: [
         EmptyStateCard(
-          icon: Icons.favorite_border_rounded,
+          icon: LucideIcons.heart,
           title: context.l10n.propertyYouHavenTSavedAnyProperties,
           hint: context.l10n.propertyTapTheHeartIconOnListings,
         ),

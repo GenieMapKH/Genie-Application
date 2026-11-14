@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -171,8 +172,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                           },
                           child: Icon(
                             _obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                                ? LucideIcons.eyeOff
+                                : LucideIcons.eye,
                             color: context.colors.textHint,
                             size: 22,
                           ),
@@ -212,8 +213,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage>
                           },
                           child: Icon(
                             _obscureConfirmPassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                                ? LucideIcons.eyeOff
+                                : LucideIcons.eye,
                             color: context.colors.textHint,
                             size: 22,
                           ),

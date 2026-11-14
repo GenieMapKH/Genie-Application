@@ -75,6 +75,8 @@ Future<void> _openAddPage(
   WidgetTester tester,
   _Server server, {
   required int used,
+  PlanTier tier = PlanTier.free,
+  StubServer? paymentServer,
 }) async {
   // A phone screen, so the checkout's method sits above its button.
   tester.view.physicalSize = const Size(1170, 2532);
@@ -101,15 +103,17 @@ Future<void> _openAddPage(
       ),
       paymentRepositoryProvider.overrideWithValue(
         PaymentRepository(
-          StubServer.always(
-            201,
-            '{"transactionId":"tx-mock","status":"Success","amount":1,"paidAt":"2026-11-08T00:00:00.000Z"}',
-          ).dio,
+          (paymentServer ??
+                  StubServer.always(
+                    201,
+                    '{"transactionId":"tx-mock","status":"Success","amount":1,"paidAt":"2026-11-08T00:00:00.000Z"}',
+                  ))
+              .dio,
         ),
       ),
       propertyRepositoryProvider.overrideWithValue(server),
       publishingAllowanceProvider.overrideWith(
-        (ref) async => PublishingAllowance(tier: PlanTier.free, used: used),
+        (ref) async => PublishingAllowance(tier: tier, used: used),
       ),
     ],
   );
@@ -144,11 +148,53 @@ void main() {
   });
 
   testWidgets('the first listing needs no publishing plan', (tester) async {
-    await _openAddPage(tester, _Server(), used: 0);
+    final server = _Server();
+    final payments = StubServer.always(500);
+    await _openAddPage(tester, server, used: 0, paymentServer: payments);
     expect(
       find.text('Choose Publishing Plan *', findRichText: true),
       findsNothing,
     );
+    await _pressPublish(tester);
+    await tester.pumpAndSettle();
+    expect(server.created.single['status'], 'Active');
+    expect(payments.requests, isEmpty);
+    expect(find.byType(OneTimePaymentPage), findsNothing);
+  });
+
+  for (final used in [0, 1, 9]) {
+    testWidgets('Silver with $used used listings does not open payment', (
+      tester,
+    ) async {
+      final server = _Server();
+      final payments = StubServer.always(500);
+      await _openAddPage(
+        tester,
+        server,
+        used: used,
+        tier: PlanTier.silver,
+        paymentServer: payments,
+      );
+      expect(find.byType(PublishingPlanSelector), findsNothing);
+      await _pressPublish(tester);
+      await tester.pumpAndSettle();
+      expect(server.created.single['status'], 'Active');
+      expect(payments.requests, isEmpty);
+      expect(find.byType(OneTimePaymentPage), findsNothing);
+      expect(find.byType(PaymentSuccessPage), findsNothing);
+    });
+  }
+
+  testWidgets('Silver at its limit requires a publishing choice', (
+    tester,
+  ) async {
+    final server = _Server();
+    await _openAddPage(tester, server, used: 10, tier: PlanTier.silver);
+    await _pressPublish(tester);
+    expect(server.created, isEmpty);
+    expect(find.byType(PublishingPlanSelector), findsOneWidget);
+    expect(find.byType(OneTimePaymentPage), findsNothing);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
   });
 
   testWidgets('past the plan, Publish waits for a publishing plan', (

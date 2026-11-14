@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilomnov/features/admin/data/admin_income.dart';
 import 'package:tilomnov/features/admin/data/admin_record.dart';
@@ -63,7 +64,7 @@ void main() {
   });
 
   testWidgets(
-    'each tier has its own icon and property posts have a separate icon',
+    'tier styles stay distinct and property posts have a separate icon',
     (tester) async {
       await pumpTestApp(
         tester,
@@ -98,10 +99,13 @@ void main() {
           ),
         ),
       );
-      expect(find.byIcon(Icons.military_tech_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.workspace_premium_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.diamond_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.post_add_rounded), findsOneWidget);
+      expect(find.byIcon(LucideIcons.award), findsNWidgets(2));
+      final medals = tester
+          .widgetList<Icon>(find.byIcon(LucideIcons.award))
+          .toList();
+      expect(medals[0].color, isNot(medals[1].color));
+      expect(find.byIcon(LucideIcons.gem), findsOneWidget);
+      expect(find.byIcon(LucideIcons.filePlus2), findsOneWidget);
       expect(find.byTooltip('One-time property post'), findsOneWidget);
       expect(find.byTooltip('Gold subscription'), findsOneWidget);
     },

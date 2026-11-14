@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:intl/intl.dart';
 import '../data/admin_income.dart';
 import 'admin_records_page.dart';
@@ -36,14 +37,14 @@ class AdminIncomeChart extends StatelessWidget {
               purpose: 'SUBSCRIPTION',
               amount: money.format(data.subscriptionUsd),
               color: subscriptionColor,
-              icon: Icons.workspace_premium_outlined,
+              icon: LucideIcons.award,
             ),
             _IncomeSource(
               label: 'One-time property posts',
               purpose: 'LISTING_PUBLISH',
               amount: money.format(data.listingUsd),
               color: listingColor,
-              icon: Icons.post_add_rounded,
+              icon: LucideIcons.filePlus2,
             ),
           ],
         ),

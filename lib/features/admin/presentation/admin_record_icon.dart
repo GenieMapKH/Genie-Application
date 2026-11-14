@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import '../data/admin_record.dart';
 import '../../subscription/domain/plan_tier.dart';
 import '../../subscription/presentation/plan_tier_style.dart';
@@ -22,16 +23,14 @@ class AdminRecordIcon extends StatelessWidget {
     final subscription =
         values['purpose'] == 'SUBSCRIPTION' || values['tier'] != null;
     final icon = subscription
-        ? (tier.isPaid
-              ? PlanTierStyle.of(tier).icon
-              : Icons.workspace_premium_outlined)
+        ? (tier.isPaid ? PlanTierStyle.of(tier).icon : LucideIcons.award)
         : values['purpose'] == 'LISTING_PUBLISH'
-        ? Icons.post_add_rounded
+        ? LucideIcons.filePlus2
         : values.containsKey('amount')
-        ? Icons.receipt_long_outlined
+        ? LucideIcons.receiptText
         : values.containsKey('reason')
-        ? Icons.flag_outlined
-        : Icons.home_work_outlined;
+        ? LucideIcons.flag
+        : LucideIcons.building2;
     final colors = Theme.of(context).colorScheme;
     final color = subscription ? tier.accentOn(context) : colors.primary;
     return Tooltip(

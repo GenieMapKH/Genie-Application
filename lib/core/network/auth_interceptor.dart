@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:tilomnov/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:tilomnov/core/logging/app_logger.dart';
 
 /// Attaches the session to every request, and renews it when the server
 /// answers that the access token is no longer good.
@@ -7,6 +8,7 @@ class AuthInterceptor extends Interceptor {
   /// Marks the renewal request itself, and requests already repeated with a
   /// renewed token: a 401 to either is final.
   static const _noRenewal = 'auth_no_renewal';
+  static const _origin = 'auth_session_generation';
 
   final Dio dio;
 
@@ -27,7 +29,9 @@ class AuthInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    options.extra.putIfAbsent(_origin, () => AuthStorage.generation);
     var token = await AuthStorage.getAccessToken();
+    if (!_isCurrent(options)) return handler.reject(_stale(options));
     if (token != null &&
         options.extra[_noRenewal] != true &&
         AuthStorage.isTokenExpired(token)) {
@@ -37,10 +41,13 @@ class AuthInterceptor extends Interceptor {
       await _renew();
       token = await AuthStorage.getAccessToken();
     }
+    if (!_isCurrent(options)) return handler.reject(_stale(options));
     if (token != null) {
       // Automatically attach token to ALL requests if user is logged in
       options.headers['Authorization'] = 'Bearer $token';
     } else {
+      options.headers.remove('Authorization');
+      options.headers.remove('authorization');
       final guestId = await AuthStorage.getGuestSessionId();
       if (guestId != null) {
         options.headers['X-Guest-Session-ID'] = guestId;
@@ -52,11 +59,13 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     final request = err.requestOptions;
+    if (!_isCurrent(request)) return handler.next(_stale(request));
     if (err.response?.statusCode != 401 || request.extra[_noRenewal] == true) {
       return handler.next(err);
     }
 
     final newAccess = await _validAccessToken(request);
+    if (!_isCurrent(request)) return handler.next(_stale(request));
     if (newAccess == null) {
       return handler.next(err);
     }
@@ -86,23 +95,27 @@ class AuthInterceptor extends Interceptor {
   /// The renewal in progress, else a new one. Null when there is no session
   /// to renew or it could not be renewed.
   Future<String?> _renew() async {
+    final generation = AuthStorage.generation;
     final pending = _renewal;
     if (pending != null) return pending;
 
     final refreshToken = await AuthStorage.getRefreshToken();
-    if (refreshToken == null) return null;
+    if (refreshToken == null || generation != AuthStorage.generation) {
+      return null;
+    }
 
     // Checked again: another request may have started one while the
     // storage was read.
     return _renewal ??= _renewSession(
       refreshToken,
+      generation,
     ).whenComplete(() => _renewal = null);
   }
 
   /// Trades the refresh token for a new pair and returns the new access
   /// token. Null when that did not work: either the server refused, which
   /// ends the session, or it could not be reached, which changes nothing.
-  Future<String?> _renewSession(String refreshToken) async {
+  Future<String?> _renewSession(String refreshToken, int generation) async {
     try {
       final response = await dio.post(
         '/auth/refresh',
@@ -112,22 +125,52 @@ class AuthInterceptor extends Interceptor {
       final newAccess = response.data['accessToken'] as String;
       // Signed out while the renewal ran: saving would sign the device back
       // in behind the user's back.
-      if (await AuthStorage.getRefreshToken() != refreshToken) return null;
+      if (generation != AuthStorage.generation ||
+          await AuthStorage.getRefreshToken() != refreshToken) {
+        return null;
+      }
       await AuthStorage.saveTokens(
         access: newAccess,
         refresh: response.data['refreshToken'] as String,
+        expectedGeneration: generation,
       );
-      return newAccess;
+      return generation == AuthStorage.generation ? newAccess : null;
     } on DioException catch (e) {
       // Only a refusal ends the session. Being offline for a moment must
       // not sign anyone out, and a session the user already left (signing
       // out revokes the refresh token) is not ended a second time.
+      final currentRefresh = await AuthStorage.getRefreshToken();
       if (e.response?.statusCode == 401 &&
-          await AuthStorage.getRefreshToken() == refreshToken) {
-        await AuthStorage.clearTokens();
-        onSessionEnded?.call();
+          generation == AuthStorage.generation &&
+          currentRefresh == refreshToken) {
+        final clearing = AuthStorage.clearTokens();
+        final endedGeneration = AuthStorage.generation;
+        try {
+          await clearing;
+        } catch (error) {
+          AppLogger.error('Local sign-out cleanup failed', error);
+        } finally {
+          if (endedGeneration == AuthStorage.generation) onSessionEnded?.call();
+        }
       }
       return null;
     }
   }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    if (!_isCurrent(response.requestOptions)) {
+      return handler.reject(_stale(response.requestOptions));
+    }
+    handler.next(response);
+  }
+
+  bool _isCurrent(RequestOptions options) =>
+      options.extra[_origin] == AuthStorage.generation;
+
+  DioException _stale(RequestOptions options) => DioException(
+    requestOptions: options,
+    type: DioExceptionType.cancel,
+    message: 'Session changed',
+  );
 }

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/features/admin/data/admin_record.dart';
 import 'admin_record_icon.dart';
@@ -105,7 +106,7 @@ class AdminRecordTile extends StatelessWidget {
       );
       final label = '$prefix${key[0].toUpperCase()}${key.substring(1)}';
       if (entry.value is Map<String, dynamic>) {
-        yield* _fields(entry.value as Map<String, dynamic>, '$label · ');
+        yield* _fields(entry.value as Map<String, dynamic>, '$label Â· ');
       } else {
         final value = entry.value;
         final date =
@@ -126,24 +127,24 @@ class AdminRecordTile extends StatelessWidget {
   }
 
   static IconData _fieldIcon(String key) => switch (key) {
-    'email' => Icons.mail_outline_rounded,
-    'phone' || 'contactPhone' => Icons.phone_outlined,
-    'emailVerified' || 'phoneVerified' => Icons.verified_user_outlined,
-    'username' => Icons.alternate_email_rounded,
-    'name' || 'firstName' || 'lastName' => Icons.person_outline_rounded,
-    'role' => Icons.badge_outlined,
-    'createdAt' || 'publishedAt' => Icons.calendar_today_outlined,
-    'lastSeenAt' || 'updatedAt' => Icons.history_rounded,
-    'deactivatedAt' || 'cancelledAt' => Icons.person_off_outlined,
-    'tier' || 'subscriptionTier' => Icons.workspace_premium_outlined,
-    'amount' || 'price' || 'currency' => Icons.payments_outlined,
-    'status' => Icons.info_outline_rounded,
-    'reason' || 'details' => Icons.flag_outlined,
+    'email' => LucideIcons.mail,
+    'phone' || 'contactPhone' => LucideIcons.phone,
+    'emailVerified' || 'phoneVerified' => LucideIcons.badgeCheck,
+    'username' => LucideIcons.atSign,
+    'name' || 'firstName' || 'lastName' => LucideIcons.userRound,
+    'role' => LucideIcons.badgeCheck,
+    'createdAt' || 'publishedAt' => LucideIcons.calendarDays,
+    'lastSeenAt' || 'updatedAt' => LucideIcons.history,
+    'deactivatedAt' || 'cancelledAt' => LucideIcons.userRoundX,
+    'tier' || 'subscriptionTier' => LucideIcons.award,
+    'amount' || 'price' || 'currency' => LucideIcons.creditCard,
+    'status' => LucideIcons.info,
+    'reason' || 'details' => LucideIcons.flag,
     'id' ||
     'userId' ||
     'propertyId' ||
-    'transactionId' => Icons.fingerprint_rounded,
-    _ => Icons.notes_rounded,
+    'transactionId' => LucideIcons.fingerprint,
+    _ => LucideIcons.notebookPen,
   };
 }
 
@@ -156,15 +157,15 @@ class _AccountBadges extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final badges = [
       if (values['bannedAt'] != null)
-        (Icons.block_rounded, 'Banned')
+        (LucideIcons.ban, 'Banned')
       else if (values.containsKey('deactivatedAt'))
         values['deactivatedAt'] == null
-            ? (Icons.check_circle_outline_rounded, 'Active account')
-            : (Icons.person_off_outlined, 'Deactivated'),
+            ? (LucideIcons.circleCheck, 'Active account')
+            : (LucideIcons.userRoundX, 'Deactivated'),
       if (values['emailVerified'] == true)
-        (Icons.mark_email_read_outlined, 'Email verified'),
+        (LucideIcons.mailCheck, 'Email verified'),
       if (values['phoneVerified'] == true)
-        (Icons.verified_user_outlined, 'Phone verified'),
+        (LucideIcons.badgeCheck, 'Phone verified'),
     ];
     return Wrap(
       spacing: 6,

@@ -1,5 +1,6 @@
-import 'package:tilomnov/shared/utils/app_popup.dart';
+﻿import 'package:tilomnov/shared/utils/app_popup.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/logging/app_logger.dart';
@@ -33,13 +34,13 @@ class ChatListEntry extends ConsumerWidget {
     return SwipeActionTile(
       actions: [
         SwipeAction(
-          icon: isArchived ? Icons.unarchive_outlined : Icons.archive_outlined,
+          icon: isArchived ? LucideIcons.archiveRestore : LucideIcons.archive,
           label: isArchived ? l10n.chatUnarchive : l10n.chatArchive,
           color: context.colors.accent,
           onPressed: () => _toggleArchive(context, ref),
         ),
         SwipeAction(
-          icon: Icons.delete_outline,
+          icon: LucideIcons.trash2,
           label: l10n.chatDelete,
           color: context.colors.danger,
           onPressed: () => _delete(context, ref),
@@ -75,7 +76,7 @@ class ChatListEntry extends ConsumerWidget {
           children: [
             ListTile(
               leading: Icon(
-                isArchived ? Icons.unarchive_outlined : Icons.archive_outlined,
+                isArchived ? LucideIcons.archiveRestore : LucideIcons.archive,
               ),
               title: Text(
                 isArchived ? l10n.chatUnarchiveChat : l10n.chatArchiveChat,
@@ -83,7 +84,7 @@ class ChatListEntry extends ConsumerWidget {
               onTap: () => Navigator.of(sheetContext).pop(_MenuChoice.archive),
             ),
             ListTile(
-              leading: Icon(Icons.delete_outline, color: context.colors.danger),
+              leading: Icon(LucideIcons.trash2, color: context.colors.danger),
               title: Text(
                 l10n.chatDeleteChat,
                 style: TextStyle(color: context.colors.danger),

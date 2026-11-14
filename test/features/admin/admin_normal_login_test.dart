@@ -145,6 +145,10 @@ void main() {
             .login('owner@example.com', 'password'),
       );
       expect(success, isFalse);
+      expect(
+        container.read(loginControllerProvider).error,
+        isA<AdminEmailRequired>(),
+      );
       await tester.pumpAndSettle();
       expect(find.byType(AdminEmailPage), findsOneWidget);
       expect(await AuthStorage.getAccessToken(), isNull);

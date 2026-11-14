@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -41,34 +42,37 @@ class SafetyMenuButton extends ConsumerWidget {
 
     return PopupMenuButton<_SafetyAction>(
       tooltip: l10n.safetyMore,
-      icon: Icon(Icons.more_vert, color: iconColor ?? context.colors.textMuted),
+      icon: Icon(
+        LucideIcons.ellipsisVertical,
+        color: iconColor ?? context.colors.textMuted,
+      ),
       onSelected: (action) => _run(context, ref, action),
       itemBuilder: (menuContext) => [
         if (listingId != null)
           appMenuItem(
             menuContext,
             value: _SafetyAction.reportListing,
-            icon: Icons.flag_outlined,
+            icon: LucideIcons.flag,
             label: l10n.reportListingAction,
           ),
         appMenuItem(
           menuContext,
           value: _SafetyAction.reportPerson,
-          icon: Icons.report_outlined,
+          icon: LucideIcons.flagTriangleRight,
           label: l10n.reportUserAction,
         ),
         if (isBlocked)
           appMenuItem(
             menuContext,
             value: _SafetyAction.unblock,
-            icon: Icons.lock_open_outlined,
+            icon: LucideIcons.lockKeyholeOpen,
             label: l10n.unblockAction,
           )
         else
           appMenuItem(
             menuContext,
             value: _SafetyAction.block,
-            icon: Icons.block,
+            icon: LucideIcons.ban,
             label: l10n.blockAction,
             danger: true,
           ),

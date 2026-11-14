@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -37,7 +38,7 @@ class FeedHeader extends StatelessWidget {
               onPressed: onExplore,
               tooltip: l10n.feedExplore,
               style: IconButton.styleFrom(foregroundColor: colors.textPrimary),
-              icon: const Icon(Icons.explore_outlined),
+              icon: const Icon(LucideIcons.compass),
             ),
           ),
           Center(
@@ -89,7 +90,10 @@ class FeedHeader extends StatelessWidget {
                         const SizedBox(width: 8),
                         TextButton.icon(
                           onPressed: onFilter,
-                          icon: const Icon(Icons.tune_rounded, size: 18),
+                          icon: const Icon(
+                            LucideIcons.slidersHorizontal,
+                            size: 18,
+                          ),
                           label: Text(
                             filterCount == 0
                                 ? l10n.filterTitle

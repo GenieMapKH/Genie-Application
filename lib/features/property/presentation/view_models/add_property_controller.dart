@@ -1,4 +1,4 @@
-import 'package:tilomnov/features/profile/data/repositories/user_repository.dart';
+import 'package:tilomnov/features/security/presentation/view_models/security_providers.dart';
 import 'package:tilomnov/features/profile/presentation/view_models/user_providers.dart';
 import 'package:tilomnov/shared/utils/phone_number.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,16 +61,16 @@ class AddPropertyController extends AutoDisposeNotifier<AddPropertyFormState> {
     return const AddPropertyFormState();
   }
 
-  Future<void> ensureAccountPhone(String number) async {
+  Future<void> ensureAccountPhone(String number, {String? phoneProof}) async {
     final profile = await ref.read(userProfileProvider.future);
     if (profile == null) throw StateError('Sign in before publishing');
-    if (profile.phone == null || profile.phone!.isEmpty) {
+    if (!profile.phoneVerified) {
       final phone = normalizePhoneNumber(number);
       if (phone == null) throw ArgumentError('Enter a valid phone number');
-      await ref
-          .read(userRepositoryProvider)
-          .updateField(ProfileField.phone, phone);
+      if (phoneProof == null) throw StateError('SMS verification required');
+      await ref.read(accountRepositoryProvider).verifyPhone(phone, phoneProof);
       ref.invalidate(userProfileProvider);
+      await ref.read(userProfileProvider.future);
     }
   }
 

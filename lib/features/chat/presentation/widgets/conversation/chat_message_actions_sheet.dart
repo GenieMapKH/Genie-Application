@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -48,10 +49,10 @@ class _ActionTile extends StatelessWidget {
     final isDelete = action == ChatMessageAction.delete;
     final color = isDelete ? context.colors.danger : context.colors.textPrimary;
     final (icon, label) = switch (action) {
-      ChatMessageAction.reply => (Icons.reply, l10n.chatReply),
-      ChatMessageAction.copy => (Icons.copy_outlined, l10n.chatCopy),
-      ChatMessageAction.edit => (Icons.edit_outlined, l10n.chatEdit),
-      ChatMessageAction.delete => (Icons.delete_outline, l10n.chatDelete),
+      ChatMessageAction.reply => (LucideIcons.reply, l10n.chatReply),
+      ChatMessageAction.copy => (LucideIcons.copy, l10n.chatCopy),
+      ChatMessageAction.edit => (LucideIcons.pencil, l10n.chatEdit),
+      ChatMessageAction.delete => (LucideIcons.trash2, l10n.chatDelete),
     };
 
     return ListTile(

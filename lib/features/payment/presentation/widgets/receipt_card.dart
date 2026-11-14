@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -50,7 +51,7 @@ class ReceiptCard extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             const Icon(
-              Icons.check_circle_rounded,
+              LucideIcons.circleCheck,
               size: 44,
               color: Color(0xFF1FC79B),
             ),
@@ -66,7 +67,9 @@ class ReceiptCard extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             SummaryTable(
-              title: l10n.paymentReceiptTitle,
+              title: receipt.isSimulation
+                  ? l10n.paymentSimulationNotice
+                  : l10n.paymentReceiptTitle,
               rows: [
                 (l10n.paymentReceiptTransaction, '#${receipt.transactionId}'),
                 (
@@ -77,7 +80,12 @@ class ReceiptCard extends StatelessWidget {
                 (l10n.paymentReceiptMethod, method),
                 if (receipt.email case final email?)
                   (l10n.paymentReceiptEmail, email),
-                (l10n.paymentReceiptStatus, l10n.paymentReceiptPaid),
+                (
+                  l10n.paymentReceiptStatus,
+                  receipt.isSimulation
+                      ? l10n.paymentSimulation
+                      : l10n.paymentReceiptPaid,
+                ),
               ],
             ),
             const SizedBox(height: 12),

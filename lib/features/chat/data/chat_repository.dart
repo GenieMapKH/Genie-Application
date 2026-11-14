@@ -50,6 +50,7 @@ class ChatRepository {
     int limit = conversationPageSize,
     String? cursor,
   }) async {
+    final scope = await _kept.capture();
     final response = await dio.get(
       '/chat/conversations',
       queryParameters: {
@@ -59,7 +60,9 @@ class ChatRepository {
       },
     );
     final data = _asJson(response.data);
-    if (!archived && cursor == null) await _kept.write(_keptName, data);
+    if (!archived && cursor == null) {
+      await _kept.write(_keptName, data, scope: scope);
+    }
     return _conversationPageOf(data);
   }
 

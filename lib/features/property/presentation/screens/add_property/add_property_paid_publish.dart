@@ -114,6 +114,7 @@ extension AddPropertyPaidPublish on AddPropertyPageState {
             context,
             receipt: PaymentReceipt(
               transactionId: outcome.transactionId ?? '',
+              isSimulation: outcome.isSimulation,
               amountUsd: outcome.amountUsd ?? PlanCatalog.oneTimePublishFeeUsd,
               item: context.l10n.paymentItemOneTimePublish,
               method: method,

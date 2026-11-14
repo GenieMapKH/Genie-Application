@@ -2,15 +2,35 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:tilomnov/core/network/api_cache_manager.dart';
+import 'package:tilomnov/core/storage/kept_copy_store.dart';
 
 class AuthStorage {
-  static const _storage = FlutterSecureStorage();
+  static const _storage = FlutterSecureStorage(
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.unlocked_this_device,
+    ),
+  );
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
 
   static const _guestSessionKey = 'guest_session_id';
 
   static final _signedIn = ValueNotifier<bool>(false);
+  static Future<void>? _writes;
+
+  static int get generation => ApiCacheManager().generation;
+
+  static Future<void> _serialize(Future<void> Function() action) {
+    final next = (_writes ?? Future<void>.value()).then((_) => action());
+    // The caller still receives the error; subsequent cleanup must remain possible.
+    late final Future<void> barrier;
+    barrier = next.catchError((Object _) {}).whenComplete(() {
+      if (identical(_writes, barrier)) _writes = null;
+    });
+    _writes = barrier;
+    return next;
+  }
 
   /// Whether tokens are stored. Follows every save and clear, whoever makes
   /// it (sign-in, sign-out, a renewal the server refused), so nothing can
@@ -19,6 +39,7 @@ class AuthStorage {
 
   /// Reads the stored session once, before the first screen asks about it.
   static Future<void> load() async {
+    await KeptCopyStore.purgeLegacyCopies();
     final token = await getAccessToken();
     if (needsAdminEmailVerification(token)) {
       await clearTokens();
@@ -30,20 +51,36 @@ class AuthStorage {
   static Future<void> saveTokens({
     required String access,
     required String refresh,
-  }) async {
-    await _storage.write(key: _accessTokenKey, value: access);
-    await _storage.write(key: _refreshTokenKey, value: refresh);
-    _signedIn.value = true;
+    int? expectedGeneration,
+  }) {
+    if (expectedGeneration == null) {
+      _signedIn.value = false;
+      ApiCacheManager().clearAll();
+      KeptCopyStore.clearSessionCopies();
+    }
+    final origin = expectedGeneration ?? generation;
+    return _serialize(() async {
+      if (generation != origin) return;
+      await _storage.write(key: _accessTokenKey, value: access);
+      await _storage.write(key: _refreshTokenKey, value: refresh);
+      if (generation == origin) _signedIn.value = true;
+    });
   }
 
   static Future<void> saveGuestSessionId(String id) async {
     await _storage.write(key: _guestSessionKey, value: id);
   }
 
-  static Future<String?> getAccessToken() async =>
-      await _storage.read(key: _accessTokenKey);
-  static Future<String?> getRefreshToken() async =>
-      await _storage.read(key: _refreshTokenKey);
+  static Future<String?> getAccessToken() async {
+    if (_writes case final pending?) await pending;
+    return _storage.read(key: _accessTokenKey);
+  }
+
+  static Future<String?> getRefreshToken() async {
+    if (_writes case final pending?) await pending;
+    return _storage.read(key: _refreshTokenKey);
+  }
+
   static Future<String?> getGuestSessionId() async =>
       await _storage.read(key: _guestSessionKey);
 
@@ -93,12 +130,19 @@ class AuthStorage {
     }
   }
 
-  static Future<void> clearTokens() async {
+  static Future<void> clearTokens() {
     // Said first: screens must stop acting for the user at once, not after
     // the storage answers.
     _signedIn.value = false;
-    await _storage.delete(key: _accessTokenKey);
-    await _storage.delete(key: _refreshTokenKey);
+    ApiCacheManager().clearAll();
+    KeptCopyStore.clearSessionCopies();
+    return _serialize(() async {
+      await Future.wait([
+        _storage.delete(key: _accessTokenKey),
+        _storage.delete(key: _refreshTokenKey),
+        KeptCopyStore.purgeLegacyCopies(),
+      ]);
+    });
   }
 
   static Future<void> clearGuestSessionId() async {

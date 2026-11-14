@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:intl/intl.dart';
 import '../data/admin_dashboard_repository.dart';
 import 'admin_records_page.dart';
@@ -45,11 +46,7 @@ class AdminPaymentsCard extends StatelessWidget {
                 children: [
                   const Row(
                     children: [
-                      Icon(
-                        Icons.account_balance_wallet_outlined,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
+                      Icon(LucideIcons.wallet, color: Colors.white70, size: 20),
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -58,7 +55,7 @@ class AdminPaymentsCard extends StatelessWidget {
                         ),
                       ),
                       Icon(
-                        Icons.arrow_outward_rounded,
+                        LucideIcons.arrowUpRight,
                         color: Colors.white70,
                         size: 18,
                       ),
@@ -162,7 +159,7 @@ class AdminPaymentsCard extends StatelessWidget {
                                     ),
                                   ),
                                   const Icon(
-                                    Icons.chevron_right_rounded,
+                                    LucideIcons.chevronRight,
                                     size: 18,
                                   ),
                                 ],

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -61,7 +62,7 @@ class LegalBullet extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 7.0, right: 8.0),
-            child: Icon(Icons.circle, size: 4.5, color: color),
+            child: Icon(LucideIcons.circle, size: 4.5, color: color),
           ),
           Expanded(
             child: Text(

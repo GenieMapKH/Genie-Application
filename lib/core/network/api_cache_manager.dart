@@ -24,6 +24,10 @@ class ApiCacheManager {
 
   final LinkedHashMap<String, CacheEntry> _cache = LinkedHashMap();
   static const int _maxCacheEntries = 100;
+  int _generation = 0;
+
+  /// Invalidates work started before a login, logout or server-ended session.
+  int get generation => _generation;
 
   /// Generate unique cache key from path and query parameters
   String buildKey(String path, [Map<String, dynamic>? queryParameters]) {
@@ -73,6 +77,7 @@ class ApiCacheManager {
 
   /// Wipe entire cache (e.g. on user logout)
   void clearAll() {
+    _generation++;
     _cache.clear();
   }
 }
@@ -89,6 +94,8 @@ class ApiCacheManager {
 /// * A write (POST, PUT, PATCH, DELETE) drops what is kept about the same
 ///   resource, before it is sent and again once it is done.
 class CacheInterceptor extends Interceptor {
+  static const _generationKey = 'api_session_generation';
+
   /// Put `{skipCache: true}` in a request's `extra` to keep it out of this
   /// cache: requests that are rarely repeated (search texts) would only push
   /// useful entries out of the 100 kept.
@@ -103,6 +110,8 @@ class CacheInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    options.extra.putIfAbsent(_generationKey, () => _cacheManager.generation);
+    if (!_isCurrent(options)) return handler.reject(_stale(options));
     if (options.extra[skipCache] == true ||
         {'chat', 'auth'}.contains(ApiCacheManager.resourceOf(options.path))) {
       options.extra[skipCache] = true;
@@ -134,6 +143,7 @@ class CacheInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     final options = response.requestOptions;
+    if (!_isCurrent(options)) return handler.reject(_stale(options));
     if (options.extra[skipCache] != true) {
       if (!_isRead(options)) {
         // A read answered while this write ran may hold the old data.
@@ -152,6 +162,9 @@ class CacheInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (!_isCurrent(err.requestOptions)) {
+      return handler.next(_stale(err.requestOptions));
+    }
     final cached = err.requestOptions.extra['cached_entry'] as CacheEntry?;
     final notModified = err.response?.statusCode == 304;
     final offline =
@@ -166,6 +179,15 @@ class CacheInterceptor extends Interceptor {
 
   static bool _isRead(RequestOptions options) =>
       options.method.toUpperCase() == 'GET';
+
+  bool _isCurrent(RequestOptions options) =>
+      options.extra[_generationKey] == _cacheManager.generation;
+
+  static DioException _stale(RequestOptions options) => DioException(
+    requestOptions: options,
+    type: DioExceptionType.cancel,
+    message: 'Session changed',
+  );
 
   static Response _answerFrom(CacheEntry cached, RequestOptions options) =>
       Response(requestOptions: options, statusCode: 200, data: cached.data);

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -186,7 +187,7 @@ class _AppTextFieldState extends State<AppTextField> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.info_outline, size: 14.0, color: errorColor),
+                  const Icon(LucideIcons.info, size: 14.0, color: errorColor),
                   const SizedBox(width: 5),
                   Flexible(
                     child: Text(

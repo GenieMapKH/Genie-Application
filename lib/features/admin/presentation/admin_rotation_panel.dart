@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tilomnov/core/theme/app_colors.dart';
@@ -13,7 +14,7 @@ class AdminRotationPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final rotation = ref.watch(adminRotationProvider);
     return AdminServiceCard(
-      icon: Icons.key_rounded,
+      icon: LucideIcons.keyRound,
       title: 'Infisical',
       onRefresh: () => ref.invalidate(adminRotationProvider),
       refreshing: rotation.isLoading && rotation.hasValue,
@@ -57,8 +58,8 @@ class AdminRotationPanel extends ConsumerWidget {
                     }),
                     trailing: Icon(
                       credential.status == 'recorded'
-                          ? Icons.check_circle_rounded
-                          : Icons.help_outline_rounded,
+                          ? LucideIcons.circleCheck
+                          : LucideIcons.circleHelp,
                       color: credential.status == 'recorded'
                           ? context.colors.success
                           : context.colors.textMuted,

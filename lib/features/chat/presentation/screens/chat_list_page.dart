@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/shared/widgets/layout/app_header_bar.dart';
 import 'package:tilomnov/features/chat/presentation/screens/archived_chats_page.dart';
@@ -79,11 +80,11 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
   Widget _buildMoreMenu() {
     return PopupMenuButton<void>(
       tooltip: context.l10n.chatMoreOptions,
-      icon: Icon(Icons.more_vert, color: context.colors.accent),
+      icon: Icon(LucideIcons.ellipsisVertical, color: context.colors.accent),
       itemBuilder: (menuContext) => [
         appMenuItem<void>(
           menuContext,
-          icon: Icons.archive_outlined,
+          icon: LucideIcons.archive,
           label: context.l10n.chatArchivedChats,
           onTap: () => Navigator.of(
             context,
@@ -98,7 +99,7 @@ class _ChatListPageState extends ConsumerState<ChatListPage> {
       padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
       children: [
         EmptyStateCard(
-          icon: Icons.chat_bubble_outline,
+          icon: LucideIcons.messageCircle,
           title: context.l10n.chatNoChatsYet,
           hint: context.l10n.chatMessageAPropertyOwnerToStart,
         ),

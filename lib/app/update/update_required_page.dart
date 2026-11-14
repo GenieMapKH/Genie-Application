@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/l10n/l10n.dart';
 
@@ -21,7 +22,7 @@ class UpdateRequiredPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.system_update_outlined,
+                  LucideIcons.download,
                   size: 64,
                   color: theme.colorScheme.primary,
                 ),

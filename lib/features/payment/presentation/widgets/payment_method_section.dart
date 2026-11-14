@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:tilomnov/core/device/app_haptics.dart';
@@ -39,7 +40,7 @@ class PaymentMethodSection extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.info_outline_rounded, size: 14, color: colors.textMuted),
+            Icon(LucideIcons.info, size: 14, color: colors.textMuted),
             const SizedBox(width: 4),
             Text(
               l10n.paymentTaxIncluded,
@@ -134,9 +135,7 @@ class PaymentMethodTile extends StatelessWidget {
                     ),
                   ),
                   Icon(
-                    selected
-                        ? Icons.radio_button_checked_rounded
-                        : Icons.radio_button_off_rounded,
+                    selected ? LucideIcons.circleDot : LucideIcons.circle,
                     color: selected ? colors.highlight : colors.iconSubtle,
                   ),
                 ],

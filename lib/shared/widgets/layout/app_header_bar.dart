@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 
 import 'package:tilomnov/core/theme/app_colors.dart';
 import 'package:tilomnov/shared/widgets/glass/glass_icon_button.dart';
@@ -52,9 +53,9 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
                         width: 40,
                         height: 40,
                         child: Icon(
-                          Icons.arrow_back,
+                          LucideIcons.arrowLeft,
+                          size: 22,
                           color: colors.textPrimary,
-                          size: 24,
                         ),
                       ),
                     ),
